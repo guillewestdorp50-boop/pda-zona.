@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#11170f"><title>PDA // ZONA</title>
+<style>
+:root{--bg:#10150f;--p:#1b2518;--line:#586b45;--g:#c6df9c;--m:#93a77c;--a:#d8b66c}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#293722,#10150f 65%);color:#e0e9d3;font:15px system-ui}header{padding:17px;background:#11180f;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}h1{margin:0;color:var(--g);font:700 21px monospace;letter-spacing:2px}.sub,small,.muted{color:var(--m);font-size:12px}nav{display:flex;overflow:auto;gap:5px;padding:9px;background:#141c12;position:sticky;top:68px;z-index:2}button{cursor:pointer}nav button,.btn{padding:9px 12px;border:1px solid var(--line);background:#293821;color:#e8f4d8;border-radius:3px;font-weight:700;white-space:nowrap}nav button.active,.btn{background:#536d3d}main{max-width:850px;margin:auto;padding:12px 12px 70px}.view{display:none}.view.active{display:block}.panel{background:linear-gradient(145deg,#222e1e,#151d13);border:1px solid var(--line);padding:14px;margin-bottom:12px;border-radius:4px}h2{font:700 15px monospace;color:var(--g);letter-spacing:1px;margin:0 0 12px}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.stack{display:grid;gap:8px}input,textarea,select{width:100%;padding:11px;background:#0d130c;color:#e5efd9;border:1px solid var(--line);border-radius:3px;font:inherit}textarea{min-height:90px}.item{display:flex;align-items:center;gap:9px;padding:11px;background:#172115;border:1px solid #46563a}.meta{flex:1;min-width:0}.meta p{font-size:12px;color:var(--m);margin:3px 0}.avatar{background:#52683c;padding:12px;font:700 16px monospace}.chatbox{height:42vh;overflow:auto;background:#0b110a;border:1px solid var(--line);padding:10px;display:flex;flex-direction:column;gap:8px;margin-bottom:9px}.bubble{max-width:88%;background:#273521;padding:9px;border:1px solid var(--line);white-space:pre-wrap;overflow-wrap:anywhere}.bubble.me{align-self:flex-end;background:#3a502e}.delete-one{background:transparent;border:1px solid #785044;color:#e0a08d;border-radius:3px;padding:1px 7px;font-size:13px;line-height:1.2;margin-left:8px;flex:none}.who{font:10px monospace;color:var(--a)}.empty{padding:20px;text-align:center;color:var(--m);border:1px dashed var(--line)}.hidden{display:none!important}.danger{background:#512c23;border-color:#985b4c}footer{position:fixed;bottom:0;background:#10170fef;border-top:1px solid var(--line);width:100%;text-align:center;padding:8px;color:var(--m);font:10px monospace}
+
+.statusline{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--m);margin-top:5px}
+.statusdot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.status-alive{background:#65e56f;box-shadow:0 0 7px #65e56f;animation:pulse 1.2s infinite}
+.status-dead{background:#ef5548;box-shadow:0 0 5px #ef5548}
+.status-lost{background:#e8c64f;box-shadow:0 0 6px #e8c64f}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.28}}
+#pdaKeyboard{position:fixed;z-index:20;left:0;right:0;bottom:0;background:#11190f;border-top:2px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px #000b}
+#pdaKeyboard.hidden{display:none!important}
+#pdaKeyboard .keyrow{display:flex;gap:4px;margin:4px 0}
+#pdaKeyboard button{flex:1;min-width:0;padding:11px 1px;touch-action:none;user-select:none;-webkit-user-select:none;background:#293821;border:1px solid #536744;color:#e8f4d8;border-radius:4px;font-weight:700;font-size:14px}
+#pdaKeyboard button.wide{flex:1.7}
+#pdaKeyboard button.action{background:#536d3d}#pdaKeyboard button.swipe-hit{background:#9ab96b;color:#10150f;transform:scale(1.06)}
+#pdaKeyboard .keyrow.tools button{font-size:11px;padding:8px 2px}
+body.keyboard-visible{padding-bottom:260px}
+body.keyboard-visible footer{display:none}
+@media(max-width:480px){#pdaKeyboard button{padding:9px 1px;font-size:13px}body.keyboard-visible{padding-bottom:245px}}
+.statusSelect{width:auto;max-width:125px;padding:5px;font-size:11px}
+#msg{min-height:48px;max-height:90px;resize:vertical}
+#customKeyboard{margin-top:9px;padding:8px;background:#11190f;border:1px solid var(--line);border-radius:4px}
+.keyrow{display:flex;gap:5px;margin:5px 0}
+.keyrow button{flex:1;min-width:0;padding:11px 2px;background:#293821;border:1px solid #536744;color:#e8f4d8;border-radius:4px;font-weight:700;font-size:14px}
+.keyrow button.wide{flex:1.7;background:#405632}
+.keyrow button.action{background:#536d3d}
+.chatbox.keyboard-open{height:22vh}
+@media(max-width:480px){header .row:first-child{align-items:flex-start}#fullscreenBtn{font-size:10px;padding:7px 8px;white-space:normal;max-width:116px}.keyrow button{padding:10px 1px;font-size:13px}}
+
+</style></head><body>
+<header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><button class="btn" id="fullscreenBtn">⛶ PANTALLA COMPLETA</button></div><div class="row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span></div></header>
+<nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES</button><button data-tab="journal">DIARIO</button><button data-tab="data">DATOS</button></nav>
+<main>
+<section id="home" class="view active"><div class="panel"><h2>TERMINAL ACTIVO</h2><p>Bienvenido a la Zona, stalker. Tus registros se guardan en este dispositivo.</p><div class="row"><div>CONTACTOS <b id="cc">4</b></div><div>MENSAJES <b id="mc">0</b></div></div><div class="row"><div>MISIONES <b id="xc">0</b></div><div>NOTAS <b id="nc">0</b></div></div></div><div class="panel"><h2>ÚLTIMA ACTIVIDAD</h2><div id="activity" class="muted">Sin actividad registrada.</div></div></section>
+<section id="contacts" class="view"><div class="panel"><div class="row"><h2>DIRECTORIO</h2><button class="btn" id="newC">+ NUEVO</button></div><p class="muted">Estado vital editable: verde = vivo · rojo = muerto · amarillo = perdido.</p><div id="contactList" class="stack"></div></div><div id="cEditor" class="panel hidden"><h2>CONTACTO</h2><input id="cName" placeholder="Nombre / alias"><input id="cRole" placeholder="Ocupación / facción"><textarea id="cBio" placeholder="Biografía y personalidad"></textarea><div class="row"><button class="btn" id="saveC">GUARDAR</button><button id="cancelC">CANCELAR</button></div></div></section>
+<section id="relationship" class="view"><div class="panel"><h2>REGISTRO DE TRATO</h2><p class="muted">Elegí un contacto, anotá qué hiciste y calificá cómo fue el trato. La amistad cambia según tu valoración.</p><select id="tratoWho"></select><div class="panel"><div class="row"><div><div class="muted">NIVEL DE AMISTAD</div><strong id="friendScore" style="font:700 28px monospace;color:var(--g)">50 / 100</strong></div><span id="friendLabel" class="tag">NEUTRAL</span></div><div style="height:9px;background:#0b110a;border:1px solid var(--line);margin-top:10px"><div id="friendBar" style="height:100%;width:50%;background:#8eae62"></div></div></div><textarea id="tratoText" placeholder="Ej.: Le hice un regalo, lo ayudé en una misión, compartimos suministros..."></textarea><select id="tratoMood"><option value="positive">Agradable / positivo (+10 amistad)</option><option value="neutral">Neutral (sin cambios)</option><option value="negative">Desagradable / negativo (-10 amistad)</option></select><button class="btn" id="saveTrato">REGISTRAR TRATO</button></div><div class="panel"><h2>HISTORIAL DE TRATOS</h2><div id="tratoHistory" class="stack"></div></div></section>
+<section id="chat" class="view"><div class="panel"><h2>CANAL PRIVADO</h2><select id="chatWho"></select><div class="row" style="margin:8px 0"><small class="muted">Conversación del stalker seleccionado</small><small class="muted">Usá × en cada mensaje para eliminarlo individualmente</small></div><div id="chatBox" class="chatbox"></div><textarea id="msg" placeholder="Tocá aquí para escribir..." readonly></textarea>
+<div class="row"><small>TECLADO PDA · escritura en pantalla</small><button class="btn" id="send">ENVIAR ▸</button></div>
+<p class="muted">Chats editables y guardados localmente. Las respuestas automáticas de IA se conectarán después con Tellama.</p></div></section>
+<section id="missions" class="view"><div class="panel"><div class="row"><h2>MISIONES</h2><button class="btn" id="newM">+ NUEVA</button></div><div id="missionList" class="stack"></div></div><div id="mEditor" class="panel hidden"><input id="mTitle" placeholder="Título"><textarea id="mDesc" placeholder="Objetivo / ubicación / recompensa"></textarea><div class="row"><button class="btn" id="saveM">GUARDAR</button><button id="cancelM">CANCELAR</button></div></div></section>
+<section id="journal" class="view"><div class="panel"><h2>DIARIO PERSONAL</h2><input id="nTitle" placeholder="Título de la anotación"><textarea id="nBody" placeholder="Escribí lo que ocurrió en la Zona..."></textarea><button class="btn" id="saveN">GUARDAR ANOTACIÓN</button></div><div class="panel"><h2>ENTRADAS</h2><div id="noteList" class="stack"></div></div></section>
+<section id="data" class="view"><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>CONEXIÓN IA</h2><p>Esta versión funciona sin conexión para escribir y organizar tus chats. Tellama se integrará en una siguiente etapa.</p><input placeholder="URL del servidor Tellama (pendiente)" disabled></div></section>
+</main><footer>PDA // ZONA · DATOS LOCALES EN ESTE NAVEGADOR</footer>
+<div id="pdaKeyboard" class="hidden" aria-label="Teclado PDA">
+ <div class="keyrow tools"><button data-k="hide">▼ OCULTAR</button><button data-k="shift">⇧ MAYÚS</button><button data-k="symbols">?123</button><button data-k="back">⌫ BORRAR</button><button data-k="mic" class="action">🎙 DICTAR</button></div>
+ <div class="keyrow"><button data-k="q">Q</button><button data-k="w">W</button><button data-k="e">E</button><button data-k="r">R</button><button data-k="t">T</button><button data-k="y">Y</button><button data-k="u">U</button><button data-k="i">I</button><button data-k="o">O</button><button data-k="p">P</button></div>
+ <div class="keyrow"><button data-k="a">A</button><button data-k="s">S</button><button data-k="d">D</button><button data-k="f">F</button><button data-k="g">G</button><button data-k="h">H</button><button data-k="j">J</button><button data-k="k">K</button><button data-k="l">L</button><button data-k="ñ">Ñ</button></div>
+ <div class="keyrow"><button data-k="z">Z</button><button data-k="x">X</button><button data-k="c">C</button><button data-k="v">V</button><button data-k="b">B</button><button data-k="n">N</button><button data-k="m">M</button><button data-k=",">,</button><button data-k=".">.</button></div>
+ <div class="keyrow"><button data-k="!">!</button><button data-k="?">?</button><button data-k="space" class="wide">ESPACIO</button><button data-k="newline">↵</button><button data-k="done" class="action">LISTO</button></div>
+</div>
+<script>
+const seed=[['STRELOK','Stalker · Leyenda','Reservado y observador. Conoce rutas que no aparecen en los mapas.'],['BARMAN','Comerciante · 100 Rads','Pragmático y negociador. Siempre tiene rumores y encargos.'],['DEGTYAREV','Agente · Operaciones','Metódico y profesional. Investiga anomalías en la Zona.'],['SUSLOV','Intendente · Deber','Militar estricto. Prioriza suministros y seguridad.']];
+const get=(k,d)=>{try{return JSON.parse(localStorage.getItem('zona_'+k))??d}catch{return d}};
+let contacts=get('c',seed.map((x,i)=>({id:'c'+i,name:x[0],role:x[1],bio:x[2]}))), chats=get('m',{}), missions=get('x',[]), notes=get('n',[]), trato=get('trato',{}), editId=null;
+const $=id=>document.getElementById(id), save=()=>{localStorage.setItem('zona_c',JSON.stringify(contacts));localStorage.setItem('zona_m',JSON.stringify(chats));localStorage.setItem('zona_x',JSON.stringify(missions));localStorage.setItem('zona_n',JSON.stringify(notes));localStorage.setItem('zona_trato',JSON.stringify(trato));home()};
+const draftFields=()=>Array.from(document.querySelectorAll('input:not([disabled]),textarea:not([disabled])'));
+function saveDrafts(){let d={};draftFields().forEach(el=>{if(el.id)d[el.id]=el.value});localStorage.setItem('zona_drafts',JSON.stringify(d));}
+function clearDraft(id){let d=get('drafts',{});delete d[id];localStorage.setItem('zona_drafts',JSON.stringify(d));}
+function restoreDrafts(){let d=get('drafts',{});draftFields().forEach(el=>{if(el.id&&Object.prototype.hasOwnProperty.call(d,el.id))el.value=d[el.id]});}
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function go(t){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===t));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));if(t==='chat')renderChat();if(t==='relationship')renderTrato()}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function home(){$('cc').textContent=contacts.length;$('mc').textContent=Object.values(chats).flat().length;$('xc').textContent=missions.filter(x=>!x.done).length;$('nc').textContent=notes.length;$('activity').textContent=notes[0]?.title||missions[0]?.title||'Sin actividad registrada.'}
+function vital(c){return c.vital||'alive'}
+function vitalLabel(v){return v==='dead'?'MUERTO':v==='lost'?'PERDIDO':'VIVO'}
+function renderContacts(){$('contactList').innerHTML=contacts.map(c=>`<div class="item"><div class="avatar">${esc(c.name.slice(0,2))}</div><div class="meta"><b>${esc(c.name)}</b><p>${esc(c.role)}</p><div class="statusline"><span class="statusdot status-${vital(c)}"></span>${vitalLabel(vital(c))}</div></div><select class="statusSelect" aria-label="Estado vital" onchange="setVital('${c.id}',this.value)"><option value="alive" ${vital(c)==='alive'?'selected':''}>🟢 Vivo</option><option value="dead" ${vital(c)==='dead'?'selected':''}>🔴 Muerto</option><option value="lost" ${vital(c)==='lost'?'selected':''}>🟡 Perdido</option></select><button onclick="editC('${c.id}')">EDITAR</button><button class="btn" onclick="chatC('${c.id}')">CHAT</button></div>`).join('')||'<div class="empty">Sin contactos.</div>';$('chatWho').innerHTML=contacts.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');$('tratoWho').innerHTML=contacts.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');renderTrato()}
+window.setVital=(id,v)=>{let c=contacts.find(x=>x.id===id);if(c){c.vital=v;save();renderContacts()}};
+$('newC').onclick=()=>{editId=null;$('cName').value='';$('cRole').value='';$('cBio').value='';$('cEditor').classList.remove('hidden')};
+window.editC=id=>{let c=contacts.find(x=>x.id===id);editId=id;$('cName').value=c.name;$('cRole').value=c.role;$('cBio').value=c.bio;$('cEditor').classList.remove('hidden')};
+$('cancelC').onclick=()=>$('cEditor').classList.add('hidden');
+$('saveC').onclick=()=>{let name=$('cName').value.trim();if(!name)return alert('Escribí un nombre');let previous=contacts.find(x=>x.id===editId);let c={id:editId||'c'+Date.now(),name,role:$('cRole').value,bio:$('cBio').value,vital:previous?.vital||'alive'};contacts=editId?contacts.map(x=>x.id===editId?c:x):[...contacts,c];save();['cName','cRole','cBio'].forEach(clearDraft);saveDrafts();renderContacts();$('cEditor').classList.add('hidden')};
+window.chatC=id=>{go('chat');$('chatWho').value=id;renderChat()};
+function renderChat(){let id=$('chatWho').value;if(!id){$('chatBox').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let arr=chats[id]||[];$('chatBox').innerHTML=arr.map((m,i)=>`<div class="bubble ${m.me?'me':''}"><div class="row"><div class="who">${m.me?'TÚ':esc(m.who)} · ${esc(m.time)}</div><button class="delete-one" onclick="deleteMessage('${id}',${i})" aria-label="Eliminar este mensaje" title="Eliminar este mensaje">×</button></div><div>${esc(m.text)}</div></div>`).join('')||'<div class="empty">Canal abierto. Todavía no hay mensajes.</div>';$('chatBox').scrollTop=$('chatBox').scrollHeight}
+$('chatWho').onchange=renderChat;
+window.deleteMessage=(id,index)=>{let arr=chats[id]||[];if(index<0||index>=arr.length)return;if(!confirm('¿Eliminar solamente este mensaje?'))return;arr.splice(index,1);if(arr.length)chats[id]=arr;else delete chats[id];save();renderChat()};
+function send(){let text=$('msg').value.trim(),id=$('chatWho').value;if(!text||!id)return;(chats[id]??=[]).push({me:true,who:'TÚ',text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});$('msg').value='';clearDraft('msg');save();saveDrafts();renderChat()}
+$('send').onclick=send;
+
+
+$('newM').onclick=()=>{$('mTitle').value='';$('mDesc').value='';$('mEditor').classList.remove('hidden')};$('cancelM').onclick=()=>$('mEditor').classList.add('hidden');
+$('saveM').onclick=()=>{if(!$('mTitle').value.trim())return alert('Poné un título');missions.unshift({id:Date.now(),title:$('mTitle').value,desc:$('mDesc').value,done:false,date:new Date().toLocaleDateString('es-AR')});save();['mTitle','mDesc'].forEach(clearDraft);saveDrafts();renderM();$('mEditor').classList.add('hidden')};
+function renderM(){$('missionList').innerHTML=missions.map(m=>`<div class="item"><div class="meta"><b>${esc(m.title)}</b><p>${esc(m.desc)} · ${m.date}</p></div><button onclick="toggleM(${m.id})">${m.done?'CUMPLIDA':'ACTIVA'}</button><button onclick="delM(${m.id})">×</button></div>`).join('')||'<div class="empty">Sin misiones.</div>'}
+window.toggleM=id=>{missions=missions.map(m=>m.id===id?{...m,done:!m.done}:m);save();renderM()};window.delM=id=>{if(confirm('¿Eliminar misión?')){missions=missions.filter(m=>m.id!==id);save();renderM()}};
+$('saveN').onclick=()=>{if(!$('nBody').value.trim())return alert('Escribí una anotación');notes.unshift({id:Date.now(),title:$('nTitle').value||'Sin título',body:$('nBody').value,date:new Date().toLocaleString('es-AR')});$('nTitle').value='';$('nBody').value='';save();['nTitle','nBody'].forEach(clearDraft);saveDrafts();renderN()};
+function renderN(){$('noteList').innerHTML=notes.map(n=>`<div class="panel"><div class="row"><b>${esc(n.title)}</b><button onclick="delN(${n.id})">BORRAR</button></div><small>${esc(n.date)}</small><p style="white-space:pre-wrap">${esc(n.body)}</p></div>`).join('')||'<div class="empty">Diario vacío.</div>'}
+window.delN=id=>{if(confirm('¿Borrar anotación?')){notes=notes.filter(n=>n.id!==id);save();renderN()}};
+
+function score(id){return trato[id]?.score??50}
+function renderTrato(){if(!$('tratoWho')||!contacts.length){$('tratoHistory').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let id=$('tratoWho').value;if(!id||!contacts.some(c=>c.id===id))id=contacts[0].id;$('tratoWho').value=id;let s=score(id);$('friendScore').textContent=s+' / 100';$('friendBar').style.width=s+'%';$('friendLabel').textContent=s>=80?'ALIADO':s>=60?'BUENA RELACIÓN':s>=40?'NEUTRAL':s>=20?'DESCONFIANZA':'HOSTIL';let arr=trato[id]?.history||[];$('tratoHistory').innerHTML=arr.map(x=>`<div class="item"><div class="meta"><b>${esc(x.text)}</b><p>${esc(x.date)} · ${esc(x.mood)}</p></div><strong style="color:${x.delta>0?'var(--g)':x.delta<0?'#d58a78':'var(--m)'}">${x.delta>0?'+':''}${x.delta}</strong></div>`).join('')||'<div class="empty">Todavía no registraste tratos con este contacto.</div>'}
+$('tratoWho').onchange=renderTrato;
+$('saveTrato').onclick=()=>{let id=$('tratoWho').value,text=$('tratoText').value.trim(),mood=$('tratoMood').value;if(!text)return alert('Contá qué hiciste antes de registrar el trato.');let delta=mood==='positive'?10:mood==='negative'?-10:0;trato[id]??={score:50,history:[]};trato[id].score=Math.max(0,Math.min(100,trato[id].score+delta));trato[id].history.unshift({text,delta,mood:mood==='positive'?'Agradable':mood==='negative'?'Desagradable':'Neutral',date:new Date().toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires'})});$('tratoText').value='';clearDraft('tratoText');save();saveDrafts();renderTrato()};
+$('saveNow').onclick=()=>{save();saveDrafts();$('saveStatus').textContent='Guardado · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});};
+$('export').onclick=()=>{let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify({contacts,chats,missions,notes,trato},null,2)],{type:'application/json'}));a.href=u;a.download='PDA_Zona_respaldo.json';a.click();URL.revokeObjectURL(u)};
+$('wipe').onclick=()=>{if(confirm('¿Borrar todos los datos?')){['c','m','x','n','trato'].forEach(k=>localStorage.removeItem('zona_'+k));location.reload()}};
+function updateClock(){let now=new Date();$('clock').textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);$('dateAR').textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(now)}
+setInterval(updateClock,1000);updateClock();
+$('fullscreenBtn').onclick=async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();$('fullscreenBtn').textContent='⛶ SALIR DE PANTALLA COMPLETA'}else{await document.exitFullscreen();$('fullscreenBtn').textContent='⛶ PANTALLA COMPLETA'}}catch(e){alert('El navegador no permite pantalla completa en esta vista. Abrí la PDA en Chrome y probá nuevamente.')}}
+document.addEventListener('fullscreenchange',()=>{$('fullscreenBtn').textContent=document.fullscreenElement?'⛶ SALIR DE PANTALLA COMPLETA':'⛶ PANTALLA COMPLETA'});
+// Teclado PDA compartido: bloquea el teclado del sistema en todos los campos editables.
+let activeField=null,shiftOn=false,symbolMode=false;
+const pdaKeys=$('pdaKeyboard');
+function openPdaKeyboard(field){
+ activeField=field;
+ field.setAttribute('readonly','readonly');
+ pdaKeys.classList.remove('hidden');
+ document.body.classList.add('keyboard-visible');
+ setTimeout(()=>field.scrollIntoView({block:'center',behavior:'smooth'}),80);
+}
+function closePdaKeyboard(){
+ pdaKeys.classList.add('hidden');
+ document.body.classList.remove('keyboard-visible');
+ activeField=null;
+}
+document.querySelectorAll('input:not([disabled]),textarea:not([disabled])').forEach(field=>{
+ field.setAttribute('readonly','readonly');
+ field.addEventListener('click',()=>openPdaKeyboard(field));field.addEventListener('input',saveDrafts);
+});
+function insertPdaText(insert){
+ if(!activeField)return;
+ const el=activeField,start=el.selectionStart??el.value.length,end=el.selectionEnd??el.value.length;
+ el.value=el.value.slice(0,start)+insert+el.value.slice(end);
+ const pos=start+insert.length;el.setSelectionRange(pos,pos);
+ el.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();
+}
+async function dictate(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!activeField){alert('Primero tocá el campo donde querés escribir.');return}
+  if(!SR){alert('Este navegador no ofrece dictado por voz. Abrí la PDA con Google Chrome actualizado.');return}
+
+  // El reconocimiento de voz necesita un origen seguro y permiso de micrófono.
+  if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    alert('No se puede acceder al micrófono desde esta ubicación ('+location.protocol+').\n\nAbrí la PDA desde una dirección HTTPS o desde localhost. Si la abrís directamente desde Descargas, Android puede bloquear el micrófono.');
+    return;
+  }
+
+  const micButton=pdaKeys.querySelector('[data-k="mic"]');
+  try{
+    if(micButton){micButton.disabled=true;micButton.textContent='🎙 VERIFICANDO…'}
+    // Solicita el permiso de Android/Chrome antes de iniciar SpeechRecognition.
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(track=>track.stop());
+  }catch(e){
+    if(micButton){micButton.disabled=false;micButton.textContent='🎙 DICTAR'}
+    const messages={
+      'NotAllowedError':'Chrome no tiene permiso para usar el micrófono. Permitilo en Ajustes de Android > Aplicaciones > Chrome > Permisos > Micrófono. Después, revisá también los permisos del sitio.',
+      'PermissionDeniedError':'El permiso del micrófono fue denegado. Habilitalo para Chrome en los ajustes de Android.',
+      'NotFoundError':'No se encontró un micrófono disponible en el dispositivo.',
+      'NotReadableError':'El micrófono está siendo utilizado por otra aplicación. Cerrá esa aplicación e intentá de nuevo.'
+    };
+    alert(messages[e.name]||('No se pudo acceder al micrófono: '+(e.message||e.name)));
+    return;
+  }
+
+  const rec=new SR();
+  rec.lang='es-AR';rec.interimResults=false;rec.continuous=false;rec.maxAlternatives=1;
+  rec.onstart=()=>{if(micButton){micButton.disabled=false;micButton.textContent='🎙 ESCUCHANDO…'}};
+  rec.onresult=e=>{
+    const transcript=e.results&&e.results[0]&&e.results[0][0]&&e.results[0][0].transcript;
+    if(transcript&&transcript.trim())insertPdaText(transcript.trim()+' ');
+  };
+  rec.onerror=e=>{
+    const messages={
+      'not-allowed':'Chrome denegó el micrófono. Revisá Ajustes de Android > Aplicaciones > Chrome > Permisos > Micrófono y permití el acceso.',
+      'service-not-allowed':'El servicio de reconocimiento de voz está bloqueado por el navegador.',
+      'audio-capture':'No se encontró un micrófono disponible.',
+      'network':'Falló la conexión. El dictado de Chrome necesita internet.',
+      'language-not-supported':'El reconocimiento en español no está disponible en este navegador.'
+    };
+    alert('Error de dictado: '+(messages[e.error]||e.error||'no se pudo iniciar'));
+  };
+  rec.onend=()=>{if(micButton){micButton.disabled=false;micButton.textContent='🎙 DICTAR'}};
+  try{rec.start()}catch(e){if(micButton){micButton.disabled=false;micButton.textContent='🎙 DICTAR'}alert('No se pudo iniciar el dictado: '+e.message)}
+}
+let swipeActive=false,swipeLetters=[],swipeLast='',swipeMoved=false,suppressKeyClick=false;
+pdaKeys.addEventListener('pointerdown',e=>{
+ const b=e.target.closest('button[data-k]');if(!b)return;
+ if(/^[a-zñ]$/i.test(b.dataset.k)){swipeActive=true;swipeLetters=[b.dataset.k.toLowerCase()];swipeLast=b.dataset.k;swipeMoved=false;b.classList.add('swipe-hit');e.preventDefault()}
+});
+document.addEventListener('pointermove',e=>{
+ if(!swipeActive)return;
+ const b=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('#pdaKeyboard button[data-k]');
+ if(b&&/^[a-zñ]$/i.test(b.dataset.k)&&b.dataset.k!==swipeLast){
+  swipeLast=b.dataset.k;swipeLetters.push(b.dataset.k.toLowerCase());b.classList.add('swipe-hit');swipeMoved=true;
+ }
+});
+document.addEventListener('pointerup',()=>{
+ if(!swipeActive)return;swipeActive=false;
+ pdaKeys.querySelectorAll('.swipe-hit').forEach(b=>b.classList.remove('swipe-hit'));
+ if(swipeMoved&&swipeLetters.length>1){insertPdaText((shiftOn?swipeLetters.join('').toUpperCase():swipeLetters.join('')));shiftOn=false;suppressKeyClick=true;setTimeout(()=>suppressKeyClick=false,250)}
+ swipeLetters=[];swipeLast='';
+});
+pdaKeys.addEventListener('click',e=>{
+ const btn=e.target.closest('button[data-k]'); if(!btn)return;
+ if(suppressKeyClick){e.preventDefault();return}
+ const k=btn.dataset.k;
+ if(k==='hide'||k==='done'){closePdaKeyboard();return}
+ if(k==='shift'){shiftOn=!shiftOn;return}
+ if(k==='mic'){dictate();return}
+ if(!activeField)return;
+ if(k==='back'){
+  const el=activeField,start=el.selectionStart??el.value.length,end=el.selectionEnd??el.value.length;
+  if(start!==end){el.value=el.value.slice(0,start)+el.value.slice(end);el.setSelectionRange(start,start)}
+  else if(start>0){el.value=el.value.slice(0,start-1)+el.value.slice(end);el.setSelectionRange(start-1,start-1)}
+  el.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();
+ }else if(k==='space')insertPdaText(' ');
+ else if(k==='newline')insertPdaText('\\n');
+ else if(/^[a-zñ]$/i.test(k)||k==='!'||k==='?'||k===','||k==='.')insertPdaText(shiftOn?k.toUpperCase():k.toLowerCase());
+ if(shiftOn)shiftOn=false;
+ if(activeField)activeField.focus({preventScroll:true});
+});
+document.addEventListener('click',e=>{
+ if(!pdaKeys.classList.contains('hidden') && !e.target.closest('#pdaKeyboard') && !e.target.closest('input,textarea'))closePdaKeyboard();
+});
+restoreDrafts();renderContacts();renderM();renderN();home();renderTrato();
+</script></body></html>
