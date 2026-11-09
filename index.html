@@ -10,6 +10,13 @@
 .status-lost{background:#e8c64f;box-shadow:0 0 6px #e8c64f}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.28}}
 #pdaKeyboard{position:fixed;z-index:20;left:0;right:0;bottom:0;background:#11190f;border-top:2px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px #000b}
+#swipeSuggestions{position:relative;z-index:10;display:flex;align-items:center;justify-content:center;gap:7px;min-height:34px;margin:0 0 4px;padding:2px 4px;color:#d8e9c5;font-size:12px}
+#swipeSuggestions button{padding:5px 12px!important;background:#35482b!important;border:1px solid #78965a!important;color:#efffdc!important;border-radius:12px!important;font-size:13px!important;min-height:28px}
+#swipeSuggestions button.primary-suggestion{background:#8aa85c!important;color:#10170c!important;border-color:#c1e58a!important;font-weight:900}
+#swipeSuggestions .suggestion-hint{opacity:.65;letter-spacing:1px;font-size:10px}
+#swipeTrail{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:8;opacity:1;transition:opacity .22s ease}
+#swipeTrail path{fill:none;stroke:#d8f7a3;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 3px #b8f27a) drop-shadow(0 0 8px #9acb62)}
+#swipeTrail.fading{opacity:0}
 #pdaKeyboard.hidden{display:none!important}
 #pdaKeyboard .keyrow{display:flex;gap:4px;margin:4px 0}
 #pdaKeyboard button{flex:1;min-width:0;padding:11px 1px;touch-action:none;user-select:none;-webkit-user-select:none;background:#293821;border:1px solid #536744;color:#e8f4d8;border-radius:4px;font-weight:700;font-size:14px}
@@ -31,7 +38,7 @@ body.keyboard-visible footer{display:none}
 
 </style></head><body>
 <header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><button class="btn" id="fullscreenBtn">⛶ PANTALLA COMPLETA</button></div><div class="row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span></div></header>
-<nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES</button><button data-tab="journal">DIARIO</button><button data-tab="data">DATOS</button></nav>
+<nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="data">DATOS</button></nav>
 <main>
 <section id="home" class="view active"><div class="panel"><h2>TERMINAL ACTIVO</h2><p>Bienvenido a la Zona, stalker. Tus registros se guardan en este dispositivo.</p><div class="row"><div>CONTACTOS <b id="cc">4</b></div><div>MENSAJES <b id="mc">0</b></div></div><div class="row"><div>MISIONES <b id="xc">0</b></div><div>NOTAS <b id="nc">0</b></div></div></div><div class="panel"><h2>ÚLTIMA ACTIVIDAD</h2><div id="activity" class="muted">Sin actividad registrada.</div></div></section>
 <section id="contacts" class="view"><div class="panel"><div class="row"><h2>DIRECTORIO</h2><button class="btn" id="newC">+ NUEVO</button></div><p class="muted">Estado vital editable: verde = vivo · rojo = muerto · amarillo = perdido.</p><div id="contactList" class="stack"></div></div><div id="cEditor" class="panel hidden"><h2>CONTACTO</h2><input id="cName" placeholder="Nombre / alias"><input id="cRole" placeholder="Ocupación / facción"><textarea id="cBio" placeholder="Biografía y personalidad"></textarea><div class="row"><button class="btn" id="saveC">GUARDAR</button><button id="cancelC">CANCELAR</button></div></div></section>
@@ -40,28 +47,48 @@ body.keyboard-visible footer{display:none}
 <div class="row"><small>TECLADO PDA · escritura en pantalla</small><button class="btn" id="send">ENVIAR ▸</button></div>
 <p class="muted">Chats editables y guardados localmente. Las respuestas automáticas de IA se conectarán después con Tellama.</p></div></section>
 <section id="missions" class="view"><div class="panel"><div class="row"><h2>MISIONES</h2><button class="btn" id="newM">+ NUEVA</button></div><div id="missionList" class="stack"></div></div><div id="mEditor" class="panel hidden"><input id="mTitle" placeholder="Título"><textarea id="mDesc" placeholder="Objetivo / ubicación / recompensa"></textarea><div class="row"><button class="btn" id="saveM">GUARDAR</button><button id="cancelM">CANCELAR</button></div></div></section>
-<section id="journal" class="view"><div class="panel"><h2>DIARIO PERSONAL</h2><input id="nTitle" placeholder="Título de la anotación"><textarea id="nBody" placeholder="Escribí lo que ocurrió en la Zona..."></textarea><button class="btn" id="saveN">GUARDAR ANOTACIÓN</button></div><div class="panel"><h2>ENTRADAS</h2><div id="noteList" class="stack"></div></div></section>
-<section id="data" class="view"><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>CONEXIÓN IA</h2><p>Esta versión funciona sin conexión para escribir y organizar tus chats. Tellama se integrará en una siguiente etapa.</p><input placeholder="URL del servidor Tellama (pendiente)" disabled></div></section>
+<section id="encyclopedia" class="view"><div class="panel"><h2>ENCICLOPEDIA DE LA ZONA</h2><p class="muted">Tu inventario de campo. Sumá o descontá unidades de cada elemento.</p><div class="row"><select id="encyCategory"><option value="Mutantes">Mutantes</option><option value="Artefactos">Artefactos</option><option value="Armas">Armas</option><option value="Botiquines">Botiquines</option><option value="Medicamentos">Medicamentos</option><option value="Radiación">Radiación</option><option value="Lugares">Lugares</option></select></div><div class="row" style="margin-top:8px"><input id="encyName" placeholder="Nombre del elemento o lugar"><input id="encyQty" type="number" min="0" step="1" value="1" style="max-width:82px" aria-label="Cantidad inicial"></div><textarea id="encyDescription" placeholder="Descripción: características, aspecto, peligros, utilidad, ubicación..."></textarea><button class="btn" id="encyAdd" style="width:100%;margin-top:8px">+ AGREGAR A LA ENCICLOPEDIA</button></div><div class="panel"><div class="row"><h2>REGISTROS</h2><select id="encyFilter" style="max-width:150px"><option value="Todos">Todas las categorías</option><option>Mutantes</option><option>Artefactos</option><option>Armas</option><option>Botiquines</option><option>Medicamentos</option><option>Radiación</option><option>Lugares</option></select></div><div id="encyList" class="stack"></div></div></section><section id="journal" class="view"><div class="panel"><h2>DIARIO PERSONAL</h2><input id="nTitle" placeholder="Título de la anotación"><textarea id="nBody" placeholder="Escribí lo que ocurrió en la Zona..."></textarea><button class="btn" id="saveN">GUARDAR ANOTACIÓN</button></div><div class="panel"><h2>ENTRADAS</h2><div id="noteList" class="stack"></div></div></section>
+<section id="emissions" class="view"><div class="panel"><h2>CONTROL DE EMISIONES</h2><p class="muted">Iniciá una sesión para activar la señal. La PDA emitirá un pitido cada 20 segundos hasta que cierres la sesión o apagues los pitidos.</p><div class="row"><button class="btn" id="startEmission">▶ INICIAR SESIÓN</button><button class="btn danger" id="powerEmission">⏻ APAGAR PITIDOS</button></div><div id="emissionStatus" class="statusline" style="margin-top:12px">SIN EMISIÓN ACTIVA</div></div><div class="panel"><div class="row"><h2>REGISTRAR / EDITAR EMISIÓN</h2><button class="btn" id="newEmission">+ NUEVA</button></div><input id="emTitle" placeholder="Nombre o motivo de la emisión"><label class="muted" for="emDate">Fecha</label><input id="emDate" type="date"><div class="row"><div style="flex:1"><label class="muted" for="emStart">Comenzó</label><input id="emStart" type="time"></div><div style="flex:1"><label class="muted" for="emEnd">Terminó</label><input id="emEnd" type="time"><button class="btn" type="button" id="emEndNow" style="margin-top:6px;width:100%">■ TERMINÓ · AHORA</button></div></div><textarea id="emNotes" placeholder="Detalles / observaciones (opcional)"></textarea><div class="row"><button class="btn" id="saveEmission">GUARDAR EMISIÓN</button><button id="cancelEmission">CANCELAR</button></div></div><div class="panel"><h2>REGISTRO DE EMISIONES</h2><div id="emissionList" class="stack"></div></div></section>
+<section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>CONEXIÓN IA</h2><p>Esta versión funciona sin conexión para escribir y organizar tus chats. Tellama se integrará en una siguiente etapa.</p><input placeholder="URL del servidor Tellama (pendiente)" disabled></div></section>
 </main><footer>PDA // ZONA · DATOS LOCALES EN ESTE NAVEGADOR</footer>
 <div id="pdaKeyboard" class="hidden" aria-label="Teclado PDA">
- <div class="keyrow tools"><button data-k="hide">▼ OCULTAR</button><button data-k="shift">⇧ MAYÚS</button><button data-k="symbols">?123</button><button data-k="back">⌫ BORRAR</button><button data-k="mic" class="action">🎙 DICTAR</button></div>
- <div class="keyrow"><button data-k="q">Q</button><button data-k="w">W</button><button data-k="e">E</button><button data-k="r">R</button><button data-k="t">T</button><button data-k="y">Y</button><button data-k="u">U</button><button data-k="i">I</button><button data-k="o">O</button><button data-k="p">P</button></div>
- <div class="keyrow"><button data-k="a">A</button><button data-k="s">S</button><button data-k="d">D</button><button data-k="f">F</button><button data-k="g">G</button><button data-k="h">H</button><button data-k="j">J</button><button data-k="k">K</button><button data-k="l">L</button><button data-k="ñ">Ñ</button></div>
- <div class="keyrow"><button data-k="z">Z</button><button data-k="x">X</button><button data-k="c">C</button><button data-k="v">V</button><button data-k="b">B</button><button data-k="n">N</button><button data-k="m">M</button><button data-k=",">,</button><button data-k=".">.</button></div>
- <div class="keyrow"><button data-k="!">!</button><button data-k="?">?</button><button data-k="space" class="wide">ESPACIO</button><button data-k="newline">↵</button><button data-k="done" class="action">LISTO</button></div>
+ <div id="swipeSuggestions" aria-live="polite"><span class="suggestion-hint">DESLIZÁ PARA ESCRIBIR</span></div>
+ <svg id="swipeTrail" aria-hidden="true"><path id="swipeTrailPath" d=""></path></svg>
+ <div class="keyrow tools"><button data-k="hide">▼ OCULTAR</button><button data-k="shift">⇧ MAYÚS</button><button data-k="symbols" id="keyboardModeBtn">?123</button><button data-k="back">⌫ BORRAR</button><button data-k="mic" class="action">🎙 DICTAR</button></div>
+ <div id="letterLayout">
+  <div class="keyrow"><button data-k="q">Q</button><button data-k="w">W</button><button data-k="e">E</button><button data-k="r">R</button><button data-k="t">T</button><button data-k="y">Y</button><button data-k="u">U</button><button data-k="i">I</button><button data-k="o">O</button><button data-k="p">P</button></div>
+  <div class="keyrow"><button data-k="a">A</button><button data-k="s">S</button><button data-k="d">D</button><button data-k="f">F</button><button data-k="g">G</button><button data-k="h">H</button><button data-k="j">J</button><button data-k="k">K</button><button data-k="l">L</button><button data-k="ñ">Ñ</button></div>
+  <div class="keyrow"><button data-k="z">Z</button><button data-k="x">X</button><button data-k="c">C</button><button data-k="v">V</button><button data-k="b">B</button><button data-k="n">N</button><button data-k="m">M</button><button data-k=",">,</button><button data-k=".">.</button></div>
+  <div class="keyrow"><button data-k="!">!</button><button data-k="?">?</button><button data-k="space" class="wide">ESPACIO</button><button data-k="newline">↵</button><button data-k="done" class="action">LISTO</button></div>
+ </div>
+ <div id="numberLayout" class="hidden">
+  <div class="keyrow"><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="0">0</button></div>
+  <div class="keyrow"><button data-k="@">@</button><button data-k="#">#</button><button data-k="$">$</button><button data-k="%">%</button><button data-k="&amp;">&amp;</button><button data-k="-">−</button><button data-k="+">+</button><button data-k="(">(</button><button data-k=")">)</button></div>
+  <div class="keyrow"><button data-k="*">*</button><button data-k='"'>"</button><button data-k="'">'</button><button data-k=":">:</button><button data-k=";">;</button><button data-k="/">/</button><button data-k="\">\</button><button data-k="_">_</button><button data-k="=">=</button></div>
+  <div class="keyrow"><button data-k="!">!</button><button data-k="?">?</button><button data-k=",">,</button><button data-k=".">.</button><button data-k="space" class="wide">ESPACIO</button><button data-k="newline">↵</button><button data-k="done" class="action">LISTO</button></div>
+ </div>
 </div>
 <script>
 const seed=[['STRELOK','Stalker · Leyenda','Reservado y observador. Conoce rutas que no aparecen en los mapas.'],['BARMAN','Comerciante · 100 Rads','Pragmático y negociador. Siempre tiene rumores y encargos.'],['DEGTYAREV','Agente · Operaciones','Metódico y profesional. Investiga anomalías en la Zona.'],['SUSLOV','Intendente · Deber','Militar estricto. Prioriza suministros y seguridad.']];
 const get=(k,d)=>{try{return JSON.parse(localStorage.getItem('zona_'+k))??d}catch{return d}};
-let contacts=get('c',seed.map((x,i)=>({id:'c'+i,name:x[0],role:x[1],bio:x[2]}))), chats=get('m',{}), missions=get('x',[]), notes=get('n',[]), trato=get('trato',{}), editId=null;
-const $=id=>document.getElementById(id), save=()=>{localStorage.setItem('zona_c',JSON.stringify(contacts));localStorage.setItem('zona_m',JSON.stringify(chats));localStorage.setItem('zona_x',JSON.stringify(missions));localStorage.setItem('zona_n',JSON.stringify(notes));localStorage.setItem('zona_trato',JSON.stringify(trato));home()};
+let contacts=get('c',seed.map((x,i)=>({id:'c'+i,name:x[0],role:x[1],bio:x[2]}))), chats=get('m',{}), missions=get('x',[]), notes=get('n',[]), trato=get('trato',{}), emissions=get('emissions',[]), encyclopedia=get('encyclopedia',[]), editId=null, emissionEditId=null;
+const $=id=>document.getElementById(id), save=()=>{localStorage.setItem('zona_c',JSON.stringify(contacts));localStorage.setItem('zona_m',JSON.stringify(chats));localStorage.setItem('zona_x',JSON.stringify(missions));localStorage.setItem('zona_n',JSON.stringify(notes));localStorage.setItem('zona_trato',JSON.stringify(trato));localStorage.setItem('zona_encyclopedia',JSON.stringify(encyclopedia));home()};
+// Audio de la PDA: tonos electrónicos sintetizados, sin archivos externos.
+let pdaAudio=null, pdaSoundEnabled=localStorage.getItem('zona_sound_enabled')!=='false', nextHourlyBeep=0, hourlyCheck=null;
+function initPdaAudio(){try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return false;if(!pdaAudio)pdaAudio=new Ctx();if(pdaAudio.state==='suspended')pdaAudio.resume();if(!hourlyCheck)hourlyCheck=setInterval(checkHourlyBeep,1000);$('soundStatus').textContent='Sistema acústico activo · aviso al comienzo de cada hora';return true}catch(e){$('soundStatus').textContent='Audio no disponible en este navegador.';return false}}
+function tone(freq,start,duration,volume,wave='sine'){if(!pdaAudio)return;const osc=pdaAudio.createOscillator(),gain=pdaAudio.createGain();osc.type=wave;osc.frequency.setValueAtTime(freq,start);gain.gain.setValueAtTime(0.0001,start);gain.gain.exponentialRampToValueAtTime(volume,start+0.008);gain.gain.exponentialRampToValueAtTime(0.0001,start+duration);osc.connect(gain);gain.connect(pdaAudio.destination);osc.start(start);osc.stop(start+duration+0.02)}
+function playPdaBeep(kind='notify'){if(!pdaSoundEnabled||!initPdaAudio())return;const t=pdaAudio.currentTime+0.012;if(kind==='boot'){tone(1046,t,.095,.07,'square');tone(1318,t+.12,.095,.07,'square');tone(1568,t+.24,.11,.075,'square');tone(2093,t+.39,.2,.07,'sine')}else if(kind==='hour'){tone(880,t,.13,.07,'sine');tone(1318,t+.18,.19,.075,'sine')}else if(kind==='emission'){tone(1760,t,.075,.04,'square');tone(1480,t+.1,.09,.035,'square')}else if(kind==='missionStart'){tone(660,t,.10,.075,'square');tone(990,t+.12,.12,.08,'square');tone(1320,t+.27,.16,.08,'sine')}else if(kind==='missionDone'){tone(784,t,.11,.075,'sine');tone(988,t+.13,.11,.08,'sine');tone(1175,t+.26,.12,.08,'sine');tone(1568,t+.40,.22,.085,'sine')}else if(kind==='message'){tone(1175,t,.055,.065,'square');tone(1568,t+.075,.075,.07,'square')}else if(kind==='journal'){tone(523,t,.12,.07,'sine');tone(659,t+.14,.15,.075,'sine')}else if(kind==='hour'){tone(880,t,.13,.07,'sine');tone(1318,t+.18,.19,.075,'sine')}else{tone(1568,t,.065,.065,'square');tone(1174,t+.085,.075,.06,'sine')}}
+function checkHourlyBeep(){if(!pdaSoundEnabled||document.hidden)return;const n=new Date();if(n.getMinutes()!==0||n.getSeconds()>5)return;const key=[n.getFullYear(),String(n.getMonth()+1).padStart(2,'0'),String(n.getDate()).padStart(2,'0'),String(n.getHours()).padStart(2,'0')].join('-');if(localStorage.getItem('zona_last_hour_chime')===key)return;localStorage.setItem('zona_last_hour_chime',key);playPdaBeep('hour')}
+function refreshSoundControls(){if($('soundToggle'))$('soundToggle').textContent='SONIDOS: '+(pdaSoundEnabled?'ACTIVADOS':'DESACTIVADOS')}
+let bootBeepPending=true;document.addEventListener('pointerdown',()=>{if(pdaSoundEnabled&&initPdaAudio()&&bootBeepPending){playPdaBeep('boot');bootBeepPending=false;if(typeof resumeEmissionLoop==='function')resumeEmissionLoop(false)}},{once:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(pdaAudio&&pdaAudio.state==='suspended')pdaAudio.resume();checkHourlyBeep();if(typeof resumeEmissionLoop==='function')resumeEmissionLoop(false)}});
+
 const draftFields=()=>Array.from(document.querySelectorAll('input:not([disabled]),textarea:not([disabled])'));
 function saveDrafts(){let d={};draftFields().forEach(el=>{if(el.id)d[el.id]=el.value});localStorage.setItem('zona_drafts',JSON.stringify(d));}
 function clearDraft(id){let d=get('drafts',{});delete d[id];localStorage.setItem('zona_drafts',JSON.stringify(d));}
 function restoreDrafts(){let d=get('drafts',{});draftFields().forEach(el=>{if(el.id&&Object.prototype.hasOwnProperty.call(d,el.id))el.value=d[el.id]});}
 
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function go(t){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===t));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));if(t==='chat')renderChat();if(t==='relationship')renderTrato()}
+function go(t){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===t));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));if(t==='chat')renderChat();if(t==='relationship')renderTrato();if(t==='emissions')renderEmissions()}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
 function home(){$('cc').textContent=contacts.length;$('mc').textContent=Object.values(chats).flat().length;$('xc').textContent=missions.filter(x=>!x.done).length;$('nc').textContent=notes.length;$('activity').textContent=notes[0]?.title||missions[0]?.title||'Sin actividad registrada.'}
 function vital(c){return c.vital||'alive'}
@@ -71,36 +98,68 @@ window.setVital=(id,v)=>{let c=contacts.find(x=>x.id===id);if(c){c.vital=v;save(
 $('newC').onclick=()=>{editId=null;$('cName').value='';$('cRole').value='';$('cBio').value='';$('cEditor').classList.remove('hidden')};
 window.editC=id=>{let c=contacts.find(x=>x.id===id);editId=id;$('cName').value=c.name;$('cRole').value=c.role;$('cBio').value=c.bio;$('cEditor').classList.remove('hidden')};
 $('cancelC').onclick=()=>$('cEditor').classList.add('hidden');
-$('saveC').onclick=()=>{let name=$('cName').value.trim();if(!name)return alert('Escribí un nombre');let previous=contacts.find(x=>x.id===editId);let c={id:editId||'c'+Date.now(),name,role:$('cRole').value,bio:$('cBio').value,vital:previous?.vital||'alive'};contacts=editId?contacts.map(x=>x.id===editId?c:x):[...contacts,c];save();['cName','cRole','cBio'].forEach(clearDraft);saveDrafts();renderContacts();$('cEditor').classList.add('hidden')};
+$('saveC').onclick=()=>{let name=$('cName').value.trim();if(!name)return alert('Escribí un nombre');let previous=contacts.find(x=>x.id===editId);let c={id:editId||'c'+Date.now(),name,role:$('cRole').value,bio:$('cBio').value,vital:previous?.vital||'alive'};contacts=editId?contacts.map(x=>x.id===editId?c:x):[...contacts,c];save();['cName','cRole','cBio'].forEach(clearDraft);saveDrafts();renderContacts();$('cEditor').classList.add('hidden');playPdaBeep('notify')};
 window.chatC=id=>{go('chat');$('chatWho').value=id;renderChat()};
 function renderChat(){let id=$('chatWho').value;if(!id){$('chatBox').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let arr=chats[id]||[];$('chatBox').innerHTML=arr.map((m,i)=>`<div class="bubble ${m.me?'me':''}"><div class="row"><div class="who">${m.me?'TÚ':esc(m.who)} · ${esc(m.time)}</div><button class="delete-one" onclick="deleteMessage('${id}',${i})" aria-label="Eliminar este mensaje" title="Eliminar este mensaje">×</button></div><div>${esc(m.text)}</div></div>`).join('')||'<div class="empty">Canal abierto. Todavía no hay mensajes.</div>';$('chatBox').scrollTop=$('chatBox').scrollHeight}
 $('chatWho').onchange=renderChat;
 window.deleteMessage=(id,index)=>{let arr=chats[id]||[];if(index<0||index>=arr.length)return;if(!confirm('¿Eliminar solamente este mensaje?'))return;arr.splice(index,1);if(arr.length)chats[id]=arr;else delete chats[id];save();renderChat()};
-function send(){let text=$('msg').value.trim(),id=$('chatWho').value;if(!text||!id)return;(chats[id]??=[]).push({me:true,who:'TÚ',text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});$('msg').value='';clearDraft('msg');save();saveDrafts();renderChat()}
+function send(){let text=$('msg').value.trim(),id=$('chatWho').value;if(!text||!id)return;(chats[id]??=[]).push({me:true,who:'TÚ',text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});$('msg').value='';clearDraft('msg');save();saveDrafts();renderChat();playPdaBeep('message')}
 $('send').onclick=send;
 
 
 $('newM').onclick=()=>{$('mTitle').value='';$('mDesc').value='';$('mEditor').classList.remove('hidden')};$('cancelM').onclick=()=>$('mEditor').classList.add('hidden');
-$('saveM').onclick=()=>{if(!$('mTitle').value.trim())return alert('Poné un título');missions.unshift({id:Date.now(),title:$('mTitle').value,desc:$('mDesc').value,done:false,date:new Date().toLocaleDateString('es-AR')});save();['mTitle','mDesc'].forEach(clearDraft);saveDrafts();renderM();$('mEditor').classList.add('hidden')};
+$('saveM').onclick=()=>{if(!$('mTitle').value.trim())return alert('Poné un título');missions.unshift({id:Date.now(),title:$('mTitle').value,desc:$('mDesc').value,done:false,date:new Date().toLocaleDateString('es-AR')});save();['mTitle','mDesc'].forEach(clearDraft);saveDrafts();renderM();$('mEditor').classList.add('hidden');playPdaBeep('missionStart')};
 function renderM(){$('missionList').innerHTML=missions.map(m=>`<div class="item"><div class="meta"><b>${esc(m.title)}</b><p>${esc(m.desc)} · ${m.date}</p></div><button onclick="toggleM(${m.id})">${m.done?'CUMPLIDA':'ACTIVA'}</button><button onclick="delM(${m.id})">×</button></div>`).join('')||'<div class="empty">Sin misiones.</div>'}
-window.toggleM=id=>{missions=missions.map(m=>m.id===id?{...m,done:!m.done}:m);save();renderM()};window.delM=id=>{if(confirm('¿Eliminar misión?')){missions=missions.filter(m=>m.id!==id);save();renderM()}};
-$('saveN').onclick=()=>{if(!$('nBody').value.trim())return alert('Escribí una anotación');notes.unshift({id:Date.now(),title:$('nTitle').value||'Sin título',body:$('nBody').value,date:new Date().toLocaleString('es-AR')});$('nTitle').value='';$('nBody').value='';save();['nTitle','nBody'].forEach(clearDraft);saveDrafts();renderN()};
+window.toggleM=id=>{const target=missions.find(m=>m.id===id);if(!target)return;const completed=!target.done;missions=missions.map(m=>m.id===id?{...m,done:completed}:m);save();renderM();playPdaBeep(completed?'missionDone':'missionStart')};window.delM=id=>{if(confirm('¿Eliminar misión?')){missions=missions.filter(m=>m.id!==id);save();renderM()}};
+// Enciclopedia e inventario de campo: guarda cantidades por categoría y nombre.
+function renderEncyclopedia(){const filter=$('encyFilter').value;const rows=encyclopedia.filter(x=>filter==='Todos'||x.category===filter);$('encyList').innerHTML=rows.map(x=>`<div class="item"><div class="meta"><b>${esc(x.name)}</b><p>${esc(x.category)} · Cantidad: <strong>${x.qty}</strong></p>${x.description?`<p style="white-space:pre-wrap;margin-top:6px">${esc(x.description)}</p>`:'<p class="muted">Sin descripción.</p>'}<button onclick="encyEditDescription(${x.id})">EDITAR DESCRIPCIÓN</button></div><button class="btn" onclick="encyChange(${x.id},1)" aria-label="Sumar">+</button><button onclick="encyChange(${x.id},-1)" aria-label="Restar">−</button><button class="delete-one" onclick="encyDelete(${x.id})" aria-label="Eliminar">×</button></div>`).join('')||'<div class="empty">Todavía no hay registros en esta categoría.</div>'}
+$('encyAdd').onclick=()=>{const category=$('encyCategory').value,name=$('encyName').value.trim(),description=$('encyDescription').value.trim(),qty=Math.max(0,Math.floor(Number($('encyQty').value)||0));if(!name)return alert('Escribí el nombre del elemento.');const existing=encyclopedia.find(x=>x.category===category&&x.name.toLocaleLowerCase('es-AR')===name.toLocaleLowerCase('es-AR'));if(existing){existing.qty+=qty;if(description)existing.description=description}else encyclopedia.unshift({id:Date.now(),category,name,qty,description});save();$('encyName').value='';$('encyDescription').value='';$('encyQty').value='1';renderEncyclopedia();playPdaBeep('journal')};
+$('encyFilter').onchange=renderEncyclopedia;
+window.encyEditDescription=id=>{const x=encyclopedia.find(v=>v.id===id);if(!x)return;const value=prompt('Descripción de '+x.name+':',x.description||'');if(value===null)return;x.description=value.trim();save();renderEncyclopedia()};
+window.encyChange=(id,delta)=>{const x=encyclopedia.find(v=>v.id===id);if(!x)return;x.qty=Math.max(0,(Number(x.qty)||0)+delta);save();renderEncyclopedia();};
+window.encyDelete=id=>{const x=encyclopedia.find(v=>v.id===id);if(!x||!confirm('¿Eliminar '+x.name+' de la enciclopedia?'))return;encyclopedia=encyclopedia.filter(v=>v.id!==id);save();renderEncyclopedia()};
+$('saveN').onclick=()=>{if(!$('nBody').value.trim())return alert('Escribí una anotación');notes.unshift({id:Date.now(),title:$('nTitle').value||'Sin título',body:$('nBody').value,date:new Date().toLocaleString('es-AR')});$('nTitle').value='';$('nBody').value='';save();['nTitle','nBody'].forEach(clearDraft);saveDrafts();renderN();playPdaBeep('journal')};
 function renderN(){$('noteList').innerHTML=notes.map(n=>`<div class="panel"><div class="row"><b>${esc(n.title)}</b><button onclick="delN(${n.id})">BORRAR</button></div><small>${esc(n.date)}</small><p style="white-space:pre-wrap">${esc(n.body)}</p></div>`).join('')||'<div class="empty">Diario vacío.</div>'}
 window.delN=id=>{if(confirm('¿Borrar anotación?')){notes=notes.filter(n=>n.id!==id);save();renderN()}};
 
 function score(id){return trato[id]?.score??50}
-function renderTrato(){if(!$('tratoWho')||!contacts.length){$('tratoHistory').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let id=$('tratoWho').value;if(!id||!contacts.some(c=>c.id===id))id=contacts[0].id;$('tratoWho').value=id;let s=score(id);$('friendScore').textContent=s+' / 100';$('friendBar').style.width=s+'%';$('friendLabel').textContent=s>=80?'ALIADO':s>=60?'BUENA RELACIÓN':s>=40?'NEUTRAL':s>=20?'DESCONFIANZA':'HOSTIL';let arr=trato[id]?.history||[];$('tratoHistory').innerHTML=arr.map(x=>`<div class="item"><div class="meta"><b>${esc(x.text)}</b><p>${esc(x.date)} · ${esc(x.mood)}</p></div><strong style="color:${x.delta>0?'var(--g)':x.delta<0?'#d58a78':'var(--m)'}">${x.delta>0?'+':''}${x.delta}</strong></div>`).join('')||'<div class="empty">Todavía no registraste tratos con este contacto.</div>'}
+function renderTrato(){if(!$('tratoWho')||!contacts.length){$('tratoHistory').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let id=$('tratoWho').value;if(!id||!contacts.some(c=>c.id===id))id=contacts[0].id;$('tratoWho').value=id;let s=score(id);$('friendScore').textContent=s+' / 100';$('friendBar').style.width=s+'%';$('friendLabel').textContent=s>=80?'ALIADO':s>=60?'BUENA RELACIÓN':s>=40?'NEUTRAL':s>=20?'DESCONFIANZA':'HOSTIL';let arr=trato[id]?.history||[];$('tratoHistory').innerHTML=arr.map((x,i)=>`<div class="item"><div class="meta"><b>${esc(x.text)}</b><p>${esc(x.date)} · ${esc(x.mood)}</p></div><strong style="color:${x.delta>0?'var(--g)':x.delta<0?'#d58a78':'var(--m)'}">${x.delta>0?'+':''}${x.delta}</strong><button class="btn danger" title="Eliminar trato" onclick="deleteTrato('${id}',${i})">×</button></div>`).join('')||'<div class="empty">Todavía no registraste tratos con este contacto.</div>'}
+window.deleteTrato=(id,index)=>{const record=trato[id]?.history?.[index];if(!record)return;if(!confirm('¿Eliminar este registro de trato? También se ajustará el nivel de relación.'))return;trato[id].score=Math.max(0,Math.min(100,(trato[id].score??50)-(record.delta||0)));trato[id].history.splice(index,1);if(!trato[id].history.length&&trato[id].score===50)delete trato[id];save();renderTrato()};
 $('tratoWho').onchange=renderTrato;
-$('saveTrato').onclick=()=>{let id=$('tratoWho').value,text=$('tratoText').value.trim(),mood=$('tratoMood').value;if(!text)return alert('Contá qué hiciste antes de registrar el trato.');let delta=mood==='positive'?10:mood==='negative'?-10:0;trato[id]??={score:50,history:[]};trato[id].score=Math.max(0,Math.min(100,trato[id].score+delta));trato[id].history.unshift({text,delta,mood:mood==='positive'?'Agradable':mood==='negative'?'Desagradable':'Neutral',date:new Date().toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires'})});$('tratoText').value='';clearDraft('tratoText');save();saveDrafts();renderTrato()};
+$('saveTrato').onclick=()=>{let id=$('tratoWho').value,text=$('tratoText').value.trim(),mood=$('tratoMood').value;if(!text)return alert('Contá qué hiciste antes de registrar el trato.');let delta=mood==='positive'?10:mood==='negative'?-10:0;trato[id]??={score:50,history:[]};trato[id].score=Math.max(0,Math.min(100,trato[id].score+delta));trato[id].history.unshift({text,delta,mood:mood==='positive'?'Agradable':mood==='negative'?'Desagradable':'Neutral',date:new Date().toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires'})});$('tratoText').value='';clearDraft('tratoText');save();saveDrafts();renderTrato();playPdaBeep('notify')};
 $('saveNow').onclick=()=>{save();saveDrafts();$('saveStatus').textContent='Guardado · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});};
-$('export').onclick=()=>{let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify({contacts,chats,missions,notes,trato},null,2)],{type:'application/json'}));a.href=u;a.download='PDA_Zona_respaldo.json';a.click();URL.revokeObjectURL(u)};
-$('wipe').onclick=()=>{if(confirm('¿Borrar todos los datos?')){['c','m','x','n','trato'].forEach(k=>localStorage.removeItem('zona_'+k));location.reload()}};
+$('soundToggle').onclick=()=>{pdaSoundEnabled=!pdaSoundEnabled;localStorage.setItem('zona_sound_enabled',String(pdaSoundEnabled));refreshSoundControls();if(pdaSoundEnabled){initPdaAudio();playPdaBeep('notify');resumeEmissionLoop(false)}else{$('soundStatus').textContent='Sonidos desactivados.';stopEmissionTimer()}};$('soundTest').onclick=()=>{if(!pdaSoundEnabled){pdaSoundEnabled=true;localStorage.setItem('zona_sound_enabled','true');refreshSoundControls()}playPdaBeep('notify')};refreshSoundControls();
+$('export').onclick=()=>{let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify({contacts,chats,missions,notes,trato,emissions,encyclopedia},null,2)],{type:'application/json'}));a.href=u;a.download='PDA_Zona_respaldo.json';a.click();URL.revokeObjectURL(u)};
+$('wipe').onclick=()=>{if(confirm('¿Borrar todos los datos?')){['c','m','x','n','trato','emissions','encyclopedia','active_emission'].forEach(k=>localStorage.removeItem('zona_'+k));location.reload()}};
+// Gestor de sesiones de emisión. La sesión activa sobrevive al cierre o recarga de la página.
+let emissionTimer=null, emissionSoundOn=localStorage.getItem('zona_emission_sound_on')!=='false';
+function activeEmission(){return emissions.find(x=>x.active)||null}
+function persistEmissions(){localStorage.setItem('zona_emissions',JSON.stringify(emissions));const a=activeEmission();if(a)localStorage.setItem('zona_active_emission',String(a.id));else localStorage.removeItem('zona_active_emission')}
+function stopEmissionTimer(){if(emissionTimer){clearInterval(emissionTimer);emissionTimer=null}}
+function resumeEmissionLoop(playNow=false){const a=activeEmission();if(!a||!emissionSoundOn||!pdaSoundEnabled||!pdaAudio||pdaAudio.state==='suspended'){stopEmissionTimer();return}if(emissionTimer)return;if(playNow)playPdaBeep('emission');emissionTimer=setInterval(()=>{const current=activeEmission();if(!current||!emissionSoundOn||!pdaSoundEnabled){stopEmissionTimer();return}playPdaBeep('emission')},20000)}
+function startEmission(){if(activeEmission())return alert('Ya hay una emisión activa. Cerrala antes de iniciar otra.');const now=new Date(),date=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-'),time=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});const rec={id:Date.now(),title:'Emisión',date,start:time,end:'',notes:'',active:true};emissions.unshift(rec);persistEmissions();renderEmissions();if(pdaSoundEnabled&&initPdaAudio())resumeEmissionLoop(true);$('emissionStatus').textContent='EMISIÓN ACTIVA · PITIDO CADA 20 SEGUNDOS'}
+function closeEmission(){const a=activeEmission();if(!a)return;const now=new Date();a.end=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});a.active=false;persistEmissions();stopEmissionTimer();renderEmissions();$('emissionStatus').textContent='SESIÓN CERRADA · '+a.end;playPdaBeep('notify')}
+function renderEmissions(){const a=activeEmission();$('emissionStatus').textContent=a?'EMISIÓN ACTIVA · '+a.title+' · '+(emissionSoundOn?'PITIDOS ACTIVOS':'PITIDOS APAGADOS'):'SIN EMISIÓN ACTIVA';$('startEmission').disabled=!!a;$('startEmission').textContent=a?'EMISIÓN EN CURSO':'▶ INICIAR SESIÓN';$('powerEmission').textContent=emissionSoundOn?'⏻ APAGAR PITIDOS':'▶ REACTIVAR PITIDOS';$('powerEmission').disabled=!a;$('emissionList').innerHTML=emissions.map(x=>`<div class="item"><div class="meta"><b>${esc(x.title||'Emisión')}</b><p>${esc(x.date||'')} · Comenzó: ${esc(x.start||'--:--')} · Terminó: ${esc(x.end|| (x.active?'EN CURSO':'--:--'))}</p>${x.notes?`<p>${esc(x.notes)}</p>`:''}</div><button onclick="editEmission(${x.id})">EDITAR</button>${x.active?`<button class="btn danger" onclick="closeEmission()">CERRAR</button>`:`<button onclick="deleteEmission(${x.id})">×</button>`}</div>`).join('')||'<div class="empty">Todavía no hay emisiones registradas.</div>'}
+function resetEmissionForm(){emissionEditId=null;$('emTitle').value='';$('emDate').value=new Date().toISOString().slice(0,10);$('emStart').value='';$('emEnd').value='';$('emNotes').value=''}
+$('startEmission').onclick=startEmission;$('powerEmission').onclick=()=>{if(!activeEmission())return;emissionSoundOn=!emissionSoundOn;localStorage.setItem('zona_emission_sound_on',String(emissionSoundOn));if(emissionSoundOn){if(pdaSoundEnabled&&initPdaAudio())resumeEmissionLoop(true)}else stopEmissionTimer();renderEmissions()};
+$('newEmission').onclick=()=>{resetEmissionForm();$('emTitle').value='Emisión';$('emStart').value=localEmissionTime();};
+function localEmissionTime(){const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')}
+$('emEndNow').onclick=()=>{$('emEnd').value=localEmissionTime();$('emEnd').dispatchEvent(new Event('change',{bubbles:true}));playPdaBeep('notify')};
+$('cancelEmission').onclick=()=>resetEmissionForm();
+$('saveEmission').onclick=()=>{const title=$('emTitle').value.trim()||'Emisión',date=$('emDate').value,start=$('emStart').value,end=$('emEnd').value;if(!date||!start)return alert('Indicá la fecha y la hora de comienzo.');let rec=emissions.find(x=>x.id===emissionEditId);if(rec){rec.title=title;rec.date=date;rec.start=start;rec.end=end;rec.notes=$('emNotes').value;if(end)rec.active=false}else{rec={id:Date.now(),title,date,start,end,notes:$('emNotes').value,active:false};emissions.unshift(rec)}persistEmissions();if(!activeEmission())stopEmissionTimer();resetEmissionForm();renderEmissions();playPdaBeep('notify')};
+window.editEmission=id=>{const x=emissions.find(v=>v.id===id);if(!x)return;emissionEditId=id;$('emTitle').value=x.title||'';$('emDate').value=x.date||'';$('emStart').value=x.start||'';$('emEnd').value=x.end||'';$('emNotes').value=x.notes||'';};
+window.deleteEmission=id=>{if(!confirm('¿Eliminar este registro de emisión?'))return;emissions=emissions.filter(x=>x.id!==id);persistEmissions();renderEmissions()};
+// Al recargar, una sesión que quedó abierta sigue activa; el audio vuelve al primer toque permitido por el navegador.
+if(activeEmission()){emissionSoundOn=localStorage.getItem('zona_emission_sound_on')!=='false';}
+renderEmissions();
 function updateClock(){let now=new Date();$('clock').textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);$('dateAR').textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(now)}
 setInterval(updateClock,1000);updateClock();
 $('fullscreenBtn').onclick=async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();$('fullscreenBtn').textContent='⛶ SALIR DE PANTALLA COMPLETA'}else{await document.exitFullscreen();$('fullscreenBtn').textContent='⛶ PANTALLA COMPLETA'}}catch(e){alert('El navegador no permite pantalla completa en esta vista. Abrí la PDA en Chrome y probá nuevamente.')}}
 document.addEventListener('fullscreenchange',()=>{$('fullscreenBtn').textContent=document.fullscreenElement?'⛶ SALIR DE PANTALLA COMPLETA':'⛶ PANTALLA COMPLETA'});
 // Teclado PDA compartido: bloquea el teclado del sistema en todos los campos editables.
-let activeField=null,shiftOn=false,symbolMode=false;
+let activeField=null,shiftOn=false,capsLock=false,lastShiftTap=0,symbolMode=false;
+function updateShiftKey(){const b=pdaKeys?.querySelector('[data-k="shift"]');if(b){b.textContent=capsLock?'⇧ FIJA':shiftOn?'⇧ 1 LETRA':'⇧ MAYÚS';b.style.background=capsLock?'#8aa85c':shiftOn?'#536d3d':'';b.style.color=capsLock?'#10150f':''}}
+function consumeShift(){if(shiftOn&&!capsLock)shiftOn=false;updateShiftKey()}
 const pdaKeys=$('pdaKeyboard');
 function openPdaKeyboard(field){
  activeField=field;
@@ -174,30 +233,184 @@ async function dictate(){
   rec.onend=()=>{if(micButton){micButton.disabled=false;micButton.textContent='🎙 DICTAR'}};
   try{rec.start()}catch(e){if(micButton){micButton.disabled=false;micButton.textContent='🎙 DICTAR'}alert('No se pudo iniciar el dictado: '+e.message)}
 }
-let swipeActive=false,swipeLetters=[],swipeLast='',swipeMoved=false,suppressKeyClick=false;
+
+// Diccionario local inicial: funciona sin conexión y se puede ampliar.
+const swipeDictionary = (`hola ayuda amigo amiga gracias buenos buenas dias tardes noches
+como estas estoy bien que tal para por favor quiero quieres necesito necesitamos
+donde cuando quien porque pero con sin sobre entre aqui alli ahora hoy manana
+ayer luego despues antes siempre nunca tambien tampoco todo toda todos todas
+nada algo alguien nadie mucho mucha muchos muchas poco poca otro otra otros
+este esta estos estas eso esa esos esas soy sos tenes queres podes tengo tiene
+tenemos tienen puede puedo vamos voy vas viene venir hacer hago hace hicieron
+decir digo dice hablar habla escribir leer ver mirar escuchar saber conocer
+pensar creer sentir vivir tener estar ser ir dar tomar poner sacar dejar pasar
+llegar salir entrar volver buscar encontrar perder ganar jugar trabajar estudiar
+comer beber dormir despertar caminar correr esperar ayudar cuidar usar abrir
+cerrar guardar borrar enviar recibir mensaje mensajes contacto contactos mision
+misiones diario zona stalker pda equipo amigo hermano bro che dale joya posta
+banco tranqui buenisimo genial copado re si no bueno buena malo mala claro
+listo perfecto gracias porfa hola chau adios hasta vemos pronto saludos abrazo
+familia casa calle lugar tiempo dia noche tarde manana semana mes ano anos
+persona personas gente nino nina chico chica hombre mujer padre madre hijo hija
+amigos amigas equipo grupo mundo vida nombre apellido numero telefono correo
+mensaje palabra palabras texto teclado letras letra escribir escribiendo
+quiero quiero puedo puedo necesito necesito dame decime contame mostrame
+explicame ayuda ayudame gracias muchas gracias por favor como estas como va
+que haces que paso que pasa que onda todo bien todo mal nos vemos hasta luego
+buen dia buenas noches buenas tardes buen trabajo excelente felicitaciones
+arriba abajo adelante atras izquierda derecha centro cerca lejos rapido lento
+primero segundo tercero ultimo nuevo nueva viejo vieja grande pequeno pequena
+importante posible imposible seguro claro verdad mentira correcto incorrecto
+siempre juntos ahora mismo mas menos mejor peor igual diferente facil dificil
+simple rapido despacio listo listo para empezar terminar continuar seguir
+guardar cambios datos respaldo exportar importar archivo carpeta codigo
+internet navegador telefono computadora pantalla boton tecla deslizar dedo
+palabra palabras prediccion predicciones teclado virtual dictado voz audio
+microfono sonido permiso permisos chrome android argentina cordoba
+`).trim().split(/\s+/);
+const swipeWords = [...new Set(swipeDictionary)];
+function keyCenter(letter){
+ const key=pdaKeys.querySelector(`button[data-k="${letter}"]`);
+ if(!key)return null;
+ const r=key.getBoundingClientRect();
+ return {x:r.left+r.width/2,y:r.top+r.height/2};
+}
+function pointSegmentDistance(p,a,b){
+ const dx=b.x-a.x,dy=b.y-a.y;
+ const len=dx*dx+dy*dy;
+ if(!len)return Math.hypot(p.x-a.x,p.y-a.y);
+ const t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/len));
+ return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy));
+}
+function distanceToPath(p,path){
+ if(path.length===1)return Math.hypot(p.x-path[0].x,p.y-path[0].y);
+ let best=Infinity;
+ for(let i=1;i<path.length;i++)best=Math.min(best,pointSegmentDistance(p,path[i-1],path[i]));
+ return best;
+}
+let learnedSwipeWords=get('swipe_words',[]);
+let swipeFrequency=get('swipe_frequency',{});
+function rememberSwipeWord(word){
+ const clean=String(word||'').toLocaleLowerCase('es-AR').trim();
+ if(!/^[a-zñáéíóúü]{2,24}$/i.test(clean))return;
+ if(!learnedSwipeWords.includes(clean))learnedSwipeWords.push(clean);
+ swipeFrequency[clean]=(swipeFrequency[clean]||0)+1;
+ localStorage.setItem('zona_swipe_words',JSON.stringify(learnedSwipeWords));
+ localStorage.setItem('zona_swipe_frequency',JSON.stringify(swipeFrequency));
+}
+function rankSwipeWords(points){
+ if(points.length<3)return [];
+ const sampleStep=Math.max(1,Math.floor(points.length/55));
+ const samples=points.filter((_,i)=>i%sampleStep===0);
+ const keyRects=[...pdaKeys.querySelectorAll('button[data-k]')].filter(b=>/^[a-zñ]$/i.test(b.dataset.k));
+ const keyWidth=keyRects.length?keyRects[0].getBoundingClientRect().width:32;
+ const candidates=[...new Set([...learnedSwipeWords,...swipeWords])];
+ const ranked=[];
+ for(const word of candidates){
+  if(word.length<2||word.length>24)continue;
+  const centers=[...word].map(keyCenter);
+  if(centers.some(p=>!p))continue;
+  let actualError=0;
+  for(const p of samples)actualError+=distanceToPath(p,centers);
+  actualError/=samples.length;
+  let reverseError=0;
+  for(const p of centers)reverseError+=distanceToPath(p,samples);
+  reverseError/=centers.length;
+  const lengthPenalty=Math.abs(word.length-samples.length/7)*keyWidth*.035;
+  const frequencyBonus=Math.min(0.12,Math.log1p(swipeFrequency[word]||0)*0.025);
+  const score=(actualError*.72+reverseError*.28+lengthPenalty)/keyWidth-frequencyBonus;
+  ranked.push({word,score});
+ }
+ ranked.sort((a,b)=>a.score-b.score);
+ return ranked.filter(x=>x.score<=0.78).slice(0,3);
+}
+function showSwipeSuggestions(points){
+ const strip=$('swipeSuggestions');
+ const ranked=rankSwipeWords(points);
+ if(!ranked.length){strip.innerHTML='<span class="suggestion-hint">BUSCANDO PALABRA…</span>';return}
+ strip.innerHTML=ranked.map((x,i)=>`<button type="button" data-suggestion="${esc(x.word)}" class="${i===0?'primary-suggestion':''}">${esc(x.word)}</button>`).join('');
+}
+function hideSwipeSuggestions(){
+ $('swipeSuggestions').innerHTML='<span class="suggestion-hint">DESLIZÁ PARA ESCRIBIR</span>';
+}
+
+let swipeActive=false,swipeLetters=[],swipeLast='',swipeMoved=false,suppressKeyClick=false,swipePoints=[];
+const swipeTrail=$('swipeTrail'),swipeTrailPath=$('swipeTrailPath');
+function drawSwipeTrail(){
+ const rect=pdaKeys.getBoundingClientRect();
+ swipeTrail.setAttribute('viewBox',`0 0 ${Math.max(1,rect.width)} ${Math.max(1,rect.height)}`);
+ if(!swipePoints.length){swipeTrailPath.setAttribute('d','');return}
+ const d=swipePoints.map((pt,i)=>`${i?'L':'M'} ${(pt.x-rect.left).toFixed(1)} ${(pt.y-rect.top).toFixed(1)}`).join(' ');
+ swipeTrailPath.setAttribute('d',d);
+}
+function clearSwipeTrail(){
+ swipeTrail.classList.add('fading');
+ setTimeout(()=>{swipeTrailPath.setAttribute('d','');swipeTrail.classList.remove('fading')},230);
+}
 pdaKeys.addEventListener('pointerdown',e=>{
  const b=e.target.closest('button[data-k]');if(!b)return;
- if(/^[a-zñ]$/i.test(b.dataset.k)){swipeActive=true;swipeLetters=[b.dataset.k.toLowerCase()];swipeLast=b.dataset.k;swipeMoved=false;b.classList.add('swipe-hit');e.preventDefault()}
+ if(/^[a-zñ]$/i.test(b.dataset.k)){
+  swipeActive=true;swipeLetters=[b.dataset.k.toLowerCase()];swipeLast=b.dataset.k;swipeMoved=false;
+  swipePoints=[{x:e.clientX,y:e.clientY}];swipeTrail.classList.remove('fading');drawSwipeTrail();hideSwipeSuggestions();
+  b.classList.add('swipe-hit');e.preventDefault();
+ }
 });
 document.addEventListener('pointermove',e=>{
  if(!swipeActive)return;
+ const lastPoint=swipePoints[swipePoints.length-1];
+ if(!lastPoint||Math.hypot(e.clientX-lastPoint.x,e.clientY-lastPoint.y)>2){
+  swipePoints.push({x:e.clientX,y:e.clientY});drawSwipeTrail();
+  if(Math.hypot(e.clientX-swipePoints[0].x,e.clientY-swipePoints[0].y)>7){swipeMoved=true;showSwipeSuggestions(swipePoints)}
+ }
  const b=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('#pdaKeyboard button[data-k]');
  if(b&&/^[a-zñ]$/i.test(b.dataset.k)&&b.dataset.k!==swipeLast){
-  swipeLast=b.dataset.k;swipeLetters.push(b.dataset.k.toLowerCase());b.classList.add('swipe-hit');swipeMoved=true;
+  swipeLast=b.dataset.k;swipeLetters.push(b.dataset.k.toLowerCase());b.classList.add('swipe-hit');
  }
 });
-document.addEventListener('pointerup',()=>{
+function finishSwipe(){
  if(!swipeActive)return;swipeActive=false;
  pdaKeys.querySelectorAll('.swipe-hit').forEach(b=>b.classList.remove('swipe-hit'));
- if(swipeMoved&&swipeLetters.length>1){insertPdaText((shiftOn?swipeLetters.join('').toUpperCase():swipeLetters.join('')));shiftOn=false;suppressKeyClick=true;setTimeout(()=>suppressKeyClick=false,250)}
- swipeLetters=[];swipeLast='';
+ if(swipeMoved&&swipeLetters.length>1){
+  const ranked=rankSwipeWords(swipePoints);
+  if(ranked.length){
+   // Dejar las predicciones visibles al levantar el dedo para que el usuario elija.
+   const strip=$('swipeSuggestions');
+   strip.innerHTML=ranked.map((x,i)=>`<button type="button" data-suggestion="${esc(x.word)}" class="${i===0?'primary-suggestion':''}">${esc(x.word)}</button>`).join('');
+  }else{
+   const typed=swipeLetters.join('');
+   insertPdaText(((shiftOn||capsLock)?typed.toUpperCase():typed)+' ');
+   if(!capsLock)shiftOn=false;
+   hideSwipeSuggestions();
+  }
+  suppressKeyClick=true;setTimeout(()=>suppressKeyClick=false,250);
+ }else{
+  hideSwipeSuggestions();
+ }
+ swipeLetters=[];swipeLast='';swipePoints=[];clearSwipeTrail();
+}
+document.addEventListener('pointerup',finishSwipe);
+document.addEventListener('pointercancel',finishSwipe);
+window.addEventListener('resize',()=>{if(swipeActive)drawSwipeTrail()});
+$('swipeSuggestions').addEventListener('click',e=>{
+ e.stopPropagation();
+ const choice=e.target.closest('button[data-suggestion]');if(!choice||!activeField)return;
+ const word=choice.dataset.suggestion;
+ insertPdaText(((shiftOn||capsLock)?word.toUpperCase():word)+' ');
+ if(!capsLock)shiftOn=false;
+ rememberSwipeWord(word);
+ // Mantener el teclado abierto para seguir escribiendo sin volver a abrirlo.
+ pdaKeys.classList.remove('hidden');
+ document.body.classList.add('keyboard-visible');
+ hideSwipeSuggestions();updateShiftKey();
+ suppressKeyClick=true;setTimeout(()=>suppressKeyClick=false,250);
 });
 pdaKeys.addEventListener('click',e=>{
  const btn=e.target.closest('button[data-k]'); if(!btn)return;
  if(suppressKeyClick){e.preventDefault();return}
  const k=btn.dataset.k;
  if(k==='hide'||k==='done'){closePdaKeyboard();return}
- if(k==='shift'){shiftOn=!shiftOn;return}
+ if(k==='shift'){const now=Date.now();if(capsLock){capsLock=false;shiftOn=false}else if(shiftOn&&now-lastShiftTap<500){capsLock=true;shiftOn=true}else{shiftOn=true}lastShiftTap=now;updateShiftKey();return}
+ if(k==='symbols'){symbolMode=!symbolMode;$('letterLayout').classList.toggle('hidden',symbolMode);$('numberLayout').classList.toggle('hidden',!symbolMode);$('keyboardModeBtn').textContent=symbolMode?'ABC':'?123';hideSwipeSuggestions();return}
  if(k==='mic'){dictate();return}
  if(!activeField)return;
  if(k==='back'){
@@ -205,14 +418,18 @@ pdaKeys.addEventListener('click',e=>{
   if(start!==end){el.value=el.value.slice(0,start)+el.value.slice(end);el.setSelectionRange(start,start)}
   else if(start>0){el.value=el.value.slice(0,start-1)+el.value.slice(end);el.setSelectionRange(start-1,start-1)}
   el.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();
- }else if(k==='space')insertPdaText(' ');
+ }else if(k==='space'){
+  const before=activeField.value.slice(0,activeField.selectionStart??activeField.value.length);
+  const lastWord=before.trim().split(/\s+/).pop();if(lastWord)rememberSwipeWord(lastWord);
+  if(!before.endsWith(' '))insertPdaText(' ');
+ }
  else if(k==='newline')insertPdaText('\\n');
- else if(/^[a-zñ]$/i.test(k)||k==='!'||k==='?'||k===','||k==='.')insertPdaText(shiftOn?k.toUpperCase():k.toLowerCase());
- if(shiftOn)shiftOn=false;
- if(activeField)activeField.focus({preventScroll:true});
+ else if(/^[a-zñ]$/i.test(k)||/^[0-9]$/.test(k)||'!?.,@#$%&-+()*\"\':;/\\_='.includes(k))insertPdaText((shiftOn||capsLock)?k.toUpperCase():k.toLowerCase());
+ if(/^[a-zñ]$/i.test(k))consumeShift();
+ updateShiftKey();if(activeField)activeField.focus({preventScroll:true});
 });
 document.addEventListener('click',e=>{
  if(!pdaKeys.classList.contains('hidden') && !e.target.closest('#pdaKeyboard') && !e.target.closest('input,textarea'))closePdaKeyboard();
 });
-restoreDrafts();renderContacts();renderM();renderN();home();renderTrato();
+restoreDrafts();renderContacts();renderM();renderN();renderEncyclopedia();home();renderTrato();
 </script></body></html>
