@@ -46,29 +46,34 @@ body.keyboard-visible footer{display:none}
 .rich-output{overflow-wrap:anywhere}
 
 
-/* Galería y reproductor PDA */
-.gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.gallery-card{position:relative;background:#11190f;border:1px solid var(--line);padding:5px;min-width:0}
-.gallery-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
-.gallery-card button{width:100%;margin-top:5px;font-size:11px;padding:6px}
-.photo-viewer{position:fixed;inset:0;background:#050805f2;z-index:40;display:flex;align-items:center;justify-content:center;padding:16px}
-.photo-viewer-inner{width:min(100%,700px);display:grid;gap:10px}
-.photo-viewer img{width:100%;max-height:75vh;object-fit:contain}
-.music-now{display:flex;align-items:center;gap:13px;margin:16px 0;padding:12px;background:#10180e;border:1px solid var(--line)}
-.music-disc{width:62px;height:62px;border:2px solid #8aa85c;border-radius:50%;display:grid;place-items:center;font-size:30px;color:var(--g);background:radial-gradient(circle,#536d3d 0 20%,#10150f 22% 100%);flex:none}
-.music-controls{display:flex;justify-content:center;gap:12px;margin:12px 0}
-.music-controls button{padding:10px 16px;background:#293821;border:1px solid var(--line);color:#e8f4d8}
-.music-controls .btn{background:#536d3d}
-.music-dock{position:fixed;z-index:15;bottom:34px;left:0;right:0;background:#172315f5;border-top:1px solid var(--line);padding:8px 12px;display:flex;align-items:center;gap:12px;box-shadow:0 -5px 16px #0008}
-.dock-meta{flex:1;min-width:0;display:grid;gap:2px}.dock-meta b{font:12px monospace;color:var(--g);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dock-meta small{font-size:10px}
-.music-dock button{background:#536d3d;border:1px solid var(--line);color:#fff;padding:8px 14px}
-.eq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.eq-grid label{font-size:12px;color:var(--g);display:grid;gap:4px}.eq-grid label span{color:var(--m);font-size:11px}
-input[type=range].native-control{padding:5px 0;accent-color:#a9cc78}
-body.keyboard-visible .music-dock{bottom:245px}
-@media(max-width:480px){.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.eq-grid{grid-template-columns:1fr}.music-dock{bottom:34px}}
+/* Galería y reproductor: módulos multimedia locales */
+.media-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.media-thumb{width:100%;aspect-ratio:1;object-fit:cover;background:#0b110a;border:1px solid var(--line);border-radius:3px;cursor:pointer}
+.media-card{min-width:0;background:#172115;border:1px solid #46563a;padding:6px;border-radius:3px}
+.media-card button{margin-top:5px;width:100%}
+.media-actions{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}
+.media-actions>*{flex:1;min-width:120px}
+.player-disc{width: min(62vw,230px);aspect-ratio:1;border-radius:50%;margin:12px auto;background:radial-gradient(circle,#a7bd80 0 7%,#172115 8% 13%,#52683c 14% 16%,#10150f 17% 60%,#293821 61% 63%,#0b110a 64%);border:5px solid #586b45;box-shadow:0 0 24px #0009;display:flex;align-items:center;justify-content:center;animation:discSpin 8s linear infinite;animation-play-state:paused}
+.player-disc.playing{animation-play-state:running}
+.player-disc span{font:700 11px monospace;color:#d8e9c5;text-align:center;max-width:65%;overflow-wrap:anywhere}
+@keyframes discSpin{to{transform:rotate(360deg)}}
+.player-controls{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0}
+.player-controls button{min-width:48px;min-height:42px;background:#293821;color:#e8f4d8;border:1px solid var(--line);border-radius:4px;font-size:18px}
+.player-controls button.main-play{background:#536d3d;min-width:64px;font-size:22px}
+.media-range{width:100%;accent-color:#a7c77b;padding:4px 0}
+.eq-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;text-align:center}
+.eq-band{min-width:0;background:#11190f;padding:8px 3px;border:1px solid var(--line)}
+.eq-band input{width:100%;padding:0;accent-color:#a7c77b}
+.eq-band label{display:block;font:10px monospace;color:var(--m);margin-top:6px}
+.media-overlay{position:fixed;inset:0;background:#000e;z-index:50;display:none;align-items:center;justify-content:center;padding:14px}
+.media-overlay.open{display:flex}
+.media-overlay img{max-width:100%;max-height:78vh;object-fit:contain;border:1px solid var(--line)}
+.media-overlay .overlay-close{position:absolute;top:16px;right:16px;font-size:22px}
+.media-muted{color:var(--m);font-size:11px}
+@media(max-width:380px){.media-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.eq-grid{gap:3px}.eq-band{padding:6px 1px}}
 </style></head><body>
 <header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><button class="btn" id="fullscreenBtn">⛶ PANTALLA COMPLETA</button></div><div class="row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span></div></header>
-<nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="gallery">GALERÍA</button><button data-tab="music">REPRODUCTOR</button><button data-tab="data">DATOS</button></nav>
+<nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="gallery">GALERÍA</button><button data-tab="player">REPRODUCTOR</button><button data-tab="data">DATOS</button></nav>
 <main>
 <section id="home" class="view active"><div class="panel"><h2>TERMINAL ACTIVO</h2><p>Bienvenido a la Zona, stalker. Tus registros se guardan en este dispositivo.</p><div class="row"><div>CONTACTOS <b id="cc">4</b></div><div>MENSAJES <b id="mc">0</b></div></div><div class="row"><div>MISIONES <b id="xc">0</b></div><div>NOTAS <b id="nc">0</b></div></div></div><div class="panel"><h2>ÚLTIMA ACTIVIDAD</h2><div id="activity" class="muted">Sin actividad registrada.</div></div></section>
 <section id="contacts" class="view"><div class="panel"><div class="row"><h2>DIRECTORIO</h2><button class="btn" id="newC">+ NUEVO</button></div><p class="muted">Estado vital editable: verde = vivo · rojo = muerto · amarillo = perdido.</p><div id="contactList" class="stack"></div></div><div id="cEditor" class="panel hidden"><h2>CONTACTO</h2><input id="cName" placeholder="Nombre / alias"><input id="cRole" placeholder="Ocupación / facción"><textarea id="cBio" placeholder="Biografía y personalidad"></textarea><div class="photo-tools"><img id="cPhotoPreview" class="contact-photo-preview" alt="Vista previa de la foto" src="" style="display:none"><div id="cPhotoPlaceholder" class="contact-photo-preview contact-photo-empty">SIN FOTO</div><div style="flex:1;min-width:140px"><input id="cPhotoInput" type="file" accept="image/*" style="display:none"><button type="button" id="chooseCPhoto" class="btn">📷 ELEGIR FOTO</button><button type="button" id="removeCPhoto" style="margin-top:6px">QUITAR FOTO</button><p class="muted">La imagen se guarda en este dispositivo.</p></div></div><div class="row"><button class="btn" id="saveC">GUARDAR</button><button id="cancelC">CANCELAR</button></div></div></section>
@@ -79,21 +84,509 @@ body.keyboard-visible .music-dock{bottom:245px}
 <section id="missions" class="view"><div class="panel"><div class="row"><h2>MISIONES</h2><button class="btn" id="newM">+ NUEVA</button></div><div id="missionList" class="stack"></div></div><div id="mEditor" class="panel hidden"><input id="mTitle" placeholder="Título"><textarea id="mDesc" placeholder="Objetivo / ubicación / recompensa"></textarea><div class="row"><button class="btn" id="saveM">GUARDAR</button><button id="cancelM">CANCELAR</button></div></div></section>
 <section id="encyclopedia" class="view"><div class="panel"><h2>ENCICLOPEDIA DE LA ZONA</h2><p class="muted">Tu inventario de campo. Sumá o descontá unidades de cada elemento.</p><div class="row"><select id="encyCategory"><option value="Mutantes">Mutantes</option><option value="Artefactos">Artefactos</option><option value="Armas">Armas</option><option value="Botiquines">Botiquines</option><option value="Medicamentos">Medicamentos</option><option value="Radiación">Radiación</option><option value="Lugares">Lugares</option></select></div><div class="row" style="margin-top:8px"><input id="encyName" placeholder="Nombre del elemento o lugar"><input id="encyQty" type="number" min="0" step="1" value="1" style="max-width:82px" aria-label="Cantidad inicial"></div><textarea id="encyDescription" placeholder="Descripción: características, aspecto, peligros, utilidad, ubicación..."></textarea><div class="photo-tools"><img id="encyPhotoPreview" class="contact-photo-preview" alt="Vista previa de la imagen" src="" style="display:none"><div id="encyPhotoPlaceholder" class="contact-photo-preview contact-photo-empty">SIN FOTO</div><div style="flex:1;min-width:140px"><input id="encyPhotoInput" type="file" accept="image/*" style="display:none"><button type="button" id="chooseEncyPhoto" class="btn">📷 ELEGIR FOTO</button><button type="button" id="removeEncyPhoto" style="margin-top:6px">QUITAR FOTO</button><p class="muted">Agregá una imagen propia a cada ficha.</p></div></div><button class="btn" id="encyAdd" style="width:100%;margin-top:8px">+ AGREGAR A LA ENCICLOPEDIA</button></div><div class="panel"><div class="row"><h2>REGISTROS</h2><select id="encyFilter" style="max-width:150px"><option value="Todos">Todas las categorías</option><option>Mutantes</option><option>Artefactos</option><option>Armas</option><option>Botiquines</option><option>Medicamentos</option><option>Radiación</option><option>Lugares</option></select></div><div id="encyList" class="stack"></div></div></section><section id="journal" class="view"><div class="panel"><h2>DIARIO PERSONAL</h2><input id="nTitle" placeholder="Título de la anotación"><textarea id="nBody" placeholder="Escribí lo que ocurrió en la Zona..."></textarea><button class="btn" id="saveN">GUARDAR ANOTACIÓN</button></div><div class="panel"><h2>ENTRADAS</h2><div id="noteList" class="stack"></div></div></section>
 <section id="emissions" class="view"><div class="panel"><h2>CONTROL DE EMISIONES</h2><p class="muted">Iniciá una sesión para activar la señal. La PDA emitirá un pitido cada 20 segundos hasta que cierres la sesión o apagues los pitidos.</p><div class="row"><button class="btn" id="startEmission">▶ INICIAR SESIÓN</button><button class="btn danger" id="powerEmission">⏻ APAGAR PITIDOS</button></div><div id="emissionStatus" class="statusline" style="margin-top:12px">SIN EMISIÓN ACTIVA</div></div><div class="panel"><div class="row"><h2>REGISTRAR / EDITAR EMISIÓN</h2><button class="btn" id="newEmission">+ NUEVA</button></div><input id="emTitle" placeholder="Nombre o motivo de la emisión"><label class="muted" for="emDate">Fecha</label><input id="emDate" type="date"><div class="row"><div style="flex:1"><label class="muted" for="emStart">Comenzó</label><input id="emStart" type="time"></div><div style="flex:1"><label class="muted" for="emEnd">Terminó</label><input id="emEnd" type="time"><button class="btn" type="button" id="emEndNow" style="margin-top:6px;width:100%">■ TERMINÓ · AHORA</button></div></div><textarea id="emNotes" placeholder="Detalles / observaciones (opcional)"></textarea><div class="row"><button class="btn" id="saveEmission">GUARDAR EMISIÓN</button><button id="cancelEmission">CANCELAR</button></div></div><div class="panel"><h2>REGISTRO DE EMISIONES</h2><div id="emissionList" class="stack"></div></div></section>
-<section id="gallery" class="view">
- <div class="panel">
-  <div class="row"><h2>GALERÍA DE CAMPO</h2><span id="galleryCount" class="muted">0 ARCHIVOS</span></div>
-  <p class="muted">Fotos privadas de este dispositivo. Se guardan localmente en esta PDA.</p>
-  <input id="galleryCameraInput" type="file" accept="image/*" capture="environment" multiple style="display:none">
-  <input id="galleryFileInput" type="file" accept="image/*" multiple style="display:none">
-  <div class="row"><button class="btn" id="openCamera">📷 ABRIR CÁMARA</button><button class="btn" id="addGalleryPhotos">＋ AGREGAR FOTOS</button></div>
+<section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>CONEXIÓN IA</h2><p>Esta versión funciona sin conexión para escribir y organizar tus chats. Tellama se integrará en una siguiente etapa.</p><input placeholder="URL del servidor Tellama (pendiente)" disabled></div></section>
+
+<section id="gallery" class="view"><div class="panel"><div class="row"><h2>GALERÍA DE CAMPO</h2><span id="galleryCount" class="muted">0 FOTOS</span></div><p class="muted">Fotos guardadas únicamente en este dispositivo.</p><div class="media-actions"><button class="btn" id="galleryCamera">📷 ABRIR CÁMARA</button><button class="btn" id="galleryChoose">▧ ELEGIR FOTOS</button></div><input id="galleryCameraInput" type="file" accept="image/*" capture="environment" multiple style="display:none"><input id="galleryFileInput" type="file" accept="image/*" multiple style="display:none"><div id="galleryGrid" class="media-grid"><div class="empty">Todavía no hay fotografías.</div></div></div></section>
+<section id="player" class="view"><div class="panel"><div class="row"><h2>REPRODUCTOR DE LA ZONA</h2><span id="playerStatus" class="media-muted">EN ESPERA</span></div><div id="playerDisc" class="player-disc"><span id="discLabel">PDA // AUDIO</span></div><div style="text-align:center"><strong id="trackTitle">Ninguna pista seleccionada</strong><div id="trackArtist" class="media-muted">Cargá música desde tu dispositivo</div></div><div class="player-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div><div class="row"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"><div class="row" style="margin-top:8px"><label for="playerVolume" class="muted">VOLUMEN</label><span id="volumeValue" class="muted">80%</span></div><input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen"></div>
+<div class="panel"><div class="row"><h2>LISTA DE REPRODUCCIÓN</h2><span id="trackCount" class="muted">0 PISTAS</span></div><div class="media-actions"><button class="btn" id="addTracks">＋ AGREGAR MP3 / AUDIO</button><button id="clearTracks" class="danger">VACIAR LISTA</button></div><input id="trackFileInput" type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav,.flac" multiple style="display:none"><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div>
+<div class="panel"><h2>ECUALIZADOR · 5 BANDAS</h2><p class="muted">Filtros de audio reales. Ajustá cada frecuencia mientras suena la música.</p><div class="eq-grid"><div class="eq-band"><input data-native-control class="eq-slider" data-freq="60" type="range" min="-12" max="12" step="1" value="0" orient="vertical"><label>60 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="250" type="range" min="-12" max="12" step="1" value="0"><label>250 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="1000" type="range" min="-12" max="12" step="1" value="0"><label>1 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="4000" type="range" min="-12" max="12" step="1" value="0"><label>4 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="12000" type="range" min="-12" max="12" step="1" value="0"><label>12 kHz</label></div></div><div class="row" style="margin-top:9px"><small class="muted">−12 dB</small><button id="resetEQ">RESTABLECER</button><small class="muted">+12 dB</small></div></div>
+<div class="panel"><h2>TEMPORIZADOR DE APAGADO</h2><p class="muted">Detiene la música automáticamente después del tiempo elegido.</p><div class="row"><select id="sleepTimer"><option value="0">Desactivado</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option><option value="90">90 minutos</option></select><button id="cancelSleep">CANCELAR</button></div><small id="sleepStatus" class="media-muted">Sin temporizador activo.</small></div></section>
+<audio id="zonaAudio" preload="metadata" playsinline></audio><div id="galleryOverlay" class="media-overlay"><button class="overlay-close" id="galleryClose">✕</button><img id="galleryLarge" alt="Fotografía ampliada"><button id="galleryDelete" class="danger" style="position:absolute;bottom:18px">ELIMINAR FOTO</button></div>
+</main><footer>PDA // ZONA · DATOS LOCALES EN ESTE NAVEGADOR</footer>
+<div id="pdaKeyboard" class="hidden" aria-label="Teclado PDA">
+ <div id="swipeSuggestions" aria-live="polite"><span class="suggestion-hint">DESLIZÁ PARA ESCRIBIR</span></div>
+ <svg id="swipeTrail" aria-hidden="true"><path id="swipeTrailPath" d=""></path></svg>
+ <div class="keyrow tools"><button data-k="hide">▼ OCULTAR</button><button data-k="shift">⇧ MAYÚS</button><button data-k="symbols" id="keyboardModeBtn">?123</button><button data-k="back">⌫ BORRAR</button><button data-k="paste" class="action">📋 PEGAR</button><button data-k="mic" class="action">🎙 DICTAR</button></div>
+ <div id="letterLayout">
+  <div class="keyrow"><button data-k="q">Q</button><button data-k="w">W</button><button data-k="e">E</button><button data-k="r">R</button><button data-k="t">T</button><button data-k="y">Y</button><button data-k="u">U</button><button data-k="i">I</button><button data-k="o">O</button><button data-k="p">P</button></div>
+  <div class="keyrow"><button data-k="a">A</button><button data-k="s">S</button><button data-k="d">D</button><button data-k="f">F</button><button data-k="g">G</button><button data-k="h">H</button><button data-k="j">J</button><button data-k="k">K</button><button data-k="l">L</button><button data-k="ñ">Ñ</button></div>
+  <div class="keyrow"><button data-k="z">Z</button><button data-k="x">X</button><button data-k="c">C</button><button data-k="v">V</button><button data-k="b">B</button><button data-k="n">N</button><button data-k="m">M</button><button data-k=",">,</button><button data-k=".">.</button></div>
+  <div class="keyrow accents"><button data-k="á">á</button><button data-k="é">é</button><button data-k="í">í</button><button data-k="ó">ó</button><button data-k="ú">ú</button><button data-k="ü">ü</button></div>
+ <div class="keyrow"><button data-k="!">!</button><button data-k="?">?</button><button data-k="space" class="wide">ESPACIO</button><button data-k="newline">↵</button><button data-k="done" class="action">LISTO</button></div>
  </div>
- <div class="panel"><div id="galleryGrid" class="gallery-grid"><div class="empty">Todavía no hay fotografías guardadas.</div></div></div>
- <div id="photoViewer" class="photo-viewer hidden"><div class="photo-viewer-inner"><button class="btn" id="closePhotoViewer">✕ CERRAR</button><img id="photoViewerImage" alt="Fotografía de la Zona"><p id="photoViewerName" class="muted"></p></div></div>
-</section>
-<section id="music" class="view">
- <div class="panel"><h2>REPRODUCTOR DE CAMPO</h2><p class="muted">Agregá archivos MP3 desde el teléfono. La música continúa al cambiar de sección.</p>
-  <input id="musicFileInput" type="file" accept="audio/mpeg,audio/mp3,.mp3" multiple style="display:none">
-  <button class="btn" id="addMusic">＋ CARGAR MP3</button>
-  <div class="music-now"><div class="music-disc">♫</div><div class="meta"><b id="musicTitle">SIN PISTA SELECCIONADA</b><p id="musicSub">ESPERANDO ARCHIVOS DE AUDIO</p></div></div>
-  <div class="music-controls"><button id="musicPrev">|◀</button><button class="btn" id="musicPlay">▶ REPRODUCIR</button><button id="musicNext">▶|</button></div>
-  <label class="muted" for="musicProgress">PROGRESO</label><input id="musicProgress" class="native-control" type="range" min="0" max="100
+ <div id="numberLayout" class="hidden">
+  <div class="keyrow"><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="0">0</button></div>
+  <div class="keyrow"><button data-k="@">@</button><button data-k="#">#</button><button data-k="$">$</button><button data-k="%">%</button><button data-k="&amp;">&amp;</button><button data-k="-">−</button><button data-k="+">+</button><button data-k="(">(</button><button data-k=")">)</button></div>
+  <div class="keyrow"><button data-k="*">*</button><button data-k='"'>"</button><button data-k="'">'</button><button data-k=":">:</button><button data-k=";">;</button><button data-k="/">/</button><button data-k="\">\</button><button data-k="_">_</button><button data-k="=">=</button></div>
+ <div class="keyrow"><button data-k="!">!</button><button data-k="?">?</button><button data-k=",">,</button><button data-k=".">.</button><button data-k="space" class="wide">ESPACIO</button><button data-k="newline">↵</button><button data-k="done" class="action">LISTO</button></div>
+ </div>
+</div>
+<script>
+const seed=[['STRELOK','Stalker · Leyenda','Reservado y observador. Conoce rutas que no aparecen en los mapas.'],['BARMAN','Comerciante · 100 Rads','Pragmático y negociador. Siempre tiene rumores y encargos.'],['DEGTYAREV','Agente · Operaciones','Metódico y profesional. Investiga anomalías en la Zona.'],['SUSLOV','Intendente · Deber','Militar estricto. Prioriza suministros y seguridad.']];
+const get=(k,d)=>{try{return JSON.parse(localStorage.getItem('zona_'+k))??d}catch{return d}};
+let contacts=get('c',seed.map((x,i)=>({id:'c'+i,name:x[0],role:x[1],bio:x[2]}))), chats=get('m',{}), missions=get('x',[]), notes=get('n',[]), trato=get('trato',{}), emissions=get('emissions',[]), encyclopedia=get('encyclopedia',[]), editId=null, emissionEditId=null;
+const $=id=>document.getElementById(id), save=()=>{localStorage.setItem('zona_c',JSON.stringify(contacts));localStorage.setItem('zona_m',JSON.stringify(chats));localStorage.setItem('zona_x',JSON.stringify(missions));localStorage.setItem('zona_n',JSON.stringify(notes));localStorage.setItem('zona_trato',JSON.stringify(trato));localStorage.setItem('zona_encyclopedia',JSON.stringify(encyclopedia));home()};
+// Audio de la PDA: tonos electrónicos sintetizados, sin archivos externos.
+let pdaAudio=null, pdaSoundEnabled=localStorage.getItem('zona_sound_enabled')!=='false', nextHourlyBeep=0, hourlyCheck=null;
+function initPdaAudio(){try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return false;if(!pdaAudio)pdaAudio=new Ctx();if(pdaAudio.state==='suspended')pdaAudio.resume();if(!hourlyCheck)hourlyCheck=setInterval(checkHourlyBeep,1000);$('soundStatus').textContent='Sistema acústico activo · aviso al comienzo de cada hora';return true}catch(e){$('soundStatus').textContent='Audio no disponible en este navegador.';return false}}
+function tone(freq,start,duration,volume,wave='sine'){if(!pdaAudio)return;const osc=pdaAudio.createOscillator(),gain=pdaAudio.createGain();osc.type=wave;osc.frequency.setValueAtTime(freq,start);gain.gain.setValueAtTime(0.0001,start);gain.gain.exponentialRampToValueAtTime(volume,start+0.008);gain.gain.exponentialRampToValueAtTime(0.0001,start+duration);osc.connect(gain);gain.connect(pdaAudio.destination);osc.start(start);osc.stop(start+duration+0.02)}
+function playPdaBeep(kind='notify'){if(!pdaSoundEnabled||!initPdaAudio())return;const t=pdaAudio.currentTime+0.012;if(kind==='boot'){tone(1046,t,.095,.07,'square');tone(1318,t+.12,.095,.07,'square');tone(1568,t+.24,.11,.075,'square');tone(2093,t+.39,.2,.07,'sine')}else if(kind==='hour'){tone(880,t,.13,.07,'sine');tone(1318,t+.18,.19,.075,'sine')}else if(kind==='emission'){tone(1760,t,.075,.04,'square');tone(1480,t+.1,.09,.035,'square')}else if(kind==='missionStart'){tone(660,t,.10,.075,'square');tone(990,t+.12,.12,.08,'square');tone(1320,t+.27,.16,.08,'sine')}else if(kind==='missionDone'){tone(784,t,.11,.075,'sine');tone(988,t+.13,.11,.08,'sine');tone(1175,t+.26,.12,.08,'sine');tone(1568,t+.40,.22,.085,'sine')}else if(kind==='message'){tone(1175,t,.055,.065,'square');tone(1568,t+.075,.075,.07,'square')}else if(kind==='journal'){tone(523,t,.12,.07,'sine');tone(659,t+.14,.15,.075,'sine')}else if(kind==='hour'){tone(880,t,.13,.07,'sine');tone(1318,t+.18,.19,.075,'sine')}else{tone(1568,t,.065,.065,'square');tone(1174,t+.085,.075,.06,'sine')}}
+function checkHourlyBeep(){if(!pdaSoundEnabled||document.hidden)return;const n=new Date();if(n.getMinutes()!==0||n.getSeconds()>5)return;const key=[n.getFullYear(),String(n.getMonth()+1).padStart(2,'0'),String(n.getDate()).padStart(2,'0'),String(n.getHours()).padStart(2,'0')].join('-');if(localStorage.getItem('zona_last_hour_chime')===key)return;localStorage.setItem('zona_last_hour_chime',key);playPdaBeep('hour')}
+function refreshSoundControls(){if($('soundToggle'))$('soundToggle').textContent='SONIDOS: '+(pdaSoundEnabled?'ACTIVADOS':'DESACTIVADOS')}
+let bootBeepPending=true;document.addEventListener('pointerdown',()=>{if(pdaSoundEnabled&&initPdaAudio()&&bootBeepPending){playPdaBeep('boot');bootBeepPending=false;if(typeof resumeEmissionLoop==='function')resumeEmissionLoop(false)}},{once:true});document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(pdaAudio&&pdaAudio.state==='suspended')pdaAudio.resume();checkHourlyBeep();if(typeof resumeEmissionLoop==='function')resumeEmissionLoop(false)}});
+
+const draftFields=()=>Array.from(document.querySelectorAll('input:not([disabled]),textarea:not([disabled])'));
+function saveDrafts(){let d={};draftFields().forEach(el=>{if(el.id)d[el.id]=el.value});localStorage.setItem('zona_drafts',JSON.stringify(d));}
+function clearDraft(id){let d=get('drafts',{});delete d[id];localStorage.setItem('zona_drafts',JSON.stringify(d));}
+function restoreDrafts(){let d=get('drafts',{});draftFields().forEach(el=>{if(el.id&&Object.prototype.hasOwnProperty.call(d,el.id))el.value=d[el.id]});}
+
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function richText(value){
+ let out=esc(value??'');
+ out=out.replace(/\[b\]([\s\S]*?)\[\/b\]/gi,'<strong>$1</strong>')
+  .replace(/\[i\]([\s\S]*?)\[\/i\]/gi,'<em>$1</em>')
+  .replace(/\[u\]([\s\S]*?)\[\/u\]/gi,'<u>$1</u>')
+  .replace(/\[s\]([\s\S]*?)\[\/s\]/gi,'<s>$1</s>')
+  .replace(/\[color=(#[0-9a-f]{6})\]([\s\S]*?)\[\/color\]/gi,(_,c,t)=>`<span style="color:${c}">${t}</span>`)
+  .replace(/\[size=(small|normal|large|huge)\]([\s\S]*?)\[\/size\]/gi,(_,z,t)=>`<span style="font-size:${({small:'12px',normal:'15px',large:'19px',huge:'24px'})[z]}">${t}</span>`)
+  .replace(/\[font=(mono|serif|sans)\]([\s\S]*?)\[\/font\]/gi,(_,f,t)=>`<span style="font-family:${({mono:'monospace',serif:'Georgia,serif',sans:'Arial,sans-serif'})[f]}">${t}</span>`);
+ return out.replace(/\r?\n/g,'<br>');
+}
+function rememberRichSelection(field){if(!field)return;field._richSelection={start:field.selectionStart??field.value.length,end:field.selectionEnd??field.value.length};}
+function applyRichTag(field,tag,value){
+ if(!field)return;const saved=field._richSelection;const start=saved?.start??field.selectionStart??field.value.length,end=saved?.end??field.selectionEnd??field.value.length;
+ const open=tag==='color'?'[color='+value+']':tag==='size'?'[size='+value+']':tag==='font'?'[font='+value+']':'['+tag+']';
+ const close='[/'+tag+']',selected=field.value.slice(start,end),replacement=open+selected+close;
+ field.value=field.value.slice(0,start)+replacement+field.value.slice(end);
+ const caret=selected?start+replacement.length:start+open.length;
+ field.setSelectionRange(caret,caret);field._richSelection={start:caret,end:caret};field.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();field.focus({preventScroll:true});
+}
+function initRichEditors(){
+ const targets=Array.from(document.querySelectorAll('textarea:not([disabled])'));
+ targets.forEach(field=>{
+  if(field.dataset.richReady)return;field.dataset.richReady='1';
+  const bar=document.createElement('div');bar.className='rich-toolbar';bar.setAttribute('aria-label','Herramientas de formato');
+  field.addEventListener('select',()=>rememberRichSelection(field));field.addEventListener('keyup',()=>rememberRichSelection(field));field.addEventListener('click',()=>rememberRichSelection(field));field.addEventListener('input',()=>rememberRichSelection(field));
+  const addButton=(label,tag,title)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.addEventListener('pointerdown',e=>e.preventDefault());b.addEventListener('click',()=>applyRichTag(field,tag));bar.appendChild(b)};
+  addButton('B','b','Negrita');addButton('I','i','Cursiva');addButton('U','u','Subrayado');addButton('S','s','Tachado');
+  const color=document.createElement('select');color.setAttribute('aria-label','Color de letra');color.innerHTML='<option value="#c6df9c">Color</option><option value="#ffffff">Blanco</option><option value="#ff5555">Rojo</option><option value="#55dd88">Verde</option><option value="#55aaff">Azul</option><option value="#ffd84d">Amarillo</option><option value="#ff9b45">Naranja</option><option value="#d18cff">Violeta</option><option value="#ff83c6">Rosa</option>';
+  color.addEventListener('pointerdown',()=>rememberRichSelection(field));color.addEventListener('change',()=>{applyRichTag(field,'color',color.value);color.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(color);
+  const size=document.createElement('select');size.setAttribute('aria-label','Tamaño de letra');size.innerHTML='<option value="normal">Tamaño</option><option value="small">Pequeño</option><option value="normal">Normal</option><option value="large">Grande</option><option value="huge">Extra grande</option>';size.addEventListener('pointerdown',()=>rememberRichSelection(field));size.addEventListener('change',()=>{applyRichTag(field,'size',size.value);size.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(size);
+  const font=document.createElement('select');font.setAttribute('aria-label','Tipo de letra');font.innerHTML='<option value="sans">Fuente</option><option value="sans">Sans</option><option value="serif">Serif</option><option value="mono">Monoespaciada</option>';font.addEventListener('pointerdown',()=>rememberRichSelection(field));font.addEventListener('change',()=>{applyRichTag(field,'font',font.value);font.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(font);
+  const help=document.createElement('div');help.className='rich-help';help.textContent='Seleccioná texto y elegí formato. Si no seleccionás, el formato queda listo para escribir con el teclado PDA.';bar.appendChild(help);
+  field.parentNode.insertBefore(bar,field);
+ });
+}
+
+function go(t){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===t));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));if(t==='chat')renderChat();if(t==='relationship')renderTrato();if(t==='emissions')renderEmissions()}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+function home(){$('cc').textContent=contacts.length;$('mc').textContent=Object.values(chats).flat().length;$('xc').textContent=missions.filter(x=>!x.done).length;$('nc').textContent=notes.length;$('activity').textContent=notes[0]?.title||missions[0]?.title||'Sin actividad registrada.'}
+function vital(c){return c.vital||'alive'}
+function vitalLabel(v){return v==='dead'?'MUERTO':v==='lost'?'PERDIDO':'VIVO'}
+function renderContacts(){$('contactList').innerHTML=contacts.map(c=>`<div class="item">${c.photo?`<img class="contact-avatar" src="${c.photo}" alt="Foto de ${esc(c.name)}">`:`<div class="avatar">${esc(c.name.slice(0,2))}</div>`}<div class="meta"><b>${esc(c.name)}</b><p>${esc(c.role)}</p>${c.bio?`<div class="rich-output" style="font-size:12px;margin:5px 0">${richText(c.bio)}</div>`:''}<div class="statusline"><span class="statusdot status-${vital(c)}"></span>${vitalLabel(vital(c))}</div></div><select class="statusSelect" aria-label="Estado vital" onchange="setVital('${c.id}',this.value)"><option value="alive" ${vital(c)==='alive'?'selected':''}>🟢 Vivo</option><option value="dead" ${vital(c)==='dead'?'selected':''}>🔴 Muerto</option><option value="lost" ${vital(c)==='lost'?'selected':''}>🟡 Perdido</option></select><button onclick="editC('${c.id}')">EDITAR</button><button class="btn" onclick="chatC('${c.id}')">CHAT</button></div>`).join('')||'<div class="empty">Sin contactos.</div>';$('chatWho').innerHTML=contacts.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');$('tratoWho').innerHTML=contacts.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');renderTrato()}
+window.setVital=(id,v)=>{let c=contacts.find(x=>x.id===id);if(c){c.vital=v;save();renderContacts()}};
+let contactPhotoData='';function showContactPhoto(){const has=!!contactPhotoData;$('cPhotoPreview').style.display=has?'block':'none';$('cPhotoPreview').src=has?contactPhotoData:'';$('cPhotoPlaceholder').style.display=has?'none':'flex'}$('chooseCPhoto').onclick=()=>$('cPhotoInput').click();$('cPhotoInput').onchange=()=>{const file=$('cPhotoInput').files?.[0];if(!file)return;if(!file.type.startsWith('image/'))return alert('Elegí un archivo de imagen.');const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const max=640,scale=Math.min(1,max/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);contactPhotoData=canvas.toDataURL('image/jpeg',.78);showContactPhoto()};img.onerror=()=>alert('No se pudo leer esa imagen.');img.src=reader.result};reader.readAsDataURL(file)};$('removeCPhoto').onclick=()=>{contactPhotoData='';$('cPhotoInput').value='';showContactPhoto()};$('newC').onclick=()=>{editId=null;contactPhotoData='';$('cPhotoInput').value='';$('cName').value='';$('cRole').value='';$('cBio').value='';showContactPhoto();$('cEditor').classList.remove('hidden')};
+window.editC=id=>{let c=contacts.find(x=>x.id===id);if(!c)return;editId=id;contactPhotoData=c.photo||'';$('cPhotoInput').value='';$('cName').value=c.name;$('cRole').value=c.role;$('cBio').value=c.bio;showContactPhoto();$('cEditor').classList.remove('hidden')};
+$('cancelC').onclick=()=>$('cEditor').classList.add('hidden');
+$('saveC').onclick=()=>{let name=$('cName').value.trim();if(!name)return alert('Escribí un nombre');let previous=contacts.find(x=>x.id===editId);let c={id:editId||'c'+Date.now(),name,role:$('cRole').value,bio:$('cBio').value,vital:previous?.vital||'alive',photo:contactPhotoData||''};contacts=editId?contacts.map(x=>x.id===editId?c:x):[...contacts,c];save();['cName','cRole','cBio'].forEach(clearDraft);saveDrafts();renderContacts();$('cEditor').classList.add('hidden');playPdaBeep('notify')};
+window.chatC=id=>{go('chat');$('chatWho').value=id;renderChat()};
+function renderChat(){let id=$('chatWho').value;if(!id){$('chatBox').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let arr=chats[id]||[];$('chatBox').innerHTML=arr.map((m,i)=>`<div class="bubble ${m.me?'me':''}"><div class="row"><div class="who">${m.me?'TÚ':esc(m.who)} · ${esc(m.time)}</div><button class="delete-one" onclick="deleteMessage('${id}',${i})" aria-label="Eliminar este mensaje" title="Eliminar este mensaje">×</button></div><div>${richText(m.text)}</div></div>`).join('')||'<div class="empty">Canal abierto. Todavía no hay mensajes.</div>';$('chatBox').scrollTop=$('chatBox').scrollHeight}
+$('chatWho').onchange=renderChat;
+window.deleteMessage=(id,index)=>{let arr=chats[id]||[];if(index<0||index>=arr.length)return;if(!confirm('¿Eliminar solamente este mensaje?'))return;arr.splice(index,1);if(arr.length)chats[id]=arr;else delete chats[id];save();renderChat()};
+function send(){let text=$('msg').value.trim(),id=$('chatWho').value;if(!text||!id)return;(chats[id]??=[]).push({me:true,who:'TÚ',text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});$('msg').value='';clearDraft('msg');save();saveDrafts();renderChat();playPdaBeep('message')}
+$('send').onclick=send;
+
+
+$('newM').onclick=()=>{$('mTitle').value='';$('mDesc').value='';$('mEditor').classList.remove('hidden')};$('cancelM').onclick=()=>$('mEditor').classList.add('hidden');
+$('saveM').onclick=()=>{if(!$('mTitle').value.trim())return alert('Poné un título');missions.unshift({id:Date.now(),title:$('mTitle').value,desc:$('mDesc').value,done:false,date:new Date().toLocaleDateString('es-AR')});save();['mTitle','mDesc'].forEach(clearDraft);saveDrafts();renderM();$('mEditor').classList.add('hidden');playPdaBeep('missionStart')};
+function renderM(){$('missionList').innerHTML=missions.map(m=>`<div class="item"><div class="meta"><b>${esc(m.title)}</b><p>${richText(m.desc)} · ${m.date}</p></div><button onclick="toggleM(${m.id})">${m.done?'CUMPLIDA':'ACTIVA'}</button><button onclick="delM(${m.id})">×</button></div>`).join('')||'<div class="empty">Sin misiones.</div>'}
+window.toggleM=id=>{const target=missions.find(m=>m.id===id);if(!target)return;const completed=!target.done;missions=missions.map(m=>m.id===id?{...m,done:completed}:m);save();renderM();playPdaBeep(completed?'missionDone':'missionStart')};window.delM=id=>{if(confirm('¿Eliminar misión?')){missions=missions.filter(m=>m.id!==id);save();renderM()}};
+// Enciclopedia e inventario de campo: cada ficha admite foto, descripción y cantidad.
+let encyclopediaPhotoData='';
+function showEncyclopediaPhoto(){const has=!!encyclopediaPhotoData;$('encyPhotoPreview').style.display=has?'block':'none';$('encyPhotoPreview').src=has?encyclopediaPhotoData:'';$('encyPhotoPlaceholder').style.display=has?'none':'flex'}
+function compressEncyclopediaPhoto(file,done){if(!file||!file.type.startsWith('image/'))return alert('Elegí un archivo de imagen.');const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const max=520,scale=Math.min(1,max/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);done(canvas.toDataURL('image/jpeg',.70))};img.onerror=()=>alert('No se pudo leer esa imagen.');img.src=reader.result};reader.readAsDataURL(file)}
+$('chooseEncyPhoto').onclick=()=>$('encyPhotoInput').click();
+$('encyPhotoInput').onchange=()=>{const file=$('encyPhotoInput').files?.[0];if(!file)return;compressEncyclopediaPhoto(file,data=>{encyclopediaPhotoData=data;showEncyclopediaPhoto()})};
+$('removeEncyPhoto').onclick=()=>{encyclopediaPhotoData='';$('encyPhotoInput').value='';showEncyclopediaPhoto()};
+function renderEncyclopedia(){const filter=$('encyFilter').value;const rows=encyclopedia.filter(x=>filter==='Todos'||x.category===filter);$('encyList').innerHTML=rows.map(x=>`<div class="item">${x.photo?`<img class="contact-avatar" src="${x.photo}" alt="Imagen de ${esc(x.name)}">`:`<div class="contact-avatar contact-photo-empty">SIN FOTO</div>`}<div class="meta"><b>${esc(x.name)}</b><p>${esc(x.category)} · Cantidad: <strong>${x.qty}</strong></p>${x.description?`<p style="white-space:pre-wrap;margin-top:6px">${richText(x.description)}</p>`:'<p class="muted">Sin descripción.</p>'}<button onclick="encyEditDescription(${x.id})">EDITAR DESCRIPCIÓN</button> <button onclick="encyChoosePhoto(${x.id})">${x.photo?'CAMBIAR FOTO':'AGREGAR FOTO'}</button>${x.photo?` <button onclick="encyRemovePhoto(${x.id})">QUITAR FOTO</button>`:''}</div><button class="btn" onclick="encyChange(${x.id},1)" aria-label="Sumar">+</button><button onclick="encyChange(${x.id},-1)" aria-label="Restar">−</button><button class="delete-one" onclick="encyDelete(${x.id})" aria-label="Eliminar">×</button></div>`).join('')||'<div class="empty">Todavía no hay registros en esta categoría.</div>'}
+$('encyAdd').onclick=()=>{const category=$('encyCategory').value,name=$('encyName').value.trim(),description=$('encyDescription').value.trim(),qty=Math.max(0,Math.floor(Number($('encyQty').value)||0));if(!name)return alert('Escribí el nombre del elemento.');const existing=encyclopedia.find(x=>x.category===category&&x.name.toLocaleLowerCase('es-AR')===name.toLocaleLowerCase('es-AR'));if(existing){existing.qty+=qty;if(description)existing.description=description;if(encyclopediaPhotoData)existing.photo=encyclopediaPhotoData}else encyclopedia.unshift({id:Date.now(),category,name,qty,description,photo:encyclopediaPhotoData||''});save();$('encyName').value='';$('encyDescription').value='';$('encyQty').value='1';encyclopediaPhotoData='';$('encyPhotoInput').value='';showEncyclopediaPhoto();renderEncyclopedia();playPdaBeep('journal')};
+$('encyFilter').onchange=renderEncyclopedia;
+window.encyEditDescription=id=>{const x=encyclopedia.find(v=>v.id===id);if(!x)return;const value=prompt('Descripción de '+x.name+':',x.description||'');if(value===null)return;x.description=value.trim();save();renderEncyclopedia()};
+window.encyChoosePhoto=id=>{const x=encyclopedia.find(v=>v.id===id);if(!x)return;const picker=document.createElement('input');picker.type='file';picker.accept='image/*';picker.onchange=()=>{const file=picker.files?.[0];if(!file)return;compressEncyclopediaPhoto(file,data=>{x.photo=data;save();renderEncyclopedia()})};picker.click()};
+window.encyRemovePhoto=id=>{const x=encyclopedia.find(v=>v.id===id);if(!x||!confirm('¿Quitar la foto de '+x.name+'?'))return;x.photo='';save();renderEncyclopedia()};
+window.encyChange=(id,delta)=>{const x=encyclopedia.find(v=>v.id===id);if(!x)return;x.qty=Math.max(0,(Number(x.qty)||0)+delta);save();renderEncyclopedia();};
+window.encyDelete=id=>{const x=encyclopedia.find(v=>v.id===id);if(!x||!confirm('¿Eliminar '+x.name+' de la enciclopedia?'))return;encyclopedia=encyclopedia.filter(v=>v.id!==id);save();renderEncyclopedia()};
+$('saveN').onclick=()=>{if(!$('nBody').value.trim())return alert('Escribí una anotación');notes.unshift({id:Date.now(),title:$('nTitle').value||'Sin título',body:$('nBody').value,date:new Date().toLocaleString('es-AR')});$('nTitle').value='';$('nBody').value='';save();['nTitle','nBody'].forEach(clearDraft);saveDrafts();renderN();playPdaBeep('journal')};
+function renderN(){$('noteList').innerHTML=notes.map(n=>`<div class="panel"><div class="row"><b>${esc(n.title)}</b><button onclick="delN(${n.id})">BORRAR</button></div><small>${esc(n.date)}</small><p style="white-space:pre-wrap">${richText(n.body)}</p></div>`).join('')||'<div class="empty">Diario vacío.</div>'}
+window.delN=id=>{if(confirm('¿Borrar anotación?')){notes=notes.filter(n=>n.id!==id);save();renderN()}};
+
+function score(id){return trato[id]?.score??50}
+function renderTrato(){if(!$('tratoWho')||!contacts.length){$('tratoHistory').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let id=$('tratoWho').value;if(!id||!contacts.some(c=>c.id===id))id=contacts[0].id;$('tratoWho').value=id;let s=score(id);$('friendScore').textContent=s+' / 100';$('friendBar').style.width=s+'%';$('friendLabel').textContent=s>=80?'ALIADO':s>=60?'BUENA RELACIÓN':s>=40?'NEUTRAL':s>=20?'DESCONFIANZA':'HOSTIL';let arr=trato[id]?.history||[];$('tratoHistory').innerHTML=arr.map((x,i)=>`<div class="item"><div class="meta"><b>${richText(x.text)}</b><p>${esc(x.date)} · ${esc(x.mood)}</p></div><strong style="color:${x.delta>0?'var(--g)':x.delta<0?'#d58a78':'var(--m)'}">${x.delta>0?'+':''}${x.delta}</strong><button class="btn danger" title="Eliminar trato" onclick="deleteTrato('${id}',${i})">×</button></div>`).join('')||'<div class="empty">Todavía no registraste tratos con este contacto.</div>'}
+window.deleteTrato=(id,index)=>{const record=trato[id]?.history?.[index];if(!record)return;if(!confirm('¿Eliminar este registro de trato? También se ajustará el nivel de relación.'))return;trato[id].score=Math.max(0,Math.min(100,(trato[id].score??50)-(record.delta||0)));trato[id].history.splice(index,1);if(!trato[id].history.length&&trato[id].score===50)delete trato[id];save();renderTrato()};
+$('tratoWho').onchange=renderTrato;
+$('saveTrato').onclick=()=>{let id=$('tratoWho').value,text=$('tratoText').value.trim(),mood=$('tratoMood').value;if(!text)return alert('Contá qué hiciste antes de registrar el trato.');let delta=mood==='positive'?10:mood==='negative'?-10:0;trato[id]??={score:50,history:[]};trato[id].score=Math.max(0,Math.min(100,trato[id].score+delta));trato[id].history.unshift({text,delta,mood:mood==='positive'?'Agradable':mood==='negative'?'Desagradable':'Neutral',date:new Date().toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires'})});$('tratoText').value='';clearDraft('tratoText');save();saveDrafts();renderTrato();playPdaBeep('notify')};
+$('saveNow').onclick=()=>{save();saveDrafts();$('saveStatus').textContent='Guardado · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});};
+$('soundToggle').onclick=()=>{pdaSoundEnabled=!pdaSoundEnabled;localStorage.setItem('zona_sound_enabled',String(pdaSoundEnabled));refreshSoundControls();if(pdaSoundEnabled){initPdaAudio();playPdaBeep('notify');resumeEmissionLoop(false)}else{$('soundStatus').textContent='Sonidos desactivados.';stopEmissionTimer()}};$('soundTest').onclick=()=>{if(!pdaSoundEnabled){pdaSoundEnabled=true;localStorage.setItem('zona_sound_enabled','true');refreshSoundControls()}playPdaBeep('notify')};refreshSoundControls();
+$('export').onclick=()=>{let a=document.createElement('a'),u=URL.createObjectURL(new Blob([JSON.stringify({contacts,chats,missions,notes,trato,emissions,encyclopedia},null,2)],{type:'application/json'}));a.href=u;a.download='PDA_Zona_respaldo.json';a.click();URL.revokeObjectURL(u)};
+$('wipe').onclick=()=>{if(confirm('¿Borrar todos los datos?')){['c','m','x','n','trato','emissions','encyclopedia','active_emission'].forEach(k=>localStorage.removeItem('zona_'+k));location.reload()}};
+// Gestor de sesiones de emisión. La sesión activa sobrevive al cierre o recarga de la página.
+let emissionTimer=null, emissionSoundOn=localStorage.getItem('zona_emission_sound_on')!=='false';
+function activeEmission(){return emissions.find(x=>x.active)||null}
+function persistEmissions(){localStorage.setItem('zona_emissions',JSON.stringify(emissions));const a=activeEmission();if(a)localStorage.setItem('zona_active_emission',String(a.id));else localStorage.removeItem('zona_active_emission')}
+function stopEmissionTimer(){if(emissionTimer){clearInterval(emissionTimer);emissionTimer=null}}
+function resumeEmissionLoop(playNow=false){const a=activeEmission();if(!a||!emissionSoundOn||!pdaSoundEnabled||!pdaAudio||pdaAudio.state==='suspended'){stopEmissionTimer();return}if(emissionTimer)return;if(playNow)playPdaBeep('emission');emissionTimer=setInterval(()=>{const current=activeEmission();if(!current||!emissionSoundOn||!pdaSoundEnabled){stopEmissionTimer();return}playPdaBeep('emission')},20000)}
+function startEmission(){if(activeEmission())return alert('Ya hay una emisión activa. Cerrala antes de iniciar otra.');const now=new Date(),date=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-'),time=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});const rec={id:Date.now(),title:'Emisión',date,start:time,end:'',notes:'',active:true};emissions.unshift(rec);persistEmissions();renderEmissions();if(pdaSoundEnabled&&initPdaAudio())resumeEmissionLoop(true);$('emissionStatus').textContent='EMISIÓN ACTIVA · PITIDO CADA 20 SEGUNDOS'}
+function closeEmission(){const a=activeEmission();if(!a)return;const now=new Date();a.end=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});a.active=false;persistEmissions();stopEmissionTimer();renderEmissions();$('emissionStatus').textContent='SESIÓN CERRADA · '+a.end;playPdaBeep('notify')}
+function renderEmissions(){const a=activeEmission();$('emissionStatus').textContent=a?'EMISIÓN ACTIVA · '+a.title+' · '+(emissionSoundOn?'PITIDOS ACTIVOS':'PITIDOS APAGADOS'):'SIN EMISIÓN ACTIVA';$('startEmission').disabled=!!a;$('startEmission').textContent=a?'EMISIÓN EN CURSO':'▶ INICIAR SESIÓN';$('powerEmission').textContent=emissionSoundOn?'⏻ APAGAR PITIDOS':'▶ REACTIVAR PITIDOS';$('powerEmission').disabled=!a;$('emissionList').innerHTML=emissions.map(x=>`<div class="item"><div class="meta"><b>${esc(x.title||'Emisión')}</b><p>${esc(x.date||'')} · Comenzó: ${esc(x.start||'--:--')} · Terminó: ${esc(x.end|| (x.active?'EN CURSO':'--:--'))}</p>${x.notes?`<p>${richText(x.notes)}</p>`:''}</div><button onclick="editEmission(${x.id})">EDITAR</button>${x.active?`<button class="btn danger" onclick="closeEmission()">CERRAR</button>`:`<button onclick="deleteEmission(${x.id})">×</button>`}</div>`).join('')||'<div class="empty">Todavía no hay emisiones registradas.</div>'}
+function resetEmissionForm(){emissionEditId=null;$('emTitle').value='';$('emDate').value=new Date().toISOString().slice(0,10);$('emStart').value='';$('emEnd').value='';$('emNotes').value=''}
+$('startEmission').onclick=startEmission;$('powerEmission').onclick=()=>{if(!activeEmission())return;emissionSoundOn=!emissionSoundOn;localStorage.setItem('zona_emission_sound_on',String(emissionSoundOn));if(emissionSoundOn){if(pdaSoundEnabled&&initPdaAudio())resumeEmissionLoop(true)}else stopEmissionTimer();renderEmissions()};
+$('newEmission').onclick=()=>{resetEmissionForm();$('emTitle').value='Emisión';$('emStart').value=localEmissionTime();};
+function localEmissionTime(){const n=new Date();return String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')}
+$('emEndNow').onclick=()=>{$('emEnd').value=localEmissionTime();$('emEnd').dispatchEvent(new Event('change',{bubbles:true}));playPdaBeep('notify')};
+$('cancelEmission').onclick=()=>resetEmissionForm();
+$('saveEmission').onclick=()=>{const title=$('emTitle').value.trim()||'Emisión',date=$('emDate').value,start=$('emStart').value,end=$('emEnd').value;if(!date||!start)return alert('Indicá la fecha y la hora de comienzo.');let rec=emissions.find(x=>x.id===emissionEditId);if(rec){rec.title=title;rec.date=date;rec.start=start;rec.end=end;rec.notes=$('emNotes').value;if(end)rec.active=false}else{rec={id:Date.now(),title,date,start,end,notes:$('emNotes').value,active:false};emissions.unshift(rec)}persistEmissions();if(!activeEmission())stopEmissionTimer();resetEmissionForm();renderEmissions();playPdaBeep('notify')};
+window.editEmission=id=>{const x=emissions.find(v=>v.id===id);if(!x)return;emissionEditId=id;$('emTitle').value=x.title||'';$('emDate').value=x.date||'';$('emStart').value=x.start||'';$('emEnd').value=x.end||'';$('emNotes').value=x.notes||'';};
+window.deleteEmission=id=>{if(!confirm('¿Eliminar este registro de emisión?'))return;emissions=emissions.filter(x=>x.id!==id);persistEmissions();renderEmissions()};
+// Al recargar, una sesión que quedó abierta sigue activa; el audio vuelve al primer toque permitido por el navegador.
+if(activeEmission()){emissionSoundOn=localStorage.getItem('zona_emission_sound_on')!=='false';}
+renderEmissions();
+function updateClock(){let now=new Date();$('clock').textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);$('dateAR').textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(now)}
+setInterval(updateClock,1000);updateClock();
+$('fullscreenBtn').onclick=async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();$('fullscreenBtn').textContent='⛶ SALIR DE PANTALLA COMPLETA'}else{await document.exitFullscreen();$('fullscreenBtn').textContent='⛶ PANTALLA COMPLETA'}}catch(e){alert('El navegador no permite pantalla completa en esta vista. Abrí la PDA en Chrome y probá nuevamente.')}}
+document.addEventListener('fullscreenchange',()=>{$('fullscreenBtn').textContent=document.fullscreenElement?'⛶ SALIR DE PANTALLA COMPLETA':'⛶ PANTALLA COMPLETA'});
+// Teclado PDA compartido: bloquea el teclado del sistema en todos los campos editables.
+let activeField=null,shiftOn=false,capsLock=false,lastShiftTap=0,symbolMode=false;
+function updateShiftKey(){const b=pdaKeys?.querySelector('[data-k="shift"]');if(b){b.textContent=capsLock?'⇧ FIJA':shiftOn?'⇧ 1 LETRA':'⇧ MAYÚS';b.style.background=capsLock?'#8aa85c':shiftOn?'#536d3d':'';b.style.color=capsLock?'#10150f':''}}
+function consumeShift(){if(shiftOn&&!capsLock)shiftOn=false;updateShiftKey()}
+const pdaKeys=$('pdaKeyboard');
+function openPdaKeyboard(field){
+ activeField=field;
+ field.setAttribute('readonly','readonly');
+ pdaKeys.classList.remove('hidden');
+ document.body.classList.add('keyboard-visible');
+ setTimeout(()=>field.scrollIntoView({block:'center',behavior:'smooth'}),80);
+}
+function closePdaKeyboard(){
+ pdaKeys.classList.add('hidden');
+ document.body.classList.remove('keyboard-visible');
+ activeField=null;
+}
+document.querySelectorAll('input:not([disabled]):not([type="file"]):not([data-native-control]),textarea:not([disabled])').forEach(field=>{
+ field.setAttribute('readonly','readonly');
+ field.addEventListener('click',()=>openPdaKeyboard(field));field.addEventListener('input',saveDrafts);
+});
+function insertPdaText(insert){
+ if(!activeField)return;
+ const el=activeField,start=el.selectionStart??el.value.length,end=el.selectionEnd??el.value.length;
+ el.value=el.value.slice(0,start)+insert+el.value.slice(end);
+ const pos=start+insert.length;el.setSelectionRange(pos,pos);
+ el.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();
+}
+async function pasteFromClipboard(){
+ if(!activeField)return;
+ try{
+  if(!navigator.clipboard?.readText)throw new Error('unsupported');
+  const text=await navigator.clipboard.readText();
+  if(text)insertPdaText(text);
+  else alert('El portapapeles está vacío. Copiá un texto primero.');
+ }catch(err){
+  alert('Chrome no permitió acceder al portapapeles. Abrí PDA // ZONA desde su dirección HTTPS, copiá primero el texto y volvé a tocar PEGAR. Si Android pregunta, autorizá el acceso.');
+ }
+}
+async function dictate(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!activeField){alert('Primero tocá el campo donde querés escribir.');return}
+  if(!SR){alert('Este navegador no ofrece dictado por voz. Abrí la PDA con Google Chrome actualizado.');return}
+
+  // El reconocimiento de voz necesita un origen seguro y permiso de micrófono.
+  if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    alert('No se puede acceder al micrófono desde esta ubicación ('+location.protocol+').\n\nAbrí la PDA desde una dirección HTTPS o desde localhost. Si la abrís directamente desde Descargas, Android puede bloquear el micrófono.');
+    return;
+  }
+
+  const micButton=pdaKeys.querySelector('[data-k="mic"]');
+  try{
+    if(micButton){micButton.disabled=true;micButton.textContent='🎙 VERIFICANDO…'}
+    // Solicita el permiso de Android/Chrome antes de iniciar SpeechRecognition.
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    stream.getTracks().forEach(track=>track.stop());
+  }catch(e){
+    if(micButton){micButton.disabled=false;micButton.textContent='🎙 DICTAR'}
+    const messages={
+      'NotAllowedError':'Chrome no tiene permiso para usar el micrófono. Permitilo en Ajustes de Android > Aplicaciones > Chrome > Permisos > Micrófono. Después, revisá también los permisos del sitio.',
+      'PermissionDeniedError':'El permiso del micrófono fue denegado. Habilitalo para Chrome en los ajustes de Android.',
+      'NotFoundError':'No se encontró un micrófono disponible en el dispositivo.',
+      'NotReadableError':'El micrófono está siendo utilizado por otra aplicación. Cerrá esa aplicación e intentá de nuevo.'
+    };
+    alert(messages[e.name]||('No se pudo acceder al micrófono: '+(e.message||e.name)));
+    return;
+  }
+
+  const rec=new SR();
+  rec.lang='es-AR';rec.interimResults=false;rec.continuous=false;rec.maxAlternatives=1;
+  rec.onstart=()=>{if(micButton){micButton.disabled=false;micButton.textContent='🎙 ESCUCHANDO…'}};
+  rec.onresult=e=>{
+    const transcript=e.results&&e.results[0]&&e.results[0][0]&&e.results[0][0].transcript;
+    if(transcript&&transcript.trim())insertPdaText(transcript.trim()+' ');
+  };
+  rec.onerror=e=>{
+    const messages={
+      'not-allowed':'Chrome denegó el micrófono. Revisá Ajustes de Android > Aplicaciones > Chrome > Permisos > Micrófono y permití el acceso.',
+      'service-not-allowed':'El servicio de reconocimiento de voz está bloqueado por el navegador.',
+      'audio-capture':'No se encontró un micrófono disponible.',
+      'network':'Falló la conexión. El dictado de Chrome necesita internet.',
+      'language-not-supported':'El reconocimiento en español no está disponible en este navegador.'
+    };
+    alert('Error de dictado: '+(messages[e.error]||e.error||'no se pudo iniciar'));
+  };
+  rec.onend=()=>{if(micButton){micButton.disabled=false;micButton.textContent='🎙 DICTAR'}};
+  try{rec.start()}catch(e){if(micButton){micButton.disabled=false;micButton.textContent='🎙 DICTAR'}alert('No se pudo iniciar el dictado: '+e.message)}
+}
+
+// Diccionario local inicial: funciona sin conexión y se puede ampliar.
+const swipeDictionary = (`hola ayuda amigo amiga gracias buenos buenas dias tardes noches
+como estas estoy bien que tal para por favor quiero quieres necesito necesitamos
+donde cuando quien porque pero con sin sobre entre aqui alli ahora hoy manana
+ayer luego despues antes siempre nunca tambien tampoco todo toda todos todas
+nada algo alguien nadie mucho mucha muchos muchas poco poca otro otra otros
+este esta estos estas eso esa esos esas soy sos tenes queres podes tengo tiene
+tenemos tienen puede puedo vamos voy vas viene venir hacer hago hace hicieron
+decir digo dice hablar habla escribir leer ver mirar escuchar saber conocer
+pensar creer sentir vivir tener estar ser ir dar tomar poner sacar dejar pasar
+llegar salir entrar volver buscar encontrar perder ganar jugar trabajar estudiar
+comer beber dormir despertar caminar correr esperar ayudar cuidar usar abrir
+cerrar guardar borrar enviar recibir mensaje mensajes contacto contactos mision
+misiones diario zona stalker pda equipo amigo hermano bro che dale joya posta
+banco tranqui buenisimo genial copado re si no bueno buena malo mala claro
+listo perfecto gracias porfa hola chau adios hasta vemos pronto saludos abrazo
+familia casa calle lugar tiempo dia noche tarde manana semana mes ano anos
+persona personas gente nino nina chico chica hombre mujer padre madre hijo hija
+amigos amigas equipo grupo mundo vida nombre apellido numero telefono correo
+mensaje palabra palabras texto teclado letras letra escribir escribiendo
+quiero quiero puedo puedo necesito necesito dame decime contame mostrame
+explicame ayuda ayudame gracias muchas gracias por favor como estas como va
+que haces que paso que pasa que onda todo bien todo mal nos vemos hasta luego
+buen dia buenas noches buenas tardes buen trabajo excelente felicitaciones
+arriba abajo adelante atras izquierda derecha centro cerca lejos rapido lento
+primero segundo tercero ultimo nuevo nueva viejo vieja grande pequeno pequena
+importante posible imposible seguro claro verdad mentira correcto incorrecto
+siempre juntos ahora mismo mas menos mejor peor igual diferente facil dificil
+simple rapido despacio listo listo para empezar terminar continuar seguir
+guardar cambios datos respaldo exportar importar archivo carpeta codigo
+internet navegador telefono computadora pantalla boton tecla deslizar dedo
+palabra palabras prediccion predicciones teclado virtual dictado voz audio
+microfono sonido permiso permisos chrome android argentina cordoba
+`).trim().split(/\s+/);
+const accentPreferred = {
+ atencion:'atención', atencion:'atención', tambien:'también', dias:'días', dia:'día', manana:'mañana',
+ despues:'después', aqui:'aquí', alli:'allí', mas:'más', facil:'fácil', dificil:'difícil',
+ telefono:'teléfono', numero:'número', rapido:'rápido', ultimo:'último', pequena:'pequeña',
+ pequeno:'pequeño', anos:'años', ano:'año', adios:'adiós', explicame:'explícame', decime:'decime',
+ queres:'querés', tenes:'tenés', podes:'podés', estas:'estás', como:'cómo', que:'qué', quien:'quién',
+ cuando:'cuándo', donde:'dónde', porque:'porque', tambien:'también', emocion:'emoción', informacion:'información',
+ descripcion:'descripción', mision:'misión', comunicacion:'comunicación', situacion:'situación',
+ energia:'energía', bateria:'batería', estacion:'estación', mutacion:'mutación', biologico:'biológico'
+};
+function swipeBase(word){return String(word).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ñ/g,'ñ').toLowerCase()}
+const swipeWords = [...new Set(swipeDictionary.map(w=>accentPreferred[swipeBase(w)]||w))];
+function keyCenter(letter){
+ const key=pdaKeys.querySelector(`button[data-k="${letter}"]`);
+ if(!key)return null;
+ const r=key.getBoundingClientRect();
+ return {x:r.left+r.width/2,y:r.top+r.height/2};
+}
+function pointSegmentDistance(p,a,b){
+ const dx=b.x-a.x,dy=b.y-a.y;
+ const len=dx*dx+dy*dy;
+ if(!len)return Math.hypot(p.x-a.x,p.y-a.y);
+ const t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/len));
+ return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy));
+}
+function distanceToPath(p,path){
+ if(path.length===1)return Math.hypot(p.x-path[0].x,p.y-path[0].y);
+ let best=Infinity;
+ for(let i=1;i<path.length;i++)best=Math.min(best,pointSegmentDistance(p,path[i-1],path[i]));
+ return best;
+}
+let learnedSwipeWords=get('swipe_words',[]);
+let swipeFrequency=get('swipe_frequency',{});
+function rememberSwipeWord(word){
+ const clean=String(word||'').toLocaleLowerCase('es-AR').trim();
+ if(!/^[a-zñáéíóúü]{2,24}$/i.test(clean))return;
+ if(!learnedSwipeWords.includes(clean))learnedSwipeWords.push(clean);
+ swipeFrequency[clean]=(swipeFrequency[clean]||0)+1;
+ localStorage.setItem('zona_swipe_words',JSON.stringify(learnedSwipeWords));
+ localStorage.setItem('zona_swipe_frequency',JSON.stringify(swipeFrequency));
+}
+function rankSwipeWords(points){
+ if(points.length<3)return [];
+ const sampleStep=Math.max(1,Math.floor(points.length/55));
+ const samples=points.filter((_,i)=>i%sampleStep===0);
+ const keyRects=[...pdaKeys.querySelectorAll('button[data-k]')].filter(b=>/^[a-zñ]$/i.test(b.dataset.k));
+ const keyWidth=keyRects.length?keyRects[0].getBoundingClientRect().width:32;
+ const candidates=[...new Set([...learnedSwipeWords,...swipeWords])];
+ const ranked=[];
+ for(const word of candidates){
+  if(word.length<2||word.length>24)continue;
+  const centers=[...swipeBase(word)].map(keyCenter);
+  if(centers.some(p=>!p))continue;
+  let actualError=0;
+  for(const p of samples)actualError+=distanceToPath(p,centers);
+  actualError/=samples.length;
+  let reverseError=0;
+  for(const p of centers)reverseError+=distanceToPath(p,samples);
+  reverseError/=centers.length;
+  const lengthPenalty=Math.abs(word.length-samples.length/7)*keyWidth*.035;
+  const frequencyBonus=Math.min(0.12,Math.log1p(swipeFrequency[word]||0)*0.025);
+  const score=(actualError*.72+reverseError*.28+lengthPenalty)/keyWidth-frequencyBonus;
+  ranked.push({word,score});
+ }
+ ranked.sort((a,b)=>a.score-b.score);
+ return ranked.filter(x=>x.score<=0.78).slice(0,3);
+}
+function showSwipeSuggestions(points){
+ const strip=$('swipeSuggestions');
+ const ranked=rankSwipeWords(points);
+ if(!ranked.length){strip.innerHTML='<span class="suggestion-hint">BUSCANDO PALABRA…</span>';return}
+ strip.innerHTML=ranked.map((x,i)=>`<button type="button" data-suggestion="${esc(x.word)}" class="${i===0?'primary-suggestion':''}">${esc(x.word)}</button>`).join('');
+}
+function hideSwipeSuggestions(){
+ $('swipeSuggestions').innerHTML='<span class="suggestion-hint">DESLIZÁ PARA ESCRIBIR</span>';
+}
+
+let swipeActive=false,swipeLetters=[],swipeLast='',swipeMoved=false,suppressKeyClick=false,swipePoints=[];
+const swipeTrail=$('swipeTrail'),swipeTrailPath=$('swipeTrailPath');
+function drawSwipeTrail(){
+ const rect=pdaKeys.getBoundingClientRect();
+ swipeTrail.setAttribute('viewBox',`0 0 ${Math.max(1,rect.width)} ${Math.max(1,rect.height)}`);
+ if(!swipePoints.length){swipeTrailPath.setAttribute('d','');return}
+ const d=swipePoints.map((pt,i)=>`${i?'L':'M'} ${(pt.x-rect.left).toFixed(1)} ${(pt.y-rect.top).toFixed(1)}`).join(' ');
+ swipeTrailPath.setAttribute('d',d);
+}
+function clearSwipeTrail(){
+ swipeTrail.classList.add('fading');
+ setTimeout(()=>{swipeTrailPath.setAttribute('d','');swipeTrail.classList.remove('fading')},230);
+}
+pdaKeys.addEventListener('pointerdown',e=>{
+ const b=e.target.closest('button[data-k]');if(!b)return;
+ if(/^[a-zñ]$/i.test(b.dataset.k)){
+  swipeActive=true;swipeLetters=[b.dataset.k.toLowerCase()];swipeLast=b.dataset.k;swipeMoved=false;
+  swipePoints=[{x:e.clientX,y:e.clientY}];swipeTrail.classList.remove('fading');drawSwipeTrail();hideSwipeSuggestions();
+  b.classList.add('swipe-hit');e.preventDefault();
+ }
+});
+document.addEventListener('pointermove',e=>{
+ if(!swipeActive)return;
+ const lastPoint=swipePoints[swipePoints.length-1];
+ if(!lastPoint||Math.hypot(e.clientX-lastPoint.x,e.clientY-lastPoint.y)>2){
+  swipePoints.push({x:e.clientX,y:e.clientY});drawSwipeTrail();
+  if(Math.hypot(e.clientX-swipePoints[0].x,e.clientY-swipePoints[0].y)>7){swipeMoved=true;showSwipeSuggestions(swipePoints)}
+ }
+ const b=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('#pdaKeyboard button[data-k]');
+ if(b&&/^[a-zñ]$/i.test(b.dataset.k)&&b.dataset.k!==swipeLast){
+  swipeLast=b.dataset.k;swipeLetters.push(b.dataset.k.toLowerCase());b.classList.add('swipe-hit');
+ }
+});
+function finishSwipe(){
+ if(!swipeActive)return;swipeActive=false;
+ pdaKeys.querySelectorAll('.swipe-hit').forEach(b=>b.classList.remove('swipe-hit'));
+ if(swipeMoved&&swipeLetters.length>1){
+  const ranked=rankSwipeWords(swipePoints);
+  if(ranked.length){
+   // Dejar las predicciones visibles al levantar el dedo para que el usuario elija.
+   const strip=$('swipeSuggestions');
+   strip.innerHTML=ranked.map((x,i)=>`<button type="button" data-suggestion="${esc(x.word)}" class="${i===0?'primary-suggestion':''}">${esc(x.word)}</button>`).join('');
+  }else{
+   const typed=swipeLetters.join('');
+   insertPdaText(((shiftOn||capsLock)?typed.toUpperCase():typed)+' ');
+   if(!capsLock)shiftOn=false;
+   hideSwipeSuggestions();
+  }
+  suppressKeyClick=true;setTimeout(()=>suppressKeyClick=false,250);
+ }else{
+  hideSwipeSuggestions();
+ }
+ swipeLetters=[];swipeLast='';swipePoints=[];clearSwipeTrail();
+}
+document.addEventListener('pointerup',finishSwipe);
+document.addEventListener('pointercancel',finishSwipe);
+window.addEventListener('resize',()=>{if(swipeActive)drawSwipeTrail()});
+$('swipeSuggestions').addEventListener('click',e=>{
+ e.stopPropagation();
+ const choice=e.target.closest('button[data-suggestion]');if(!choice||!activeField)return;
+ const word=choice.dataset.suggestion;
+ insertPdaText(((shiftOn||capsLock)?word.toUpperCase():word)+' ');
+ if(!capsLock)shiftOn=false;
+ rememberSwipeWord(word);
+ // Mantener el teclado abierto para seguir escribiendo sin volver a abrirlo.
+ pdaKeys.classList.remove('hidden');
+ document.body.classList.add('keyboard-visible');
+ hideSwipeSuggestions();updateShiftKey();
+ suppressKeyClick=true;setTimeout(()=>suppressKeyClick=false,250);
+});
+pdaKeys.addEventListener('click',e=>{
+ const btn=e.target.closest('button[data-k]'); if(!btn)return;
+ if(suppressKeyClick){e.preventDefault();return}
+ const k=btn.dataset.k;
+ if(k==='hide'||k==='done'){closePdaKeyboard();return}
+ if(k==='shift'){const now=Date.now();if(capsLock){capsLock=false;shiftOn=false}else if(shiftOn&&now-lastShiftTap<500){capsLock=true;shiftOn=true}else{shiftOn=true}lastShiftTap=now;updateShiftKey();return}
+ if(k==='symbols'){symbolMode=!symbolMode;$('letterLayout').classList.toggle('hidden',symbolMode);$('numberLayout').classList.toggle('hidden',!symbolMode);$('keyboardModeBtn').textContent=symbolMode?'ABC':'?123';hideSwipeSuggestions();return}
+ if(k==='mic'){dictate();return}
+ if(k==='paste'){pasteFromClipboard();return}
+ if(!activeField)return;
+ if(k==='back'){
+  const el=activeField,start=el.selectionStart??el.value.length,end=el.selectionEnd??el.value.length;
+  if(start!==end){el.value=el.value.slice(0,start)+el.value.slice(end);el.setSelectionRange(start,start)}
+  else if(start>0){el.value=el.value.slice(0,start-1)+el.value.slice(end);el.setSelectionRange(start-1,start-1)}
+  el.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();
+ }else if(k==='space'){
+  const el=activeField, cursor=el.selectionStart??el.value.length;
+  const before=el.value.slice(0,cursor), match=before.match(/[a-zñáéíóúü]+$/i);
+  const lastWord=match?.[0]||'';
+  if(lastWord){
+   rememberSwipeWord(lastWord);
+   const corrected=accentPreferred[swipeBase(lastWord)];
+   if(corrected && corrected!==lastWord.toLocaleLowerCase('es-AR')){
+    const start=cursor-lastWord.length;el.value=el.value.slice(0,start)+corrected+el.value.slice(cursor);
+    el.setSelectionRange(start+corrected.length,start+corrected.length);
+    el.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();
+   }
+  }
+  if(!el.value.slice(0,el.selectionStart??el.value.length).endsWith(' '))insertPdaText(' ');
+ }
+ else if(k==='newline')insertPdaText('\\n');
+ else if(/^[a-zñáéíóúü]$/i.test(k)||/^[0-9]$/.test(k)||'!?.,@#$%&-+()*\"\':;/\\_='.includes(k))insertPdaText((shiftOn||capsLock)?k.toLocaleUpperCase('es-AR'):k.toLocaleLowerCase('es-AR'));
+ if(/^[a-zñáéíóúü]$/i.test(k))consumeShift();
+ updateShiftKey();if(activeField)activeField.focus({preventScroll:true});
+});
+document.addEventListener('click',e=>{
+ if(!pdaKeys.classList.contains('hidden') && !e.target.closest('#pdaKeyboard') && !e.target.closest('input,textarea'))closePdaKeyboard();
+});
+
+// Multimedia local: IndexedDB mantiene fotos y pistas fuera del almacenamiento de texto.
+const MEDIA_DB='pda_zona_media_v1',MEDIA_STORE='media';let mediaDB=null,galleryItems=[],musicItems=[],currentTrackId=null,currentObjectUrl=null,sleepTimeout=null,sleepEndsAt=0,eqContext=null,eqSource=null,eqFilters=[];
+function openMediaDB(){return new Promise((resolve,reject)=>{if(mediaDB){resolve(mediaDB);return}const req=indexedDB.open(MEDIA_DB,1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(MEDIA_STORE))db.createObjectStore(MEDIA_STORE,{keyPath:'id'})};req.onsuccess=()=>{mediaDB=req.result;resolve(mediaDB)};req.onerror=()=>reject(req.error||new Error('No se pudo abrir el almacenamiento multimedia'))})}
+async function mediaPut(item){const db=await openMediaDB();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,'readwrite');tx.objectStore(MEDIA_STORE).put(item);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})}
+async function mediaDelete(id){const db=await openMediaDB();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,'readwrite');tx.objectStore(MEDIA_STORE).delete(id);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)})}
+async function mediaAll(){const db=await openMediaDB();return new Promise((resolve,reject)=>{const tx=db.transaction(MEDIA_STORE,'readonly'),req=tx.objectStore(MEDIA_STORE).getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error)})}
+function mediaId(){return 'media_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
+function fmtTime(value){if(!Number.isFinite(value))return '0:00';const n=Math.max(0,Math.floor(value));return Math.floor(n/60)+':'+String(n%60).padStart(2,'0')}
+async function loadGallery(){try{galleryItems=(await mediaAll()).filter(x=>x.kind==='photo').sort((a,b)=>b.created-a.created);renderGallery()}catch(e){$('galleryGrid').innerHTML='<div class="empty">No se pudo abrir la galería. Revisá el almacenamiento del navegador.</div>'}}
+function renderGallery(){galleryObjectUrls.forEach(u=>URL.revokeObjectURL(u));galleryObjectUrls=[];$('galleryCount').textContent=galleryItems.length+' FOTOS';$('galleryGrid').innerHTML=galleryItems.map(x=>{const url=URL.createObjectURL(x.blob);galleryObjectUrls.push(url);return `<div class="media-card"><img class="media-thumb" data-photo="${esc(x.id)}" src="${url}" alt="${esc(x.name)}"><div class="media-muted" style="overflow-wrap:anywhere">${esc(x.name)}</div></div>`}).join('')||'<div class="empty">Todavía no hay fotografías.</div>'}
+async function addPhotos(files){for(const file of [...files]){if(!file.type.startsWith('image/'))continue;try{await mediaPut({id:mediaId(),kind:'photo',name:file.name||'Fotografía',type:file.type,blob:file,created:Date.now()})}catch(e){alert('No se pudo guardar '+file.name+'. Puede faltar espacio disponible.');break}}await loadGallery()}
+let openedPhotoId=null,galleryObjectUrls=[];function openGalleryPhoto(id){const item=galleryItems.find(x=>x.id===id);if(!item)return;openedPhotoId=id;$('galleryLarge').src=URL.createObjectURL(item.blob);$('galleryOverlay').classList.add('open')}
+async function deleteOpenedPhoto(){if(!openedPhotoId||!confirm('¿Eliminar esta fotografía de este dispositivo?'))return;await mediaDelete(openedPhotoId);$('galleryOverlay').classList.remove('open');$('galleryLarge').src='';openedPhotoId=null;await loadGallery()}
+$('galleryCamera').onclick=()=>$('galleryCameraInput').click();$('galleryChoose').onclick=()=>$('galleryFileInput').click();$('galleryCameraInput').onchange=async e=>{await addPhotos(e.target.files||[]);e.target.value=''};$('galleryFileInput').onchange=async e=>{await addPhotos(e.target.files||[]);e.target.value=''};$('galleryGrid').onclick=e=>{const img=e.target.closest('[data-photo]');if(img)openGalleryPhoto(img.dataset.photo)};$('galleryClose').onclick=()=>{$('galleryOverlay').classList.remove('open');$('galleryLarge').src='';openedPhotoId=null};$('galleryDelete').onclick=deleteOpenedPhoto;$('galleryOverlay').onclick=e=>{if(e.target===$('galleryOverlay'))$('galleryClose').click()};
+function setupEqualizer(){const audio=$('zonaAudio');if(eqContext)return;const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;try{eqContext=new Ctx();eqSource=eqContext.createMediaElementSource(audio);const freqs=[60,250,1000,4000,12000];eqFilters=freqs.map((f,i)=>{const node=eqContext.createBiquadFilter();node.type=i===0?'lowshelf':i===4?'highshelf':'peaking';node.frequency.value=f;node.Q.value=1;node.gain.value=Number(document.querySelector(`.eq-slider[data-freq="${f}"]`).value);return node});eqSource.connect(eqFilters[0]);for(let i=0;i<eqFilters.length-1;i++)eqFilters[i].connect(eqFilters[i+1]);eqFilters.at(-1).connect(eqContext.destination)}catch(e){eqContext=null;eqFilters=[]}}
+function applyEQ(){const values=[...document.querySelectorAll('.eq-slider')].map(el=>Number(el.value));localStorage.setItem('zona_music_eq',JSON.stringify(values));if(!eqFilters.length)return;document.querySelectorAll('.eq-slider').forEach((el,i)=>{eqFilters[i].gain.setTargetAtTime(Number(el.value),eqContext.currentTime,.025)})}
+document.querySelectorAll('.eq-slider').forEach(el=>el.addEventListener('input',applyEQ));$('resetEQ').onclick=()=>{document.querySelectorAll('.eq-slider').forEach(el=>el.value=0);applyEQ();localStorage.setItem('zona_music_eq','[0,0,0,0,0]')};
+async function loadMusic(){try{musicItems=(await mediaAll()).filter(x=>x.kind==='track').sort((a,b)=>a.created-b.created);renderTracks()}catch(e){$('trackList').innerHTML='<div class="empty">No se pudo abrir la lista de música.</div>'}}
+function renderTracks(){$('trackCount').textContent=musicItems.length+' PISTAS';$('trackList').innerHTML=musicItems.map((x,i)=>`<div class="item"><div class="avatar">♫</div><div class="meta"><b>${esc(x.name)}</b><p>${esc(x.type||'Audio')}</p></div><button class="btn" data-play-track="${esc(x.id)}">▶</button><button class="delete-one" data-delete-track="${esc(x.id)}" title="Eliminar pista">×</button></div>`).join('')||'<div class="empty">Todavía no hay música cargada.</div>'}
+async function addTracks(files){for(const file of [...files]){if(!file.type.startsWith('audio/')&&!/\.(mp3|m4a|ogg|wav|flac|aac)$/i.test(file.name))continue;try{await mediaPut({id:mediaId(),kind:'track',name:file.name.replace(/\.[^.]+$/,''),type:file.type,blob:file,created:Date.now()})}catch(e){alert('No se pudo guardar '+file.name+'. Puede faltar espacio disponible.');break}}await loadMusic()}
+function updatePlayerUI(){$('playTrack').textContent=$('zonaAudio').paused?'▶':'Ⅱ';$('playerStatus').textContent=$('zonaAudio').paused?'EN PAUSA':'REPRODUCIENDO';$('playerDisc').classList.toggle('playing',!$('zonaAudio').paused);$('trackProgress').value=$('zonaAudio').duration?Math.round($('zonaAudio').currentTime/$('zonaAudio').duration*1000):0;$('currentTime').textContent=fmtTime($('zonaAudio').currentTime);$('durationTime').textContent=fmtTime($('zonaAudio').duration)}
+async function playTrack(id,autoplay=true){const item=musicItems.find(x=>x.id===id);if(!item)return;const audio=$('zonaAudio');if(currentTrackId!==id){if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=URL.createObjectURL(item.blob);audio.src=currentObjectUrl;currentTrackId=id;$('trackTitle').textContent=item.name;$('trackArtist').textContent='BIBLIOTECA LOCAL · '+(musicItems.findIndex(x=>x.id===id)+1)+'/'+musicItems.length;$('discLabel').textContent=item.name;audio.load()}if(autoplay){try{setupEqualizer();if(eqContext?.state==='suspended')await eqContext.resume();audio.volume=Number($('playerVolume').value);await audio.play();if('mediaSession'in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:item.name,artist:'PDA // ZONA',album:'Biblioteca local'});navigator.mediaSession.playbackState='playing'} }catch(e){alert('El navegador no pudo reproducir este archivo. Probá con MP3 o M4A.')}}updatePlayerUI()}
+function stepTrack(direction){if(!musicItems.length)return;let i=musicItems.findIndex(x=>x.id===currentTrackId);i=i<0?(direction>0?0:musicItems.length-1):(i+direction+musicItems.length)%musicItems.length;playTrack(musicItems[i].id,true)}
+$('addTracks').onclick=()=>$('trackFileInput').click();$('trackFileInput').onchange=async e=>{await addTracks(e.target.files||[]);e.target.value=''};$('trackList').onclick=e=>{const play=e.target.closest('[data-play-track]'),del=e.target.closest('[data-delete-track]');if(play)playTrack(play.dataset.playTrack,true);if(del)removeTrack(del.dataset.deleteTrack)};
+async function removeTrack(id){if(!confirm('¿Eliminar esta pista de la biblioteca?'))return;if(currentTrackId===id){$('zonaAudio').pause();$('zonaAudio').removeAttribute('src');$('zonaAudio').load();if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=null;currentTrackId=null;$('trackTitle').textContent='Ninguna pista seleccionada';$('trackArtist').textContent='Cargá música desde tu dispositivo';updatePlayerUI()}await mediaDelete(id);await loadMusic()}
+$('clearTracks').onclick=async()=>{if(!musicItems.length||!confirm('¿Eliminar todas las pistas guardadas en este dispositivo?'))return;$('zonaAudio').pause();for(const item of musicItems)await mediaDelete(item.id);if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=null;currentTrackId=null;$('trackTitle').textContent='Ninguna pista seleccionada';await loadMusic();updatePlayerUI()};$('playTrack').onclick=()=>{const a=$('zonaAudio');if(a.paused){if(currentTrackId)playTrack(currentTrackId,true);else if(musicItems.length)playTrack(musicItems[0].id,true)}else a.pause()};$('prevTrack').onclick=()=>stepTrack(-1);$('nextTrack').onclick=()=>stepTrack(1);$('zonaAudio').addEventListener('timeupdate',updatePlayerUI);$('zonaAudio').addEventListener('loadedmetadata',updatePlayerUI);$('zonaAudio').addEventListener('play',updatePlayerUI);$('zonaAudio').addEventListener('pause',()=>{updatePlayerUI();if('mediaSession'in navigator)navigator.mediaSession.playbackState='paused'});$('zonaAudio').addEventListener('ended',()=>stepTrack(1));$('trackProgress').oninput=e=>{const a=$('zonaAudio');if(a.duration)a.currentTime=a.duration*Number(e.target.value)/1000};$('playerVolume').oninput=e=>{const v=Number(e.target.value);$('zonaAudio').volume=v;$('volumeValue').textContent=Math.round(v*100)+'%';localStorage.setItem('zona_music_volume',String(v))};$('zonaAudio').volume=Number(localStorage.getItem('zona_music_volume')||.8);$('playerVolume').value=$('zonaAudio').volume;$('volumeValue').textContent=Math.round($('zonaAudio').volume*100)+'%';
+if('mediaSession'in navigator){try{navigator.mediaSession.setActionHandler('play',()=>playTrack(currentTrackId||musicItems[0]?.id,true));navigator.mediaSession.setActionHandler('pause',()=>$('zonaAudio').pause());navigator.mediaSession.setActionHandler('previoustrack',()=>stepTrack(-1));navigator.mediaSession.setActionHandler('nexttrack',()=>stepTrack(1));navigator.mediaSession.setActionHandler('seekbackward',d=>{$('zonaAudio').currentTime=Math.max(0,$('zonaAudio').currentTime-(d.seekOffset||10))});navigator.mediaSession.setActionHandler('seekforward',d=>{$('zonaAudio').currentTime=Math.min($('zonaAudio').duration||Infinity,$('zonaAudio').currentTime+(d.seekOffset||10))})}catch(e){}}
+function cancelSleepTimer(){if(sleepTimeout)clearTimeout(sleepTimeout);sleepTimeout=null;sleepEndsAt=0;$('sleepStatus').textContent='Sin temporizador activo.';$('sleepTimer').value='0'}function startSleepTimer(minutes){cancelSleepTimer();if(!minutes)return;sleepEndsAt=Date.now()+minutes*60000;sleepTimeout=setTimeout(()=>{$('zonaAudio').pause();cancelSleepTimer();$('sleepStatus').textContent='Temporizador finalizado · reproducción detenida.'},minutes*60000);$('sleepStatus').textContent='La música se detendrá en '+minutes+' minutos.'}$('sleepTimer').onchange=e=>startSleepTimer(Number(e.target.value));$('cancelSleep').onclick=cancelSleepTimer;
+// La reproducción permanece en el mismo elemento de audio al cambiar de sección; Android/Chrome puede mostrar controles de pantalla bloqueada.
+async function initMediaModules(){await Promise.all([loadGallery(),loadMusic()]);const saved=JSON.parse(localStorage.getItem('zona_music_eq')||'[0,0,0,0,0]');document.querySelectorAll('.eq-slider').forEach((el,i)=>el.value=Number(saved[i]||0));}
+initMediaModules().catch(e=>console.warn('Multimedia PDA:',e));
+
+initRichEditors();restoreDrafts();renderContacts();renderM();renderN();renderEncyclopedia();home();renderTrato();
+if ('serviceWorker' in navigator) {
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('PDA offline:',err)));
+}
+</script></body></html>
