@@ -36,6 +36,15 @@ body.keyboard-visible footer{display:none}
 .chatbox.keyboard-open{height:22vh}
 @media(max-width:480px){header .row:first-child{align-items:flex-start}#fullscreenBtn{font-size:10px;padding:7px 8px;white-space:normal;max-width:116px}.keyrow button{padding:10px 1px;font-size:13px}}
 
+
+/* Editor enriquecido PDA: el contenido se guarda como texto con etiquetas seguras */
+.rich-toolbar{display:flex;flex-wrap:wrap;gap:5px;padding:7px;margin:6px 0 4px;background:#11190f;border:1px solid var(--line);border-radius:4px;align-items:center}
+.rich-toolbar button{padding:7px 9px;background:#293821;color:#e8f4d8;border:1px solid #536744;border-radius:3px;font-weight:800;min-width:34px}
+.rich-toolbar select{width:auto;max-width:125px;padding:7px 6px;font-size:12px}
+.rich-toolbar .color-choice{width:26px;min-width:26px;height:26px;padding:0;border-radius:50%;border:2px solid #d5e6c4}
+.rich-help{font-size:10px;color:var(--m);width:100%;padding:0 2px}
+.rich-output{overflow-wrap:anywhere}
+
 </style></head><body>
 <header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><button class="btn" id="fullscreenBtn">⛶ PANTALLA COMPLETA</button></div><div class="row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span></div></header>
 <nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="data">DATOS</button></nav>
@@ -54,18 +63,19 @@ body.keyboard-visible footer{display:none}
 <div id="pdaKeyboard" class="hidden" aria-label="Teclado PDA">
  <div id="swipeSuggestions" aria-live="polite"><span class="suggestion-hint">DESLIZÁ PARA ESCRIBIR</span></div>
  <svg id="swipeTrail" aria-hidden="true"><path id="swipeTrailPath" d=""></path></svg>
- <div class="keyrow tools"><button data-k="hide">▼ OCULTAR</button><button data-k="shift">⇧ MAYÚS</button><button data-k="symbols" id="keyboardModeBtn">?123</button><button data-k="back">⌫ BORRAR</button><button data-k="mic" class="action">🎙 DICTAR</button></div>
+ <div class="keyrow tools"><button data-k="hide">▼ OCULTAR</button><button data-k="shift">⇧ MAYÚS</button><button data-k="symbols" id="keyboardModeBtn">?123</button><button data-k="back">⌫ BORRAR</button><button data-k="paste" class="action">📋 PEGAR</button><button data-k="mic" class="action">🎙 DICTAR</button></div>
  <div id="letterLayout">
   <div class="keyrow"><button data-k="q">Q</button><button data-k="w">W</button><button data-k="e">E</button><button data-k="r">R</button><button data-k="t">T</button><button data-k="y">Y</button><button data-k="u">U</button><button data-k="i">I</button><button data-k="o">O</button><button data-k="p">P</button></div>
   <div class="keyrow"><button data-k="a">A</button><button data-k="s">S</button><button data-k="d">D</button><button data-k="f">F</button><button data-k="g">G</button><button data-k="h">H</button><button data-k="j">J</button><button data-k="k">K</button><button data-k="l">L</button><button data-k="ñ">Ñ</button></div>
   <div class="keyrow"><button data-k="z">Z</button><button data-k="x">X</button><button data-k="c">C</button><button data-k="v">V</button><button data-k="b">B</button><button data-k="n">N</button><button data-k="m">M</button><button data-k=",">,</button><button data-k=".">.</button></div>
-  <div class="keyrow"><button data-k="!">!</button><button data-k="?">?</button><button data-k="space" class="wide">ESPACIO</button><button data-k="newline">↵</button><button data-k="done" class="action">LISTO</button></div>
+  <div class="keyrow accents"><button data-k="á">á</button><button data-k="é">é</button><button data-k="í">í</button><button data-k="ó">ó</button><button data-k="ú">ú</button><button data-k="ü">ü</button></div>
+ <div class="keyrow"><button data-k="!">!</button><button data-k="?">?</button><button data-k="space" class="wide">ESPACIO</button><button data-k="newline">↵</button><button data-k="done" class="action">LISTO</button></div>
  </div>
  <div id="numberLayout" class="hidden">
   <div class="keyrow"><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="0">0</button></div>
   <div class="keyrow"><button data-k="@">@</button><button data-k="#">#</button><button data-k="$">$</button><button data-k="%">%</button><button data-k="&amp;">&amp;</button><button data-k="-">−</button><button data-k="+">+</button><button data-k="(">(</button><button data-k=")">)</button></div>
   <div class="keyrow"><button data-k="*">*</button><button data-k='"'>"</button><button data-k="'">'</button><button data-k=":">:</button><button data-k=";">;</button><button data-k="/">/</button><button data-k="\">\</button><button data-k="_">_</button><button data-k="=">=</button></div>
-  <div class="keyrow"><button data-k="!">!</button><button data-k="?">?</button><button data-k=",">,</button><button data-k=".">.</button><button data-k="space" class="wide">ESPACIO</button><button data-k="newline">↵</button><button data-k="done" class="action">LISTO</button></div>
+ <div class="keyrow"><button data-k="!">!</button><button data-k="?">?</button><button data-k=",">,</button><button data-k=".">.</button><button data-k="space" class="wide">ESPACIO</button><button data-k="newline">↵</button><button data-k="done" class="action">LISTO</button></div>
  </div>
 </div>
 <script>
@@ -88,19 +98,56 @@ function clearDraft(id){let d=get('drafts',{});delete d[id];localStorage.setItem
 function restoreDrafts(){let d=get('drafts',{});draftFields().forEach(el=>{if(el.id&&Object.prototype.hasOwnProperty.call(d,el.id))el.value=d[el.id]});}
 
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function richText(value){
+ let out=esc(value??'');
+ out=out.replace(/\[b\]([\s\S]*?)\[\/b\]/gi,'<strong>$1</strong>')
+  .replace(/\[i\]([\s\S]*?)\[\/i\]/gi,'<em>$1</em>')
+  .replace(/\[u\]([\s\S]*?)\[\/u\]/gi,'<u>$1</u>')
+  .replace(/\[s\]([\s\S]*?)\[\/s\]/gi,'<s>$1</s>')
+  .replace(/\[color=(#[0-9a-f]{6})\]([\s\S]*?)\[\/color\]/gi,(_,c,t)=>`<span style="color:${c}">${t}</span>`)
+  .replace(/\[size=(small|normal|large|huge)\]([\s\S]*?)\[\/size\]/gi,(_,z,t)=>`<span style="font-size:${({small:'12px',normal:'15px',large:'19px',huge:'24px'})[z]}">${t}</span>`)
+  .replace(/\[font=(mono|serif|sans)\]([\s\S]*?)\[\/font\]/gi,(_,f,t)=>`<span style="font-family:${({mono:'monospace',serif:'Georgia,serif',sans:'Arial,sans-serif'})[f]}">${t}</span>`);
+ return out.replace(/\r?\n/g,'<br>');
+}
+function rememberRichSelection(field){if(!field)return;field._richSelection={start:field.selectionStart??field.value.length,end:field.selectionEnd??field.value.length};}
+function applyRichTag(field,tag,value){
+ if(!field)return;const saved=field._richSelection;const start=saved?.start??field.selectionStart??field.value.length,end=saved?.end??field.selectionEnd??field.value.length;
+ const open=tag==='color'?'[color='+value+']':tag==='size'?'[size='+value+']':tag==='font'?'[font='+value+']':'['+tag+']';
+ const close='[/'+tag+']',selected=field.value.slice(start,end),replacement=open+selected+close;
+ field.value=field.value.slice(0,start)+replacement+field.value.slice(end);
+ const caret=selected?start+replacement.length:start+open.length;
+ field.setSelectionRange(caret,caret);field._richSelection={start:caret,end:caret};field.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();field.focus({preventScroll:true});
+}
+function initRichEditors(){
+ const targets=Array.from(document.querySelectorAll('textarea:not([disabled])'));
+ targets.forEach(field=>{
+  if(field.dataset.richReady)return;field.dataset.richReady='1';
+  const bar=document.createElement('div');bar.className='rich-toolbar';bar.setAttribute('aria-label','Herramientas de formato');
+  field.addEventListener('select',()=>rememberRichSelection(field));field.addEventListener('keyup',()=>rememberRichSelection(field));field.addEventListener('click',()=>rememberRichSelection(field));field.addEventListener('input',()=>rememberRichSelection(field));
+  const addButton=(label,tag,title)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.addEventListener('pointerdown',e=>e.preventDefault());b.addEventListener('click',()=>applyRichTag(field,tag));bar.appendChild(b)};
+  addButton('B','b','Negrita');addButton('I','i','Cursiva');addButton('U','u','Subrayado');addButton('S','s','Tachado');
+  const color=document.createElement('select');color.setAttribute('aria-label','Color de letra');color.innerHTML='<option value="#c6df9c">Color</option><option value="#ffffff">Blanco</option><option value="#ff5555">Rojo</option><option value="#55dd88">Verde</option><option value="#55aaff">Azul</option><option value="#ffd84d">Amarillo</option><option value="#ff9b45">Naranja</option><option value="#d18cff">Violeta</option><option value="#ff83c6">Rosa</option>';
+  color.addEventListener('pointerdown',()=>rememberRichSelection(field));color.addEventListener('change',()=>{applyRichTag(field,'color',color.value);color.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(color);
+  const size=document.createElement('select');size.setAttribute('aria-label','Tamaño de letra');size.innerHTML='<option value="normal">Tamaño</option><option value="small">Pequeño</option><option value="normal">Normal</option><option value="large">Grande</option><option value="huge">Extra grande</option>';size.addEventListener('pointerdown',()=>rememberRichSelection(field));size.addEventListener('change',()=>{applyRichTag(field,'size',size.value);size.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(size);
+  const font=document.createElement('select');font.setAttribute('aria-label','Tipo de letra');font.innerHTML='<option value="sans">Fuente</option><option value="sans">Sans</option><option value="serif">Serif</option><option value="mono">Monoespaciada</option>';font.addEventListener('pointerdown',()=>rememberRichSelection(field));font.addEventListener('change',()=>{applyRichTag(field,'font',font.value);font.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(font);
+  const help=document.createElement('div');help.className='rich-help';help.textContent='Seleccioná texto y elegí formato. Si no seleccionás, el formato queda listo para escribir con el teclado PDA.';bar.appendChild(help);
+  field.parentNode.insertBefore(bar,field);
+ });
+}
+
 function go(t){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===t));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));if(t==='chat')renderChat();if(t==='relationship')renderTrato();if(t==='emissions')renderEmissions()}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
 function home(){$('cc').textContent=contacts.length;$('mc').textContent=Object.values(chats).flat().length;$('xc').textContent=missions.filter(x=>!x.done).length;$('nc').textContent=notes.length;$('activity').textContent=notes[0]?.title||missions[0]?.title||'Sin actividad registrada.'}
 function vital(c){return c.vital||'alive'}
 function vitalLabel(v){return v==='dead'?'MUERTO':v==='lost'?'PERDIDO':'VIVO'}
-function renderContacts(){$('contactList').innerHTML=contacts.map(c=>`<div class="item">${c.photo?`<img class="contact-avatar" src="${c.photo}" alt="Foto de ${esc(c.name)}">`:`<div class="avatar">${esc(c.name.slice(0,2))}</div>`}<div class="meta"><b>${esc(c.name)}</b><p>${esc(c.role)}</p><div class="statusline"><span class="statusdot status-${vital(c)}"></span>${vitalLabel(vital(c))}</div></div><select class="statusSelect" aria-label="Estado vital" onchange="setVital('${c.id}',this.value)"><option value="alive" ${vital(c)==='alive'?'selected':''}>🟢 Vivo</option><option value="dead" ${vital(c)==='dead'?'selected':''}>🔴 Muerto</option><option value="lost" ${vital(c)==='lost'?'selected':''}>🟡 Perdido</option></select><button onclick="editC('${c.id}')">EDITAR</button><button class="btn" onclick="chatC('${c.id}')">CHAT</button></div>`).join('')||'<div class="empty">Sin contactos.</div>';$('chatWho').innerHTML=contacts.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');$('tratoWho').innerHTML=contacts.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');renderTrato()}
+function renderContacts(){$('contactList').innerHTML=contacts.map(c=>`<div class="item">${c.photo?`<img class="contact-avatar" src="${c.photo}" alt="Foto de ${esc(c.name)}">`:`<div class="avatar">${esc(c.name.slice(0,2))}</div>`}<div class="meta"><b>${esc(c.name)}</b><p>${esc(c.role)}</p>${c.bio?`<div class="rich-output" style="font-size:12px;margin:5px 0">${richText(c.bio)}</div>`:''}<div class="statusline"><span class="statusdot status-${vital(c)}"></span>${vitalLabel(vital(c))}</div></div><select class="statusSelect" aria-label="Estado vital" onchange="setVital('${c.id}',this.value)"><option value="alive" ${vital(c)==='alive'?'selected':''}>🟢 Vivo</option><option value="dead" ${vital(c)==='dead'?'selected':''}>🔴 Muerto</option><option value="lost" ${vital(c)==='lost'?'selected':''}>🟡 Perdido</option></select><button onclick="editC('${c.id}')">EDITAR</button><button class="btn" onclick="chatC('${c.id}')">CHAT</button></div>`).join('')||'<div class="empty">Sin contactos.</div>';$('chatWho').innerHTML=contacts.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');$('tratoWho').innerHTML=contacts.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');renderTrato()}
 window.setVital=(id,v)=>{let c=contacts.find(x=>x.id===id);if(c){c.vital=v;save();renderContacts()}};
 let contactPhotoData='';function showContactPhoto(){const has=!!contactPhotoData;$('cPhotoPreview').style.display=has?'block':'none';$('cPhotoPreview').src=has?contactPhotoData:'';$('cPhotoPlaceholder').style.display=has?'none':'flex'}$('chooseCPhoto').onclick=()=>$('cPhotoInput').click();$('cPhotoInput').onchange=()=>{const file=$('cPhotoInput').files?.[0];if(!file)return;if(!file.type.startsWith('image/'))return alert('Elegí un archivo de imagen.');const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const max=640,scale=Math.min(1,max/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);contactPhotoData=canvas.toDataURL('image/jpeg',.78);showContactPhoto()};img.onerror=()=>alert('No se pudo leer esa imagen.');img.src=reader.result};reader.readAsDataURL(file)};$('removeCPhoto').onclick=()=>{contactPhotoData='';$('cPhotoInput').value='';showContactPhoto()};$('newC').onclick=()=>{editId=null;contactPhotoData='';$('cPhotoInput').value='';$('cName').value='';$('cRole').value='';$('cBio').value='';showContactPhoto();$('cEditor').classList.remove('hidden')};
 window.editC=id=>{let c=contacts.find(x=>x.id===id);if(!c)return;editId=id;contactPhotoData=c.photo||'';$('cPhotoInput').value='';$('cName').value=c.name;$('cRole').value=c.role;$('cBio').value=c.bio;showContactPhoto();$('cEditor').classList.remove('hidden')};
 $('cancelC').onclick=()=>$('cEditor').classList.add('hidden');
 $('saveC').onclick=()=>{let name=$('cName').value.trim();if(!name)return alert('Escribí un nombre');let previous=contacts.find(x=>x.id===editId);let c={id:editId||'c'+Date.now(),name,role:$('cRole').value,bio:$('cBio').value,vital:previous?.vital||'alive',photo:contactPhotoData||''};contacts=editId?contacts.map(x=>x.id===editId?c:x):[...contacts,c];save();['cName','cRole','cBio'].forEach(clearDraft);saveDrafts();renderContacts();$('cEditor').classList.add('hidden');playPdaBeep('notify')};
 window.chatC=id=>{go('chat');$('chatWho').value=id;renderChat()};
-function renderChat(){let id=$('chatWho').value;if(!id){$('chatBox').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let arr=chats[id]||[];$('chatBox').innerHTML=arr.map((m,i)=>`<div class="bubble ${m.me?'me':''}"><div class="row"><div class="who">${m.me?'TÚ':esc(m.who)} · ${esc(m.time)}</div><button class="delete-one" onclick="deleteMessage('${id}',${i})" aria-label="Eliminar este mensaje" title="Eliminar este mensaje">×</button></div><div>${esc(m.text)}</div></div>`).join('')||'<div class="empty">Canal abierto. Todavía no hay mensajes.</div>';$('chatBox').scrollTop=$('chatBox').scrollHeight}
+function renderChat(){let id=$('chatWho').value;if(!id){$('chatBox').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let arr=chats[id]||[];$('chatBox').innerHTML=arr.map((m,i)=>`<div class="bubble ${m.me?'me':''}"><div class="row"><div class="who">${m.me?'TÚ':esc(m.who)} · ${esc(m.time)}</div><button class="delete-one" onclick="deleteMessage('${id}',${i})" aria-label="Eliminar este mensaje" title="Eliminar este mensaje">×</button></div><div>${richText(m.text)}</div></div>`).join('')||'<div class="empty">Canal abierto. Todavía no hay mensajes.</div>';$('chatBox').scrollTop=$('chatBox').scrollHeight}
 $('chatWho').onchange=renderChat;
 window.deleteMessage=(id,index)=>{let arr=chats[id]||[];if(index<0||index>=arr.length)return;if(!confirm('¿Eliminar solamente este mensaje?'))return;arr.splice(index,1);if(arr.length)chats[id]=arr;else delete chats[id];save();renderChat()};
 function send(){let text=$('msg').value.trim(),id=$('chatWho').value;if(!text||!id)return;(chats[id]??=[]).push({me:true,who:'TÚ',text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});$('msg').value='';clearDraft('msg');save();saveDrafts();renderChat();playPdaBeep('message')}
@@ -109,7 +156,7 @@ $('send').onclick=send;
 
 $('newM').onclick=()=>{$('mTitle').value='';$('mDesc').value='';$('mEditor').classList.remove('hidden')};$('cancelM').onclick=()=>$('mEditor').classList.add('hidden');
 $('saveM').onclick=()=>{if(!$('mTitle').value.trim())return alert('Poné un título');missions.unshift({id:Date.now(),title:$('mTitle').value,desc:$('mDesc').value,done:false,date:new Date().toLocaleDateString('es-AR')});save();['mTitle','mDesc'].forEach(clearDraft);saveDrafts();renderM();$('mEditor').classList.add('hidden');playPdaBeep('missionStart')};
-function renderM(){$('missionList').innerHTML=missions.map(m=>`<div class="item"><div class="meta"><b>${esc(m.title)}</b><p>${esc(m.desc)} · ${m.date}</p></div><button onclick="toggleM(${m.id})">${m.done?'CUMPLIDA':'ACTIVA'}</button><button onclick="delM(${m.id})">×</button></div>`).join('')||'<div class="empty">Sin misiones.</div>'}
+function renderM(){$('missionList').innerHTML=missions.map(m=>`<div class="item"><div class="meta"><b>${esc(m.title)}</b><p>${richText(m.desc)} · ${m.date}</p></div><button onclick="toggleM(${m.id})">${m.done?'CUMPLIDA':'ACTIVA'}</button><button onclick="delM(${m.id})">×</button></div>`).join('')||'<div class="empty">Sin misiones.</div>'}
 window.toggleM=id=>{const target=missions.find(m=>m.id===id);if(!target)return;const completed=!target.done;missions=missions.map(m=>m.id===id?{...m,done:completed}:m);save();renderM();playPdaBeep(completed?'missionDone':'missionStart')};window.delM=id=>{if(confirm('¿Eliminar misión?')){missions=missions.filter(m=>m.id!==id);save();renderM()}};
 // Enciclopedia e inventario de campo: cada ficha admite foto, descripción y cantidad.
 let encyclopediaPhotoData='';
@@ -118,7 +165,7 @@ function compressEncyclopediaPhoto(file,done){if(!file||!file.type.startsWith('i
 $('chooseEncyPhoto').onclick=()=>$('encyPhotoInput').click();
 $('encyPhotoInput').onchange=()=>{const file=$('encyPhotoInput').files?.[0];if(!file)return;compressEncyclopediaPhoto(file,data=>{encyclopediaPhotoData=data;showEncyclopediaPhoto()})};
 $('removeEncyPhoto').onclick=()=>{encyclopediaPhotoData='';$('encyPhotoInput').value='';showEncyclopediaPhoto()};
-function renderEncyclopedia(){const filter=$('encyFilter').value;const rows=encyclopedia.filter(x=>filter==='Todos'||x.category===filter);$('encyList').innerHTML=rows.map(x=>`<div class="item">${x.photo?`<img class="contact-avatar" src="${x.photo}" alt="Imagen de ${esc(x.name)}">`:`<div class="contact-avatar contact-photo-empty">SIN FOTO</div>`}<div class="meta"><b>${esc(x.name)}</b><p>${esc(x.category)} · Cantidad: <strong>${x.qty}</strong></p>${x.description?`<p style="white-space:pre-wrap;margin-top:6px">${esc(x.description)}</p>`:'<p class="muted">Sin descripción.</p>'}<button onclick="encyEditDescription(${x.id})">EDITAR DESCRIPCIÓN</button> <button onclick="encyChoosePhoto(${x.id})">${x.photo?'CAMBIAR FOTO':'AGREGAR FOTO'}</button>${x.photo?` <button onclick="encyRemovePhoto(${x.id})">QUITAR FOTO</button>`:''}</div><button class="btn" onclick="encyChange(${x.id},1)" aria-label="Sumar">+</button><button onclick="encyChange(${x.id},-1)" aria-label="Restar">−</button><button class="delete-one" onclick="encyDelete(${x.id})" aria-label="Eliminar">×</button></div>`).join('')||'<div class="empty">Todavía no hay registros en esta categoría.</div>'}
+function renderEncyclopedia(){const filter=$('encyFilter').value;const rows=encyclopedia.filter(x=>filter==='Todos'||x.category===filter);$('encyList').innerHTML=rows.map(x=>`<div class="item">${x.photo?`<img class="contact-avatar" src="${x.photo}" alt="Imagen de ${esc(x.name)}">`:`<div class="contact-avatar contact-photo-empty">SIN FOTO</div>`}<div class="meta"><b>${esc(x.name)}</b><p>${esc(x.category)} · Cantidad: <strong>${x.qty}</strong></p>${x.description?`<p style="white-space:pre-wrap;margin-top:6px">${richText(x.description)}</p>`:'<p class="muted">Sin descripción.</p>'}<button onclick="encyEditDescription(${x.id})">EDITAR DESCRIPCIÓN</button> <button onclick="encyChoosePhoto(${x.id})">${x.photo?'CAMBIAR FOTO':'AGREGAR FOTO'}</button>${x.photo?` <button onclick="encyRemovePhoto(${x.id})">QUITAR FOTO</button>`:''}</div><button class="btn" onclick="encyChange(${x.id},1)" aria-label="Sumar">+</button><button onclick="encyChange(${x.id},-1)" aria-label="Restar">−</button><button class="delete-one" onclick="encyDelete(${x.id})" aria-label="Eliminar">×</button></div>`).join('')||'<div class="empty">Todavía no hay registros en esta categoría.</div>'}
 $('encyAdd').onclick=()=>{const category=$('encyCategory').value,name=$('encyName').value.trim(),description=$('encyDescription').value.trim(),qty=Math.max(0,Math.floor(Number($('encyQty').value)||0));if(!name)return alert('Escribí el nombre del elemento.');const existing=encyclopedia.find(x=>x.category===category&&x.name.toLocaleLowerCase('es-AR')===name.toLocaleLowerCase('es-AR'));if(existing){existing.qty+=qty;if(description)existing.description=description;if(encyclopediaPhotoData)existing.photo=encyclopediaPhotoData}else encyclopedia.unshift({id:Date.now(),category,name,qty,description,photo:encyclopediaPhotoData||''});save();$('encyName').value='';$('encyDescription').value='';$('encyQty').value='1';encyclopediaPhotoData='';$('encyPhotoInput').value='';showEncyclopediaPhoto();renderEncyclopedia();playPdaBeep('journal')};
 $('encyFilter').onchange=renderEncyclopedia;
 window.encyEditDescription=id=>{const x=encyclopedia.find(v=>v.id===id);if(!x)return;const value=prompt('Descripción de '+x.name+':',x.description||'');if(value===null)return;x.description=value.trim();save();renderEncyclopedia()};
@@ -127,11 +174,11 @@ window.encyRemovePhoto=id=>{const x=encyclopedia.find(v=>v.id===id);if(!x||!conf
 window.encyChange=(id,delta)=>{const x=encyclopedia.find(v=>v.id===id);if(!x)return;x.qty=Math.max(0,(Number(x.qty)||0)+delta);save();renderEncyclopedia();};
 window.encyDelete=id=>{const x=encyclopedia.find(v=>v.id===id);if(!x||!confirm('¿Eliminar '+x.name+' de la enciclopedia?'))return;encyclopedia=encyclopedia.filter(v=>v.id!==id);save();renderEncyclopedia()};
 $('saveN').onclick=()=>{if(!$('nBody').value.trim())return alert('Escribí una anotación');notes.unshift({id:Date.now(),title:$('nTitle').value||'Sin título',body:$('nBody').value,date:new Date().toLocaleString('es-AR')});$('nTitle').value='';$('nBody').value='';save();['nTitle','nBody'].forEach(clearDraft);saveDrafts();renderN();playPdaBeep('journal')};
-function renderN(){$('noteList').innerHTML=notes.map(n=>`<div class="panel"><div class="row"><b>${esc(n.title)}</b><button onclick="delN(${n.id})">BORRAR</button></div><small>${esc(n.date)}</small><p style="white-space:pre-wrap">${esc(n.body)}</p></div>`).join('')||'<div class="empty">Diario vacío.</div>'}
+function renderN(){$('noteList').innerHTML=notes.map(n=>`<div class="panel"><div class="row"><b>${esc(n.title)}</b><button onclick="delN(${n.id})">BORRAR</button></div><small>${esc(n.date)}</small><p style="white-space:pre-wrap">${richText(n.body)}</p></div>`).join('')||'<div class="empty">Diario vacío.</div>'}
 window.delN=id=>{if(confirm('¿Borrar anotación?')){notes=notes.filter(n=>n.id!==id);save();renderN()}};
 
 function score(id){return trato[id]?.score??50}
-function renderTrato(){if(!$('tratoWho')||!contacts.length){$('tratoHistory').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let id=$('tratoWho').value;if(!id||!contacts.some(c=>c.id===id))id=contacts[0].id;$('tratoWho').value=id;let s=score(id);$('friendScore').textContent=s+' / 100';$('friendBar').style.width=s+'%';$('friendLabel').textContent=s>=80?'ALIADO':s>=60?'BUENA RELACIÓN':s>=40?'NEUTRAL':s>=20?'DESCONFIANZA':'HOSTIL';let arr=trato[id]?.history||[];$('tratoHistory').innerHTML=arr.map((x,i)=>`<div class="item"><div class="meta"><b>${esc(x.text)}</b><p>${esc(x.date)} · ${esc(x.mood)}</p></div><strong style="color:${x.delta>0?'var(--g)':x.delta<0?'#d58a78':'var(--m)'}">${x.delta>0?'+':''}${x.delta}</strong><button class="btn danger" title="Eliminar trato" onclick="deleteTrato('${id}',${i})">×</button></div>`).join('')||'<div class="empty">Todavía no registraste tratos con este contacto.</div>'}
+function renderTrato(){if(!$('tratoWho')||!contacts.length){$('tratoHistory').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}let id=$('tratoWho').value;if(!id||!contacts.some(c=>c.id===id))id=contacts[0].id;$('tratoWho').value=id;let s=score(id);$('friendScore').textContent=s+' / 100';$('friendBar').style.width=s+'%';$('friendLabel').textContent=s>=80?'ALIADO':s>=60?'BUENA RELACIÓN':s>=40?'NEUTRAL':s>=20?'DESCONFIANZA':'HOSTIL';let arr=trato[id]?.history||[];$('tratoHistory').innerHTML=arr.map((x,i)=>`<div class="item"><div class="meta"><b>${richText(x.text)}</b><p>${esc(x.date)} · ${esc(x.mood)}</p></div><strong style="color:${x.delta>0?'var(--g)':x.delta<0?'#d58a78':'var(--m)'}">${x.delta>0?'+':''}${x.delta}</strong><button class="btn danger" title="Eliminar trato" onclick="deleteTrato('${id}',${i})">×</button></div>`).join('')||'<div class="empty">Todavía no registraste tratos con este contacto.</div>'}
 window.deleteTrato=(id,index)=>{const record=trato[id]?.history?.[index];if(!record)return;if(!confirm('¿Eliminar este registro de trato? También se ajustará el nivel de relación.'))return;trato[id].score=Math.max(0,Math.min(100,(trato[id].score??50)-(record.delta||0)));trato[id].history.splice(index,1);if(!trato[id].history.length&&trato[id].score===50)delete trato[id];save();renderTrato()};
 $('tratoWho').onchange=renderTrato;
 $('saveTrato').onclick=()=>{let id=$('tratoWho').value,text=$('tratoText').value.trim(),mood=$('tratoMood').value;if(!text)return alert('Contá qué hiciste antes de registrar el trato.');let delta=mood==='positive'?10:mood==='negative'?-10:0;trato[id]??={score:50,history:[]};trato[id].score=Math.max(0,Math.min(100,trato[id].score+delta));trato[id].history.unshift({text,delta,mood:mood==='positive'?'Agradable':mood==='negative'?'Desagradable':'Neutral',date:new Date().toLocaleString('es-AR',{timeZone:'America/Argentina/Buenos_Aires'})});$('tratoText').value='';clearDraft('tratoText');save();saveDrafts();renderTrato();playPdaBeep('notify')};
@@ -147,7 +194,7 @@ function stopEmissionTimer(){if(emissionTimer){clearInterval(emissionTimer);emis
 function resumeEmissionLoop(playNow=false){const a=activeEmission();if(!a||!emissionSoundOn||!pdaSoundEnabled||!pdaAudio||pdaAudio.state==='suspended'){stopEmissionTimer();return}if(emissionTimer)return;if(playNow)playPdaBeep('emission');emissionTimer=setInterval(()=>{const current=activeEmission();if(!current||!emissionSoundOn||!pdaSoundEnabled){stopEmissionTimer();return}playPdaBeep('emission')},20000)}
 function startEmission(){if(activeEmission())return alert('Ya hay una emisión activa. Cerrala antes de iniciar otra.');const now=new Date(),date=[now.getFullYear(),String(now.getMonth()+1).padStart(2,'0'),String(now.getDate()).padStart(2,'0')].join('-'),time=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});const rec={id:Date.now(),title:'Emisión',date,start:time,end:'',notes:'',active:true};emissions.unshift(rec);persistEmissions();renderEmissions();if(pdaSoundEnabled&&initPdaAudio())resumeEmissionLoop(true);$('emissionStatus').textContent='EMISIÓN ACTIVA · PITIDO CADA 20 SEGUNDOS'}
 function closeEmission(){const a=activeEmission();if(!a)return;const now=new Date();a.end=now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});a.active=false;persistEmissions();stopEmissionTimer();renderEmissions();$('emissionStatus').textContent='SESIÓN CERRADA · '+a.end;playPdaBeep('notify')}
-function renderEmissions(){const a=activeEmission();$('emissionStatus').textContent=a?'EMISIÓN ACTIVA · '+a.title+' · '+(emissionSoundOn?'PITIDOS ACTIVOS':'PITIDOS APAGADOS'):'SIN EMISIÓN ACTIVA';$('startEmission').disabled=!!a;$('startEmission').textContent=a?'EMISIÓN EN CURSO':'▶ INICIAR SESIÓN';$('powerEmission').textContent=emissionSoundOn?'⏻ APAGAR PITIDOS':'▶ REACTIVAR PITIDOS';$('powerEmission').disabled=!a;$('emissionList').innerHTML=emissions.map(x=>`<div class="item"><div class="meta"><b>${esc(x.title||'Emisión')}</b><p>${esc(x.date||'')} · Comenzó: ${esc(x.start||'--:--')} · Terminó: ${esc(x.end|| (x.active?'EN CURSO':'--:--'))}</p>${x.notes?`<p>${esc(x.notes)}</p>`:''}</div><button onclick="editEmission(${x.id})">EDITAR</button>${x.active?`<button class="btn danger" onclick="closeEmission()">CERRAR</button>`:`<button onclick="deleteEmission(${x.id})">×</button>`}</div>`).join('')||'<div class="empty">Todavía no hay emisiones registradas.</div>'}
+function renderEmissions(){const a=activeEmission();$('emissionStatus').textContent=a?'EMISIÓN ACTIVA · '+a.title+' · '+(emissionSoundOn?'PITIDOS ACTIVOS':'PITIDOS APAGADOS'):'SIN EMISIÓN ACTIVA';$('startEmission').disabled=!!a;$('startEmission').textContent=a?'EMISIÓN EN CURSO':'▶ INICIAR SESIÓN';$('powerEmission').textContent=emissionSoundOn?'⏻ APAGAR PITIDOS':'▶ REACTIVAR PITIDOS';$('powerEmission').disabled=!a;$('emissionList').innerHTML=emissions.map(x=>`<div class="item"><div class="meta"><b>${esc(x.title||'Emisión')}</b><p>${esc(x.date||'')} · Comenzó: ${esc(x.start||'--:--')} · Terminó: ${esc(x.end|| (x.active?'EN CURSO':'--:--'))}</p>${x.notes?`<p>${richText(x.notes)}</p>`:''}</div><button onclick="editEmission(${x.id})">EDITAR</button>${x.active?`<button class="btn danger" onclick="closeEmission()">CERRAR</button>`:`<button onclick="deleteEmission(${x.id})">×</button>`}</div>`).join('')||'<div class="empty">Todavía no hay emisiones registradas.</div>'}
 function resetEmissionForm(){emissionEditId=null;$('emTitle').value='';$('emDate').value=new Date().toISOString().slice(0,10);$('emStart').value='';$('emEnd').value='';$('emNotes').value=''}
 $('startEmission').onclick=startEmission;$('powerEmission').onclick=()=>{if(!activeEmission())return;emissionSoundOn=!emissionSoundOn;localStorage.setItem('zona_emission_sound_on',String(emissionSoundOn));if(emissionSoundOn){if(pdaSoundEnabled&&initPdaAudio())resumeEmissionLoop(true)}else stopEmissionTimer();renderEmissions()};
 $('newEmission').onclick=()=>{resetEmissionForm();$('emTitle').value='Emisión';$('emStart').value=localEmissionTime();};
@@ -191,6 +238,17 @@ function insertPdaText(insert){
  el.value=el.value.slice(0,start)+insert+el.value.slice(end);
  const pos=start+insert.length;el.setSelectionRange(pos,pos);
  el.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();
+}
+async function pasteFromClipboard(){
+ if(!activeField)return;
+ try{
+  if(!navigator.clipboard?.readText)throw new Error('unsupported');
+  const text=await navigator.clipboard.readText();
+  if(text)insertPdaText(text);
+  else alert('El portapapeles está vacío. Copiá un texto primero.');
+ }catch(err){
+  alert('Chrome no permitió acceder al portapapeles. Abrí PDA // ZONA desde su dirección HTTPS, copiá primero el texto y volvé a tocar PEGAR. Si Android pregunta, autorizá el acceso.');
+ }
 }
 async function dictate(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -276,7 +334,18 @@ internet navegador telefono computadora pantalla boton tecla deslizar dedo
 palabra palabras prediccion predicciones teclado virtual dictado voz audio
 microfono sonido permiso permisos chrome android argentina cordoba
 `).trim().split(/\s+/);
-const swipeWords = [...new Set(swipeDictionary)];
+const accentPreferred = {
+ atencion:'atención', atencion:'atención', tambien:'también', dias:'días', dia:'día', manana:'mañana',
+ despues:'después', aqui:'aquí', alli:'allí', mas:'más', facil:'fácil', dificil:'difícil',
+ telefono:'teléfono', numero:'número', rapido:'rápido', ultimo:'último', pequena:'pequeña',
+ pequeno:'pequeño', anos:'años', ano:'año', adios:'adiós', explicame:'explícame', decime:'decime',
+ queres:'querés', tenes:'tenés', podes:'podés', estas:'estás', como:'cómo', que:'qué', quien:'quién',
+ cuando:'cuándo', donde:'dónde', porque:'porque', tambien:'también', emocion:'emoción', informacion:'información',
+ descripcion:'descripción', mision:'misión', comunicacion:'comunicación', situacion:'situación',
+ energia:'energía', bateria:'batería', estacion:'estación', mutacion:'mutación', biologico:'biológico'
+};
+function swipeBase(word){return String(word).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ñ/g,'ñ').toLowerCase()}
+const swipeWords = [...new Set(swipeDictionary.map(w=>accentPreferred[swipeBase(w)]||w))];
 function keyCenter(letter){
  const key=pdaKeys.querySelector(`button[data-k="${letter}"]`);
  if(!key)return null;
@@ -316,7 +385,7 @@ function rankSwipeWords(points){
  const ranked=[];
  for(const word of candidates){
   if(word.length<2||word.length>24)continue;
-  const centers=[...word].map(keyCenter);
+  const centers=[...swipeBase(word)].map(keyCenter);
   if(centers.some(p=>!p))continue;
   let actualError=0;
   for(const p of samples)actualError+=distanceToPath(p,centers);
@@ -420,6 +489,7 @@ pdaKeys.addEventListener('click',e=>{
  if(k==='shift'){const now=Date.now();if(capsLock){capsLock=false;shiftOn=false}else if(shiftOn&&now-lastShiftTap<500){capsLock=true;shiftOn=true}else{shiftOn=true}lastShiftTap=now;updateShiftKey();return}
  if(k==='symbols'){symbolMode=!symbolMode;$('letterLayout').classList.toggle('hidden',symbolMode);$('numberLayout').classList.toggle('hidden',!symbolMode);$('keyboardModeBtn').textContent=symbolMode?'ABC':'?123';hideSwipeSuggestions();return}
  if(k==='mic'){dictate();return}
+ if(k==='paste'){pasteFromClipboard();return}
  if(!activeField)return;
  if(k==='back'){
   const el=activeField,start=el.selectionStart??el.value.length,end=el.selectionEnd??el.value.length;
@@ -427,19 +497,29 @@ pdaKeys.addEventListener('click',e=>{
   else if(start>0){el.value=el.value.slice(0,start-1)+el.value.slice(end);el.setSelectionRange(start-1,start-1)}
   el.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();
  }else if(k==='space'){
-  const before=activeField.value.slice(0,activeField.selectionStart??activeField.value.length);
-  const lastWord=before.trim().split(/\s+/).pop();if(lastWord)rememberSwipeWord(lastWord);
-  if(!before.endsWith(' '))insertPdaText(' ');
+  const el=activeField, cursor=el.selectionStart??el.value.length;
+  const before=el.value.slice(0,cursor), match=before.match(/[a-zñáéíóúü]+$/i);
+  const lastWord=match?.[0]||'';
+  if(lastWord){
+   rememberSwipeWord(lastWord);
+   const corrected=accentPreferred[swipeBase(lastWord)];
+   if(corrected && corrected!==lastWord.toLocaleLowerCase('es-AR')){
+    const start=cursor-lastWord.length;el.value=el.value.slice(0,start)+corrected+el.value.slice(cursor);
+    el.setSelectionRange(start+corrected.length,start+corrected.length);
+    el.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();
+   }
+  }
+  if(!el.value.slice(0,el.selectionStart??el.value.length).endsWith(' '))insertPdaText(' ');
  }
  else if(k==='newline')insertPdaText('\\n');
- else if(/^[a-zñ]$/i.test(k)||/^[0-9]$/.test(k)||'!?.,@#$%&-+()*\"\':;/\\_='.includes(k))insertPdaText((shiftOn||capsLock)?k.toUpperCase():k.toLowerCase());
- if(/^[a-zñ]$/i.test(k))consumeShift();
+ else if(/^[a-zñáéíóúü]$/i.test(k)||/^[0-9]$/.test(k)||'!?.,@#$%&-+()*\"\':;/\\_='.includes(k))insertPdaText((shiftOn||capsLock)?k.toLocaleUpperCase('es-AR'):k.toLocaleLowerCase('es-AR'));
+ if(/^[a-zñáéíóúü]$/i.test(k))consumeShift();
  updateShiftKey();if(activeField)activeField.focus({preventScroll:true});
 });
 document.addEventListener('click',e=>{
  if(!pdaKeys.classList.contains('hidden') && !e.target.closest('#pdaKeyboard') && !e.target.closest('input,textarea'))closePdaKeyboard();
 });
-restoreDrafts();renderContacts();renderM();renderN();renderEncyclopedia();home();renderTrato();
+initRichEditors();restoreDrafts();renderContacts();renderM();renderN();renderEncyclopedia();home();renderTrato();
 if ('serviceWorker' in navigator) {
  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('PDA offline:',err)));
 }
