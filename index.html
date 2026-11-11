@@ -184,7 +184,7 @@ function linkEncyclopediaReferences(html,currentId){
  [...new Set(encyclopedia.map(x=>x.category).filter(Boolean))].forEach(category=>refs.push({label:String(category),kind:'category',category:String(category)}));
  refs.sort((a,b)=>b.label.length-a.label.length);
  if(!refs.length)return html;
- const escapeRegex=value=>value.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\$&');
+ const escapeRegex=value=>value.split('').map(ch=>'\\^$.*+?()[]{}|'.includes(ch)?'\\'+ch:ch).join('');
  const lookup=new Map(refs.map(ref=>[ref.label.toLocaleLowerCase('es-AR'),ref]));
  const boundary='A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9_';
  const pattern=new RegExp('(^|[^'+boundary+'])('+refs.map(ref=>escapeRegex(ref.label)).join('|')+')(?=$|[^'+boundary+'])','gi');
