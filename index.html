@@ -385,7 +385,7 @@ async function pdaSaveProfilePhoto(file){
  if(uploadError)throw uploadError;
  const {data:urlData}=client.storage.from('pda-avatars').getPublicUrl(path);
  const avatarUrl=urlData.publicUrl+'?v='+Date.now();
- const displayName=$('pdaDisplayName')?.value?.trim()||pdaProfile?.display_name||'STALKER';
+ const displayName=$('pdaProfileDisplayName')?.value?.trim()||$('pdaDisplayName')?.value?.trim()||pdaProfile?.display_name||'STALKER';
  const {data,error}=await client.from('pda_profiles').upsert({user_id:pdaUserId,display_name:displayName,avatar_url:avatarUrl,faction:pdaProfile?.faction||'Solitarios',bio:pdaProfile?.bio||'',ranking_joined:!!pdaProfile?.ranking_joined,updated_at:new Date().toISOString()},{onConflict:'user_id'}).select('user_id,display_name,avatar_url,faction,bio,updated_at,ranking_joined').single();
  if(error)throw error;
  pdaProfile=data;renderPdaProfile();$('pdaProfileStatus').textContent='FOTOGRAFÍA SINCRONIZADA · PERFIL ACTUALIZADO';
@@ -421,7 +421,7 @@ function pdaOpenRankingProfile(index){
  if(r.avatar_url)photo='<img class="ranking-profile-photo" src="'+esc(r.avatar_url)+'" alt="Retrato">';
  else if(r.is_npc)photo='<div class="ranking-profile-photo npc-portrait" role="img" aria-label="Retrato de '+esc(r.name)+'" style="background-image:url(assets/stalker-portraits.webp);background-size:500% 500%;background-position:'+px+'% '+py+'%"></div>';
  else photo='<div class="ranking-profile-photo" style="display:grid;place-items:center;color:#c7d7a4;font:900 20px monospace">'+esc((r.name||'S').slice(0,2).toUpperCase())+'</div>';
- $('rankingProfileContent').innerHTML='<div class="ranking-profile-head">'+photo+'<div><div class="ranking-profile-title" id="rankingProfileTitle">'+esc(r.name)+'</div><div class="ranking-profile-faction">'+esc(r.faction||'STALKER')+'</div><div class="ranking-profile-stats">'+Number(r.points||0).toLocaleString('es-AR')+' PUNTOS</div></div></div><div class="ranking-profile-bio">'+esc(r.bio|| (r.is_reserved?'Este lugar está esperando a una PDA.':'No hay biografía registrada.'))+'</div>'+(r.quote?'<small class="muted">«'+esc(r.quote)+'»</small>':'')+(r.is_reserved?'<small class="muted">ESPACIO RESERVADO · INSCRIPCIÓN PENDIENTE</small>':'');
+ $('rankingProfileContent').innerHTML='<div class="ranking-profile-head">'+photo+'<div><div class="ranking-profile-title" id="rankingProfileTitle">'+esc(r.name)+'</div><div class="ranking-profile-faction">'+esc(r.faction||'STALKER')+'</div><div class="ranking-profile-stats">'+Number(r.points||0).toLocaleString('es-AR')+' PUNTOS</div></div></div><div class="ranking-profile-bio">'+esc(r.bio|| (r.is_reserved?'Este lugar está esperando a una PDA.':'No hay biografía registrada.'))+'</div>'+(r.is_reserved?'<small class="muted">ESPACIO RESERVADO · INSCRIPCIÓN PENDIENTE</small>':'');
  $('rankingProfileModal').classList.remove('hidden');
 }
 $('rankingProfileClose').onclick=()=>$('rankingProfileModal').classList.add('hidden');
