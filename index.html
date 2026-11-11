@@ -104,6 +104,9 @@ body.keyboard-visible footer{display:none}
 
 /* Rejilla de mochila: casilleros visuales como la PDA de Pripyat */
 .cop-item-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.cop-item{display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;gap:6px;min-height:158px;padding:7px;background:linear-gradient(145deg,#263321,#11180f);border:1px solid #526744;box-shadow:inset 0 0 12px #0008}.cop-item-img{width:100%;height:76px;padding:4px;object-fit:contain;background:radial-gradient(ellipse,#435632,#11180f 72%);border:1px solid #65794c}.cop-item-fallback{font-size:34px}.cop-item-main{text-align:center;min-height:34px}.cop-item-main b{font-size:10px;line-height:1.25}.cop-item-main small{font-size:9px}.cop-item-controls{justify-content:center;margin-top:auto}.cop-item-controls button{width:34px;height:30px;font-size:18px}.cop-item-controls strong{min-width:28px;font-size:15px}@media(min-width:620px){.cop-item-list{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(min-width:850px){.cop-item-list{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* Selector de traje y aviso de sobrecarga */
+.cop-suit-wrap{position:relative;flex:none}.cop-suit-button{width:76px;padding:4px;background:#10170e;border:1px solid #819967;color:#d8e9c5;display:flex;flex-direction:column;align-items:center;gap:3px}.cop-suit-button img{width:66px;height:66px;object-fit:contain;background:radial-gradient(ellipse,#465a35,#10170e 75%)}.cop-suit-button span{font:800 8px monospace;letter-spacing:.4px;text-align:center}.cop-suit-picker{position:absolute;z-index:30;right:0;top:100%;width:min(260px,78vw);max-height:270px;overflow:auto;padding:7px;background:#10170f;border:1px solid #819967;box-shadow:0 8px 22px #000d;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.cop-suit-picker.hidden{display:none!important}.cop-suit-picker button{min-width:0;padding:5px;background:#202c1c;border:1px solid #536744;color:#d8e9c5;font:10px monospace}.cop-suit-picker img{width:100%;height:66px;object-fit:contain;display:block;background:#11190f}.cop-suit-picker span{display:block;padding-top:4px}.cop-exo-row{position:relative}.cop-exo-toggle{width:100%;margin:0 0 10px}.cop-exo-warning{position:absolute;z-index:12;right:8px;top:-37px;padding:8px 11px;background:#d8b66c;color:#171b11;border:1px solid #fff0b5;border-radius:3px;box-shadow:0 3px 12px #000b;font:900 11px monospace;animation:exoPulse .8s ease-in-out 3}.cop-exo-warning:after{content:"";position:absolute;right:20px;bottom:-6px;width:10px;height:10px;background:#d8b66c;transform:rotate(45deg)}@keyframes exoPulse{50%{transform:scale(1.04);filter:brightness(1.2)}}
 </style></head><body>
 <header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><div class="header-tools"><button class="btn" id="orientationBtn">↻ HORIZONTAL</button><button class="btn" id="fullscreenBtn">⛶ PANTALLA COMPLETA</button></div></div><div class="row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span></div></header>
 <nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="gallery">GALERÍA</button><button data-tab="player">REPRODUCTOR</button><button data-tab="compass">BRÚJULA</button><button data-tab="artifacts">INVENTARIO</button><button data-tab="map">MAPA GPS</button><button data-tab="data">DATOS</button></nav>
@@ -122,9 +125,9 @@ body.keyboard-visible footer{display:none}
 <div class="compass-section-title">▸ RUMBO MARCADO</div><div class="compass-target"><div class="compass-mini">OBJETIVO DE NAVEGACIÓN</div><strong id="bearingTarget">SIN MARCA</strong><div class="compass-mini" id="bearingDelta">Guardá el rumbo actual para seguirlo.</div><div class="compass-controls" style="margin-top:9px"><button class="btn" id="saveBearing">⚑ MARCAR ESTE RUMBO</button><button id="clearBearing">BORRAR MARCA</button></div></div>
 <div class="compass-section-title">▸ CRONÓMETRO DE EXPEDICIÓN</div><div class="compass-data"><div class="row"><b id="fieldChrono" style="font-size:24px">00:00:00</b><span class="compass-mini" id="chronoState">DETENIDO</span></div><div class="compass-controls" style="margin-top:8px"><button class="btn" id="chronoStart">▶ INICIAR</button><button id="chronoReset">REINICIAR</button></div></div><p class="muted">La brújula usa el sensor magnético del teléfono. El GPS requiere permiso de ubicación y puede tardar en fijar posición. Altitud, velocidad y precisión dependen del hardware y de la señal disponible. Alejá el dispositivo de imanes y objetos metálicos.</p></div></div></section><section id="artifacts" class="view">
 <div class="panel cop-inventory">
- <div class="cop-inv-head"><div><div class="cop-kicker">S.T.A.L.K.E.R. · CALL OF PRIPYAT</div><h2>INVENTARIO PERSONAL</h2><div class="muted">MOCHILA DE CAMPO · EQUIPO REGISTRADO</div></div><div class="cop-weight-icon">▣</div></div>
+ <div class="cop-inv-head"><div><div class="cop-kicker">S.T.A.L.K.E.R. · CALL OF PRIPYAT</div><h2>INVENTARIO PERSONAL</h2><div class="muted">MOCHILA DE CAMPO · EQUIPO REGISTRADO</div></div><div class="cop-suit-wrap"><button class="cop-suit-button" id="invSuitButton" type="button" aria-label="Cambiar traje"><img id="invSuitImage" alt="Traje Clear Sky"><span id="invSuitLabel">CLEAR SKY ▾</span></button><div class="cop-suit-picker hidden" id="invSuitPicker"></div></div></div>
  <div class="cop-stats"><div><small>PESO TOTAL</small><b id="invWeight">0,00 KG</b><span id="invCapacity">CAPACIDAD 50 KG</span></div><div><small>OBJETOS</small><b id="invCount">0</b><span>UNIDADES EN MOCHILA</span></div><div><small>TIPOS</small><b id="invKinds">0</b><span>ÍTEMS CON CANTIDAD</span></div></div>
- <button class="cop-exo-toggle" id="invExoToggle" type="button">🦾 EXOESQUELETO: NO EQUIPADO</button>
+ <div class="cop-exo-row"><button class="cop-exo-toggle" id="invExoToggle" type="button">🦾 PONERSE EXOESQUELETO · 50 KG</button><div class="cop-exo-warning hidden" id="invExoWarning">⚠ PONERSE EXOESQUELETO</div></div>
  <div class="cop-weight-track"><div id="invWeightBar"></div></div>
  <div class="cop-search"><input id="invSearch" type="search" placeholder="BUSCAR ARMA, MEDICINA, ARTEFACTO..."></div>
  <div class="cop-categories" id="invCategories"></div>
@@ -716,17 +719,38 @@ if(!inventoryData.quantities){
  localStorage.setItem('zona_pda_inventory_v1',JSON.stringify(inventoryData));
 }
 let inventoryCategory='TODOS',inventorySearch='';
+const copSuits=[
+ {name:'Clear Sky',file:'CS-3a_Body_Armor_Large.jpg'},
+ {name:'Monolith',file:'Berill-5M_Armored_Suit_Large.jpg'},
+ {name:'Deber',file:'PSZ-9d_Duty_Armor_Large.jpg'},
+ {name:'Libertad',file:'Wind_of_Freedom_Bodysuit_Large.jpg'},
+ {name:'Stalker',file:'PS5-M_Universal_Protection_Large.jpg'},
+ {name:'Amanecer',file:'Sunrise_Bodysuit_Large.jpg'},
+ {name:'Bandido',file:'Leather_Trench_Coat_Large.jpg'},
+ {name:'Ciclo cerrado',file:'SEVA_Bodysuit_Large.jpg'},
+ {name:'Módulo exoesqueleto',file:'Exoskeleton_Large.jpg'}
+];
+function suitImageUrl(suit){const x=copSuits.find(a=>a.name===suit)||copSuits[0];return 'https://cop.zsg.dk/Resources/Items/Armor/'+encodeURIComponent(x.file);}
+function updateSuitDisplay(){const suit=inventoryData.suit||'Clear Sky',x=copSuits.find(a=>a.name===suit)||copSuits[0];$('invSuitImage').src=suitImageUrl(x.name);$('invSuitImage').alt='Traje '+x.name;$('invSuitLabel').textContent=x.name.toLocaleUpperCase('es')+' ▾';}
+function renderSuitPicker(){$('invSuitPicker').innerHTML=copSuits.filter(x=>x.name!=='Módulo exoesqueleto').map(x=>'<button type="button" data-suit="'+esc(x.name)+'"><img src="'+suitImageUrl(x.name)+'" alt="" onerror="this.style.opacity=.25"><span>'+esc(x.name)+'</span></button>').join('');}
+function showExoWarning(){const t=$('invExoWarning');if(!t)return;t.classList.remove('hidden');try{const C=window.AudioContext||window.webkitAudioContext;if(C){const c=new C(),o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.setValueAtTime(880,c.currentTime);o.frequency.setValueAtTime(660,c.currentTime+.13);g.gain.setValueAtTime(.08,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.28);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.29);o.onended=()=>c.close();}}catch(e){}}
+$('invSuitButton').addEventListener('click',()=>{$('invSuitPicker').classList.toggle('hidden');});
+$('invSuitPicker').addEventListener('click',e=>{const b=e.target.closest('[data-suit]');if(!b)return;inventoryData.suit=b.dataset.suit;saveInventory();updateSuitDisplay();$('invSuitPicker').classList.add('hidden');});
+document.addEventListener('click',e=>{if(!e.target.closest('.cop-suit-wrap'))$('invSuitPicker').classList.add('hidden');});
+renderSuitPicker();
 function saveInventory(){localStorage.setItem('zona_pda_inventory_v1',JSON.stringify(inventoryData));}
 function invFmt(n){return Number(n).toFixed(2).replace('.',',')}
 function renderInvStats(){
  const entries=inventoryCatalog.map(x=>({x,q:Math.max(0,Number(inventoryData.quantities[x.id])||0)}));
  const count=entries.reduce((a,b)=>a+b.q,0),weight=entries.reduce((a,b)=>a+b.q*b.x.weight,0),kinds=entries.filter(a=>a.q>0).length;
- const exo=inventoryCatalog.find(x=>x.name==='Exoesqueleto'),exoQty=exo?Math.max(0,Number(inventoryData.quantities[exo.id])||0):0;
- const exoEquipped=!!inventoryData.exoskeletonEquipped&&exoQty>0,capacity=exoEquipped?110:50;
+ const exoEquipped=!!inventoryData.exoskeletonEquipped,capacity=exoEquipped?110:50;
  $('invWeight').textContent=invFmt(weight)+' KG';$('invCount').textContent=count;$('invKinds').textContent=kinds;
  $('invCapacity').textContent='CAPACIDAD '+capacity+' KG';
- $('invExoToggle').textContent=exoQty===0?'🦾 AÑADIR EXOESQUELETO · 50 KG':(exoEquipped?'🦾 EXOESQUELETO: EQUIPADO · 110 KG':'🦾 EXOESQUELETO: NO EQUIPADO · 50 KG');
+ $('invExoToggle').textContent=exoEquipped?'🦾 EXOESQUELETO PUESTO · 110 KG':'🦾 PONERSE EXOESQUELETO · 50 KG';
  $('invExoToggle').classList.toggle('active',exoEquipped);
+ updateSuitDisplay();
+ if(weight>=50&&!exoEquipped&&!inventoryData.weightWarningShown){inventoryData.weightWarningShown=true;showExoWarning();saveInventory();}
+ if(weight<50){inventoryData.weightWarningShown=false;}
  $('invWeightBar').style.width=Math.min(100,weight/capacity*100)+'%';
  $('invWeightBar').style.background=weight>capacity?'#c65d45':'linear-gradient(90deg,#789d50,#d6bd69)';
 }
@@ -742,9 +766,9 @@ function renderInventory(){
  }).join('')||'<div class="cop-empty">NO HAY ÍTEMS PARA ESTA BÚSQUEDA</div>';
 }
 $('invCategories').addEventListener('click',e=>{const b=e.target.closest('[data-inv-cat]');if(!b)return;inventoryCategory=b.dataset.invCat;renderInventory();});
-$('invItems').addEventListener('click',e=>{const b=e.target.closest('[data-inv-change]');if(!b)return;const id=b.dataset.invId,delta=Number(b.dataset.invChange);inventoryData.quantities[id]=Math.max(0,(Number(inventoryData.quantities[id])||0)+delta);saveInventory();renderInventory();});
+$('invItems').addEventListener('click',e=>{const b=e.target.closest('[data-inv-change]');if(!b)return;const before=inventoryCatalog.reduce((n,x)=>n+(Number(inventoryData.quantities[x.id])||0)*x.weight,0);const id=b.dataset.invId,delta=Number(b.dataset.invChange);inventoryData.quantities[id]=Math.max(0,(Number(inventoryData.quantities[id])||0)+delta);const after=inventoryCatalog.reduce((n,x)=>n+(Number(inventoryData.quantities[x.id])||0)*x.weight,0);if(before<50&&after>=50&&!inventoryData.exoskeletonEquipped){inventoryData.weightWarningShown=true;showExoWarning();}if(after<50)inventoryData.weightWarningShown=false;saveInventory();renderInventory();});
 $('invSearch').addEventListener('input',e=>{inventorySearch=e.target.value.toLocaleLowerCase('es').trim();renderInventory();});
-$('invExoToggle').addEventListener('click',()=>{const exo=inventoryCatalog.find(x=>x.name==='Exoesqueleto');if(!exo)return;if(!(Number(inventoryData.quantities[exo.id])>0)){inventoryCategory='Trajes y protección';inventorySearch='exoesqueleto';$('invSearch').value=inventorySearch;renderInventory();$('invItems').scrollIntoView({behavior:'smooth',block:'center'});return;}inventoryData.exoskeletonEquipped=!inventoryData.exoskeletonEquipped;saveInventory();renderInventory();});
+$('invExoToggle').addEventListener('click',()=>{if(!inventoryData.exoskeletonEquipped){inventoryData.suitBeforeExo=inventoryData.suit||'Clear Sky';inventoryData.exoskeletonEquipped=true;inventoryData.suit='Módulo exoesqueleto';}else{inventoryData.exoskeletonEquipped=false;inventoryData.suit=inventoryData.suitBeforeExo||'Clear Sky';}inventoryData.weightWarningShown=false;saveInventory();$('invExoWarning').classList.add('hidden');renderInventory();});
 renderInventory();
 // Mapa real con posición GPS y puntos de campo guardados localmente.
 let mapWatchId=null,mapLastPosition=null,mapPoints= get('map_points',[]);
