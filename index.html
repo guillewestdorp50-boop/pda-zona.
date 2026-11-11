@@ -732,10 +732,10 @@ const copSuits=[
 ];
 function suitImageUrl(suit){const x=copSuits.find(a=>a.name===suit)||copSuits[0];return 'https://cop.zsg.dk/Resources/Items/Armor/'+encodeURIComponent(x.file);}
 function updateSuitDisplay(){const suit=inventoryData.suit||'Clear Sky',x=copSuits.find(a=>a.name===suit)||copSuits[0];$('invSuitImage').src=suitImageUrl(x.name);$('invSuitImage').alt='Traje '+x.name;$('invSuitLabel').textContent=x.name.toLocaleUpperCase('es')+' ▾';}
-function renderSuitPicker(){$('invSuitPicker').innerHTML=copSuits.filter(x=>x.name!=='Módulo exoesqueleto').map(x=>'<button type="button" data-suit="'+esc(x.name)+'"><img src="'+suitImageUrl(x.name)+'" alt="" onerror="this.style.opacity=.25"><span>'+esc(x.name)+'</span></button>').join('');}
+function renderSuitPicker(){$('invSuitPicker').innerHTML=copSuits.map(x=>'<button type="button" data-suit="'+esc(x.name)+'"><img src="'+suitImageUrl(x.name)+'" alt="" onerror="this.style.opacity=.25"><span>'+esc(x.name)+'</span></button>').join('');}
 function showExoWarning(){const t=$('invExoWarning');if(!t)return;t.classList.remove('hidden');try{const C=window.AudioContext||window.webkitAudioContext;if(C){const c=new C(),o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.setValueAtTime(880,c.currentTime);o.frequency.setValueAtTime(660,c.currentTime+.13);g.gain.setValueAtTime(.08,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.28);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.29);o.onended=()=>c.close();}}catch(e){}}
 $('invSuitButton').addEventListener('click',()=>{$('invSuitPicker').classList.toggle('hidden');});
-$('invSuitPicker').addEventListener('click',e=>{const b=e.target.closest('[data-suit]');if(!b)return;inventoryData.suit=b.dataset.suit;saveInventory();updateSuitDisplay();$('invSuitPicker').classList.add('hidden');});
+$('invSuitPicker').addEventListener('click',e=>{const b=e.target.closest('[data-suit]');if(!b)return;inventoryData.suit=b.dataset.suit;inventoryData.exoskeletonEquipped=b.dataset.suit==='Módulo exoesqueleto';inventoryData.weightWarningShown=false;saveInventory();updateSuitDisplay();renderInvStats();$('invSuitPicker').classList.add('hidden');});
 document.addEventListener('click',e=>{if(!e.target.closest('.cop-suit-wrap'))$('invSuitPicker').classList.add('hidden');});
 renderSuitPicker();
 function saveInventory(){localStorage.setItem('zona_pda_inventory_v1',JSON.stringify(inventoryData));}
