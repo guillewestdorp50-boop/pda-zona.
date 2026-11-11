@@ -744,7 +744,7 @@ function renderInventory(){
 $('invCategories').addEventListener('click',e=>{const b=e.target.closest('[data-inv-cat]');if(!b)return;inventoryCategory=b.dataset.invCat;renderInventory();});
 $('invItems').addEventListener('click',e=>{const b=e.target.closest('[data-inv-change]');if(!b)return;const id=b.dataset.invId,delta=Number(b.dataset.invChange);inventoryData.quantities[id]=Math.max(0,(Number(inventoryData.quantities[id])||0)+delta);saveInventory();renderInventory();});
 $('invSearch').addEventListener('input',e=>{inventorySearch=e.target.value.toLocaleLowerCase('es').trim();renderInventory();});
-$('invExoToggle').addEventListener('click',()=>{const exo=inventoryCatalog.find(x=>x.name==='Exoesqueleto');if(!exo)return;if(!(Number(inventoryData.quantities[exo.id])>0)){inventoryCategory='Trajes y protección';inventorySearch='Exoesqueleto';$('invSearch').value=inventorySearch;renderInventory();$('invItems').scrollIntoView({behavior:'smooth',block:'center'});return;}inventoryData.exoskeletonEquipped=!inventoryData.exoskeletonEquipped;saveInventory();renderInventory();});
+$('invExoToggle').addEventListener('click',()=>{const exo=inventoryCatalog.find(x=>x.name==='Exoesqueleto');if(!exo)return;if(!(Number(inventoryData.quantities[exo.id])>0)){inventoryCategory='Trajes y protección';inventorySearch='exoesqueleto';$('invSearch').value=inventorySearch;renderInventory();$('invItems').scrollIntoView({behavior:'smooth',block:'center'});return;}inventoryData.exoskeletonEquipped=!inventoryData.exoskeletonEquipped;saveInventory();renderInventory();});
 renderInventory();
 // Mapa real con posición GPS y puntos de campo guardados localmente.
 let mapWatchId=null,mapLastPosition=null,mapPoints= get('map_points',[]);
