@@ -218,30 +218,6 @@ window.encyFollowLink=el=>{
   $('encyList')?.scrollIntoView({behavior:'smooth',block:'start'});
  }
 };
-function rememberRichSelection');
- const lookup=new Map(refs.map(ref=>[ref.label.toLocaleLowerCase('es-AR'),ref]));
- const boundary='A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9_';
- const pattern=new RegExp('(^|[^'+boundary+'])('+refs.map(ref=>escapeRegex(ref.label)).join('|')+')(?=$|[^'+boundary+'])','gi');
- return html.split(/(<[^>]*>)/g).map((part,index)=>{
-  if(index%2)return part;
-  return part.replace(pattern,(whole,prefix,word)=>{
-   const ref=lookup.get(word.toLocaleLowerCase('es-AR'));
-   if(!ref)return whole;
-   const attrs=ref.kind==='entry'?('data-ency-kind="entry" data-ency-id="'+esc(ref.id)+'"'):('data-ency-kind="category" data-ency-category="'+esc(ref.category)+'"');
-   return prefix+'<a href="#" class="ency-inline-link" '+attrs+' onclick="encyFollowLink(this);return false">'+word+'</a>';
-  });
- }).join('');
-}
-window.encyFollowLink=el=>{
- if(!el)return;
- if(el.dataset.encyKind==='entry'){const item=encyclopedia.find(x=>String(x.id)===el.dataset.encyId);if(item)encyOpen(item.id);return}
- if(el.dataset.encyKind==='category'){
-  const category=el.dataset.encyCategory;
-  encyClose();
-  if($('encyFilter')){$('encyFilter').value=category;renderEncyclopedia()}
-  $('encyList')?.scrollIntoView({behavior:'smooth',block:'start'});
- }
-};
 function rememberRichSelection(field){if(!field)return;field._richSelection={start:field.selectionStart??field.value.length,end:field.selectionEnd??field.value.length};}
 function applyRichTag(field,tag,value){
  if(!field)return;const saved=field._richSelection;const start=saved?.start??field.selectionStart??field.value.length,end=saved?.end??field.selectionEnd??field.value.length;
@@ -268,7 +244,7 @@ function initRichEditors(){
  });
 }
 
-function go(t){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===t));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));if(t==='chat')renderChat();if(t==='relationship')renderTrato();if(t==='emissions')renderEmissions();if(t==='artifacts')renderArtifacts();if(t==='map')renderMapPoints()}
+function go(t){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===t));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));if(t==='chat')renderChat();if(t==='relationship')renderTrato();if(t==='emissions')renderEmissions();if(t==='artifacts')renderInventory();if(t==='map')renderMapPoints()}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
 function home(){$('cc').textContent=contacts.length;$('mc').textContent=Object.values(chats).flat().length;$('xc').textContent=missions.filter(x=>!x.done).length;$('nc').textContent=notes.length;$('activity').textContent=notes[0]?.title||missions[0]?.title||'Sin actividad registrada.'}
 function vital(c){return c.vital||'alive'}
