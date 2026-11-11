@@ -118,11 +118,12 @@ body.keyboard-visible footer{display:none}
 
 /* Selector de traje y aviso de sobrecarga */
 .cop-suit-wrap{position:relative;flex:none}.cop-suit-button{width:76px;padding:4px;background:#10170e;border:1px solid #819967;color:#d8e9c5;display:flex;flex-direction:column;align-items:center;gap:3px}.cop-suit-button img{width:66px;height:66px;object-fit:contain;background:radial-gradient(ellipse,#465a35,#10170e 75%)}.cop-suit-button span{font:800 8px monospace;letter-spacing:.4px;text-align:center}.cop-suit-picker{position:absolute;z-index:30;right:0;top:100%;width:min(260px,78vw);max-height:270px;overflow:auto;padding:7px;background:#10170f;border:1px solid #819967;box-shadow:0 8px 22px #000d;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.cop-suit-picker.hidden{display:none!important}.cop-suit-picker button{min-width:0;padding:5px;background:#202c1c;border:1px solid #536744;color:#d8e9c5;font:10px monospace}.cop-suit-picker img{width:100%;height:66px;object-fit:contain;display:block;background:#11190f}.cop-suit-picker span{display:block;padding-top:4px}.cop-exo-row{position:relative}.cop-exo-toggle{width:100%;margin:0 0 10px}.cop-exo-warning{position:absolute;z-index:12;right:8px;top:-37px;padding:8px 11px;background:#d8b66c;color:#171b11;border:1px solid #fff0b5;border-radius:3px;box-shadow:0 3px 12px #000b;font:900 11px monospace;animation:exoPulse .8s ease-in-out 3}.cop-exo-warning:after{content:"";position:absolute;right:20px;bottom:-6px;width:10px;height:10px;background:#d8b66c;transform:rotate(45deg)}@keyframes exoPulse{50%{transform:scale(1.04);filter:brightness(1.2)}}
+.pda-profile-card{display:flex;align-items:center;gap:12px}.pda-profile-avatar{width:76px;height:76px;min-width:76px;border-radius:50%;object-fit:cover;border:2px solid #8ca96b;background:#0d130c;box-shadow:0 0 12px #0008}.pda-profile-placeholder{display:grid;place-items:center;color:var(--m);font:700 10px monospace;text-align:center}.pda-profile-info{flex:1;min-width:0}.pda-profile-info strong{display:block;color:var(--g);font:800 16px monospace;overflow-wrap:anywhere}.pda-profile-info small{display:block;margin:4px 0 8px}.pda-profile-actions{display:flex;gap:6px;flex-wrap:wrap}.pda-profile-actions button{font-size:11px;padding:7px 9px}
 </style></head><body>
 <header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><div class="header-tools"><button class="btn" id="sidorovichToggle" type="button" aria-label="Silenciar o activar la voz de Sidorovich">🔊 SIDO: ON</button><button class="btn" id="orientationBtn">↻ HORIZONTAL</button><button class="btn" id="fullscreenBtn">⛶ PANTALLA COMPLETA</button></div></div><div class="row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span></div></header>
 <nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES<span id="missionAlertDot" class="mission-alert-dot hidden" aria-label="Misión nueva"></span></button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="gallery">GALERÍA</button><button data-tab="player">REPRODUCTOR</button><button data-tab="compass">BRÚJULA</button><button data-tab="artifacts">INVENTARIO</button><button data-tab="map">MAPA GPS</button><button data-tab="data">DATOS</button></nav>
 <main>
-<section id="home" class="view active"><div class="panel"><h2>TERMINAL ACTIVO</h2><p>Bienvenido a la Zona, stalker. Tus registros se guardan en este dispositivo.</p><div class="row"><div>CONTACTOS <b id="cc">4</b></div><div>MENSAJES <b id="mc">0</b></div></div><div class="row"><div>MISIONES <b id="xc">0</b></div><div>NOTAS <b id="nc">0</b></div></div></div><div class="panel"><h2>ÚLTIMA ACTIVIDAD</h2><div id="activity" class="muted">Sin actividad registrada.</div></div></section>
+<section id="home" class="view active"><div class="panel"><h2>IDENTIDAD DEL STALKER</h2><div class="pda-profile-card"><img id="pdaProfileAvatar" class="pda-profile-avatar hidden" alt="Foto de perfil del Stalker"><div id="pdaProfilePlaceholder" class="pda-profile-avatar pda-profile-placeholder">SIN<br>FOTOGRAFÍA</div><div class="pda-profile-info"><strong id="pdaProfileName">STALKER</strong><small id="pdaProfileStatus" class="muted">PERFIL DE CAMPO</small><div class="pda-profile-actions"><input id="pdaProfilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><button class="btn" type="button" id="pdaChooseProfilePhoto">📷 ELEGIR FOTO</button></div></div></div></div><div class="panel"><h2>TERMINAL ACTIVO</h2><p>Bienvenido a la Zona, stalker. Tus registros se guardan en este dispositivo.</p><div class="row"><div>CONTACTOS <b id="cc">4</b></div><div>MENSAJES <b id="mc">0</b></div></div><div class="row"><div>MISIONES <b id="xc">0</b></div><div>NOTAS <b id="nc">0</b></div></div></div><div class="panel"><h2>ÚLTIMA ACTIVIDAD</h2><div id="activity" class="muted">Sin actividad registrada.</div></div></section>
 <section id="contacts" class="view"><div class="panel"><div class="row"><h2>DIRECTORIO</h2><button class="btn" id="newC">+ NUEVO</button></div><p class="muted">Estado vital editable: verde = vivo · rojo = muerto · amarillo = perdido.</p>
 <div class="panel pda-link-panel"><h2>VINCULAR OTRA PDA</h2><p class="muted">Conectá dos terminales con un código privado de un solo uso. El código vence a los 10 minutos.</p><label class="muted" for="pdaDisplayName">IDENTIFICACIÓN DE ESTA PDA</label><input id="pdaDisplayName" maxlength="40" value="STALKER" placeholder="Ej.: CHAZON"><div class="row" style="margin-top:8px"><button class="btn" id="createPairCode">GENERAR CÓDIGO</button><span id="pdaLinkStatus" class="muted">CENTRAL SIN CONECTAR</span></div><div id="pairCodeBox" class="hidden" style="margin-top:10px;padding:12px;text-align:center;background:#0b110a;border:1px dashed var(--line)"><div class="muted">CÓDIGO DE VINCULACIÓN · 10 MIN</div><strong id="pairCodeValue" style="font:900 28px monospace;letter-spacing:5px;color:var(--g)"></strong></div><div style="border-top:1px solid var(--line);margin:12px 0;padding-top:10px"><label class="muted" for="pairCodeInput">SI TE PASARON UN CÓDIGO</label><div class="row"><input id="pairCodeInput" maxlength="12" placeholder="XXXXXXXX" autocapitalize="characters"><button class="btn" id="redeemPairCode">VINCULAR</button></div></div><small class="muted">La otra PDA debe estar conectada a internet para recibir mensajes y audios.</small></div>
 <div id="contactList" class="stack"></div></div><div id="cEditor" class="panel hidden"><h2>CONTACTO</h2><input id="cName" placeholder="Nombre / alias"><input id="cRole" placeholder="Ocupación / facción"><label class="muted" for="cAlignment">RELACIÓN CON ESTE STALKER</label><select id="cAlignment"><option value="enemy">ENEMIGO</option><option value="neutral" selected>NEUTRAL</option><option value="friend">AMIGO</option><option value="ally">ALIADO</option></select><textarea id="cBio" placeholder="Biografía y personalidad"></textarea><div class="photo-tools"><img id="cPhotoPreview" class="contact-photo-preview" alt="Vista previa de la foto" src="" style="display:none"><div id="cPhotoPlaceholder" class="contact-photo-preview contact-photo-empty">SIN FOTO</div><div style="flex:1;min-width:140px"><input id="cPhotoInput" type="file" accept="image/*" style="display:none"><button type="button" id="chooseCPhoto" class="btn">📷 ELEGIR FOTO</button><button type="button" id="removeCPhoto" style="margin-top:6px">QUITAR FOTO</button><p class="muted">La imagen se guarda en este dispositivo.</p></div></div><div class="row"><button class="btn" id="saveC">GUARDAR</button><button id="cancelC">CANCELAR</button></div></div></section>
@@ -329,6 +330,51 @@ async function pdaEnsureSession(){
  pdaUserId=session.user.id;
  return client;
 }
+let pdaProfile=null;
+function renderPdaProfile(){
+ const photo=pdaProfile?.avatar_url||'';
+ $('pdaProfileName').textContent=pdaProfile?.display_name||$('pdaDisplayName')?.value||'STALKER';
+ $('pdaProfileAvatar').src=photo;
+ $('pdaProfileAvatar').classList.toggle('hidden',!photo);
+ $('pdaProfilePlaceholder').classList.toggle('hidden',!!photo);
+}
+async function pdaLoadProfile(){
+ const client=await pdaEnsureSession();
+ let {data,error}=await client.from('pda_profiles').select('user_id,display_name,avatar_url,updated_at').eq('user_id',pdaUserId).maybeSingle();
+ if(error)throw error;
+ if(!data){
+  const displayName=$('pdaDisplayName')?.value?.trim()||'STALKER';
+  const created=await client.from('pda_profiles').upsert({user_id:pdaUserId,display_name:displayName},{onConflict:'user_id'}).select('user_id,display_name,avatar_url,updated_at').single();
+  if(created.error)throw created.error;
+  data=created.data;
+ }
+ pdaProfile=data;
+ if($('pdaDisplayName')&&data.display_name)$('pdaDisplayName').value=data.display_name;
+ renderPdaProfile();
+}
+async function pdaSaveProfilePhoto(file){
+ if(!file||!['image/jpeg','image/png','image/webp'].includes(file.type))throw new Error('Elegí una imagen JPG, PNG o WEBP.');
+ const dataUrl=await new Promise((resolve,reject)=>{
+  const reader=new FileReader();reader.onerror=()=>reject(new Error('No se pudo leer la fotografía.'));
+  reader.onload=()=>{const img=new Image();img.onerror=()=>reject(new Error('La imagen no se pudo abrir.'));
+   img.onload=()=>{const max=640,scale=Math.min(1,max/Math.max(img.width,img.height)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',.82))};img.src=reader.result};
+  reader.readAsDataURL(file);
+ });
+ const blob=await (await fetch(dataUrl)).blob(),client=await pdaEnsureSession(),path=pdaUserId+'/avatar.jpg';
+ $('pdaProfileStatus').textContent='SUBIENDO FOTOGRAFÍA…';
+ const {error:uploadError}=await client.storage.from('pda-avatars').upload(path,blob,{contentType:'image/jpeg',upsert:true,cacheControl:'3600'});
+ if(uploadError)throw uploadError;
+ const {data:urlData}=client.storage.from('pda-avatars').getPublicUrl(path);
+ const avatarUrl=urlData.publicUrl+'?v='+Date.now();
+ const displayName=$('pdaDisplayName')?.value?.trim()||pdaProfile?.display_name||'STALKER';
+ const {data,error}=await client.from('pda_profiles').upsert({user_id:pdaUserId,display_name:displayName,avatar_url:avatarUrl,updated_at:new Date().toISOString()},{onConflict:'user_id'}).select('user_id,display_name,avatar_url,updated_at').single();
+ if(error)throw error;
+ pdaProfile=data;renderPdaProfile();$('pdaProfileStatus').textContent='FOTOGRAFÍA SINCRONIZADA · PERFIL ACTUALIZADO';
+}
+$('pdaChooseProfilePhoto').onclick=()=>$('pdaProfilePhotoInput').click();
+$('pdaProfilePhotoInput').onchange=async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;try{await pdaSaveProfilePhoto(file);playPdaBeep('notify')}catch(err){$('pdaProfileStatus').textContent='NO SE PUDO ACTUALIZAR';alert('No se pudo guardar la foto de perfil: '+(err.message||err))}};
+$('pdaDisplayName').addEventListener('change',async()=>{if(!pdaUserId)return;try{const client=await pdaEnsureSession(),displayName=$('pdaDisplayName').value.trim()||'STALKER';const {data,error}=await client.from('pda_profiles').upsert({user_id:pdaUserId,display_name:displayName,avatar_url:pdaProfile?.avatar_url||null,updated_at:new Date().toISOString()},{onConflict:'user_id'}).select('user_id,display_name,avatar_url,updated_at').single();if(error)throw error;pdaProfile=data;renderPdaProfile()}catch(e){console.warn('Perfil PDA:',e)}});
+
 async function pdaInvoke(action,extra={}){
  const client=await pdaEnsureSession();
  const {data,error}=await client.functions.invoke('pda-pairing',{body:{action,displayName:$('pdaDisplayName')?.value||'STALKER',...extra}});
@@ -461,7 +507,7 @@ async function pdaStartAudioRecording(){
 $('recordAudioBtn').onclick=pdaStartAudioRecording;
 $('stopAudioBtn').onclick=()=>{if(pdaMediaRecorder?.state==='recording'){pdaMediaRecorder.stop();$('stopAudioBtn').classList.add('hidden');$('recordAudioBtn').classList.remove('hidden')}};
 async function initPdaComms(){
- try{await pdaEnsureSession();await refreshRemoteContacts();await pdaRefreshRemoteMissions();setInterval(async()=>{await refreshRemoteContacts();await pdaRefreshRemoteMissions()},15000)}
+ try{await pdaEnsureSession();await pdaLoadProfile();await refreshRemoteContacts();await pdaRefreshRemoteMissions();setInterval(async()=>{await refreshRemoteContacts();await pdaRefreshRemoteMissions()},15000)}
  catch(e){pdaSetStatus('AUTENTICACIÓN PENDIENTE');$('chatConnectionState').textContent='SIN AUTENTICAR';console.warn('PDA comunicaciones:',e)}
 }
 
