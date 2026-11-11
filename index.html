@@ -314,7 +314,7 @@ let contactPhotoData='';function showContactPhoto(){const has=!!contactPhotoData
 window.editC=id=>{let c=contacts.find(x=>x.id===id);if(!c)return;editId=id;contactPhotoData=c.photo||'';$('cPhotoInput').value='';$('cName').value=c.name;$('cRole').value=c.role;$('cBio').value=c.bio;showContactPhoto();$('cEditor').classList.remove('hidden')};
 $('cancelC').onclick=()=>$('cEditor').classList.add('hidden');
 $('saveC').onclick=()=>{let name=$('cName').value.trim();if(!name)return alert('Escribí un nombre');let previous=contacts.find(x=>x.id===editId);let c={id:editId||'c'+Date.now(),name,role:$('cRole').value,bio:$('cBio').value,vital:previous?.vital||'alive',photo:contactPhotoData||''};contacts=editId?contacts.map(x=>x.id===editId?c:x):[...contacts,c];save();['cName','cRole','cBio'].forEach(clearDraft);saveDrafts();renderContacts();$('cEditor').classList.add('hidden');playPdaBeep('notify')};
-let pdaRemoteMessages={},pdaRealtimeChannel=null,pdaUserId=null,pdaMediaRecorder=null,pdaAudioChunks=[],pdaAudioStream=null;
+let pdaRemoteMessages={},pdaRealtimeChannel=null,pdaUserId=null,pdaMediaRecorder=null,pdaAudioChunks=[],pdaAudioStream=null,pdaAudioStartedAt=0,pdaAudioLimitTimer=null;
 function pdaSetStatus(text){const el=$('pdaLinkStatus');if(el)el.textContent=text}
 function pdaCurrentContact(){return contacts.find(x=>x.id===$('chatWho').value)}
 async function pdaEnsureSession(){
@@ -424,6 +424,8 @@ async function pdaStartAudioRecording(){
   pdaAudioChunks=[];
   pdaMediaRecorder.ondataavailable=e=>{if(e.data?.size)pdaAudioChunks.push(e.data)};
   pdaMediaRecorder.onstop=async()=>{
+   if(pdaAudioLimitTimer)clearTimeout(pdaAudioLimitTimer);pdaAudioLimitTimer=null;
+   const durationMs=Math.max(1,Date.now()-pdaAudioStartedAt);pdaAudioStartedAt=0;
    pdaAudioStream?.getTracks().forEach(t=>t.stop());pdaAudioStream=null;
    const blob=new Blob(pdaAudioChunks,{type:pdaMediaRecorder.mimeType||'audio/webm'});
    $('voiceMessageStatus').textContent='TRANSMITIENDO '+Math.round(blob.size/1024)+' KB…';
@@ -433,13 +435,13 @@ async function pdaStartAudioRecording(){
     const path=contact.remoteConversationId+'/'+crypto.randomUUID()+'.'+ext;
     const {error:uploadError}=await client.storage.from('pda-audios').upload(path,blob,{contentType:blob.type,upsert:false});
     if(uploadError)throw uploadError;
-    const {error:insertError}=await client.from('pda_messages').insert({conversation_id:contact.remoteConversationId,sender_id:pdaUserId,message_type:'audio',audio_path:path,audio_mime_type:blob.type,audio_duration_ms:Math.max(1,Math.round(blob.size/16000))});
+    const {error:insertError}=await client.from('pda_messages').insert({conversation_id:contact.remoteConversationId,sender_id:pdaUserId,message_type:'audio',audio_path:path,audio_mime_type:blob.type,audio_duration_ms:Math.min(600000,durationMs)});
     if(insertError)throw insertError;
     $('voiceMessageStatus').textContent='AUDIO ENVIADO';await pdaLoadRemoteMessages(contact);pdaRenderChat();playPdaBeep('message');
    }catch(e){$('voiceMessageStatus').textContent='ERROR DE TRANSMISIÓN';alert('No se pudo enviar el audio: '+(e.message||e))}
    pdaMediaRecorder=null;
   };
-  pdaMediaRecorder.start();$('recordAudioBtn').classList.add('hidden');$('stopAudioBtn').classList.remove('hidden');$('voiceMessageStatus').textContent='GRABANDO…';
+  pdaAudioStartedAt=Date.now();pdaMediaRecorder.start();pdaAudioLimitTimer=setTimeout(()=>{if(pdaMediaRecorder?.state==='recording'){pdaMediaRecorder.stop();$('stopAudioBtn').classList.add('hidden');$('recordAudioBtn').classList.remove('hidden')}},600000);$('recordAudioBtn').classList.add('hidden');$('stopAudioBtn').classList.remove('hidden');$('voiceMessageStatus').textContent='GRABANDO…';
  }catch(e){$('voiceMessageStatus').textContent='MICRÓFONO NO DISPONIBLE';alert('No se pudo activar el micrófono: '+(e.message||e))}
 }
 $('recordAudioBtn').onclick=pdaStartAudioRecording;
