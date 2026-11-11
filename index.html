@@ -339,7 +339,7 @@ function renderPdaProfile(){
  $('pdaProfileAvatar').classList.toggle('hidden',!photo);
  $('pdaProfilePlaceholder').classList.toggle('hidden',!!photo);
  if($('pdaProfileDisplayName'))$('pdaProfileDisplayName').value=pdaProfile?.display_name||'';
- if($('pdaProfileFaction'))$('pdaProfileFaction').value=pdaProfile?.faction||'Solitarios';
+ if($('pdaProfileFaction'))$('pdaProfileFaction').value=pdaProfile?.faction||'';
  if($('pdaProfileBio'))$('pdaProfileBio').value=pdaProfile?.bio||'';
 }
 async function pdaLoadProfile(){
@@ -359,7 +359,7 @@ async function pdaLoadProfile(){
 async function pdaSaveProfileData(){
  const client=await pdaEnsureSession();
  const displayName=($('pdaProfileDisplayName')?.value||$('pdaDisplayName')?.value||'STALKER').trim().slice(0,40)||'STALKER';
- const faction=($('pdaProfileFaction')?.value||'Solitarios').trim().slice(0,32)||'Solitarios';
+ const faction=($('pdaProfileFaction')?.value||'').trim().slice(0,32);
  const bio=($('pdaProfileBio')?.value||'').trim().slice(0,500);
  $('pdaProfileStatus').textContent='GUARDANDO PERFIL…';
  const {data,error}=await client.from('pda_profiles').upsert({user_id:pdaUserId,display_name:displayName,avatar_url:pdaProfile?.avatar_url||null,faction,bio,ranking_joined:!!pdaProfile?.ranking_joined,updated_at:new Date().toISOString()},{onConflict:'user_id'}).select('user_id,display_name,avatar_url,faction,bio,updated_at,ranking_joined').single();
@@ -386,7 +386,7 @@ async function pdaSaveProfilePhoto(file){
  const {data:urlData}=client.storage.from('pda-avatars').getPublicUrl(path);
  const avatarUrl=urlData.publicUrl+'?v='+Date.now();
  const displayName=$('pdaProfileDisplayName')?.value?.trim()||$('pdaDisplayName')?.value?.trim()||pdaProfile?.display_name||'STALKER';
- const {data,error}=await client.from('pda_profiles').upsert({user_id:pdaUserId,display_name:displayName,avatar_url:avatarUrl,faction:pdaProfile?.faction||'Solitarios',bio:pdaProfile?.bio||'',ranking_joined:!!pdaProfile?.ranking_joined,updated_at:new Date().toISOString()},{onConflict:'user_id'}).select('user_id,display_name,avatar_url,faction,bio,updated_at,ranking_joined').single();
+ const {data,error}=await client.from('pda_profiles').upsert({user_id:pdaUserId,display_name:displayName,avatar_url:avatarUrl,faction:pdaProfile?.faction||'',bio:pdaProfile?.bio||'',ranking_joined:!!pdaProfile?.ranking_joined,updated_at:new Date().toISOString()},{onConflict:'user_id'}).select('user_id,display_name,avatar_url,faction,bio,updated_at,ranking_joined').single();
  if(error)throw error;
  pdaProfile=data;renderPdaProfile();$('pdaProfileStatus').textContent='FOTOGRAFÍA SINCRONIZADA · PERFIL ACTUALIZADO';
 }
@@ -440,7 +440,26 @@ async function pdaRefreshRanking(){try{
  }).join('')||'<div class="empty">SIN REGISTROS.</div>';
  $('rankingUpdated').textContent='ACTUALIZADO '+new Date().toLocaleTimeString('es-AR');
  }catch(e){$('rankingUpdated').textContent='SIN CONEXIÓN';console.warn('Ranking:',e)}}
-$('rankingJoinBtn').onclick=async()=>{const btn=$('rankingJoinBtn');btn.disabled=true;btn.textContent='INSCRIBIENDO…';try{await pdaSaveProfileData();await pdaInvoke('joinRanking');await pdaRefreshRanking();playPdaBeep('notify')}catch(e){alert('No se pudo ingresar al ranking: '+(e.message||e))}finally{btn.disabled=false;btn.textContent='PARTICIPAR DEL RANKING'}};
+$('rankingJoinBtn').onclick=async()=>{
+ const name=($('pdaProfileDisplayName')?.value||'').trim();
+ const faction=($('pdaProfileFaction')?.value||'').trim();
+ const bio=($('pdaProfileBio')?.value||'').trim();
+ const photo=!!(pdaProfile?.avatar_url);
+ const missing=[];
+ if(!name||name.toUpperCase()==='STALKER')missing.push('nombre');
+ if(!photo)missing.push('fotografía');
+ if(!faction)missing.push('facción');
+ if(!bio)missing.push('biografía');
+ if(missing.length){
+  const msg='PRIMERO COMPLETÁ Y GUARDÁ TU PERFIL.\n\nTe falta: '+missing.join(', ')+'.\n\nEntrá en INICIO, completá los datos y guardalos. Después podrás participar del ranking.';
+  $('pdaProfileStatus').textContent='PERFIL INCOMPLETO · FALTAN '+missing.join(', ').toUpperCase();
+  alert(msg);return;
+ }
+ const btn=$('rankingJoinBtn');btn.disabled=true;btn.textContent='INSCRIBIENDO…';
+ try{await pdaSaveProfileData();await pdaInvoke('joinRanking');await pdaRefreshRanking();playPdaBeep('notify')}
+ catch(e){alert('No se pudo ingresar al ranking: '+(e.message||e))}
+ finally{btn.disabled=false;btn.textContent='PARTICIPAR DEL RANKING'}
+};
 
 
 async function refreshRemoteContacts(){
