@@ -723,7 +723,7 @@ let compassListening=false,compassEventName='deviceorientation',compassLastHeadi
 const compassStatus=$('compassStatus'),compassHeading=$('compassHeading'),compassNeedle=$('compassNeedle');
 const compassDirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'];
 function compassDir(deg){return compassDirs[Math.round(deg/22.5)%16]}
-function buildCompassDegrees(){const host=$('compassDegrees');if(!host)return;host.innerHTML='';for(let d=0;d<360;d+=45){const n=document.createElement('span');n.textContent=String(d).padStart(3,'0');n.style.transform='translate(-50%,-50%) rotate('+d+'deg) translateY(-'+(Math.min(390,Math.max(260,window.innerWidth*.78))*.39)+'px) rotate('+(-d)+'deg)';host.appendChild(n);}}
+function buildCompassDegrees(){const host=$('compassDegrees');if(!host)return;host.innerHTML='';const radius=host.parentElement.clientWidth*.39;for(let d=0;d<360;d+=45){const n=document.createElement('span');n.textContent=String(d).padStart(3,'0');n.style.transform='translate(-50%,-50%) rotate('+d+'deg) translateY(-'+radius+'px) rotate('+(-d)+'deg)';host.appendChild(n);}}
 buildCompassDegrees();window.addEventListener('resize',buildCompassDegrees);
 function compassUpdate(e){
  let heading=null;
