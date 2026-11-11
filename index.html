@@ -348,6 +348,7 @@ function renderPdaProfile(){
  const complete=pdaProfileIsComplete(),editing=pdaProfileEditing||!complete;
  $('pdaProfileEditor').classList.toggle('hidden',!editing);
  $('pdaProfileReadOnly').classList.toggle('hidden',editing);
+ $('pdaEditProfileBtn').classList.toggle('hidden',editing||!complete);
  $('pdaProfileFactionView').textContent=pdaProfile?.faction||'SIN FACCION';
  $('pdaProfileBioView').textContent=pdaProfile?.bio||'SIN BIOGRAFÍA REGISTRADA';
  if(complete&&!editing)$('pdaProfileStatus').textContent='PERFIL SINCRONIZADO';
