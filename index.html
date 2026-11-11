@@ -173,9 +173,9 @@ function richText(value,currentId){
   .replace(/\[i\]([\s\S]*?)\[\/i\]/gi,'<em>$1</em>')
   .replace(/\[u\]([\s\S]*?)\[\/u\]/gi,'<u>$1</u>')
   .replace(/\[s\]([\s\S]*?)\[\/s\]/gi,'<s>$1</s>')
-  .replace(/\[color=(#[0-9a-f]{6})\]([\s\S]*?)\[\/color\]/gi,(_,c,t)=>`<span style="color:${c}">${t}</span>`)
-  .replace(/\[size=(small|normal|large|huge)\]([\s\S]*?)\[\/size\]/gi,(_,z,t)=>`<span style="font-size:${({small:'12px',normal:'15px',large:'19px',huge:'24px'})[z]}">${t}</span>`)
-  .replace(/\[font=(mono|serif|sans)\]([\s\S]*?)\[\/font\]/gi,(_,f,t)=>`<span style="font-family:${({mono:'monospace',serif:'Georgia,serif',sans:'Arial,sans-serif'})[f]}">${t}</span>`);
+  .replace(/\[color=(#[0-9a-f]{6})\]([\s\S]*?)\[\/color\]/gi,(_,c,t)=>'<span style="color:'+c+'">'+t+'</span>')
+  .replace(/\[size=(small|normal|large|huge)\]([\s\S]*?)\[\/size\]/gi,(_,z,t)=>'<span style="font-size:'+({small:'12px',normal:'15px',large:'19px',huge:'24px'})[z]+'">'+t+'</span>')
+  .replace(/\[font=(mono|serif|sans)\]([\s\S]*?)\[\/font\]/gi,(_,f,t)=>'<span style="font-family:'+({mono:'monospace',serif:'Georgia,serif',sans:'Arial,sans-serif'})[f]+'">'+t+'</span>');
  return linkEncyclopediaReferences(out,currentId).replace(/\r?\n/g,'<br>');
 }
 function linkEncyclopediaReferences(html,currentId){
@@ -184,8 +184,30 @@ function linkEncyclopediaReferences(html,currentId){
  [...new Set(encyclopedia.map(x=>x.category).filter(Boolean))].forEach(category=>refs.push({label:String(category),kind:'category',category:String(category)}));
  refs.sort((a,b)=>b.label.length-a.label.length);
  if(!refs.length)return html;
- const escapeRegex=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\ return out.replace(/\r?\n/g,'<br>');
+ const escapeRegex=value=>value.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\$&');
+ const lookup=new Map(refs.map(ref=>[ref.label.toLocaleLowerCase('es-AR'),ref]));
+ const boundary='A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9_';
+ const pattern=new RegExp('(^|[^'+boundary+'])('+refs.map(ref=>escapeRegex(ref.label)).join('|')+')(?=$|[^'+boundary+'])','gi');
+ return html.split(/(<[^>]*>)/g).map((part,index)=>{
+  if(index%2)return part;
+  return part.replace(pattern,(whole,prefix,word)=>{
+   const ref=lookup.get(word.toLocaleLowerCase('es-AR'));
+   if(!ref)return whole;
+   const attrs=ref.kind==='entry'?('data-ency-kind="entry" data-ency-id="'+esc(ref.id)+'"'):('data-ency-kind="category" data-ency-category="'+esc(ref.category)+'"');
+   return prefix+'<a href="#" class="ency-inline-link" '+attrs+' onclick="encyFollowLink(this);return false">'+word+'</a>';
+  });
+ }).join('');
 }
+window.encyFollowLink=el=>{
+ if(!el)return;
+ if(el.dataset.encyKind==='entry'){const item=encyclopedia.find(x=>String(x.id)===el.dataset.encyId);if(item)encyOpen(item.id);return}
+ if(el.dataset.encyKind==='category'){
+  const category=el.dataset.encyCategory;
+  encyClose();
+  if($('encyFilter')){$('encyFilter').value=category;renderEncyclopedia()}
+  $('encyList')?.scrollIntoView({behavior:'smooth',block:'start'});
+ }
+};
 function rememberRichSelection');
  const lookup=new Map(refs.map(ref=>[ref.label.toLocaleLowerCase('es-AR'),ref]));
  const boundary='A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9_';
