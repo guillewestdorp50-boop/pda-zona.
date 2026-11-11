@@ -721,16 +721,18 @@ if(!inventoryData.quantities){
 let inventoryCategory='TODOS',inventorySearch='';
 const copSuits=[
  {name:'Clear Sky',file:'CS-3a_Body_Armor_Large.jpg'},
- {name:'Monolith',file:'Berill-5M_Armored_Suit_Large.jpg'},
+ {name:'Monolith',url:'https://images.steamusercontent.com/ugc/1690527294067963699/5AD202F08A8718B252B6158637CA8CEBB58B6456/'},
  {name:'Deber',file:'PSZ-9d_Duty_Armor_Large.jpg'},
- {name:'Libertad',file:'Wind_of_Freedom_Bodysuit_Large.jpg'},
+ {name:'Libertad',file:'Wind_Of_Freedom_Bodysuit_Large.jpg'},
  {name:'Stalker',file:'PS5-M_Universal_Protection_Large.jpg'},
  {name:'Amanecer',file:'Sunrise_Bodysuit_Large.jpg'},
  {name:'Bandido',file:'Leather_Trench_Coat_Large.jpg'},
  {name:'Ciclo cerrado',file:'SEVA_Bodysuit_Large.jpg'},
+ {name:'Militar (Berill-5M)',file:'Berill-5M_Armored_Suit_Large.jpg'},
+ {name:'Bulat',file:'Bulat_Armored_Suit_Large.jpg'},
  {name:'Módulo exoesqueleto',file:'Exoskeleton_Large.jpg'}
 ];
-function suitImageUrl(suit){const x=copSuits.find(a=>a.name===suit)||copSuits[0];return 'https://cop.zsg.dk/Resources/Items/Armor/'+encodeURIComponent(x.file);}
+function suitImageUrl(suit){const x=copSuits.find(a=>a.name===suit)||copSuits[0];return x.url||('https://cop.zsg.dk/Resources/Items/Armor/'+encodeURIComponent(x.file));}
 function updateSuitDisplay(){const suit=inventoryData.suit||'Clear Sky',x=copSuits.find(a=>a.name===suit)||copSuits[0];$('invSuitImage').src=suitImageUrl(x.name);$('invSuitImage').alt='Traje '+x.name;$('invSuitLabel').textContent=x.name.toLocaleUpperCase('es')+' ▾';}
 function renderSuitPicker(){$('invSuitPicker').innerHTML=copSuits.map(x=>'<button type="button" data-suit="'+esc(x.name)+'"><img src="'+suitImageUrl(x.name)+'" alt="" onerror="this.style.opacity=.25"><span>'+esc(x.name)+'</span></button>').join('');}
 function showExoWarning(){const t=$('invExoWarning');if(!t)return;t.classList.remove('hidden');try{const C=window.AudioContext||window.webkitAudioContext;if(C){const c=new C(),o=c.createOscillator(),g=c.createGain();o.type='square';o.frequency.setValueAtTime(880,c.currentTime);o.frequency.setValueAtTime(660,c.currentTime+.13);g.gain.setValueAtTime(.08,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.28);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.29);o.onended=()=>c.close();}}catch(e){}}
