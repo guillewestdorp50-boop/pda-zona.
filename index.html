@@ -406,6 +406,13 @@ async function pdaLoadProfile(){
  pdaProfile=data;
  if($('pdaDisplayName')&&data.display_name)$('pdaDisplayName').value=data.display_name;
  renderPdaProfile();
+ try{
+  await pdaInvoke('addNpcStoryContact',{npcId:1});
+  if(!contacts.some(c=>Number(c.npcId)===1)){
+   contacts.unshift({id:'npc_1',npcId:1,name:'Cuervo Gris',role:'Guardián de la Zona · Técnico de la PDA',alignment:'ally',vital:'alive',bio:'Tu compañero técnico en la Zona. Canal de conversación GPT.',npcStory:true,portraitIndex:0});
+   save();renderContacts();
+  }
+ }catch(e){console.warn('Cuervo Gris:',e)}
 }
 async function pdaSaveProfileData(){
  const client=await pdaEnsureSession();
@@ -555,16 +562,31 @@ async function pdaLoadRemoteMessages(contact){
  for(const m of rows){if(m.message_type==='audio'&&m.audio_path){const {data:signed}=await client.storage.from('pda-audios').createSignedUrl(m.audio_path,3600);m.audioUrl=signed?.signedUrl||''}}
  pdaRemoteMessages[conversationId]=rows;
 }
+let pdaCuervoMessages=[];
+function pdaRenderCuervoChat(){
+ const box=$('chatBox');
+ box.innerHTML=pdaCuervoMessages.map(m=>'<div class="bubble '+(m.role==='user'?'me':'')+'"><div class="who">'+(m.role==='user'?'TÚ':'CUERVO GRIS')+' · '+esc(pdaFormatTime(m.created_at))+'</div><div>'+esc(m.content||'')+'</div></div>').join('')||'<div class="empty">Canal abierto. Cuervo Gris está escuchando.</div>';
+ box.scrollTop=box.scrollHeight;
+}
+async function pdaLoadCuervoChat(){
+ const data=await pdaInvoke('listCuervoChat');
+ pdaCuervoMessages=data.messages||[];
+ pdaRenderCuervoChat();
+ $('chatConnectionState').textContent='RADIO GPT · CUERVO GRIS';
+}
 function pdaRenderChat(){
- const id=$('chatWho').value,contact=pdaCurrentContact(),story=!!contact?.npcStory;
- $('npcStoryDialogue').classList.toggle('hidden',!story);$('chatBox').classList.toggle('hidden',story);
- $('msg').classList.toggle('hidden',story);$('send').classList.toggle('hidden',story);
+ const id=$('chatWho').value,contact=pdaCurrentContact(),story=!!contact?.npcStory,cuervo=story&&Number(contact.npcId)===1;
+ $('npcStoryDialogue').classList.toggle('hidden',!story||cuervo);$('chatBox').classList.toggle('hidden',story&&!cuervo);
+ $('msg').classList.toggle('hidden',story&&!cuervo);$('send').classList.toggle('hidden',story&&!cuervo);
  $('missionComposeToggle').classList.toggle('hidden',!contact?.remoteConversationId||story);
- if(story){$('missionComposer').classList.add('hidden');document.body.classList.add('npc-story-open')}else document.body.classList.remove('npc-story-open');
+ $('msg').readOnly=!!(story&&!cuervo);
+ $('msg').placeholder=cuervo?'Transmití un mensaje a Cuervo Gris...':'Tocá aquí para escribir...';
+ if(story){$('missionComposer').classList.add('hidden');document.body.classList.toggle('npc-story-open',!cuervo)}else document.body.classList.remove('npc-story-open');
+ if(cuervo){$('npcStoryDialogue').innerHTML='';if(!pdaCuervoMessages.length)$('chatBox').innerHTML='<div class="empty">ABRIENDO CANAL GPT...</div>';$('chatConnectionState').textContent='RADIO GPT · CUERVO GRIS';return}
  if(story){$('chatBox').innerHTML='';$('chatConnectionState').textContent='CANAL NARRATIVO';return}
  if(!id){$('chatBox').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}
  const local=(chats[id]||[]).map((m,i)=>({...m,local:true,localIndex:i,sortAt:0}));
- const remote=contact?.remoteConversationId?(pdaRemoteMessages[contact.remoteConversationId]||[]).map(m=>({...m,me:m.sender_id===pdaUserId,who:m.sender_id===pdaUserId?'TÚ':contact.name,time:pdaFormatTime(m.created_at),sortAt:new Date(m.created_at).getTime(),remote:true})):[];
+ const remote=contact?.remoteConversationId?(pdaRemoteMessages[contact.remoteConversationId]||[]).map(m=>({...m,me:m.sender_id===pdaUserId,who:m.sender_id===pdaUserId?'TÚ':contact.name,time:pdaFormatTime(m.created_at),sortAt:new Date(m.created_at).getTime(),remote:true})): [];
  const all=[...local,...remote].sort((a,b)=>a.sortAt-b.sortAt);
  $('chatBox').innerHTML=all.map(m=>{
   if(m.remote&&m.message_type==='audio')return '<div class="bubble '+(m.me?'me':'')+'"><div class="who">'+(m.me?'TÚ':esc(m.who))+' · '+esc(m.time)+' · NOTA DE VOZ</div>'+(m.audioUrl?'<audio controls preload="none" src="'+esc(m.audioUrl)+'" style="width:100%;max-width:260px;margin-top:7px"></audio>':'<small class="muted">Audio no disponible</small>')+'</div>';
@@ -600,7 +622,12 @@ window.chooseNpcDailyDialogue=async(sessionId,choice)=>{
 };
 async function renderChat(){
  const contact=pdaCurrentContact();pdaRenderChat();
- if(contact?.npcStory){await renderNpcDailyDialogue(contact);if(pdaRealtimeChannel){window.pdaSupabase?.removeChannel(pdaRealtimeChannel);pdaRealtimeChannel=null}return}
+ if(contact?.npcStory){
+  if(pdaRealtimeChannel){window.pdaSupabase?.removeChannel(pdaRealtimeChannel);pdaRealtimeChannel=null}
+  if(Number(contact.npcId)===1){try{await pdaInvoke('addNpcStoryContact',{npcId:1});await pdaLoadCuervoChat()}catch(e){$('chatBox').innerHTML='<div class="empty">'+esc(e.message||String(e))+'</div>'}}
+  else await renderNpcDailyDialogue(contact);
+  return;
+ }
  if(contact?.remoteConversationId){try{await pdaLoadRemoteMessages(contact);pdaRenderChat();await pdaSubscribeConversation(contact)}catch(e){$('chatConnectionState').textContent='SIN CONEXIÓN';console.warn('PDA chat:',e)}}
  else if(pdaRealtimeChannel){window.pdaSupabase?.removeChannel(pdaRealtimeChannel);pdaRealtimeChannel=null}
 }
@@ -610,6 +637,13 @@ window.chatC=id=>{go('chat');$('chatWho').value=id;renderChat()};
 async function send(){
  const text=$('msg').value.trim(),id=$('chatWho').value,contact=pdaCurrentContact();
  if(!text||!id)return;
+ if(contact?.npcStory&&Number(contact.npcId)===1){
+  const button=$('send');button.disabled=true;button.textContent='TRANSMITIENDO…';
+  try{const data=await pdaInvoke('cuervoChat',{message:text});$('msg').value='';clearDraft('msg');saveDrafts();await pdaLoadCuervoChat();playPdaBeep('message')}
+  catch(e){alert('No se pudo transmitir a Cuervo Gris. El mensaje sigue en el cuadro. '+(e.message||e))}
+  finally{button.disabled=false;button.textContent='ENVIAR ▸'}
+  return;
+ }
  if(contact?.remoteConversationId){
   try{const client=await pdaEnsureSession();const {error}=await client.from('pda_messages').insert({conversation_id:contact.remoteConversationId,sender_id:pdaUserId,message_type:'text',body:text});if(error)throw error;$('msg').value='';clearDraft('msg');saveDrafts();await pdaLoadRemoteMessages(contact);pdaRenderChat();playPdaBeep('message')}
   catch(e){alert('No se pudo transmitir. El texto sigue en el cuadro para que no lo pierdas. '+(e.message||''))}
