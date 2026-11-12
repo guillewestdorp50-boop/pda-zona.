@@ -545,7 +545,7 @@ body.keyboard-visible footer{display:none}
 <div class="panel pda-link-panel"><h2>VINCULAR OTRA PDA</h2><p class="muted">Conectá dos terminales con un código privado de un solo uso. El código vence a los 10 minutos.</p><label class="muted" for="pdaDisplayName">IDENTIFICACIÓN DE ESTA PDA</label><input id="pdaDisplayName" maxlength="40" value="STALKER" placeholder="Ej.: CHAZON"><div class="row" style="margin-top:8px"><button class="btn" id="createPairCode">GENERAR CÓDIGO</button><span id="pdaLinkStatus" class="muted">CENTRAL SIN CONECTAR</span></div><div id="pairCodeBox" class="hidden" style="margin-top:10px;padding:12px;text-align:center;background:#0b110a;border:1px dashed var(--line)"><div class="muted">CÓDIGO DE VINCULACIÓN · 10 MIN</div><strong id="pairCodeValue" style="font:900 28px monospace;letter-spacing:5px;color:var(--g)"></strong></div><div style="border-top:1px solid var(--line);margin:12px 0;padding-top:10px"><label class="muted" for="pairCodeInput">SI TE PASARON UN CÓDIGO</label><div class="row"><input id="pairCodeInput" maxlength="12" placeholder="XXXXXXXX" autocapitalize="characters"><button class="btn" id="redeemPairCode">VINCULAR</button></div></div><small class="muted">La otra PDA debe estar conectada a internet para recibir mensajes y audios.</small></div>
 <div id="contactList" class="stack"></div></div><div id="cEditor" class="panel hidden"><h2>CONTACTO</h2><input id="cName" placeholder="Nombre / alias"><input id="cRole" placeholder="Ocupación / facción"><label class="muted" for="cAlignment">RELACIÓN CON ESTE STALKER</label><select id="cAlignment"><option value="enemy">ENEMIGO</option><option value="neutral" selected>NEUTRAL</option><option value="friend">AMIGO</option><option value="ally">ALIADO</option></select><textarea id="cBio" placeholder="Biografía y personalidad"></textarea><div class="photo-tools"><img id="cPhotoPreview" class="contact-photo-preview" alt="Vista previa de la foto" src="" style="display:none"><div id="cPhotoPlaceholder" class="contact-photo-preview contact-photo-empty">SIN FOTO</div><div style="flex:1;min-width:140px"><input id="cPhotoInput" type="file" accept="image/*" style="display:none"><button type="button" id="chooseCPhoto" class="btn">📷 ELEGIR FOTO</button><button type="button" id="removeCPhoto" style="margin-top:6px">QUITAR FOTO</button><p class="muted">La imagen se guarda en este dispositivo.</p></div></div><div class="row"><button class="btn" id="saveC">GUARDAR</button><button id="cancelC">CANCELAR</button></div></div></section>
 <section id="relationship" class="view"><div class="panel"><h2>REGISTRO DE TRATO</h2><p class="muted">Elegí un contacto, anotá qué hiciste y calificá cómo fue el trato. La amistad cambia según tu valoración.</p><select id="tratoWho"></select><div class="panel"><div class="row"><div><div class="muted">NIVEL DE AMISTAD</div><strong id="friendScore" style="font:700 28px monospace;color:var(--g)">50 / 100</strong></div><span id="friendLabel" class="tag">NEUTRAL</span></div><div style="height:9px;background:#0b110a;border:1px solid var(--line);margin-top:10px"><div id="friendBar" style="height:100%;width:50%;background:#8eae62"></div></div></div><textarea id="tratoText" placeholder="Ej.: Le hice un regalo, lo ayudé en una misión, compartimos suministros..."></textarea><select id="tratoMood"><option value="positive">Agradable / positivo (+10 amistad)</option><option value="neutral">Neutral (sin cambios)</option><option value="negative">Desagradable / negativo (-10 amistad)</option></select><button class="btn" id="saveTrato">REGISTRAR TRATO</button></div><div class="panel"><h2>HISTORIAL DE TRATOS</h2><div id="tratoHistory" class="stack"></div></div></section>
-<section id="chat" class="view"><div class="panel"><h2>COMUNICACIONES DE STALKERS · RED NPC</h2><p class="muted">Canal de mensajes controlados. Los stalkers transmiten encargos y reconocimientos; las respuestas se eligen entre opciones predeterminadas.</p><div id="npcChatBox" class="chatbox" style="height:30vh;min-height:150px"></div></div><div class="panel"><h2>CANAL PRIVADO</h2><select id="chatWho"></select><div class="row" style="margin:8px 0"><small class="muted">CANAL PRIVADO · CONEXIÓN SEGURA</small><small id="chatConnectionState" class="muted">LOCAL</small></div><div id="npcStoryDialogue" class="npc-story-dialogue hidden"></div><div id="chatBox" class="chatbox"></div><div id="barbasArtifactPanel" class="panel hidden" style="margin-top:10px"><div class="row"><div><div class="cop-kicker">REGISTRO DE INTERCAMBIO</div><h3 style="margin:3px 0">ARTEFACTOS PARA BARBAS</h3><small class="muted">MISMAS FICHAS E IMÁGENES DE TU MOCHILA</small></div><strong id="barbasArtifactTotal">0 ENTREGADOS</strong></div><div id="barbasArtifactItems" class="cop-item-list" style="margin-top:10px"></div><div id="barbasArtifactHistory" class="muted" style="font-size:11px;margin-top:9px"></div></div><textarea id="msg" placeholder="Tocá aquí para escribir..." readonly></textarea>
+<section id="chat" class="view"><div class="panel"><h2>COMUNICACIONES DE STALKERS · RED NPC</h2><p class="muted">Canal de mensajes controlados. Los stalkers transmiten encargos y reconocimientos; las respuestas se eligen entre opciones predeterminadas.</p><div id="npcChatBox" class="chatbox" style="height:30vh;min-height:150px"></div></div><div class="panel"><h2>CANAL PRIVADO</h2><select id="chatWho"></select><div class="row" style="margin:8px 0"><small class="muted">CANAL PRIVADO · CONEXIÓN SEGURA</small><small id="chatConnectionState" class="muted">LOCAL</small></div><div id="npcStoryDialogue" class="npc-story-dialogue hidden"></div><div id="chatBox" class="chatbox"></div><div id="barbasArtifactPanel" class="panel hidden" style="margin-top:10px"><div class="row"><div><div class="cop-kicker">REGISTRO DE INTERCAMBIO</div><h3 style="margin:3px 0">ARTEFACTOS PARA BARBAS</h3><small class="muted">MISMAS FICHAS E IMÁGENES DE TU MOCHILA</small></div><strong id="barbasArtifactTotal">0 ENTREGADOS</strong></div><div id="barbasArtifactItems" class="cop-item-list" style="margin-top:10px"></div><div id="barbasQuestActions" class="stack" style="margin-top:10px"></div><div id="barbasArtifactHistory" class="muted" style="font-size:11px;margin-top:9px"></div></div><textarea id="msg" placeholder="Tocá aquí para escribir..." readonly></textarea>
 <div class="row"><small>TECLADO PDA · escritura en pantalla</small><button class="btn" id="send">ENVIAR ▸</button><button class="btn" id="missionComposeToggle">▣ ENVIAR MISIÓN</button></div><div id="missionComposer" class="panel hidden" style="margin-top:10px"><h3>TRANSMITIR NUEVO ENCARGO</h3><input id="remoteMissionTitle" maxlength="80" placeholder="Nombre de la misión"><textarea id="remoteMissionDesc" maxlength="1200" placeholder="Objetivo, ubicación e instrucciones..."></textarea><div class="row"><label class="muted">RECOMPENSA EN PUNTOS</label><input id="remoteMissionReward" type="number" min="1" max="100000" value="100" style="max-width:120px"></div><div class="row"><label class="muted">PENALIZACIÓN SI RECHAZA O FALLA (5–20)</label><input id="remoteMissionPenalty" type="number" min="5" max="20" step="1" value="5" style="max-width:90px"></div><div class="row"><label class="muted">PLAZO</label><select id="remoteMissionDuration" style="max-width:110px"><option value="1">1 HORA</option><option value="2">2 HORAS</option><option value="3">3 HORAS</option><option value="6">6 HORAS</option><option value="12">12 HORAS</option><option value="24" selected>24 HORAS</option><option value="48">48 HORAS</option></select></div><div class="row"><button class="btn" id="sendRemoteMission">TRANSMITIR ENCARGO</button><button id="cancelRemoteMission">CANCELAR</button></div></div>
 <div class="pda-voice-tools"><div class="row"><b style="font:700 11px monospace;color:var(--g)">TRANSMISIÓN DE VOZ</b><small id="voiceMessageStatus" class="muted">LISTO</small></div><div class="row" style="margin-top:8px"><button class="btn" id="recordAudioBtn">● GRABAR AUDIO</button><button class="btn danger hidden" id="stopAudioBtn">■ DETENER Y ENVIAR</button></div><small class="muted">Notas de voz privadas · máximo 10 minutos · hasta 20 MB.</small></div>
 <p class="muted">Los chats locales anteriores se conservan. Los mensajes entre PDAs se sincronizan por internet.</p></div></section>
@@ -746,8 +746,9 @@ function initRichEditors(){
 
 function updateMissionAlert(){let ids=[];try{ids=JSON.parse(localStorage.getItem('zona_unread_remote_missions')||'[]')}catch{}const active=ids.length>0;const dot=$('missionAlertDot'),button=document.querySelector('nav button[data-tab="missions"]');if(dot)dot.classList.toggle('hidden',!active);if(button)button.classList.toggle('mission-alert',active)}function clearMissionAlert(){localStorage.setItem('zona_unread_remote_missions','[]');updateMissionAlert()}function go(t){currentPdaTab=t;if(t==='missions')clearMissionAlert();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===t));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));if(t==='chat')renderChat();if(t==='missions')renderM();if(t==='relationship')renderTrato();if(t==='emissions')renderEmissions();if(t==='artifacts')renderInventory();if(t==='map')renderMapPoints();if(!welcomeFallbackTriggered&&!welcomeInProgress)speakSidorovich(t)}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
-let pdaWalletData={balance:18000,earned:18000,prices:{ojo:18000},history:[{type:'payment',name:'Ojo',amount:18000,time:'REGISTRO INICIAL'}]};
+let pdaWalletData={balance:0,earned:0,prices:{ojo:18000},history:[]};
 try{const saved=JSON.parse(localStorage.getItem('zona_wallet_v1')||'null');if(saved&&typeof saved==='object')pdaWalletData={...pdaWalletData,...saved,prices:{...pdaWalletData.prices,...(saved.prices||{})}}}catch(e){}
+if(Array.isArray(pdaWalletData.history)&&pdaWalletData.history.length===1&&pdaWalletData.history[0]?.type==='payment'&&pdaWalletData.history[0]?.name==='Ojo'&&Number(pdaWalletData.history[0]?.amount)===18000&&pdaWalletData.history[0]?.time==='REGISTRO INICIAL'){pdaWalletData.balance=0;pdaWalletData.earned=0;pdaWalletData.history=[];try{localStorage.setItem('zona_wallet_v1',JSON.stringify(pdaWalletData))}catch(e){}}
 function savePdaWallet(){localStorage.setItem('zona_wallet_v1',JSON.stringify(pdaWalletData))}
 function pdaArtifactPrice(item){const key=String(item?.name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,'-');return Math.max(0,Number(pdaWalletData.prices[key]??pdaWalletData.prices[item?.id])||0)}
 function pdaRegisterBarbasPayment(item){const price=pdaArtifactPrice(item);if(!price)return 0;pdaWalletData.earned=Math.max(0,Number(pdaWalletData.earned)||0)+price;if(pdaWalletData.balance!==null&&Number.isFinite(Number(pdaWalletData.balance)))pdaWalletData.balance=Number(pdaWalletData.balance)+price;pdaWalletData.history.push({type:'payment',name:item.name,amount:price,time:new Date().toLocaleString('es-AR')});pdaWalletData.history=pdaWalletData.history.slice(-100);savePdaWallet();home();return price}
@@ -1106,12 +1107,7 @@ async function send(){
   catch(e){alert('No se pudo transmitir. El texto sigue en el cuadro para que no lo pierdas. '+(e.message||''))}
  }else{
   (chats[id]??=[]).push({me:true,who:'TÚ',text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});
-  const barbasResult=pdaTryBarbasArtifactDelivery(text,contact);
-  if(barbasResult?.status==='delivered'){
-   const paid=pdaRegisterBarbasPayment(barbasResult.item);
-   const reply=paid?'Ese Ojo tiene buen aspecto. La Zona no regala nada, pero yo cumplo mi palabra: '+paid.toLocaleString('es-AR')+' RU son tuyos.':'Vaya, un Ojo. Justo el tipo de pieza que andaba buscando. Ya quedó en mis manos.';
-   (chats[id]??=[]).push({me:false,who:'BARBAS',text:reply,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});
-  }
+  // El mensaje de texto no entrega ni paga automáticamente: el stalker confirma con AQUÍ TIENES.
   $('msg').value='';clearDraft('msg');save();saveDrafts();renderChat();playPdaBeep('message')
  }
 }
@@ -1785,6 +1781,7 @@ $('invSuitPicker').addEventListener('click',e=>{const b=e.target.closest('[data-
 document.addEventListener('click',e=>{if(!e.target.closest('.cop-suit-wrap'))$('invSuitPicker').classList.add('hidden');});
 renderSuitPicker();
 function saveInventory(){localStorage.setItem('zona_pda_inventory_v1',JSON.stringify(inventoryData));}
+try{if(localStorage.getItem('zona_barbas_ojo_flow_v2')!=='1'){const ojo=inventoryCatalog.find(x=>x.kind==='artifact'&&x.name==='Ojo');if(ojo){inventoryData.quantities[ojo.id]=1;saveInventory();barbasDeliveryData.quantities[ojo.id]=0;barbasDeliveryData.history=barbasDeliveryData.history.filter(h=>h.id!==ojo.id);saveBarbasDeliveries();localStorage.setItem('zona_barbas_ojo_flow_v2','1');localStorage.setItem('zona_barbas_ojo_quest_v2',JSON.stringify({stage:'awaiting_artifact',itemId:ojo.id,startedAt:new Date().toISOString()}));}}}catch(e){console.warn('No se pudo preparar el encargo de Barbas.',e)}
 function invFmt(n){return Number(n).toFixed(2).replace('.',',')}
 function renderInvStats(){
  const entries=inventoryCatalog.map(x=>({x,q:Math.max(0,Number(inventoryData.quantities[x.id])||0)}));
@@ -1824,59 +1821,50 @@ try{barbasDeliveryData=JSON.parse(localStorage.getItem('zona_barbas_deliveries_v
 if(!barbasDeliveryData.quantities||typeof barbasDeliveryData.quantities!=='object')barbasDeliveryData.quantities={};
 if(!Array.isArray(barbasDeliveryData.history))barbasDeliveryData.history=[];
 function saveBarbasDeliveries(){localStorage.setItem('zona_barbas_deliveries_v1',JSON.stringify(barbasDeliveryData))}
-function pdaTryBarbasArtifactDelivery(message,contact){
- if(!contact||contact.npcStory||contact.remoteConversationId||!/barbas/i.test(contact.name||''))return null;
- const normalizeArtifactText=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
- const normalized=normalizeArtifactText(message);
- const deliveryIntent=/\b(?:te\s+)?(?:he\s+)?(?:traido|traje|traigo|entrego|entregar|dejo|deje|doy)\b|\baqui\s+(?:tienes|esta)\b/.test(normalized);
- const negatedDelivery=/\bno\s+(?:te\s+(?:lo\s+)?)?(?:he\s+)?(?:traido|traje|traigo|entrego|entregar|dejo|deje|doy)\b/.test(normalized);
- if(!deliveryIntent||negatedDelivery)return null;
- const padded=' '+normalized+' ';
- const matches=inventoryCatalog.filter(x=>x.kind==='artifact'&&padded.includes(' '+normalizeArtifactText(x.name)+' '));
- if(matches.length!==1)return null;
- const item=matches[0],backpack=Math.max(0,Number(inventoryData.quantities[item.id])||0);
- if(backpack<1)return {status:'empty',item};
- const delivered=Math.max(0,Number(barbasDeliveryData.quantities[item.id])||0);
- inventoryData.quantities[item.id]=backpack-1;
- barbasDeliveryData.quantities[item.id]=delivered+1;
- barbasDeliveryData.history.push({action:'give',id:item.id,name:item.name,time:new Date().toLocaleString('es-AR'),source:'chat'});
- barbasDeliveryData.history=barbasDeliveryData.history.slice(-100);
- saveInventory();saveBarbasDeliveries();renderInventory();renderBarbasArtifactPanel();
- return {status:'delivered',item};
-}
+let barbasOjoQuest={stage:'awaiting_artifact',itemId:null};
+try{barbasOjoQuest={...barbasOjoQuest,...JSON.parse(localStorage.getItem('zona_barbas_ojo_quest_v2')||'{}')}}catch(e){}
+function saveBarbasOjoQuest(){localStorage.setItem('zona_barbas_ojo_quest_v2',JSON.stringify(barbasOjoQuest))}
 function renderBarbasArtifactPanel(){
  const panel=$('barbasArtifactPanel');if(!panel)return;if(!window.pdaInventoryReady){panel.classList.add('hidden');return;}
  const contact=pdaCurrentContact(),isManualBarbas=!!contact&&!contact.npcStory&&!contact.remoteConversationId&&/barbas/i.test(contact.name||'');
  panel.classList.toggle('hidden',!isManualBarbas);if(!isManualBarbas)return;
- const artifacts=inventoryCatalog.filter(x=>x.kind==='artifact');
- const total=artifacts.reduce((n,x)=>n+(Number(barbasDeliveryData.quantities[x.id])||0),0);
- $('barbasArtifactTotal').textContent=total+' ENTREGADOS';
- $('barbasArtifactItems').innerHTML=artifacts.map(x=>{
-  const backpack=Math.max(0,Number(inventoryData.quantities[x.id])||0),delivered=Math.max(0,Number(barbasDeliveryData.quantities[x.id])||0);
-  const src=x.image?'https://cop.zsg.dk/Resources/Items/Artifacts/'+encodeURIComponent(x.image):'';
-  return '<div class="cop-item"><img class="cop-item-img" src="'+src+'" alt="" loading="lazy" onerror="this.style.display=String.fromCharCode(110,111,110,101);this.nextElementSibling.style.display=String.fromCharCode(103,114,105,100)"><div class="cop-item-img cop-item-fallback" style="display:none">'+esc(x.glyph)+'</div><div class="cop-item-main"><b>'+esc(x.name)+'</b><small>MOCHILA: '+backpack+' · ENTREGADOS: '+delivered+'</small></div><div class="cop-item-controls"><button data-barbas-return="'+x.id+'" '+(delivered===0?'disabled':'')+' aria-label="Deshacer entrega">−</button><strong>'+delivered+'</strong><button data-barbas-give="'+x.id+'" '+(backpack===0?'disabled':'')+' aria-label="Entregar a Barbas">+</button></div></div>';
- }).join('')||'<div class="cop-empty">NO HAY ARTEFACTOS EN EL CATÁLOGO</div>';
- const recent=barbasDeliveryData.history.slice(-5).reverse();
- $('barbasArtifactHistory').innerHTML='<b>ÚLTIMOS MOVIMIENTOS</b><br>'+ (recent.map(h=>esc(h.action==='give'?'ENTREGASTE':'DEVOLVISTE')+' · '+esc(h.name)+' · '+esc(h.time)).join('<br>')||'Todavía no hay entregas registradas.');
-}
-window.pdaInventoryReady=true;renderBarbasArtifactPanel();
-$('barbasArtifactItems').addEventListener('click',e=>{
- const give=e.target.closest('[data-barbas-give]'),undo=e.target.closest('[data-barbas-return]');if(!give&&!undo)return;
- const id=(give||undo).dataset.barbasGive||(give||undo).dataset.barbasReturn;
- const item=inventoryCatalog.find(x=>x.id===id&&x.kind==='artifact');if(!item)return;
- const backpack=Math.max(0,Number(inventoryData.quantities[id])||0),delivered=Math.max(0,Number(barbasDeliveryData.quantities[id])||0);
- if(give){
-  if(backpack<1)return;
-  inventoryData.quantities[id]=backpack-1;barbasDeliveryData.quantities[id]=delivered+1;
-  barbasDeliveryData.history.push({action:'give',id,name:item.name,time:new Date().toLocaleString('es-AR')});
+ const ojo=inventoryCatalog.find(x=>x.kind==='artifact'&&x.name==='Ojo');if(!ojo)return;
+ barbasOjoQuest.itemId=ojo.id;
+ const backpack=Math.max(0,Number(inventoryData.quantities[ojo.id])||0),delivered=Math.max(0,Number(barbasDeliveryData.quantities[ojo.id])||0);
+ $('barbasArtifactTotal').textContent=delivered+' ENTREGADOS';
+ const src='https://cop.zsg.dk/Resources/Items/Artifacts/'+encodeURIComponent(ojo.image);
+ $('barbasArtifactItems').innerHTML='<div class="cop-item"><img class="cop-item-img" src="'+src+'" alt="Ojo" loading="lazy"><div class="cop-item-main"><b>Ojo</b><small>MOCHILA: '+backpack+' · ENTREGADOS: '+delivered+' · RECOMPENSA: 18.000 RU</small></div></div>';
+ const actions=$('barbasQuestActions');if(!actions)return;
+ if(barbasOjoQuest.stage==='awaiting_artifact'){
+  actions.innerHTML='<div class="muted" style="margin:8px 0">BARBAS ESTÁ ESPERANDO EL ARTEFACTO.</div><button class="btn" id="barbasGiveOjo" '+(backpack<1?'disabled':'')+'>AQUÍ TIENES</button>';
+ }else if(barbasOjoQuest.stage==='awaiting_payment'){
+  actions.innerHTML='<div class="muted" style="margin:8px 0">BARBAS: “Buen trabajo, stalker. Esta pieza vale lo que te prometí. Acá tenés tu recompensa.”</div><button class="btn" id="barbasReceiveOjo">RECIBIR 18.000 RU</button>';
  }else{
-  if(delivered<1)return;
-  barbasDeliveryData.quantities[id]=delivered-1;inventoryData.quantities[id]=backpack+1;
-  barbasDeliveryData.history.push({action:'return',id,name:item.name,time:new Date().toLocaleString('es-AR')});
+  actions.innerHTML='<div class="statusline"><span class="statusdot status-alive"></span>MISIÓN COMPLETADA · PAGO RECIBIDO: 18.000 RU</div>';
  }
- barbasDeliveryData.history=barbasDeliveryData.history.slice(-100);
- saveInventory();saveBarbasDeliveries();renderInventory();renderBarbasArtifactPanel();
-});
+}
+window.pdaGiveOjoToBarbas=()=>{
+ const contact=pdaCurrentContact(),id=$('chatWho').value;if(!contact||!/barbas/i.test(contact.name||'')||barbasOjoQuest.stage!=='awaiting_artifact')return;
+ const ojo=inventoryCatalog.find(x=>x.kind==='artifact'&&x.name==='Ojo');if(!ojo)return;
+ const qty=Math.max(0,Number(inventoryData.quantities[ojo.id])||0);if(qty<1){alert('No tenés un Ojo en la mochila.');return}
+ inventoryData.quantities[ojo.id]=qty-1;barbasDeliveryData.quantities[ojo.id]=Math.max(0,Number(barbasDeliveryData.quantities[ojo.id])||0)+1;
+ barbasDeliveryData.history.push({action:'give',id:ojo.id,name:'Ojo',time:new Date().toLocaleString('es-AR'),source:'barbas-quest'});
+ barbasDeliveryData.history=barbasDeliveryData.history.slice(-100);saveInventory();saveBarbasDeliveries();
+ barbasOjoQuest.stage='awaiting_payment';barbasOjoQuest.itemId=ojo.id;barbasOjoQuest.deliveredAt=new Date().toISOString();saveBarbasOjoQuest();
+ (chats[id]??=[]).push({me:false,who:'BARBAS',text:'Buen trabajo, stalker. No es fácil encontrar una pieza así y menos traerla entera. El Ojo queda conmigo. Te ganaste lo que acordamos: dieciocho mil RU. Tomá, es tuyo.',time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});
+ save();renderInventory();pdaRenderChat();playPdaBeep('message');
+};
+window.pdaReceiveOjoPayment=()=>{
+ const contact=pdaCurrentContact(),id=$('chatWho').value;if(!contact||!/barbas/i.test(contact.name||'')||barbasOjoQuest.stage!=='awaiting_payment')return;
+ const ojo=inventoryCatalog.find(x=>x.kind==='artifact'&&x.name==='Ojo');if(!ojo)return;
+ const paid=pdaRegisterBarbasPayment(ojo);if(paid!==18000)return;
+ barbasOjoQuest.stage='completed';barbasOjoQuest.paidAt=new Date().toISOString();saveBarbasOjoQuest();
+ barbasDeliveryData.history.push({action:'paid',id:ojo.id,name:'Ojo · 18.000 RU',time:new Date().toLocaleString('es-AR'),source:'barbas-quest'});barbasDeliveryData.history=barbasDeliveryData.history.slice(-100);saveBarbasDeliveries();
+ (chats[id]??=[]).push({me:false,who:'BARBAS',text:'Así me gusta. Trato cumplido. Cuidá esos RU, stalker; en la Zona siempre aparece algo que vale la pena comprar.',time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});
+ save();pdaRenderChat();playPdaBeep('notify');
+};
+window.pdaInventoryReady=true;renderBarbasArtifactPanel();
+$('barbasQuestActions').addEventListener('click',e=>{if(e.target.closest('#barbasGiveOjo'))window.pdaGiveOjoToBarbas();if(e.target.closest('#barbasReceiveOjo'))window.pdaReceiveOjoPayment()});
 // Mapa real con posición GPS y puntos de campo guardados localmente.
 let mapWatchId=null,mapLastPosition=null,mapPoints= get('map_points',[]);
 function mapUrl(lat,lon){return 'https://maps.google.com/maps?q='+lat+','+lon+'&t=k&z=17&output=embed';}
