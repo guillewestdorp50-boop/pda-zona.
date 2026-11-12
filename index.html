@@ -1776,15 +1776,16 @@ if ('serviceWorker' in navigator) {
 }
 
 /* Controles adicionales del HUD de radio */
-(()=>{const $=id=>document.getElementById(id);let shuffle=false,repeat=false;
+let radioShuffleMode=false;
+(()=>{const $=id=>document.getElementById(id);let repeat=false;
  const openPanel=id=>{['radioLyricsPanel','radioEqPanel'].forEach(x=>$(x).hidden=x!==id)};
  document.querySelectorAll('[data-close-panel]').forEach(b=>b.addEventListener('click',()=>openPanel('')));
  $('lyricsToggle').addEventListener('click',()=>{const p=$('radioLyricsPanel');if(!p.hidden){openPanel('');return}openPanel('radioLyricsPanel');const key='zona_lyrics_'+(window.currentTrackId||$('trackTitle').textContent);$('radioLyricsText').value=localStorage.getItem(key)||''});
  $('saveRadioLyrics').addEventListener('click',()=>{const key='zona_lyrics_'+(window.currentTrackId||$('trackTitle').textContent);localStorage.setItem(key,$('radioLyricsText').value);$('saveRadioLyrics').textContent='GUARDADA';setTimeout(()=>$('saveRadioLyrics').textContent='GUARDAR LETRA',1200)});
  $('eqToggle').addEventListener('click',()=>{const p=$('radioEqPanel');if(!p.hidden){openPanel('');return}openPanel('radioEqPanel')});
- $('shuffleToggle').addEventListener('click',()=>{shuffle=!shuffle;$('shuffleToggle').classList.toggle('active',shuffle);$('shuffleToggle').setAttribute('aria-pressed',String(shuffle))});
+ $('shuffleToggle').addEventListener('click',()=>{radioShuffleMode=!radioShuffleMode;$('shuffleToggle').classList.toggle('active',radioShuffleMode);$('shuffleToggle').setAttribute('aria-pressed',String(radioShuffleMode))});
  $('repeatToggle').addEventListener('click',()=>{repeat=!repeat;$('repeatToggle').classList.toggle('active',repeat);$('repeatToggle').setAttribute('aria-pressed',String(repeat));$('zonaAudio').loop=repeat});
- $('zonaAudio').addEventListener('ended',()=>{if(repeat)return;if(shuffle&&musicItems.length>1){const choices=musicItems.filter(x=>x.id!==currentTrackId);if(choices.length)playTrack(choices[Math.floor(Math.random()*choices.length)].id,true)}});
+ $('zonaAudio').addEventListener('ended',()=>{if(repeat)return;if(radioShuffleMode&&musicItems.length>1){const choices=musicItems.filter(x=>x.id!==currentTrackId);if(choices.length)playTrack(choices[Math.floor(Math.random()*choices.length)].id,true)}});
 })();
 
 </script></body></html>
