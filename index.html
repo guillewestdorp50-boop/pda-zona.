@@ -1095,7 +1095,7 @@ function hideSwipeSuggestions(){
  $('swipeSuggestions').innerHTML='<span class="suggestion-hint">DESLIZÁ PARA ESCRIBIR</span>';
 }
 
-let swipeActive=false,swipeLetters=[],swipeLast='',swipeMoved=false,suppressKeyClick=false,swipePoints=[];
+let swipeActive=false,swipeLetters=[],swipeLast='',swipeMoved=false,suppressKeyClick=false,swipePoints=[],swipeSuggestionRange=null;
 const swipeTrail=$('swipeTrail'),swipeTrailPath=$('swipeTrailPath');
 function drawSwipeTrail(){
  const rect=pdaKeys.getBoundingClientRect();
@@ -1134,11 +1134,18 @@ function finishSwipe(){
  if(swipeMoved&&swipeLetters.length>1){
   const ranked=rankSwipeWords(swipePoints);
   if(ranked.length){
-   // Dejar las predicciones visibles al levantar el dedo para que el usuario elija.
+   // Escribir de inmediato la mejor predicción y conservar alternativas para corregirla.
+   const chosen=ranked[0].word, field=activeField;
+   const start=field?(field.selectionStart??field.value.length):0;
+   insertPdaText(((shiftOn||capsLock)?chosen.toLocaleUpperCase('es-AR'):chosen)+' ');
+   swipeSuggestionRange=field?{field,start,end:start+chosen.length+1}:null;
+   rememberSwipeWord(chosen);
+   if(!capsLock)shiftOn=false;
    const strip=$('swipeSuggestions');
    strip.innerHTML=ranked.map((x,i)=>`<button type="button" data-suggestion="${esc(x.word)}" class="${i===0?'primary-suggestion':''}">${esc(x.word)}</button>`).join('');
   }else{
    const typed=swipeLetters.join('');
+   swipeSuggestionRange=null;
    insertPdaText(((shiftOn||capsLock)?typed.toUpperCase():typed)+' ');
    if(!capsLock)shiftOn=false;
    hideSwipeSuggestions();
@@ -1156,7 +1163,14 @@ $('swipeSuggestions').addEventListener('click',e=>{
  e.stopPropagation();
  const choice=e.target.closest('button[data-suggestion]');if(!choice||!activeField)return;
  const word=choice.dataset.suggestion;
- insertPdaText(((shiftOn||capsLock)?word.toUpperCase():word)+' ');
+ const replacement=((shiftOn||capsLock)?word.toLocaleUpperCase('es-AR'):word)+' ';
+ if(swipeSuggestionRange?.field===activeField){
+  const {field,start,end}=swipeSuggestionRange;
+  field.value=field.value.slice(0,start)+replacement+field.value.slice(end);
+  const pos=start+replacement.length;field.setSelectionRange(pos,pos);
+  field.dispatchEvent(new Event('input',{bubbles:true}));saveDrafts();
+  swipeSuggestionRange={field,start,end:pos};
+ }else insertPdaText(replacement);
  if(!capsLock)shiftOn=false;
  rememberSwipeWord(word);
  // Mantener el teclado abierto para seguir escribiendo sin volver a abrirlo.
