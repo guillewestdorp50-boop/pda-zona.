@@ -569,7 +569,7 @@ function pdaRenderChat(){
  $('chatBox').innerHTML=all.map(m=>{
   if(m.remote&&m.message_type==='audio')return '<div class="bubble '+(m.me?'me':'')+'"><div class="who">'+(m.me?'TÚ':esc(m.who))+' · '+esc(m.time)+' · NOTA DE VOZ</div>'+(m.audioUrl?'<audio controls preload="none" src="'+esc(m.audioUrl)+'" style="width:100%;max-width:260px;margin-top:7px"></audio>':'<small class="muted">Audio no disponible</small>')+'</div>';
   if(m.remote)return '<div class="bubble '+(m.me?'me':'')+'"><div class="who">'+(m.me?'TÚ':esc(m.who))+' · '+esc(m.time)+'</div><div>'+esc(m.body||'')+'</div></div>';
-  return '<div class="bubble '+(m.me?'me':'')+'"><div class="row"><div class="who">'+(m.me?'TÚ':esc(m.who))+' · '+esc(m.time)+'</div><button class="delete-one" onclick="deleteMessage(\\''+id+'\\','+m.localIndex+')" aria-label="Eliminar este mensaje">×</button></div><div>'+richText(m.text)+'</div></div>';
+  return '<div class="bubble '+(m.me?'me':'')+'"><div class="row"><div class="who">'+(m.me?'TÚ':esc(m.who))+' · '+esc(m.time)+'</div><button class="delete-one" onclick="deleteMessage(\''+id+'\','+m.localIndex+')" aria-label="Eliminar este mensaje">×</button></div><div>'+richText(m.text)+'</div></div>';
  }).join('')||'<div class="empty">Canal abierto. Todavía no hay mensajes.</div>';
  $('chatBox').scrollTop=$('chatBox').scrollHeight;$('chatConnectionState').textContent=contact?.remoteConversationId?'RED EN LÍNEA':'ARCHIVO LOCAL';
 }
@@ -589,7 +589,7 @@ async function renderNpcDailyDialogue(contact){
   if(session.selected_choice){
    panel.innerHTML='<div class="npc-story-date">REGISTRO DIARIO · '+esc(session.local_date)+'</div><div class="npc-story-line">'+esc(session.opening_line)+'</div><div class="npc-story-response">'+esc(session.response_line||'')+'</div><div class="muted">TRANSMISIÓN DE HOY REGISTRADA. VOLVÉ MAÑANA PARA UNA NUEVA CHARLA.</div>'+stats;
   }else{
-   panel.innerHTML='<div class="npc-story-date">TRANSMISIÓN ENTRANTE · '+esc(session.local_date)+'</div><div class="npc-story-line">'+esc(session.opening_line)+'</div><div class="muted" style="margin-bottom:9px">ELEGÍ TU RESPUESTA</div><div class="npc-story-choices">'+session.choices.map((c,i)=>'<button class="npc-story-choice" onclick="chooseNpcDailyDialogue(\\''+session.id+'\\','+(i+1)+')">'+(i+1)+'. '+esc(c.label)+'</button>').join('')+'</div>'+stats;
+   panel.innerHTML='<div class="npc-story-date">TRANSMISIÓN ENTRANTE · '+esc(session.local_date)+'</div><div class="npc-story-line">'+esc(session.opening_line)+'</div><div class="muted" style="margin-bottom:9px">ELEGÍ TU RESPUESTA</div><div class="npc-story-choices">'+session.choices.map((c,i)=>'<button class="npc-story-choice" onclick="chooseNpcDailyDialogue(\''+session.id+'\','+(i+1)+')">'+(i+1)+'. '+esc(c.label)+'</button>').join('')+'</div>'+stats;
   }
  }catch(e){panel.innerHTML='<div class="empty">NO SE PUDO ESTABLECER EL CONTACTO. '+esc(e.message||String(e))+'</div>'}
 }
