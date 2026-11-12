@@ -529,9 +529,13 @@ body.keyboard-visible footer{display:none}
 #player #playlistClose{position:absolute;right:0;top:-3px;width:28px;height:26px;border:1px solid #96743b;border-radius:5px;background:#15130f;color:#f3c24a;font-size:19px;line-height:18px}
 #player .radio-playlist-toggle{position:absolute;z-index:95;right:3%;top:54%;padding:9px 12px;border:1px solid #b58a32;border-radius:22px;background:#080a09e8;color:#f2c24d;font-weight:bold;box-shadow:0 2px 12px #000a}
 #player .radio-playlist-toggle[hidden]{display:none}
-#player .radio-playlist{transform-origin:top left}
-#player .radio-pinchable{--radio-pinch-scale:1}
-#player .radio-pinchable{zoom:var(--radio-pinch-scale)}
+#player .radio-playlist{top:57%;bottom:auto;height:min(300px,42vh);max-height:42vh;display:flex;flex-direction:column;overflow:hidden;transform-origin:top left}
+#player #trackList{height:auto;min-height:0;flex:1 1 auto;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+#player #trackList .item{min-height:48px}
+#player .radio-pinchable{--radio-pinch-scale:1;transform-origin:center center}
+#player .radio-pinchable{scale:var(--radio-pinch-scale)}
+@media(orientation:landscape){#player .radio-playlist{height:min(240px,48vh);max-height:48vh}}
+
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -1992,7 +1996,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v77';
+const PDA_SW_BUILD='pda-zona-shell-v78';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
@@ -2088,13 +2092,15 @@ let radioShuffleMode=false;
   try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}
   const sk='pda_radio_scale_'+orient()+'_'+(el.id||el.classList[0]);let pinchStart=0,pinchBase=1;
   try{const z=Number(localStorage.getItem(sk));if(z>0){el.style.setProperty('--radio-pinch-scale',String(z));el.dataset.pinchScale=String(z)}}catch{}
-  el.addEventListener('touchstart',e=>{if(e.touches.length===2){pinchStart=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchBase=Number(el.dataset.pinchScale||1);e.preventDefault()}},{passive:false});
-  el.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinchStart>0){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);const z=clamp(pinchBase*d/pinchStart,.65,1.55);el.style.setProperty('--radio-pinch-scale',String(z));el.dataset.pinchScale=String(z);e.preventDefault()}},{passive:false});
-  el.addEventListener('touchend',e=>{if(e.touches.length<2&&pinchStart>0){localStorage.setItem(sk,String(Number(el.dataset.pinchScale||1)));pinchStart=0}},{passive:true});
+  const activePointers=new Map();let pinchIds=null;
+  const pointDown=e=>{if(!el.contains(e.target))return;activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(activePointers.size===2){const pts=[...activePointers.values()];pinchIds=[...activePointers.keys()];pinchStart=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y)||1;pinchBase=Number(el.dataset.pinchScale||1);clearTimeout(hold);hold=null;drag=false;el.classList.remove('dragging')}};
+  const pointMove=e=>{if(!activePointers.has(e.pointerId))return;activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinchIds&&pinchIds.every(id=>activePointers.has(id))){const a=activePointers.get(pinchIds[0]),b=activePointers.get(pinchIds[1]);const d=Math.hypot(a.x-b.x,a.y-b.y);const z=clamp(pinchBase*d/pinchStart,.55,1.6);el.style.setProperty('--radio-pinch-scale',String(z));el.dataset.pinchScale=String(z);e.preventDefault()}};
+  const pointUp=e=>{if(!activePointers.has(e.pointerId))return;activePointers.delete(e.pointerId);if(pinchIds){localStorage.setItem(sk,String(Number(el.dataset.pinchScale||1)));pinchIds=null;pinchStart=0} };
+  el.addEventListener('pointerdown',pointDown,true);el.addEventListener('pointermove',pointMove,true);el.addEventListener('pointerup',pointUp,true);el.addEventListener('pointercancel',pointUp,true);
   let hold=null,drag=false,offsetX=0,offsetY=0,pointerId=null;
   el.style.touchAction='none';
   el.addEventListener('pointerdown',e=>{
-   if(e.target.closest('input,textarea,select,button'))return;
+   if(e.target.closest('input,textarea,select'))return;
    if(e.pointerType==='mouse'&&e.button!==0)return;
    const r=el.getBoundingClientRect();offsetX=e.clientX-r.left;offsetY=e.clientY-r.top;pointerId=e.pointerId;
    try{el.setPointerCapture(pointerId)}catch{}
