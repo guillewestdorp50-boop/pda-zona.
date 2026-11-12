@@ -1810,11 +1810,12 @@ if(!Array.isArray(barbasDeliveryData.history))barbasDeliveryData.history=[];
 function saveBarbasDeliveries(){localStorage.setItem('zona_barbas_deliveries_v1',JSON.stringify(barbasDeliveryData))}
 function pdaTryBarbasArtifactDelivery(message,contact){
  if(!contact||contact.npcStory||contact.remoteConversationId||!/barbas/i.test(contact.name||''))return null;
- const normalized=String(message||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
- const deliveryIntent=/(?:\\b(?:te\\s+)?(?:he\\s+)?(?:traido|traje|traigo|entrego|entregar|dejo|deje|doy)\\b|\\baqui\\s+(?:tienes|esta)\\b)/.test(normalized);
+ const normalizeArtifactText=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+ const normalized=normalizeArtifactText(message);
+ const deliveryIntent=/\b(?:te\s+)?(?:he\s+)?(?:traido|traje|traigo|entrego|entregar|dejo|deje|doy)\b|\baqui\s+(?:tienes|esta)\b/.test(normalized);
  if(!deliveryIntent)return null;
- const matches=inventoryCatalog.filter(x=>x.kind==='artifact'&&new RegExp('(^|[^a-z0-9])'+x.name.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[.*+?^{}$()|[\\]\\\\]/g,'\\\\function saveBarbasDeliveries(){localStorage.setItem('zona_barbas_deliveries_v1',JSON.stringify(barbasDeliveryData))}
-')+'($|[^a-z0-9])').test(normalized));
+ const padded=' '+normalized+' ';
+ const matches=inventoryCatalog.filter(x=>x.kind==='artifact'&&padded.includes(' '+normalizeArtifactText(x.name)+' '));
  if(matches.length!==1)return null;
  const item=matches[0],backpack=Math.max(0,Number(inventoryData.quantities[item.id])||0);
  if(backpack<1)return {status:'empty',item};
