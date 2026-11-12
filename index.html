@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="description" content="PDA personal de la Zona"><link rel="manifest" href="manifest.webmanifest?v=53"><link rel="icon" type="image/png" sizes="192x192" href="pda-icon-192.png?v=53"><link rel="icon" type="image/svg+xml" href="pda-icon.svg?v=53"><link rel="apple-touch-icon" href="pda-icon.svg?v=52"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>PDA // ZONA</title>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="description" content="PDA personal de la Zona"><link rel="manifest" href="manifest.webmanifest?v=55"><link rel="icon" type="image/png" sizes="192x192" href="pda-icon-192.png?v=55"><link rel="icon" type="image/svg+xml" href="pda-icon.svg?v=55"><link rel="apple-touch-icon" href="pda-icon.svg?v=52"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>PDA // ZONA</title>
 <style>
 :root{--bg:#10150f;--p:#1b2518;--line:#586b45;--g:#c6df9c;--m:#93a77c;--a:#d8b66c}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#293722,#10150f 65%);color:#e0e9d3;font:15px system-ui}header{padding:17px;background:#11180f;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}h1{margin:0;color:var(--g);font:700 21px monospace;letter-spacing:2px}.sub,small,.muted{color:var(--m);font-size:12px}nav{display:flex;overflow:auto;gap:5px;padding:9px;background:#141c12;position:sticky;top:68px;z-index:2}button{cursor:pointer}nav button,.btn{padding:9px 12px;border:1px solid var(--line);background:#293821;color:#e8f4d8;border-radius:3px;font-weight:700;white-space:nowrap}nav button.active,.btn{background:#536d3d}main{max-width:850px;margin:auto;padding:12px 12px 70px}.view{display:none}.view.active{display:block}.panel{background:linear-gradient(145deg,#222e1e,#151d13);border:1px solid var(--line);padding:14px;margin-bottom:12px;border-radius:4px}h2{font:700 15px monospace;color:var(--g);letter-spacing:1px;margin:0 0 12px}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.stack{display:grid;gap:8px}input,textarea,select{width:100%;padding:11px;background:#0d130c;color:#e5efd9;border:1px solid var(--line);border-radius:3px;font:inherit}textarea{min-height:90px}.item{display:flex;align-items:center;gap:9px;padding:11px;background:#172115;border:1px solid #46563a}
 /* Directorio: reservar ancho real para la biografía y bajar controles a filas propias */
@@ -194,6 +194,54 @@ body.keyboard-visible footer{display:none}
 @keyframes zoneBreath{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.8px)}}
 @keyframes zoneHarmonica{0%{transform:translateY(0) rotate(-1deg)}100%{transform:translateY(-2px) rotate(1deg)}}
 @media(prefers-reduced-motion:reduce){.zone-campfire *{animation:none!important}}
+
+/* RADIO v55 · rediseño completo del reproductor, sin ilustración de fondo */
+#player>.panel:first-child{background:linear-gradient(155deg,#18251f 0%,#101a1c 48%,#11151b 100%);border:1px solid #49675b;border-radius:13px;padding:15px;box-shadow:0 12px 32px #0008,inset 0 1px #b6e2c51c}
+#player>.panel:first-child>.row{align-items:center;margin-bottom:12px}
+#player>.panel:first-child>.row h2{font-size:13px;letter-spacing:1.8px;color:#d8eadb}
+#player #playerStatus{padding:5px 9px;border:1px solid #426a58;border-radius:20px;background:#10271e;color:#8ee0ad;font:9px monospace;letter-spacing:1px}
+#player .player-visual-stage{position:relative;display:block;width:100%;height:190px;min-height:190px;max-height:190px;aspect-ratio:auto;overflow:hidden;margin:0 auto 16px;border:1px solid #3d6870;border-radius:10px;background:radial-gradient(ellipse at 50% 45%,#1b5960 0%,#102b37 36%,#09151f 72%,#050b11 100%);box-shadow:inset 0 0 35px #000c,0 0 22px #38b9a51c}
+#player .player-visual-stage:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,#a8f4e00a 0 1px,transparent 1px 4px),linear-gradient(90deg,transparent,#5ce0c00c 50%,transparent)}
+#player .player-visual-stage:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 45px #02080c}
+#player #xpVisualizer{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+#player .visualizer-topline{position:absolute;z-index:2;left:12px;right:12px;top:11px;display:flex;justify-content:space-between;gap:8px;color:#b9e4d8;font:9px monospace;letter-spacing:1.1px;text-shadow:0 0 8px #50d9c5}
+#player #xpVizStatus{color:#a9f2b9;white-space:nowrap}
+#player .visualizer-axis{position:absolute;z-index:2;bottom:10px;left:13px;right:13px;display:flex;justify-content:space-between;color:#79b8ba;font:8px monospace;letter-spacing:1.3px}
+#player .visualizer-center-mark{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);font-size:33px;color:#b7f3dc;opacity:.13;text-shadow:0 0 22px #6effd0;pointer-events:none}
+#player .player-disc{width:76px;margin:0 auto 10px;border:2px solid #67917b;background:radial-gradient(circle,#d4f4ce 0 4%,#193b31 5% 12%,#9ab78a 13% 15%,#101d1a 16% 57%,#315748 58% 61%,#0a1110 62%);box-shadow:0 0 20px #65d7a52c,inset 0 0 12px #000}
+#player .player-disc span{font-size:7px;letter-spacing:1px}
+#player #trackTitle{display:block;color:#f0f7ee;font-size:16px;line-height:1.3;letter-spacing:.3px;overflow-wrap:anywhere}
+#player #trackArtist{margin-top:5px;color:#8eaaa0;font-size:9px;letter-spacing:1.2px}
+#player .player-controls{gap:17px;margin:17px 0 13px}
+#player .player-controls button{width:47px;height:45px;border:1px solid #55766a;border-radius:13px;background:linear-gradient(145deg,#263e36,#14251f);color:#cdebd8;box-shadow:0 4px 12px #0006;font-size:17px}
+#player .player-controls button.main-play{width:62px;height:56px;border-radius:17px;border:1px solid #7ed8a5;background:linear-gradient(145deg,#54bd83,#23704f);color:#061b12;font-size:24px;box-shadow:0 0 20px #42d18b38,inset 0 1px #ffffff66}
+#player #currentTime,#player #durationTime{color:#91b4a5;font:10px monospace}
+#player #trackProgress{height:7px;accent-color:#65d79b;filter:drop-shadow(0 0 4px #55d99766)}
+#player label[for="playerVolume"]{color:#a8c5b5;font-size:9px;letter-spacing:1.2px}
+#player #volumeValue{color:#9ce4b6;font:10px monospace}
+#player #playerVolume{accent-color:#70d9a0}
+#player>.panel:nth-of-type(2),#player>.xp-audio-panel{background:linear-gradient(150deg,#17231f,#101719);border:1px solid #405b50;border-radius:12px;padding:14px;box-shadow:0 8px 22px #0005}
+#player .xp-audio-panel .xp-viz-head{border-bottom:1px solid #345247}
+#player .xp-audio-panel .xp-viz-head h2{color:#d8eadb;font-size:13px;letter-spacing:1.4px}
+#player .xp-audio-panel .xp-viz-head small{color:#83ad9a}
+#player .eq-live-mark{font:9px monospace;color:#8ce0aa;white-space:nowrap}
+#player .xp-audio-panel>p{color:#91a99e;font-size:11px}
+#player .eq-grid{gap:7px;margin-top:13px}
+#player .eq-band{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:112px;padding:10px 3px 8px;border:1px solid #34564b;border-radius:8px;background:linear-gradient(180deg,#1a3029,#0d1715);box-shadow:inset 0 1px #ffffff0b}
+#player .eq-band input{height:76px;accent-color:#7be0a7;filter:drop-shadow(0 0 4px #5de49b55)}
+#player .eq-band label{color:#a7cabb;font:9px monospace;white-space:nowrap}
+#player .eq-reset-row{align-items:center;margin-top:13px!important}
+#player .eq-reset-row button{border:1px solid #4a7461;border-radius:8px;background:#1b382c;color:#bce8cb;padding:8px 13px;font:10px monospace;letter-spacing:.8px}
+#player .panel:has(#trackList){background:linear-gradient(145deg,#17221e,#101719);border:1px solid #40594f;border-radius:12px}
+#player #trackList .item{border:1px solid #2e4b40;border-radius:8px;background:#101b18;margin:7px 0;padding:9px}
+#player #trackList .item .avatar{background:#1e4434;color:#9ce5b7;border-radius:8px}
+#player #trackList .item .meta b{color:#d7e9dc}
+#player #trackList .item .meta p{color:#86a496}
+#player #addTracks{background:linear-gradient(135deg,#3e9c6b,#236044);border:1px solid #70c895;color:#f0fff4;border-radius:8px}
+#player #clearTracks{border-radius:8px}
+#player #sleepTimer{background:#111e19;color:#cce2d3;border:1px solid #3b5c4b;border-radius:8px}
+@media(max-width:380px){#player .player-visual-stage{height:164px;min-height:164px;max-height:164px}#player #trackTitle{font-size:14px}#player .eq-grid{gap:4px}#player .eq-band{padding-left:1px;padding-right:1px}#player .eq-band label{font-size:8px}}
+@media(prefers-reduced-motion:reduce){#player .player-disc{animation:none!important}}
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -246,83 +294,25 @@ body.keyboard-visible footer{display:none}
 <section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>ACTUALIZADOR DE LA PDA</h2><p class="muted">Buscá nuevas versiones de PDA // ZONA e instalalas sin desinstalar la aplicación. Tus perfiles, contactos, mensajes y registros guardados no se borran durante una actualización.</p><button class="btn" id="pdaCheckUpdates" type="button">↻ BUSCAR ACTUALIZACIONES</button><div id="pdaUpdateStatus" class="statusline" role="status" aria-live="polite">SISTEMA DE ACTUALIZACIÓN LISTO · VERSIÓN 52</div><small class="muted">Se necesita conexión a Internet. La PDA se reiniciará si encuentra una versión nueva.</small></div><div class="panel"><h2>FRECUENCIAS Y COMUNICACIONES</h2><p>Configurá los canales de comunicación de tu PDA. Algunas frecuencias requieren conexión con la red de la Zona.</p></div></section>
 
 <section id="gallery" class="view"><div class="panel"><div class="row"><h2>GALERÍA DE CAMPO</h2><span id="galleryCount" class="muted">0 FOTOS</span></div><p class="muted">Fotos guardadas únicamente en este dispositivo.</p><div class="media-actions"><button class="btn" id="galleryCamera">📷 ABRIR CÁMARA</button><button class="btn" id="galleryChoose">▧ ELEGIR FOTOS</button></div><input id="galleryCameraInput" type="file" accept="image/*" capture="environment" multiple style="display:none"><input id="galleryFileInput" type="file" accept="image/*" multiple style="display:none"><div id="galleryGrid" class="media-grid"><div class="empty">Todavía no hay fotografías.</div></div></div></section>
-<section id="player" class="view"><div class="panel"><div class="row"><h2>REPRODUCTOR DE LA ZONA</h2><span id="playerStatus" class="media-muted">EN ESPERA</span></div><div id="zoneCampfire" class="zone-campfire" role="img" aria-label="Un Stalker toca una armónica junto a un fogón en una noche de la Zona">
-<svg viewBox="0 0 960 540" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-<defs>
- <linearGradient id="nightSky" x2="0" y2="1"><stop stop-color="#07111b"/><stop offset=".62" stop-color="#17232a"/><stop offset="1" stop-color="#20251d"/></linearGradient>
- <radialGradient id="moonHalo"><stop stop-color="#a9bdc1" stop-opacity=".25"/><stop offset="1" stop-color="#82949a" stop-opacity="0"/></radialGradient>
- <radialGradient id="fireHalo"><stop stop-color="#ffb24f" stop-opacity=".56"/><stop offset=".48" stop-color="#e66a25" stop-opacity=".2"/><stop offset="1" stop-color="#e66a25" stop-opacity="0"/></radialGradient>
- <linearGradient id="coat" x2="1" y2="1"><stop stop-color="#59634b"/><stop offset=".48" stop-color="#303a30"/><stop offset="1" stop-color="#151d19"/></linearGradient>
- <linearGradient id="maskMetal" x2="0" y2="1"><stop stop-color="#a39b79"/><stop offset=".5" stop-color="#464b40"/><stop offset="1" stop-color="#171d19"/></linearGradient>
- <linearGradient id="guitarWood" x2="0" y2="1"><stop stop-color="#a87543"/><stop offset=".55" stop-color="#704326"/><stop offset="1" stop-color="#332319"/></linearGradient>
- <linearGradient id="flame" x2="0" y2="1"><stop stop-color="#fff2a5"/><stop offset=".35" stop-color="#ffb33f"/><stop offset="1" stop-color="#c94c19"/></linearGradient>
- <filter id="softGlow"><feGaussianBlur stdDeviation="19"/></filter>
- <filter id="smokeBlur"><feGaussianBlur stdDeviation="4"/></filter>
- <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .09 0"/></filter>
-</defs>
-<path fill="url(#nightSky)" d="M0 0h960v540H0z"/>
-<circle cx="765" cy="105" r="112" fill="url(#moonHalo)"/><circle cx="765" cy="105" r="42" fill="#b6c0b9" opacity=".78"/><path d="M742 83l13-7 8 10-7 9 5 13-16 8-10-15zM777 67l9 7-4 12-10-3zM781 112l13 6-6 12-13-4z" fill="#78877f" opacity=".5"/>
-<g fill="#111b1c"><path d="M0 225l45-91 20 42 35-88 29 79 44-65 28 96 50-80 34 98 45-62 40 82 49-70 40 78v130H0z"/><path d="M680 220l30-95 20 49 39-88 28 83 38-64 30 90 39-73 56 110v100H680z"/></g>
-<g stroke="#0b1214" stroke-width="8" fill="none" opacity=".9"><path d="M80 0L62 230M80 70L25 18M72 104l70-72M900 0l-22 210M890 64l-58-48M889 90l65-63"/></g>
-<g opacity=".55" fill="#26312c"><path d="M555 236h155v-98h-155zM570 138v-42h18v42m17 0V78h16v60m21 0v-29h13v29m24 0V88h12v50"/><path d="M540 236v-13h180v13z"/></g>
-<g stroke="#8b9a8c" stroke-width="2" opacity=".3"><path d="M650 95v132m-22-99h44m-44 32h44m-44 32h44"/></g>
-<path fill="#101714" d="M0 330q140-40 250-9t220 0 250-13 240 10v222H0z"/><path fill="#1a211a" d="M0 395q170-25 310 4t320-7 330 6v142H0z"/>
-<g fill="#080e0d"><path d="M0 350l40-75 15 41 30-58 25 66 28-35 24 71zM835 360l30-73 18 36 25-63 28 68 24-22v54z"/></g>
-<!-- Ruinas lejanas y una vieja señal de la Zona -->
-<g opacity=".65"><path d="M842 260l26-63 26 63z" fill="#252d28"/><path d="M868 198v-49m-20 22h40" stroke="#4a5546" stroke-width="5"/><path d="M852 273h42v31h-42z" fill="#a38a46"/><path d="M873 279l12 18h-24z" fill="#1b211b"/></g>
-<!-- Resplandor que baña el campamento -->
-<ellipse class="fire-glow" cx="625" cy="425" rx="250" ry="125" fill="url(#fireHalo)" filter="url(#softGlow)"/>
-<!-- Stalker sentado, silueta y equipo -->
-<g class="stalker-breathe">
- <path d="M177 258q-16-52 24-86l60-25q44 9 58 63l-15 104-104 20z" fill="#202a25" stroke="#0a100e" stroke-width="12"/>
- <path d="M185 238q-5-55 37-83l40-12q33 17 40 58l-18 82-88 8z" fill="url(#coat)" stroke="#111915" stroke-width="9"/>
- <path d="M193 173q-15-54 28-85 39-27 75 9l17 55-35 28-76 7z" fill="#313a30" stroke="#111814" stroke-width="9"/>
- <path d="M207 112q12-39 51-39 35 0 48 34l-8 29-84 2z" fill="#252e29"/>
- <!-- Máscara antigás -->
- <path d="M226 116q27-21 57 1l11 40-26 29-39-10-16-27z" fill="url(#maskMetal)" stroke="#101714" stroke-width="7"/>
- <ellipse cx="238" cy="128" rx="13" ry="15" fill="#101718" stroke="#b3a77c" stroke-width="5"/><ellipse cx="276" cy="128" rx="13" ry="15" fill="#101718" stroke="#b3a77c" stroke-width="5"/>
- <path d="M253 146l-9 29 25 4-4-31z" fill="#202722" stroke="#777b62" stroke-width="4"/><path d="M242 183l34 8 12-12" fill="none" stroke="#121915" stroke-width="8"/>
- <!-- Mochila -->
- <path d="M151 177q-36 6-39 52l17 94 53-9 8-102z" fill="#394437" stroke="#111814" stroke-width="9"/>
- <path d="M131 218l44-7m-43 39l49-6m-43 36l42-5" stroke="#687052" stroke-width="5"/>
- <!-- Piernas flexionadas -->
- <path d="M202 292q-14 45 24 74l92 31 34-22-62-53-16-43z" fill="#303a30" stroke="#101713" stroke-width="12"/>
- <path d="M282 350l72 34 28 35-9 17-87-22-44-40z" fill="#1b211d" stroke="#0b100e" stroke-width="9"/>
- <path d="M302 415q38-8 77 13l10 15-100 4-22-11z" fill="#171d1a"/>
- <path d="M272 286q33 18 67 2l36 34-42 39-75-28-29-24z" fill="#3b4537" stroke="#111713" stroke-width="10"/>
- <path d="M326 343l55 13 29 35-11 18-82-28-27-19z" fill="#202822" stroke="#0c120f" stroke-width="9"/>
- <path d="M372 389q36-9 57 18l-5 15-73-3-12-11z" fill="#151b18"/>
- <!-- Torso, correas y bolsillos -->
- <path d="M192 184q44-30 93-5l37 95-27 47-100-18-24-75z" fill="url(#coat)" stroke="#0c130f" stroke-width="10"/>
- <path d="M216 185l29 98m36-98l-18 100" stroke="#788064" stroke-width="7" opacity=".65"/>
- <path d="M190 243l49 9-4 36-47-5zM282 241l35 8-4 37-38-9z" fill="#252f27" stroke="#111713" stroke-width="5"/>
- <path d="M203 196l-26 48 19 27 51-22-12-32z" fill="#46513e" stroke="#111713" stroke-width="8"/>
- <!-- Brazos elevados: el Stalker sostiene una armónica frente a la máscara -->
- <g class="stalker-harmonica">
-  <path d="M205 199q-22-25-5-48l35-13 20 18-20 37-11 25z" fill="#46513e" stroke="#111713" stroke-width="9"/>
-  <path d="M218 157l25-13 17 17-17 19-20-5z" fill="#b09a73" stroke="#28251b" stroke-width="4"/>
-  <path d="M293 194q26-26 9-46l-31-14-20 18 18 39 12 21z" fill="#46513e" stroke="#111713" stroke-width="9"/>
-  <path d="M284 157l-24-13-17 17 17 19 20-5z" fill="#b09a73" stroke="#28251b" stroke-width="4"/>
-  <rect x="239" y="158" width="39" height="11" rx="3" fill="#b9b9a2" stroke="#252a24" stroke-width="3"/>
-  <path d="M244 161v5m5-5v5m5-5v5m5-5v5m5-5v5m5-5v5" stroke="#555d50" stroke-width="1.5"/>
- </g>
-</g>
-<!-- Humo detrás del fuego -->
-<g class="zone-smoke" fill="#a5aaa0" opacity=".16" filter="url(#smokeBlur)"><path d="M590 394q-32-43 2-79t-4-78q62 42 25 86t10 65z"/></g>
-<g class="zone-smoke delay" fill="#b9b7a7" opacity=".12" filter="url(#smokeBlur)"><path d="M665 400q-24-34 9-65t-2-58q49 35 13 72t8 48z"/></g>
-<!-- Leña, piedras y fuego -->
-<g><path d="M522 446l174-20 20 20-174 22z" fill="#30231a" stroke="#100e0b" stroke-width="7"/><path d="M542 418l149 42 7 16-153-44z" fill="#513322" stroke="#17120d" stroke-width="7"/>
- <g fill="#42433a" stroke="#171b17" stroke-width="5"><ellipse cx="525" cy="454" rx="28" ry="16"/><ellipse cx="713" cy="453" rx="31" ry="17"/><ellipse cx="574" cy="478" rx="23" ry="12"/><ellipse cx="674" cy="480" rx="25" ry="13"/></g></g>
-<g class="fire-flame"><path d="M568 453q-33-52 11-111 2 42 26 56 2-67 53-105 0 59 31 91 31 35-8 69z" fill="#c54d1d"/><path d="M592 455q-15-44 19-83 3 33 22 42 4-51 31-66 25 46 2 107z" fill="url(#flame)"/><path d="M625 457q-8-25 12-49 4 24 18 30l-10 24z" fill="#fff0a0"/></g>
-<g class="fire-flame alt"><path d="M649 455q-15-38 16-77 0 31 17 40 8-40 29-51 22 43-2 88z" fill="#ef7929" opacity=".9"/></g>
-<g class="zone-embers"><circle cx="594" cy="401" r="3" fill="#ffb85b"/><circle cx="659" cy="385" r="2.5" fill="#ffd28a"/><circle cx="632" cy="367" r="2" fill="#f28a36"/></g>
-<g class="zone-embers delay"><circle cx="617" cy="414" r="2.5" fill="#ffca73"/><circle cx="680" cy="398" r="2" fill="#ff9b40"/></g>
-<rect width="960" height="540" filter="url(#grain)" opacity=".2"/>
-<path d="M0 0h960v540H0z" fill="none" stroke="#000" stroke-width="30" opacity=".4"/>
-</svg>
-<span class="scene-caption">FOGÓN DE CAMPO · SECTOR 04</span><span class="scene-signal">● SEÑAL LOCAL</span></div><div id="playerDisc" class="player-disc"><span id="discLabel">PDA // AUDIO</span></div><div style="text-align:center"><strong id="trackTitle">Ninguna pista seleccionada</strong><div id="trackArtist" class="media-muted">Cargá música desde tu dispositivo</div></div><div class="player-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div><div class="row"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"><div class="row" style="margin-top:8px"><label for="playerVolume" class="muted">VOLUMEN</label><span id="volumeValue" class="muted">80%</span></div><input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen"></div>
+<section id="player" class="view"><div class="panel"><div class="row"><h2>REPRODUCTOR DE LA ZONA</h2><span id="playerStatus" class="media-muted">EN ESPERA</span></div><div id="zoneCampfire" class="zone-campfire player-visual-stage" role="img" aria-label="Visualizador de audio de PDA Zona">
+<canvas id="xpVisualizer" aria-label="Espectro de frecuencias en vivo"></canvas>
+<div class="visualizer-topline"><span>▰ PDA // AUDIO SPECTRUM</span><span id="xpVizStatus">● EN ESPERA</span></div>
+<div class="visualizer-axis"><span>LOW</span><span>MID</span><span>HIGH</span><span>LIVE SIGNAL</span></div>
+<div class="visualizer-center-mark">◉</div>
+</div><div id="playerDisc" class="player-disc"><span id="discLabel">PDA // AUDIO</span></div><div style="text-align:center"><strong id="trackTitle">Ninguna pista seleccionada</strong><div id="trackArtist" class="media-muted">Cargá música desde tu dispositivo</div></div><div class="player-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div><div class="row"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"><div class="row" style="margin-top:8px"><label for="playerVolume" class="muted">VOLUMEN</label><span id="volumeValue" class="muted">80%</span></div><input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen"></div>
 <div class="panel"><div class="row"><h2>LISTA DE REPRODUCCIÓN</h2><span id="trackCount" class="muted">0 PISTAS</span></div><div class="media-actions"><button class="btn" id="addTracks">＋ AGREGAR MP3 / AUDIO</button><button id="clearTracks" class="danger">VACIAR LISTA</button></div><input id="trackFileInput" type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav,.flac" multiple style="display:none"><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div>
-<div class="panel xp-audio-panel"><div class="xp-viz-head"><div><h2>VISUALIZADOR DE ESPECTRO</h2><small>WINDOWS XP · AUDIO EN VIVO</small></div><span id="xpVizStatus">● EN ESPERA</span></div><div class="xp-viz-frame"><canvas id="xpVisualizer" aria-label="Visualizador de frecuencias de audio"></canvas><div class="xp-viz-footer"><span>LOW</span><span>MID</span><span>HIGH</span><span>LIVE SIGNAL</span></div></div><h2 class="xp-eq-title">ECUALIZADOR · 5 BANDAS</h2><p class="muted">Filtros de audio reales. Ajustá cada frecuencia mientras suena la música.</p><div class="eq-grid"><div class="eq-band"><input data-native-control class="eq-slider" data-freq="60" type="range" min="-12" max="12" step="1" value="0" orient="vertical"><label>60 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="250" type="range" min="-12" max="12" step="1" value="0"><label>250 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="1000" type="range" min="-12" max="12" step="1" value="0"><label>1 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="4000" type="range" min="-12" max="12" step="1" value="0"><label>4 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="12000" type="range" min="-12" max="12" step="1" value="0"><label>12 kHz</label></div></div><div class="row" style="margin-top:9px"><small class="muted">−12 dB</small><button id="resetEQ">RESTABLECER</button><small class="muted">+12 dB</small></div></div>
+<div class="panel xp-audio-panel">
+<div class="xp-viz-head"><div><h2>ECUALIZADOR DE AUDIO</h2><small>5 BANDAS · FILTROS DIGITALES</small></div><span class="eq-live-mark">● DSP ACTIVO</span></div>
+<p class="muted">Moldeá el sonido de tu música en tiempo real.</p>
+<div class="eq-grid">
+<div class="eq-band"><input data-native-control class="eq-slider" data-freq="60" type="range" min="-12" max="12" step="1" value="0" orient="vertical"><label>60 Hz</label></div>
+<div class="eq-band"><input data-native-control class="eq-slider" data-freq="250" type="range" min="-12" max="12" step="1" value="0"><label>250 Hz</label></div>
+<div class="eq-band"><input data-native-control class="eq-slider" data-freq="1000" type="range" min="-12" max="12" step="1" value="0"><label>1 kHz</label></div>
+<div class="eq-band"><input data-native-control class="eq-slider" data-freq="4000" type="range" min="-12" max="12" step="1" value="0"><label>4 kHz</label></div>
+<div class="eq-band"><input data-native-control class="eq-slider" data-freq="12000" type="range" min="-12" max="12" step="1" value="0"><label>12 kHz</label></div>
+</div>
+<div class="row eq-reset-row"><small class="muted">−12 dB</small><button id="resetEQ">↺ RESTABLECER</button><small class="muted">+12 dB</small></div>
+</div>
 <div class="panel"><h2>TEMPORIZADOR DE APAGADO</h2><p class="muted">Detiene la música automáticamente después del tiempo elegido.</p><div class="row"><select id="sleepTimer"><option value="0">Desactivado</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option><option value="90">90 minutos</option></select><button id="cancelSleep">CANCELAR</button></div><small id="sleepStatus" class="media-muted">Sin temporizador activo.</small></div></section>
 <audio id="zonaAudio" preload="metadata" playsinline></audio><div id="galleryOverlay" class="media-overlay"><button class="overlay-close" id="galleryClose">✕</button><img id="galleryLarge" alt="Fotografía ampliada"><button id="galleryDelete" class="danger" style="position:absolute;bottom:18px">ELIMINAR FOTO</button></div>
 </main><footer>PDA // ZONA · DATOS LOCALES EN ESTE NAVEGADOR</footer>
