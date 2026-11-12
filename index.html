@@ -505,7 +505,7 @@ body.keyboard-visible footer{display:none}
 #player #zoneCampfire,#player #zoneCampfire *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #player #zoneCampfire input,#player #zoneCampfire textarea,#player #zoneCampfire select,#player #zoneCampfire button{-webkit-user-select:none;user-select:none}
 #player #zoneCampfire .radio-bottom-tools{touch-action:manipulation}
-#player #zoneCampfire .radio-draggable{touch-action:pan-y; -webkit-user-drag:none}
+#player #zoneCampfire .radio-draggable{touch-action:none!important; -webkit-user-drag:none}
 #player #zoneCampfire .radio-draggable.dragging{touch-action:none!important}
 
 </style></head><body>
@@ -1918,16 +1918,20 @@ let radioShuffleMode=false;
   };
   try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}
   let hold=null,drag=false,offsetX=0,offsetY=0,pointerId=null;
+  el.style.touchAction='none';
   el.addEventListener('pointerdown',e=>{
    if(e.target.closest('input,textarea,select,button'))return;
+   if(e.pointerType==='mouse'&&e.button!==0)return;
    const r=el.getBoundingClientRect();offsetX=e.clientX-r.left;offsetY=e.clientY-r.top;pointerId=e.pointerId;
-   hold=setTimeout(()=>{drag=true;el.classList.add('dragging');el.style.touchAction='none';try{el.setPointerCapture(pointerId)}catch{}},420);
+   try{el.setPointerCapture(pointerId)}catch{}
+   hold=setTimeout(()=>{drag=true;el.classList.add('dragging');},420);
+   e.preventDefault();
   });
   el.addEventListener('pointermove',e=>{
-   if(!hold&&!drag)return;
+   if(e.pointerId!==pointerId)return;
    if(drag){const r=stage.getBoundingClientRect();place(e.clientX-r.left-offsetX,e.clientY-r.top-offsetY,false)}
   });
-  const finish=()=>{clearTimeout(hold);hold=null;if(drag){const r=stage.getBoundingClientRect(),b=el.getBoundingClientRect();place(b.left-r.left,b.top-r.top,true);el.classList.remove('dragging');el.style.touchAction='pan-y'}drag=false;pointerId=null};
+  const finish=e=>{if(e&&pointerId!==null&&e.pointerId!==pointerId)return;clearTimeout(hold);hold=null;if(drag){const r=stage.getBoundingClientRect(),b=el.getBoundingClientRect();place(b.left-r.left,b.top-r.top,true);el.classList.remove('dragging')}drag=false;try{if(pointerId!==null&&el.hasPointerCapture(pointerId))el.releasePointerCapture(pointerId)}catch{}pointerId=null};
   el.addEventListener('pointerup',finish);el.addEventListener('pointercancel',finish);
   window.addEventListener('resize',()=>{try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}});
  });
