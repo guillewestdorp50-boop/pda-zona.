@@ -1,5 +1,5 @@
-const CACHE = 'pda-zona-shell-v65';
-const CORE = ['./', './index.html', './manifest.webmanifest?v=65', './pda-icon.svg?v=65', './pda-icon-192.png?v=65'];
+const CACHE = 'pda-zona-shell-v66';
+const CORE = ['./', './index.html', './manifest.webmanifest?v=66', './pda-icon.svg?v=66', './pda-icon-192.png?v=66'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting()));
 });
