@@ -1807,7 +1807,7 @@ if(!barbasDeliveryData.quantities||typeof barbasDeliveryData.quantities!=='objec
 if(!Array.isArray(barbasDeliveryData.history))barbasDeliveryData.history=[];
 function saveBarbasDeliveries(){localStorage.setItem('zona_barbas_deliveries_v1',JSON.stringify(barbasDeliveryData))}
 function renderBarbasArtifactPanel(){
- const panel=$('barbasArtifactPanel');if(!panel)return;
+ const panel=$('barbasArtifactPanel');if(!panel)return;if(!window.pdaInventoryReady){panel.classList.add('hidden');return;}
  const contact=pdaCurrentContact(),isManualBarbas=!!contact&&!contact.npcStory&&!contact.remoteConversationId&&/barbas/i.test(contact.name||'');
  panel.classList.toggle('hidden',!isManualBarbas);if(!isManualBarbas)return;
  const artifacts=inventoryCatalog.filter(x=>x.kind==='artifact');
@@ -1821,6 +1821,7 @@ function renderBarbasArtifactPanel(){
  const recent=barbasDeliveryData.history.slice(-5).reverse();
  $('barbasArtifactHistory').innerHTML='<b>ÚLTIMOS MOVIMIENTOS</b><br>'+ (recent.map(h=>esc(h.action==='give'?'ENTREGASTE':'DEVOLVISTE')+' · '+esc(h.name)+' · '+esc(h.time)).join('<br>')||'Todavía no hay entregas registradas.');
 }
+window.pdaInventoryReady=true;renderBarbasArtifactPanel();
 $('barbasArtifactItems').addEventListener('click',e=>{
  const give=e.target.closest('[data-barbas-give]'),undo=e.target.closest('[data-barbas-return]');if(!give&&!undo)return;
  const id=(give||undo).dataset.barbasGive||(give||undo).dataset.barbasReturn;
