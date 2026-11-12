@@ -1033,6 +1033,10 @@ function pdaRenderChat(){
  if(cuervo){$('npcStoryDialogue').innerHTML='';if(!pdaCuervoMessages.length)$('chatBox').innerHTML='<div class="empty">SINTONIZANDO LA FRECUENCIA...</div>';$('chatConnectionState').textContent='FRECUENCIA ACTIVA · CUERVO GRIS';return}
  if(story){$('chatBox').innerHTML='';$('chatConnectionState').textContent='CANAL NARRATIVO';return}
  if(!id){$('chatBox').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}
+ if(contact&&!contact.npcStory&&!contact.remoteConversationId&&/barbas/i.test(contact.name||'')&&!(chats[id]||[]).length){
+  (chats[id]??=[]).push({me:false,who:'BARBAS',text:'La Zona está llena de chatarra, pero de vez en cuando aparece algo que vale una fortuna. Ando buscando una pieza extraña, parecida a un ojo. Si encontrás una, vení a verme.',time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});
+  save();
+ }
  const local=(chats[id]||[]).map((m,i)=>({...m,local:true,localIndex:i,sortAt:0}));
  const remote=contact?.remoteConversationId?(pdaRemoteMessages[contact.remoteConversationId]||[]).map(m=>({...m,me:m.sender_id===pdaUserId,who:m.sender_id===pdaUserId?'TÚ':contact.name,time:pdaFormatTime(m.created_at),sortAt:new Date(m.created_at).getTime(),remote:true})): [];
  const all=[...local,...remote].sort((a,b)=>a.sortAt-b.sortAt);
