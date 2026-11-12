@@ -746,12 +746,12 @@ function initRichEditors(){
 
 function updateMissionAlert(){let ids=[];try{ids=JSON.parse(localStorage.getItem('zona_unread_remote_missions')||'[]')}catch{}const active=ids.length>0;const dot=$('missionAlertDot'),button=document.querySelector('nav button[data-tab="missions"]');if(dot)dot.classList.toggle('hidden',!active);if(button)button.classList.toggle('mission-alert',active)}function clearMissionAlert(){localStorage.setItem('zona_unread_remote_missions','[]');updateMissionAlert()}function go(t){currentPdaTab=t;if(t==='missions')clearMissionAlert();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===t));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));if(t==='chat')renderChat();if(t==='missions')renderM();if(t==='relationship')renderTrato();if(t==='emissions')renderEmissions();if(t==='artifacts')renderInventory();if(t==='map')renderMapPoints();if(!welcomeFallbackTriggered&&!welcomeInProgress)speakSidorovich(t)}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
-let pdaWalletData={balance:null,earned:0,prices:{ojo:18000},history:[]};
+let pdaWalletData={balance:18000,earned:18000,prices:{ojo:18000},history:[{type:'payment',name:'Ojo',amount:18000,time:'REGISTRO INICIAL'}]};
 try{const saved=JSON.parse(localStorage.getItem('zona_wallet_v1')||'null');if(saved&&typeof saved==='object')pdaWalletData={...pdaWalletData,...saved,prices:{...pdaWalletData.prices,...(saved.prices||{})}}}catch(e){}
 function savePdaWallet(){localStorage.setItem('zona_wallet_v1',JSON.stringify(pdaWalletData))}
 function pdaArtifactPrice(item){const key=String(item?.name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,'-');return Math.max(0,Number(pdaWalletData.prices[key]??pdaWalletData.prices[item?.id])||0)}
 function pdaRegisterBarbasPayment(item){const price=pdaArtifactPrice(item);if(!price)return 0;pdaWalletData.earned=Math.max(0,Number(pdaWalletData.earned)||0)+price;if(pdaWalletData.balance!==null&&Number.isFinite(Number(pdaWalletData.balance)))pdaWalletData.balance=Number(pdaWalletData.balance)+price;pdaWalletData.history.push({type:'payment',name:item.name,amount:price,time:new Date().toLocaleString('es-AR')});pdaWalletData.history=pdaWalletData.history.slice(-100);savePdaWallet();home();return price}
-function pdaRenderWallet(){const balance=$('pdaWalletBalance'),status=$('pdaWalletStatus'),earned=$('pdaWalletEarned');if(!balance||!status||!earned)return;balance.textContent=Number.isFinite(Number(pdaWalletData.balance))&&pdaWalletData.balance!==null?Number(pdaWalletData.balance).toLocaleString('es-AR')+' RU':'PENDIENTE';status.textContent=pdaWalletData.balance===null?'Registrá tu saldo actual para iniciar el contador.':'Saldo guardado automáticamente en esta PDA.';earned.textContent=(Number(pdaWalletData.earned)||0).toLocaleString('es-AR')+' RU';const prices=$('pdaWalletPrices');if(prices)prices.textContent='PRECIOS REGISTRADOS · OJO: 18.000 RU';}
+function pdaRenderWallet(){const balance=$('pdaWalletBalance'),status=$('pdaWalletStatus'),earned=$('pdaWalletEarned');if(!balance||!status||!earned)return;balance.textContent=Number.isFinite(Number(pdaWalletData.balance))&&pdaWalletData.balance!==null?Number(pdaWalletData.balance).toLocaleString('es-AR')+' RU':'PENDIENTE';status.textContent='Saldo y pagos guardados automáticamente en esta PDA.';earned.textContent=(Number(pdaWalletData.earned)||0).toLocaleString('es-AR')+' RU';const prices=$('pdaWalletPrices');if(prices)prices.textContent='PRECIOS REGISTRADOS · OJO: 18.000 RU';}
 function home(){pdaRenderWallet();$('cc').textContent=contacts.length;$('mc').textContent=Object.values(chats).flat().length;$('xc').textContent=missions.filter(x=>!x.done).length+(pdaRemoteMissions||[]).filter(x=>x.assigned_to===pdaUserId&&(x.status==='offered'||x.status==='accepted')).length+(pdaNpcMissions||[]).filter(x=>x.status==='offered'||x.status==='accepted').length;$('nc').textContent=notes.length;$('activity').textContent=notes[0]?.title||missions[0]?.title||'Sin actividad registrada.'}
 
 const pdaCanonicalPortraits={
@@ -1927,7 +1927,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v71';
+const PDA_SW_BUILD='pda-zona-shell-v72';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
