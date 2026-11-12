@@ -642,6 +642,26 @@ function pdaUpdateMissionCountdowns(){
  });
 }
 setInterval(pdaUpdateMissionCountdowns,1000);
+function npcContactButton(m){
+ const npcId=Number(m.npc_id);
+ if(!Number.isInteger(npcId)||npcId<1)return '';
+ const added=contacts.some(c=>Number(c.npcId)===npcId);
+ return '<button type="button" class="btn" '+(added?'disabled':'')+' onclick="addNpcContact('+npcId+')">'+(added?'CONTACTO AGREGADO':'＋ AGREGAR CONTACTO')+'</button>';
+}
+window.addNpcContact=async npcId=>{
+ npcId=Number(npcId);
+ const mission=pdaNpcMissions.find(m=>Number(m.npc_id)===npcId);
+ if(!mission)return alert('No se pudo verificar el stalker que transmitió esta misión.');
+ if(contacts.some(c=>Number(c.npcId)===npcId)){renderM();return alert('Este stalker ya está en tus contactos.');}
+ try{
+  if(!pdaRankingRows.length)await pdaRefreshRanking();
+  const official=pdaRankingRows.find(r=>r.ranking_id==='npc:'+npcId&&r.is_npc===true);
+  if(!official||official.name!==mission.npc_name)return alert('IDENTIDAD NO VERIFICADA. El nombre no coincide con el registro oficial del ranking.');
+  contacts.push({id:'npc_'+npcId,npcId,name:official.name,role:official.faction||mission.npc_faction||'STALKER DEL RANKING',alignment:'neutral',vital:'alive',bio:official.bio||'Stalker registrado en el TOP 100 de la Zona.',npcStory:true,portraitIndex:Number(official.portrait_index||0)});
+  save();renderContacts();renderTrato();renderM();playPdaBeep('notify');
+  alert(official.name.toUpperCase()+' AGREGADO A CONTACTOS. Identidad oficial verificada en el ranking.');
+ }catch(e){alert('No se pudo agregar el contacto: '+(e.message||e))}
+};
 function renderM(){
  const assigned=pdaRemoteMissions.filter(m=>m.assigned_to===pdaUserId);
  const incoming=assigned.filter(m=>m.status==='offered');
@@ -650,7 +670,7 @@ function renderM(){
  const npcIncoming=pdaNpcMissions.filter(m=>m.status==='offered');
  const npcHistory=pdaNpcMissions.filter(m=>['completed','failed','expired','rejected'].includes(m.status));
  const npcInbox=[
-  ...npcIncoming.map(m=>`<div class="item"><div class="meta"><b>☢ MISIÓN TRANSMITIDA POR ${esc(m.npc_name||'UN STALKER')}</b><p class="muted">${esc(m.npc_faction||'STALKER')} · RED DE LA ZONA</p><p><strong>${esc(m.title)}</strong></p><p>${richText(m.description||'Sin instrucciones adicionales.')}</p><small class="muted">RECOMPENSA: ${m.reward_points} PUNTOS · PLAZO: ${m.duration_hours} HORAS DESDE LA ACEPTACIÓN</small></div><div class="mission-actions"><button class="btn" onclick="respondNpcMission('${m.id}','accepted')">ACEPTAR MISIÓN</button><button onclick="respondNpcMission('${m.id}','later')">Ahora no puedo, ¿me la guardás?</button></div></div>`),
+  ...npcIncoming.map(m=>`<div class="item"><div class="meta"><b>☢ MISIÓN TRANSMITIDA POR ${esc(m.npc_name||'UN STALKER')}</b><p class="muted">${esc(m.npc_faction||'STALKER')} · RED DE LA ZONA</p><p><strong>${esc(m.title)}</strong></p><p>${richText(m.description||'Sin instrucciones adicionales.')}</p><small class="muted">RECOMPENSA: ${m.reward_points} PUNTOS · PLAZO: ${m.duration_hours} HORAS DESDE LA ACEPTACIÓN</small></div><div class="mission-actions">${npcContactButton(m)}<button class="btn" onclick="respondNpcMission('${m.id}','accepted')">ACEPTAR MISIÓN</button><button onclick="respondNpcMission('${m.id}','later')">Ahora no puedo, ¿me la guardás?</button></div></div>`),
   ...npcHistory.map(m=>`<div class="item"><div class="meta"><b>${esc(m.npc_name||'STALKER')} · ${esc(m.title)}</b><p>${m.status==='completed'?'MISIÓN CUMPLIDA':m.status==='expired'?'MISIÓN VENCIDA':m.status==='failed'?'MISIÓN FALLIDA':'MISIÓN RECHAZADA'}</p><small class="muted">${m.status==='completed'?'RECOMPENSA OBTENIDA: +'+m.reward_points+' PUNTOS':m.status==='rejected'?'SIN PENALIZACIÓN · MISIÓN RECHAZADA':'SIN RECOMPENSA · PLAZO NO CUMPLIDO'}</small>${pdaMissionCountdownMarkup(m)}</div></div>`)
  ];
  const regularInbox=[
@@ -665,7 +685,7 @@ function renderM(){
  const pending=assigned.filter(m=>m.status==='accepted');
  const local=missions.map(m=>`<div class="item"><div class="meta"><b>${esc(m.title)}</b><p>${richText(m.desc)} · ${m.date}</p></div><button onclick="toggleM(${m.id})">${m.done?'CUMPLIDA':'ACTIVA'}</button><button onclick="delM(${m.id})">×</button></div>`).join('');
  const remote=pending.map(m=>`<div class="item"><div class="meta"><b>${esc(m.title)}</b><p>${richText(m.description||'Sin instrucciones adicionales.')}</p><small class="muted">RECOMPENSA: ${m.reward_points||0} PUNTOS · VENCE: ${pdaFormatTime(m.due_at)}</small>${pdaMissionCountdownMarkup(m)}</div><button class="btn" onclick="completeRemoteMission('${m.id}')">DECLARAR CUMPLIDA</button></div>`).join('');
- const npcPending=pdaNpcMissions.filter(m=>m.status==='accepted').map(m=>`<div class="item"><div class="meta"><b>☢ MISIÓN ACTIVA · ${esc(m.npc_name||'STALKER')}</b><p><strong>${esc(m.title)}</strong></p><p>${richText(m.description||'Sin instrucciones adicionales.')}</p><small class="muted">RECOMPENSA: ${m.reward_points} PUNTOS · VENCE: ${pdaFormatTime(m.due_at)}</small>${pdaMissionCountdownMarkup(m)}</div><div class="mission-actions"><button class="btn" onclick="completeNpcMission('${m.id}')">MISIÓN CUMPLIDA</button><button onclick="reportNpcProblem('${m.id}')">NECESITO INFORMAR UN PROBLEMA</button></div></div>`).join('');
+ const npcPending=pdaNpcMissions.filter(m=>m.status==='accepted').map(m=>`<div class="item"><div class="meta"><b>☢ MISIÓN ACTIVA · ${esc(m.npc_name||'STALKER')}</b><p><strong>${esc(m.title)}</strong></p><p>${richText(m.description||'Sin instrucciones adicionales.')}</p><small class="muted">RECOMPENSA: ${m.reward_points} PUNTOS · VENCE: ${pdaFormatTime(m.due_at)}</small>${pdaMissionCountdownMarkup(m)}</div><div class="mission-actions">${npcContactButton(m)}<button class="btn" onclick="completeNpcMission('${m.id}')">MISIÓN CUMPLIDA</button><button onclick="reportNpcProblem('${m.id}')">NECESITO INFORMAR UN PROBLEMA</button></div></div>`).join('');
  $('missionList').innerHTML=npcPending+remote+local||'<div class="empty">Sin misiones pendientes.</div>';
  }
 window.toggleM=id=>{const target=missions.find(m=>m.id===id);if(!target)return;const completed=!target.done;missions=missions.map(m=>m.id===id?{...m,done:completed}:m);save();renderM();playPdaBeep(completed?'missionDone':'missionStart')};window.delM=id=>{if(confirm('¿Eliminar misión?')){missions=missions.filter(m=>m.id!==id);save();renderM()}};
