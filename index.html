@@ -337,6 +337,16 @@ body.keyboard-visible footer{display:none}
 /* RADIO FULLSCREEN v58 · interfaz HUD superpuesta, sin marcos externos */
 #player{padding:0!important;margin:0!important}
 #player .radio-fullscreen{position:relative;width:100%;height:calc(100dvh - 125px);min-height:360px;max-height:none;aspect-ratio:auto;overflow:hidden;margin:0;border:0;border-radius:0;background-image:linear-gradient(90deg,#02060910,#02060925),url("https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2427420/a917f54315fc37a7484287c56256f148ccedbfa7/ss_a917f54315fc37a7484287c56256f148ccedbfa7.jpg");background-size:cover;background-position:center 52%;box-shadow:none}
+/* RADIO v66 · fuego localizado: solo se mueve la mitad inferior de la llama */
+#player .radio-fire-overlay{position:absolute;z-index:1;left:50%;top:37%;width:24%;height:43%;transform:translateX(-50%);pointer-events:none;overflow:visible;opacity:.92;filter:drop-shadow(0 0 12px #ff7a16aa)}
+#player .radio-fire-overlay .fire-upper{transform:none;animation:none}
+#player .radio-fire-overlay .fire-lower{transform-box:fill-box;transform-origin:50% 100%;animation:radioFireLower 2.4s ease-in-out infinite alternate}
+#player .radio-fire-overlay .fire-core{transform-box:fill-box;transform-origin:50% 100%;animation:radioFireCore 1.9s ease-in-out infinite alternate}
+#player .radio-fire-overlay .fire-glow{transform-box:fill-box;transform-origin:50% 100%;animation:radioFireGlow 3.2s ease-in-out infinite alternate}
+@keyframes radioFireLower{0%{transform:scaleX(.94) scaleY(.96) skewX(-2deg)}35%{transform:scaleX(1.04) scaleY(1.015) skewX(1deg)}70%{transform:scaleX(.97) scaleY(1.04) skewX(-1deg)}100%{transform:scaleX(1.06) scaleY(.98) skewX(2deg)}}
+@keyframes radioFireCore{0%{transform:scaleX(.94) scaleY(.96);opacity:.78}50%{transform:scaleX(1.06) scaleY(1.04);opacity:1}100%{transform:scaleX(.98) scaleY(.99);opacity:.84}}
+@keyframes radioFireGlow{0%{opacity:.48;transform:scale(.96)}100%{opacity:.72;transform:scale(1.05)}}
+@media(prefers-reduced-motion:reduce){#player .radio-fire-overlay *{animation:none!important}}
 #player .radio-bg-shade{position:absolute;inset:0;background:linear-gradient(90deg,transparent 35%,#05060740 67%,#05060788 100%),linear-gradient(0deg,#030404b8 0%,transparent 24%,transparent 75%,#03040455 100%);pointer-events:none}
 #player .radio-overlay-header{position:absolute;z-index:5;left:0;right:0;top:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px;background:linear-gradient(90deg,#070707d9,#09090970,transparent);pointer-events:none}
 #player .radio-brand{display:flex;align-items:center;gap:12px;color:#dba72f;text-shadow:0 2px 5px #000}
@@ -577,6 +587,20 @@ body.keyboard-visible footer{display:none}
 <section id="player" class="view">
 <div id="zoneCampfire" class="zone-campfire player-visual-stage radio-fullscreen" aria-label="Radio de la Zona">
  <div class="radio-bg-shade"></div>
+ <svg class="radio-fire-overlay" viewBox="0 0 240 320" aria-hidden="true">
+  <defs>
+   <linearGradient id="radioFireOuter" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff4b08"/><stop offset=".55" stop-color="#ff8b18"/><stop offset="1" stop-color="#ffb52c" stop-opacity=".12"/></linearGradient>
+   <linearGradient id="radioFireInner" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff9b16"/><stop offset=".62" stop-color="#ffe36b"/><stop offset="1" stop-color="#fff1a0" stop-opacity=".08"/></linearGradient>
+   <clipPath id="radioFireLowerClip"><rect x="0" y="150" width="240" height="170"/></clipPath>
+  </defs>
+  <path class="fire-upper" d="M120 12 C104 54 132 70 103 111 C85 136 94 166 120 184 C151 160 159 132 143 103 C132 82 151 51 120 12Z" fill="url(#radioFireOuter)" opacity=".66"/>
+  <g class="fire-lower" clip-path="url(#radioFireLowerClip)">
+   <path d="M120 315 C72 270 100 235 82 207 C62 178 87 160 105 146 C99 190 137 194 127 225 C155 198 145 174 161 157 C185 207 174 247 120 315Z" fill="url(#radioFireOuter)"/>
+   <path d="M119 314 C95 277 118 250 109 224 C102 205 119 188 132 174 C128 211 158 226 145 257 C139 280 132 296 119 314Z" fill="url(#radioFireInner)"/>
+  </g>
+  <path class="fire-core" d="M120 309 C108 284 123 267 119 247 C116 232 126 218 132 208 C135 238 149 247 139 275 C134 292 128 302 120 309Z" fill="#fff0a0" opacity=".82"/>
+  <ellipse class="fire-glow" cx="120" cy="294" rx="72" ry="18" fill="#ff7414" opacity=".5"/>
+ </svg>
  <header class="radio-overlay-header"><div class="radio-brand"><span class="radio-rad">☢</span><div><b>PDA <i>// ZONA</i></b><small>RADIO DE LA ZONA</small></div></div><div class="radio-live"><span class="radio-signal"><i></i><i></i><i></i><i></i></span><b>EN VIVO</b></div></header>
  <canvas id="xpVisualizer" aria-label="Espectro de frecuencias en vivo"></canvas>
  <div class="radio-track-card"><div class="radio-track-meta"><strong id="trackTitle">Ninguna pista seleccionada</strong><span id="trackArtist">Cargá música desde tu dispositivo</span></div><div class="radio-track-time"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"></div>
