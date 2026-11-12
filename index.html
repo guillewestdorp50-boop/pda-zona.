@@ -523,7 +523,16 @@ body.keyboard-visible footer{display:none}
  box-shadow:0 3px 14px #0006;backdrop-filter:blur(3px);
 }
 #player #zoneCampfire .radio-main-controls button{position:relative;z-index:1}
-\n.barbas-artifact-alert{display:inline-block;width:11px;height:11px;flex:0 0 11px;border-radius:50%;background:#55ed69;box-shadow:0 0 7px #55ed69,0 0 16px #55ed69;animation:barbasBlink .85s steps(2,start) infinite;margin-left:auto;margin-right:9px}\n@keyframes barbasBlink{to{visibility:hidden}}\n</style></head><body>
+\n.barbas-artifact-alert{display:inline-block;width:11px;height:11px;flex:0 0 11px;border-radius:50%;background:#55ed69;box-shadow:0 0 7px #55ed69,0 0 16px #55ed69;animation:barbasBlink .85s steps(2,start) infinite;margin-left:auto;margin-right:9px}\n@keyframes barbasBlink{to{visibility:hidden}}\n
+/* RADIO v77 · lista plegable y controles ajustables al gesto de pellizco */
+#player .radio-list-title{position:relative;padding-right:34px}
+#player #playlistClose{position:absolute;right:0;top:-3px;width:28px;height:26px;border:1px solid #96743b;border-radius:5px;background:#15130f;color:#f3c24a;font-size:19px;line-height:18px}
+#player .radio-playlist-toggle{position:absolute;z-index:95;right:3%;top:54%;padding:9px 12px;border:1px solid #b58a32;border-radius:22px;background:#080a09e8;color:#f2c24d;font-weight:bold;box-shadow:0 2px 12px #000a}
+#player .radio-playlist-toggle[hidden]{display:none}
+#player .radio-playlist{transform-origin:top left}
+#player .radio-pinchable{--radio-pinch-scale:1}
+#player .radio-pinchable{zoom:var(--radio-pinch-scale)}
+</style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
  <canvas id="bootParticles" aria-hidden="true"></canvas><div class="boot-scan"></div><div class="boot-noise"></div>
@@ -584,7 +593,7 @@ body.keyboard-visible footer{display:none}
  <div class="radio-track-card"><div class="radio-track-meta"><strong id="trackTitle">Ninguna pista seleccionada</strong><span id="trackArtist">Cargá música desde tu dispositivo</span></div><div class="radio-track-time"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"></div>
  <div class="radio-main-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div>
  <div class="radio-volume"><span>VOL</span><input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen"><small id="volumeValue">80%</small></div>
- <div class="radio-playlist"><div class="radio-list-title">♫ &nbsp;LISTA DE REPRODUCCIÓN <small id="trackCount">0 PISTAS</small></div><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div>
+ <div class="radio-playlist" id="radioPlaylist"><div class="radio-list-title">♫ &nbsp;LISTA DE REPRODUCCIÓN <small id="trackCount">0 PISTAS</small><button type="button" id="playlistClose" aria-label="Minimizar lista" title="Minimizar lista">—</button></div><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div><button type="button" id="playlistToggle" class="radio-playlist-toggle" aria-label="Mostrar lista de reproducción" hidden>♫ LISTA</button>
  <div class="radio-bottom-tools"><button id="addTracks" class="radio-tool"><b>＋</b><span>AGREGAR<br>CANCIÓN</span></button><button id="lyricsToggle" class="radio-tool"><b>☷</b><span>VER LETRA</span></button><button id="shuffleToggle" class="radio-tool"><b>⤨</b><span>ALEATORIO</span></button><button id="repeatToggle" class="radio-tool"><b>⟳</b><span>REPETIR</span></button><button id="eqToggle" class="radio-tool"><b>▥</b><span>ECUALIZADOR</span></button></div>
  <input id="trackFileInput" type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav,.flac" multiple style="display:none">
  <div id="radioLyricsPanel" class="radio-float-panel" hidden><div class="radio-float-head">LETRA DE LA CANCIÓN <button type="button" data-close-panel="radioLyricsPanel">✕</button></div><textarea id="radioLyricsText" rows="7" placeholder="Pegá o escribí la letra de esta canción..."></textarea><button id="saveRadioLyrics">OK · MOSTRAR LETRA</button></div><button id="lyricsEye" class="radio-lyrics-eye" type="button" aria-label="Ocultar letra" title="Ocultar letra" hidden>◉</button><div id="radioCreditsControls" class="radio-credits-controls" hidden><button id="radioCreditsPlay" type="button">▶</button><span id="radioCreditsClock">00:00</span></div><div id="radioCredits" class="radio-credits" hidden><div id="radioCreditsText"></div></div>
@@ -1683,7 +1692,7 @@ async function loadMusic(){try{musicItems=(await mediaAll()).filter(x=>x.kind===
 function renderTracks(){$('trackCount').textContent=musicItems.length+' PISTAS';$('trackList').innerHTML=musicItems.map((x,i)=>`<div class="item"><div class="avatar">♫</div><div class="meta"><b>${esc(x.name)}</b><p>${esc(x.type||'Audio')}</p></div><button class="btn" data-play-track="${esc(x.id)}">▶</button><button class="delete-one" data-delete-track="${esc(x.id)}" title="Eliminar pista">×</button></div>`).join('')||'<div class="empty">Todavía no hay música cargada.</div>'}
 async function addTracks(files){for(const file of [...files]){if(!file.type.startsWith('audio/')&&!/\.(mp3|m4a|ogg|wav|flac|aac)$/i.test(file.name))continue;try{await mediaPut({id:mediaId(),kind:'track',name:file.name.replace(/\.[^.]+$/,''),type:file.type,blob:file,created:Date.now()})}catch(e){alert('No se pudo guardar '+file.name+'. Puede faltar espacio disponible.');break}}await loadMusic()}
 function updatePlayerUI(){$('zoneCampfire')?.classList.toggle('is-playing',!$('zonaAudio').paused);$('playTrack').textContent=$('zonaAudio').paused?'▶':'Ⅱ';$('playerStatus').textContent=$('zonaAudio').paused?'EN PAUSA':'REPRODUCIENDO';$('playerDisc').classList.toggle('playing',!$('zonaAudio').paused);$('trackProgress').value=$('zonaAudio').duration?Math.round($('zonaAudio').currentTime/$('zonaAudio').duration*1000):0;$('currentTime').textContent=fmtTime($('zonaAudio').currentTime);$('durationTime').textContent=fmtTime($('zonaAudio').duration)}
-async function playTrack(id,autoplay=true){const item=musicItems.find(x=>x.id===id);if(!item)return;const audio=$('zonaAudio');if(currentTrackId!==id){if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=URL.createObjectURL(item.blob);audio.src=currentObjectUrl;currentTrackId=id;$('trackTitle').textContent=item.name;$('trackArtist').textContent='BIBLIOTECA LOCAL · '+(musicItems.findIndex(x=>x.id===id)+1)+'/'+musicItems.length;$('discLabel').textContent=item.name;audio.load()}if(autoplay){try{setupEqualizer();if(eqContext?.state==='suspended')await eqContext.resume();audio.volume=Number($('playerVolume').value);await audio.play();if('mediaSession'in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:item.name,artist:'PDA // ZONA',album:'Biblioteca local'});navigator.mediaSession.playbackState='playing'} }catch(e){alert('El navegador no pudo reproducir este archivo. Probá con MP3 o M4A.')}}updatePlayerUI()}
+async function playTrack(id,autoplay=true){const item=musicItems.find(x=>x.id===id);if(!item)return;const audio=$('zonaAudio');if(currentTrackId!==id){if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=URL.createObjectURL(item.blob);audio.src=currentObjectUrl;currentTrackId=id;$('trackTitle').textContent=item.name;$('trackArtist').textContent='BIBLIOTECA LOCAL · '+(musicItems.findIndex(x=>x.id===id)+1)+'/'+musicItems.length;$('discLabel').textContent=item.name;audio.load()}window.dispatchEvent(new CustomEvent('pda-radio-track-change',{detail:{id:item.id,name:item.name}}));if(autoplay){try{setupEqualizer();if(eqContext?.state==='suspended')await eqContext.resume();audio.volume=Number($('playerVolume').value);await audio.play();if('mediaSession'in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:item.name,artist:'PDA // ZONA',album:'Biblioteca local'});navigator.mediaSession.playbackState='playing'} }catch(e){alert('El navegador no pudo reproducir este archivo. Probá con MP3 o M4A.')}}updatePlayerUI()}
 function stepTrack(direction){if(!musicItems.length)return;let i=musicItems.findIndex(x=>x.id===currentTrackId);i=i<0?(direction>0?0:musicItems.length-1):(i+direction+musicItems.length)%musicItems.length;playTrack(musicItems[i].id,true)}
 $('addTracks').onclick=()=>$('trackFileInput').click();$('trackFileInput').onchange=async e=>{await addTracks(e.target.files||[]);e.target.value=''};$('trackList').onclick=e=>{const play=e.target.closest('[data-play-track]'),del=e.target.closest('[data-delete-track]');if(play)playTrack(play.dataset.playTrack,true);if(del)removeTrack(del.dataset.deleteTrack)};
 async function removeTrack(id){if(!confirm('¿Eliminar esta pista de la biblioteca?'))return;if(currentTrackId===id){$('zonaAudio').pause();$('zonaAudio').removeAttribute('src');$('zonaAudio').load();if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=null;currentTrackId=null;$('trackTitle').textContent='Ninguna pista seleccionada';$('trackArtist').textContent='Cargá música desde tu dispositivo';updatePlayerUI()}await mediaDelete(id);await loadMusic()}
@@ -1983,7 +1992,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v76';
+const PDA_SW_BUILD='pda-zona-shell-v77';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
@@ -2034,6 +2043,7 @@ if ('serviceWorker' in navigator) {
 let radioShuffleMode=false;
 (()=>{const $=id=>document.getElementById(id);let repeat=false;
  const openPanel=id=>{['radioLyricsPanel','radioEqPanel'].forEach(x=>$(x).hidden=x!==id)};
+ const playlist=$('radioPlaylist'),playlistToggle=$('playlistToggle');$('playlistClose').addEventListener('click',()=>{playlist.hidden=true;playlistToggle.hidden=false;localStorage.setItem('pda_radio_playlist_hidden','1')});playlistToggle.addEventListener('click',()=>{playlist.hidden=false;playlistToggle.hidden=true;localStorage.setItem('pda_radio_playlist_hidden','0')});if(localStorage.getItem('pda_radio_playlist_hidden')==='1'){playlist.hidden=true;playlistToggle.hidden=false;}
  document.querySelectorAll('[data-close-panel]').forEach(b=>b.addEventListener('click',()=>openPanel('')));
  $('eqToggle').addEventListener('click',()=>{const p=$('radioEqPanel');if(!p.hidden){openPanel('');return}openPanel('radioEqPanel')});
  $('shuffleToggle').addEventListener('click',()=>{radioShuffleMode=!radioShuffleMode;$('shuffleToggle').classList.toggle('active',radioShuffleMode);$('shuffleToggle').setAttribute('aria-pressed',String(radioShuffleMode))});
@@ -2051,10 +2061,11 @@ let radioShuffleMode=false;
  const stop=()=>{if(timer){clearInterval(timer);timer=null}playing=false;play.textContent='▶'};
  const closeEditor=()=>{$('radioLyricsPanel').hidden=true;if(typeof closePdaKeyboard==='function')closePdaKeyboard()};
  const openEditor=()=>{$('radioLyricsPanel').hidden=false;$('radioEqPanel').hidden=true;$('radioLyricsText').value=localStorage.getItem(key())||'';if(typeof openPdaKeyboard==='function')openPdaKeyboard($('radioLyricsText'));else $('radioLyricsText').focus()};
- const showReady=()=>{const text=localStorage.getItem(key())||$('radioLyricsText').value;if(!text.trim()){openEditor();return}stop();elapsed=0;clock.textContent='00:00';$('radioCreditsText').innerHTML=richText(text);box.scrollTop=0;box.hidden=false;$('radioCreditsControls').hidden=false;$('lyricsEye').hidden=false;$('radioLyricsPanel').hidden=true;lyricsMode=true;stage.querySelector('.radio-playlist').style.visibility='hidden'};
+ const showReady=(fromSaved=false)=>{const text=localStorage.getItem(key())|| (fromSaved?'':$('radioLyricsText').value);if(!text.trim()){stop();box.hidden=true;$('radioCreditsControls').hidden=true;$('lyricsEye').hidden=true;lyricsMode=false;stage.querySelector('.radio-playlist').style.visibility='';return}stop();elapsed=0;clock.textContent='00:00';$('radioCreditsText').innerHTML=richText(text);box.scrollTop=0;box.hidden=false;$('radioCreditsControls').hidden=false;$('lyricsEye').hidden=false;$('radioLyricsPanel').hidden=true;lyricsMode=true;stage.querySelector('.radio-playlist').style.visibility='hidden'};
  const run=()=>{if(playing){stop();return}const max=box.scrollHeight-box.clientHeight;if(box.scrollTop>=max-1){box.scrollTop=0;elapsed=0}playing=true;play.textContent='Ⅱ';lastTick=Date.now();timer=setInterval(()=>{const now=Date.now(),dt=(now-lastTick)/1000;lastTick=now;box.scrollTop=Math.min(box.scrollHeight-box.clientHeight,box.scrollTop+dt*8);elapsed+=dt;clock.textContent=fmt(elapsed);if(box.scrollTop>=box.scrollHeight-box.clientHeight-1)stop()},50)};
  $('lyricsToggle').addEventListener('click',()=>{if(lyricsMode){stop();box.hidden=true;$('radioCreditsControls').hidden=true;$('lyricsEye').hidden=true;lyricsMode=false;stage.querySelector('.radio-playlist').style.visibility='';return}openEditor()});
  $('saveRadioLyrics').textContent='OK · GUARDAR LETRA';
+ window.addEventListener('pda-radio-track-change',()=>{stop();$('radioLyricsText').value=localStorage.getItem(key())||'';showReady(true)});
  $('saveRadioLyrics').addEventListener('click',()=>{localStorage.setItem(key(),$('radioLyricsText').value);closeEditor();showReady()});
  play.addEventListener('click',run);
  $('lyricsEye').addEventListener('click',()=>{stop();box.hidden=true;$('radioCreditsControls').hidden=true;$('lyricsEye').hidden=true});
@@ -2064,9 +2075,9 @@ let radioShuffleMode=false;
 
 /* Arrastre limitado al interior del escenario: conserva el punto exacto donde se toma */
 (()=>{const stage=document.getElementById('zoneCampfire');if(!stage)return;
- const selectors=['.radio-overlay-header','.radio-track-card','.radio-main-controls','.radio-volume','.radio-playlist','#lyricsEye','#radioCreditsControls','#radioLyricsPanel','#radioEqPanel'];
+ const selectors=['.radio-overlay-header','.radio-track-card','.radio-main-controls','.radio-volume','.radio-playlist','#lyricsEye','#radioCreditsControls','#radioLyricsPanel','#radioEqPanel','#playlistToggle'];
  const orient=()=>matchMedia('(orientation:landscape)').matches?'landscape':'portrait';
- selectors.forEach(sel=>{const el=stage.querySelector(sel);if(!el)return;const k='pda_radio_drag_'+orient()+'_'+(el.id||el.classList[0]);
+ selectors.forEach(sel=>{const el=stage.querySelector(sel);if(!el)return;el.classList.add('radio-pinchable');const k='pda_radio_drag_'+orient()+'_'+(el.id||el.classList[0]);
   const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
   const place=(x,y,save)=>{const r=stage.getBoundingClientRect(),w=el.offsetWidth,h=el.offsetHeight;
    const maxX=Math.max(0,r.width-w),maxY=Math.max(0,r.height-h);
@@ -2075,6 +2086,11 @@ let radioShuffleMode=false;
    if(save)localStorage.setItem(k,JSON.stringify({x:px/r.width*100,y:py/r.height*100}));
   };
   try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}
+  const sk='pda_radio_scale_'+orient()+'_'+(el.id||el.classList[0]);let pinchStart=0,pinchBase=1;
+  try{const z=Number(localStorage.getItem(sk));if(z>0){el.style.setProperty('--radio-pinch-scale',String(z));el.dataset.pinchScale=String(z)}}catch{}
+  el.addEventListener('touchstart',e=>{if(e.touches.length===2){pinchStart=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchBase=Number(el.dataset.pinchScale||1);e.preventDefault()}},{passive:false});
+  el.addEventListener('touchmove',e=>{if(e.touches.length===2&&pinchStart>0){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);const z=clamp(pinchBase*d/pinchStart,.65,1.55);el.style.setProperty('--radio-pinch-scale',String(z));el.dataset.pinchScale=String(z);e.preventDefault()}},{passive:false});
+  el.addEventListener('touchend',e=>{if(e.touches.length<2&&pinchStart>0){localStorage.setItem(sk,String(Number(el.dataset.pinchScale||1)));pinchStart=0}},{passive:true});
   let hold=null,drag=false,offsetX=0,offsetY=0,pointerId=null;
   el.style.touchAction='none';
   el.addEventListener('pointerdown',e=>{
