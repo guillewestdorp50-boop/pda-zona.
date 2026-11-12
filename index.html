@@ -1855,8 +1855,9 @@ window.pdaGiveOjoToBarbas=()=>{
  barbasDeliveryData.history.push({action:'give',id:ojo.id,name:'Ojo',time:new Date().toLocaleString('es-AR'),source:'barbas-quest'});
  barbasDeliveryData.history=barbasDeliveryData.history.slice(-100);saveInventory();saveBarbasDeliveries();
  barbasOjoQuest.stage='awaiting_payment';barbasOjoQuest.itemId=ojo.id;barbasOjoQuest.deliveredAt=new Date().toISOString();saveBarbasOjoQuest();
- (chats[id]??=[]).push({me:false,who:'BARBAS',text:'Buen trabajo, stalker. No es fácil encontrar una pieza así y menos traerla entera. El Ojo queda conmigo. Te ganaste lo que acordamos: dieciocho mil RU. Tomá, es tuyo.',time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});
+ (chats[id]??=[]).push({me:true,who:'TÚ',text:'Barbas, te he traído lo que me pediste. El Ojo está aquí.',time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});
  save();renderInventory();pdaRenderChat();playPdaBeep('message');
+ setTimeout(()=>{(chats[id]??=[]).push({me:false,who:'BARBAS',text:'Buen trabajo, stalker. No es fácil encontrar una pieza así y menos traerla entera. El Ojo queda conmigo. Te ganaste lo que acordamos: dieciocho mil RU. Tomá, es tuyo.',time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});save();pdaRenderChat();playPdaBeep('notify')},1350);
 };
 window.pdaReceiveOjoPayment=()=>{
  const contact=pdaCurrentContact(),id=$('chatWho').value;if(!contact||!/barbas/i.test(contact.name||'')||barbasOjoQuest.stage!=='awaiting_payment')return;
@@ -1864,8 +1865,9 @@ window.pdaReceiveOjoPayment=()=>{
  const paid=pdaRegisterBarbasPayment(ojo);if(paid!==18000)return;
  barbasOjoQuest.stage='completed';barbasOjoQuest.paidAt=new Date().toISOString();saveBarbasOjoQuest();
  barbasDeliveryData.history.push({action:'paid',id:ojo.id,name:'Ojo · 18.000 RU',time:new Date().toLocaleString('es-AR'),source:'barbas-quest'});barbasDeliveryData.history=barbasDeliveryData.history.slice(-100);saveBarbasDeliveries();
- (chats[id]??=[]).push({me:false,who:'BARBAS',text:'Así me gusta. Trato cumplido. Cuidá esos RU, stalker; en la Zona siempre aparece algo que vale la pena comprar.',time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});
- save();pdaRenderChat();playPdaBeep('notify');
+ (chats[id]??=[]).push({me:true,who:'TÚ',text:'Gracias, Barbas. Trato hecho. Voy a hacer rendir esos RU.',time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});
+ save();pdaRenderChat();playPdaBeep('message');
+ setTimeout(()=>{(chats[id]??=[]).push({me:false,who:'BARBAS',text:'Así me gusta. Trato cumplido. Cuidá esos RU, stalker; en la Zona siempre aparece algo que vale la pena comprar.',time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});save();pdaRenderChat();playPdaBeep('notify')},1450);
 };
 window.pdaInventoryReady=true;renderBarbasArtifactPanel();
 $('barbasQuestActions').addEventListener('click',e=>{if(e.target.closest('#barbasGiveOjo'))window.pdaGiveOjoToBarbas();if(e.target.closest('#barbasReceiveOjo'))window.pdaReceiveOjoPayment()});
@@ -1919,7 +1921,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v73';
+const PDA_SW_BUILD='pda-zona-shell-v74';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
