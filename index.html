@@ -411,6 +411,47 @@ body.keyboard-visible footer{display:none}
  #player .radio-float-panel{width:94%;right:3%;bottom:18%;max-height:70%}
 }
 
+
+/* RADIO v59 · créditos de letra y ajuste panorámico */
+#player{position:relative}
+#player .radio-lyrics-eye{position:absolute;z-index:12;top:12%;right:2%;width:42px;height:42px;border-radius:50%;border:1px solid #d0a33d;background:#050606c9;color:#f2c24d;font-size:23px;box-shadow:0 2px 12px #000a}
+#player .radio-credits{position:absolute;z-index:11;left:31%;right:31%;top:24%;bottom:18%;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;text-align:center;padding:8vh 14px 6vh;color:#f2e8cc;text-shadow:0 2px 5px #000,0 0 12px #000;mask-image:linear-gradient(transparent 0%,#000 12%,#000 88%,transparent 100%);scrollbar-width:thin;scrollbar-color:#b98c35 #15120d}
+#player .radio-credits[hidden],#player .radio-lyrics-eye[hidden]{display:none}
+#player #radioCreditsText{font:clamp(16px,2.1vw,27px)/1.8 Georgia,serif;white-space:pre-wrap;letter-spacing:.3px}
+#player .radio-credits.paused{outline:1px solid #c69a42;background:#05050535}
+#player .radio-credits-hint{position:absolute;top:5px;left:0;right:0;color:#e8c45d;font:10px monospace;letter-spacing:2px}
+#player .radio-lyrics-eye{cursor:pointer}
+@media(orientation:landscape) and (max-height:600px){
+ #player{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;margin:0!important;padding:0!important;z-index:9998!important;overflow:hidden!important}
+ #player .radio-fullscreen{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;background-position:center center!important;background-size:cover!important}
+ #player .radio-overlay-header{height:9%;padding:3px 16px}
+ #player .radio-brand b{font-size:clamp(16px,3.2vh,25px)}
+ #player .radio-brand small{font-size:clamp(8px,1.5vh,11px)}
+ #player .radio-rad{font-size:clamp(24px,5vh,38px)}
+ #player .radio-track-card{top:12%;right:2%;width:29%;padding:7px 10px}
+ #player .radio-track-meta strong{font-size:clamp(15px,2.8vh,22px)}
+ #player .radio-track-meta span{font-size:clamp(10px,1.9vh,15px)}
+ #player .radio-main-controls{top:37%;right:3%;width:27%;gap:12px}
+ #player .radio-main-controls button{font-size:clamp(20px,4.8vh,34px);min-width:38px;min-height:38px}
+ #player .radio-main-controls button.main-play{width:clamp(54px,11vh,82px);height:clamp(54px,11vh,82px);font-size:clamp(24px,5vh,38px);border-width:2px}
+ #player .radio-volume{top:51%;right:3%;width:25%;font-size:10px}
+ #player .radio-playlist{top:58%;right:2%;bottom:16%;width:29%;padding:6px 9px}
+ #player .radio-list-title{font-size:clamp(11px,2.2vh,16px)}
+ #player #trackList .item{padding:3px;font-size:12px}
+ #player .radio-bottom-tools{height:14%;min-height:0;padding:4px 8px;gap:4px}
+ #player .radio-tool{font-size:clamp(9px,1.8vh,13px);gap:7px;padding:2px}
+ #player .radio-tool b{font-size:clamp(17px,3.2vh,25px)}
+ #player .radio-float-panel{right:2%;bottom:16%;width:min(420px,40%);max-height:72%}
+ #player .radio-credits{left:29%;right:29%;top:16%;bottom:15%;padding:5vh 12px}
+ #player #radioCreditsText{font-size:clamp(15px,2.5vh,22px);line-height:1.65}
+ #player .radio-lyrics-eye{top:11%;right:2%;width:36px;height:36px;font-size:20px}
+}
+@media(orientation:portrait){
+ #player .radio-credits{left:12%;right:12%;top:20%;bottom:18%;padding:5vh 12px}
+ #player #radioCreditsText{font-size:clamp(15px,2.2vh,21px)}
+ #player .radio-lyrics-eye{top:12%;right:3%}
+}
+
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -474,7 +515,7 @@ body.keyboard-visible footer{display:none}
  <div class="radio-playlist"><div class="radio-list-title">♫ &nbsp;LISTA DE REPRODUCCIÓN <small id="trackCount">0 PISTAS</small></div><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div>
  <div class="radio-bottom-tools"><button id="addTracks" class="radio-tool"><b>＋</b><span>AGREGAR<br>CANCIÓN</span></button><button id="lyricsToggle" class="radio-tool"><b>☷</b><span>VER LETRA</span></button><button id="shuffleToggle" class="radio-tool"><b>⤨</b><span>ALEATORIO</span></button><button id="repeatToggle" class="radio-tool"><b>⟳</b><span>REPETIR</span></button><button id="eqToggle" class="radio-tool"><b>▥</b><span>ECUALIZADOR</span></button></div>
  <input id="trackFileInput" type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav,.flac" multiple style="display:none">
- <div id="radioLyricsPanel" class="radio-float-panel" hidden><div class="radio-float-head">LETRA DE LA CANCIÓN <button type="button" data-close-panel="radioLyricsPanel">✕</button></div><textarea id="radioLyricsText" placeholder="Pegá o escribí la letra de esta canción..."></textarea><button id="saveRadioLyrics">GUARDAR LETRA</button></div>
+ <div id="radioLyricsPanel" class="radio-float-panel" hidden><div class="radio-float-head">LETRA DE LA CANCIÓN <button type="button" data-close-panel="radioLyricsPanel">✕</button></div><textarea id="radioLyricsText" rows="7" placeholder="Pegá o escribí la letra de esta canción..."></textarea><button id="saveRadioLyrics">OK · MOSTRAR LETRA</button></div><button id="lyricsEye" class="radio-lyrics-eye" type="button" aria-label="Ocultar letra" title="Ocultar letra" hidden>◉</button><div id="radioCredits" class="radio-credits" hidden><div id="radioCreditsText"></div></div>
  <div id="radioEqPanel" class="radio-float-panel" hidden><div class="radio-float-head">ECUALIZADOR DE LA ZONA <button type="button" data-close-panel="radioEqPanel">✕</button></div><div class="eq-grid">
  <div class="eq-band"><input data-native-control class="eq-slider" data-freq="60" type="range" min="-12" max="12" step="1" value="0" orient="vertical"><label>60 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="250" type="range" min="-12" max="12" step="1" value="0"><label>250 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="1000" type="range" min="-12" max="12" step="1" value="0"><label>1 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="4000" type="range" min="-12" max="12" step="1" value="0"><label>4 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="12000" type="range" min="-12" max="12" step="1" value="0"><label>12 kHz</label></div></div><div class="radio-eq-footer"><button id="resetEQ">↺ RESTABLECER</button><label>APAGADO AUTOMÁTICO <select id="sleepTimer"><option value="0">Desactivado</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option><option value="90">90 minutos</option></select></label><button id="cancelSleep">CANCELAR</button><small id="sleepStatus">Sin temporizador activo.</small></div></div>
  <div id="playerDisc" class="radio-hidden-status"><span id="discLabel">PDA // AUDIO</span></div><button id="clearTracks" type="button" class="radio-hidden-status">VACIAR LISTA</button><span id="playerStatus" class="radio-hidden-status">EN ESPERA</span><span id="xpVizStatus" class="radio-hidden-status">● EN ESPERA</span>
@@ -1786,6 +1827,54 @@ let radioShuffleMode=false;
  $('shuffleToggle').addEventListener('click',()=>{radioShuffleMode=!radioShuffleMode;$('shuffleToggle').classList.toggle('active',radioShuffleMode);$('shuffleToggle').setAttribute('aria-pressed',String(radioShuffleMode))});
  $('repeatToggle').addEventListener('click',()=>{repeat=!repeat;$('repeatToggle').classList.toggle('active',repeat);$('repeatToggle').setAttribute('aria-pressed',String(repeat));$('zonaAudio').loop=repeat});
  $('zonaAudio').addEventListener('ended',()=>{if(repeat)return;if(radioShuffleMode&&musicItems.length>1){const choices=musicItems.filter(x=>x.id!==currentTrackId);if(choices.length)playTrack(choices[Math.floor(Math.random()*choices.length)].id,true)}});
+})();
+
+
+/* Letras estilo créditos: edición, guardado local, desplazamiento táctil y botón ojo */
+(()=>{const $=id=>document.getElementById(id),audio=$('zonaAudio'),stage=$('zoneCampfire');
+ let creditsTimer=null,creditsPausedUntil=0,lyricsVisible=false;
+ const lyricKey=()=> 'zona_lyrics_'+(window.currentTrackId||$('trackTitle').textContent||'sin-pista');
+ const stopCredits=()=>{if(creditsTimer){clearInterval(creditsTimer);creditsTimer=null}};
+ const closeLyricsEditor=()=>{ $('radioLyricsPanel').hidden=true; if(typeof closePdaKeyboard==='function')closePdaKeyboard(); };
+ const startCredits=()=>{
+  stopCredits();const box=$('radioCredits');box.scrollTop=0;creditsTimer=setInterval(()=>{
+   if(!lyricsVisible||Date.now()<creditsPausedUntil)return;
+   const bottom=box.scrollHeight-box.clientHeight;
+   if(box.scrollTop<bottom)box.scrollTop=Math.min(bottom,box.scrollTop+0.22);
+   else stopCredits();
+  },40);
+ };
+ const showCredits=()=>{
+  const text=localStorage.getItem(lyricKey())||$('radioLyricsText').value;
+  if(!text.trim()){openLyricsEditor();return}
+  $('radioCreditsText').textContent=text;
+  $('radioCredits').hidden=false;$('lyricsEye').hidden=false;
+  $('radioPlaylist').style.visibility='hidden';
+  $('radioLyricsPanel').hidden=true;
+  lyricsVisible=true;startCredits();
+ };
+ const hideCredits=()=>{
+  lyricsVisible=false;stopCredits();$('radioCredits').hidden=true;$('lyricsEye').hidden=true;
+  $('radioPlaylist').style.visibility=''; 
+ };
+ const openLyricsEditor=()=>{
+  $('radioLyricsPanel').hidden=false;$('radioEqPanel').hidden=true;
+  $('radioLyricsText').value=localStorage.getItem(lyricKey())||'';
+  $('radioLyricsText').focus();
+ };
+ $('lyricsToggle').addEventListener('click',()=>{if(lyricsVisible){hideCredits();return}openLyricsEditor()});
+ $('saveRadioLyrics').addEventListener('click',()=>{localStorage.setItem(lyricKey(),$('radioLyricsText').value);closeLyricsEditor();showCredits()});
+ $('lyricsEye').addEventListener('click',hideCredits);
+ stage.addEventListener('click',e=>{
+  if(!lyricsVisible||e.target.closest('button,input,textarea,.radio-track-card,.radio-main-controls,.radio-playlist,.radio-bottom-tools,.radio-volume'))return;
+  hideCredits();
+ });
+ stage.addEventListener('touchstart',e=>{if(lyricsVisible&&e.target.closest('#radioCredits'))creditsPausedUntil=Date.now()+6500},{passive:true});
+ const credits=$('radioCredits');
+ credits.addEventListener('pointerdown',()=>{creditsPausedUntil=Date.now()+6500});
+ credits.addEventListener('wheel',()=>{creditsPausedUntil=Date.now()+6500},{passive:true});
+ credits.addEventListener('scroll',()=>{creditsPausedUntil=Date.now()+6500},{passive:true});
+ audio.addEventListener('loadedmetadata',()=>{if(lyricsVisible)showCredits()});
 })();
 
 </script></body></html>
