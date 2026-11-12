@@ -321,6 +321,7 @@ function updateMissionAlert(){let ids=[];try{ids=JSON.parse(localStorage.getItem
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
 function home(){$('cc').textContent=contacts.length;$('mc').textContent=Object.values(chats).flat().length;$('xc').textContent=missions.filter(x=>!x.done).length+(pdaRemoteMissions||[]).filter(x=>x.assigned_to===pdaUserId&&(x.status==='offered'||x.status==='accepted')).length+(pdaNpcMissions||[]).filter(x=>x.status==='offered'||x.status==='accepted').length;$('nc').textContent=notes.length;$('activity').textContent=notes[0]?.title||missions[0]?.title||'Sin actividad registrada.'}
 const pdaCanonicalPortraits={
+  1:{url:'assets/cuervo-gris.jpg',label:'Cuervo Gris'},
  2:{url:'https://pbs.twimg.com/media/D97oXpLXsAYIyVn.jpg',label:'Sidorovich'},
  4:{url:'https://media.moddb.com/images/mods/1/32/31562/20170208013533_1.jpg',label:'Barbas'},
  13:{url:'https://upload.wikimedia.org/wikipedia/commons/2/22/%D0%97%D0%BE%D0%B2_%D0%9F%D1%80%D0%B8%D0%BF%D1%8F%D1%82%D0%B8_-_%D0%9C%D0%B0%D0%B9%D0%BE%D1%80_%D0%94%D0%B5%D0%B3%D1%82%D1%8F%D1%80%D0%B5%D0%B2_%D0%98%D0%BD%D1%82%D1%80%D0%BE.png',label:'Mayor Degtyarev'},
