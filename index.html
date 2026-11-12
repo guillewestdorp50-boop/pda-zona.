@@ -397,16 +397,10 @@ function renderPdaProfile(){
 $('pdaEditProfileBtn').onclick=()=>{pdaProfileEditing=true;renderPdaProfile()};
 async function pdaLoadProfile(){
  const client=await pdaEnsureSession();
- let {data,error}=await client.from('pda_profiles').select('user_id,display_name,avatar_url,faction,bio,updated_at,ranking_joined').eq('user_id',pdaUserId).maybeSingle();
+ const {data,error}=await client.from('pda_profiles').select('user_id,display_name,avatar_url,faction,bio,updated_at,ranking_joined').eq('user_id',pdaUserId).maybeSingle();
  if(error)throw error;
- if(!data){
-  const displayName=$('pdaDisplayName')?.value?.trim()||'STALKER';
-  const created=await client.from('pda_profiles').upsert({user_id:pdaUserId,display_name:displayName},{onConflict:'user_id'}).select('user_id,display_name,avatar_url,faction,bio,updated_at,ranking_joined').single();
-  if(created.error)throw created.error;
-  data=created.data;
- }
- pdaProfile=data;
- if($('pdaDisplayName')&&data.display_name)$('pdaDisplayName').value=data.display_name;
+ pdaProfile=data||null;
+ if($('pdaDisplayName')&&data?.display_name)$('pdaDisplayName').value=data.display_name;
  renderPdaProfile();
  try{
   await pdaInvoke('addNpcStoryContact',{npcId:1});
@@ -711,9 +705,40 @@ async function pdaStartAudioRecording(){
 }
 $('recordAudioBtn').onclick=pdaStartAudioRecording;
 $('stopAudioBtn').onclick=()=>{if(pdaMediaRecorder?.state==='recording'){pdaMediaRecorder.stop();$('stopAudioBtn').classList.add('hidden');$('recordAudioBtn').classList.remove('hidden')}};
+function pdaRenderLocalState(){
+ const tasks=[['contactos',()=>renderContacts()],['misiones',()=>renderM()],['diario',()=>renderN()],['enciclopedia',()=>renderEncyclopedia()],['inventario',()=>renderInventory()],['inicio',()=>home()],['relaciones',()=>renderTrato()],['mensajes',()=>{if(typeof pdaRenderChat==='function')pdaRenderChat()}]];
+ for(const [name,draw] of tasks){try{draw()}catch(e){console.warn('PDA carga local · '+name+':',e)}}
+}
 async function initPdaComms(){
- try{await pdaEnsureSession();await pdaLoadProfile();try{await pdaInvoke('ensureNpcMission')}catch(npcError){console.warn('PDA misión de stalker:',npcError)}await refreshRemoteContacts();await pdaRefreshRemoteMissions();await pdaRefreshRanking();renderContacts();renderM();renderN();renderEncyclopedia();renderInventory();home();renderTrato();setInterval(async()=>{await refreshRemoteContacts();await pdaRefreshRemoteMissions();await pdaRefreshRanking();renderContacts();home()},15000)}
- catch(e){pdaSetStatus('AUTENTICACIÓN PENDIENTE');$('chatConnectionState').textContent='SIN AUTENTICAR';console.warn('PDA comunicaciones:',e)}
+ // La PDA presenta primero todo lo persistido en el dispositivo; la red nunca bloquea la interfaz local.
+ pdaRenderLocalState();
+ const connect=async()=>{
+  try{
+   await pdaEnsureSession();
+   const jobs=[
+    ['perfil',()=>pdaLoadProfile()],
+    ['misión de stalker',()=>pdaInvoke('ensureNpcMission')],
+    ['contactos remotos',()=>refreshRemoteContacts()],
+    ['misiones remotas',()=>pdaRefreshRemoteMissions()],
+    ['ranking',()=>pdaRefreshRanking()]
+   ];
+   const results=await Promise.allSettled(jobs.map(([,run])=>run()));
+   results.forEach((result,index)=>{if(result.status==='rejected')console.warn('PDA sincronización · '+jobs[index][0]+':',result.reason)});
+   pdaRenderLocalState();
+   $('chatConnectionState').textContent='SINCRONIZACIÓN COMPLETADA';
+  }catch(e){
+   pdaSetStatus('SIN ENLACE · DATOS LOCALES DISPONIBLES');
+   if($('chatConnectionState'))$('chatConnectionState').textContent='SIN AUTENTICAR · DATOS LOCALES DISPONIBLES';
+   console.warn('PDA comunicaciones:',e);
+  }
+ };
+ connect();
+ setInterval(async()=>{
+  try{await pdaEnsureSession()}catch(e){console.warn('PDA reconexión:',e);return}
+  const jobs=[()=>refreshRemoteContacts(),()=>pdaRefreshRemoteMissions(),()=>pdaRefreshRanking()];
+  await Promise.allSettled(jobs.map(run=>run()));
+  pdaRenderLocalState();
+ },15000);
 }
 
 
