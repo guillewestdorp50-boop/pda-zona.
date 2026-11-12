@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="description" content="PDA personal de la Zona"><link rel="manifest" href="manifest.webmanifest?v=50"><link rel="icon" type="image/png" sizes="192x192" href="pda-icon-192.png?v=50"><link rel="icon" type="image/svg+xml" href="pda-icon.svg?v=50"><link rel="apple-touch-icon" href="pda-icon.svg?v=50"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>PDA // ZONA</title>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="description" content="PDA personal de la Zona"><link rel="manifest" href="manifest.webmanifest?v=55"><link rel="icon" type="image/png" sizes="192x192" href="pda-icon-192.png?v=55"><link rel="icon" type="image/svg+xml" href="pda-icon.svg?v=55"><link rel="apple-touch-icon" href="pda-icon.svg?v=52"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><title>PDA // ZONA</title>
 <style>
 :root{--bg:#10150f;--p:#1b2518;--line:#586b45;--g:#c6df9c;--m:#93a77c;--a:#d8b66c}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#293722,#10150f 65%);color:#e0e9d3;font:15px system-ui}header{padding:17px;background:#11180f;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:2}h1{margin:0;color:var(--g);font:700 21px monospace;letter-spacing:2px}.sub,small,.muted{color:var(--m);font-size:12px}nav{display:flex;overflow:auto;gap:5px;padding:9px;background:#141c12;position:sticky;top:68px;z-index:2}button{cursor:pointer}nav button,.btn{padding:9px 12px;border:1px solid var(--line);background:#293821;color:#e8f4d8;border-radius:3px;font-weight:700;white-space:nowrap}nav button.active,.btn{background:#536d3d}main{max-width:850px;margin:auto;padding:12px 12px 70px}.view{display:none}.view.active{display:block}.panel{background:linear-gradient(145deg,#222e1e,#151d13);border:1px solid var(--line);padding:14px;margin-bottom:12px;border-radius:4px}h2{font:700 15px monospace;color:var(--g);letter-spacing:1px;margin:0 0 12px}.row{display:flex;align-items:center;justify-content:space-between;gap:8px}.stack{display:grid;gap:8px}input,textarea,select{width:100%;padding:11px;background:#0d130c;color:#e5efd9;border:1px solid var(--line);border-radius:3px;font:inherit}textarea{min-height:90px}.item{display:flex;align-items:center;gap:9px;padding:11px;background:#172115;border:1px solid #46563a}
 /* Directorio: reservar ancho real para la biografía y bajar controles a filas propias */
@@ -158,6 +158,371 @@ body.keyboard-visible footer{display:none}
 @media(orientation:landscape){#pdaBoot .boot-content{width:min(76vw,700px);min-height:100dvh;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto auto;align-content:center;justify-items:center;column-gap:3vw;row-gap:2vh}#pdaBoot .boot-symbol{grid-column:1;grid-row:1/5;font-size:min(43vh,230px)}#pdaBoot .boot-brand{grid-column:2;grid-row:1}#pdaBoot .boot-time{grid-column:2;grid-row:2}#pdaBoot .boot-date{grid-column:2;grid-row:3}#pdaBoot .boot-status,#pdaBoot .boot-track,#pdaBoot .boot-percent{grid-column:2}#pdaBoot .boot-track{width:min(38vw,340px)}}
 @media(prefers-reduced-motion:reduce){#pdaBoot.boot-glitch .boot-noise{animation:none}}
 
+
+/* RADIO DE LA ZONA · fogón nocturno cinematográfico */
+.zone-campfire{position:relative;isolation:isolate;overflow:hidden;width:100%;aspect-ratio:16/9;max-height:300px;min-height:210px;margin:12px auto 16px;border:1px solid #59664a;border-radius:5px;background:#070b0c;box-shadow:inset 0 0 48px #000e,0 6px 22px #0009}
+.zone-campfire:after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(90deg,#05080718 0%,transparent 45%,#05080722 100%),linear-gradient(0deg,#050807a8 0%,transparent 28%,#05080722 100%);box-shadow:inset 0 0 50px #000b}
+.zone-campfire svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.zone-campfire .fire-flame{transform-box:fill-box;transform-origin:50% 100%;animation:zoneFire .62s ease-in-out infinite alternate}
+.zone-campfire .fire-flame.alt{animation-duration:.47s;animation-delay:-.2s}
+.zone-campfire .fire-glow{transform-box:fill-box;transform-origin:center;animation:zoneGlow 1.8s ease-in-out infinite alternate}
+.zone-campfire .zone-smoke{animation:zoneSmoke 6s ease-in-out infinite}
+.zone-campfire .zone-smoke.delay{animation-delay:-3s}
+.zone-campfire .zone-embers{animation:zoneEmbers 2.8s ease-out infinite}
+.zone-campfire .zone-embers.delay{animation-delay:-1.4s}
+.zone-campfire .stalker-breathe{transform-box:fill-box;transform-origin:50% 90%;animation:zoneBreath 3.2s ease-in-out infinite}
+.zone-campfire .stalker-harmonica{transform-box:fill-box;transform-origin:50% 50%;animation:zoneHarmonica 1.8s ease-in-out infinite alternate}
+#xpVisualizer{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:.92}
+.zone-campfire:not(.is-playing) .stalker-breathe,.zone-campfire:not(.is-playing) .stalker-harmonica{animation-play-state:paused}
+.zone-campfire .scene-caption{position:absolute;z-index:3;left:11px;bottom:9px;color:#d4c6a1;font:10px monospace;letter-spacing:1.5px;text-shadow:0 1px 5px #000}
+.zone-campfire .scene-signal{position:absolute;z-index:3;right:11px;top:10px;color:#a9bc87;font:9px monospace;letter-spacing:1px;text-shadow:0 1px 5px #000}
+/* Visualizador XP: espectro real del Web Audio analyser */
+.xp-audio-panel{background:linear-gradient(180deg,#18222a,#090e12);border:1px solid #536d7d;box-shadow:inset 0 1px #a5c6d455,0 5px 18px #0008}
+.xp-viz-head{display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #5d7b8b;padding:2px 1px 9px;margin-bottom:10px}
+.xp-viz-head h2{margin:0;color:#d5e8ef;letter-spacing:1px}.xp-viz-head small{display:block;color:#7fa8bb;font:9px monospace;letter-spacing:1.2px;margin-top:3px}
+#xpVizStatus{color:#9fd5ad;font:9px monospace;white-space:nowrap}
+.xp-viz-frame{position:relative;height:164px;overflow:hidden;border:1px solid #47728a;border-radius:3px;background:radial-gradient(ellipse at 50% 48%,#173c4a 0%,#0b1b27 42%,#03070b 100%);box-shadow:inset 0 0 28px #000,0 0 12px #4aa0c233}
+.xp-viz-frame:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#9bdfff08 0 1px,transparent 1px 4px);z-index:1}
+#xpVisualizer{position:absolute;inset:0;width:100%;height:100%;display:block}
+.xp-viz-footer{position:absolute;z-index:2;bottom:5px;left:8px;right:8px;display:flex;justify-content:space-between;color:#79a7b8;font:8px monospace;letter-spacing:1px;pointer-events:none}
+.xp-eq-title{margin-top:17px!important;padding-top:12px;border-top:1px solid #476273;color:#d3e5eb}
+
+@keyframes zoneFire{0%{transform:scaleX(.88) scaleY(.92) skewX(-2deg)}100%{transform:scaleX(1.08) scaleY(1.12) skewX(2deg)}}
+@keyframes zoneGlow{0%{opacity:.55;transform:scale(.94)}100%{opacity:.9;transform:scale(1.08)}}
+@keyframes zoneSmoke{0%{transform:translate(0,8px) scale(.88);opacity:0}22%{opacity:.2}100%{transform:translate(12px,-42px) scale(1.2);opacity:0}}
+@keyframes zoneEmbers{0%{transform:translateY(7px);opacity:0}18%{opacity:.95}100%{transform:translate(12px,-48px);opacity:0}}
+@keyframes zoneBreath{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.8px)}}
+@keyframes zoneHarmonica{0%{transform:translateY(0) rotate(-1deg)}100%{transform:translateY(-2px) rotate(1deg)}}
+@media(prefers-reduced-motion:reduce){.zone-campfire *{animation:none!important}}
+
+/* RADIO v55 · rediseño completo del reproductor, sin ilustración de fondo */
+#player>.panel:first-child{background:linear-gradient(155deg,#18251f 0%,#101a1c 48%,#11151b 100%);border:1px solid #49675b;border-radius:13px;padding:15px;box-shadow:0 12px 32px #0008,inset 0 1px #b6e2c51c}
+#player>.panel:first-child>.row{align-items:center;margin-bottom:12px}
+#player>.panel:first-child>.row h2{font-size:13px;letter-spacing:1.8px;color:#d8eadb}
+#player #playerStatus{padding:5px 9px;border:1px solid #426a58;border-radius:20px;background:#10271e;color:#8ee0ad;font:9px monospace;letter-spacing:1px}
+#player .player-visual-stage{position:relative;display:block;width:100%;height:190px;min-height:190px;max-height:190px;aspect-ratio:auto;overflow:hidden;margin:0 auto 16px;border:1px solid #3d6870;border-radius:10px;background:radial-gradient(ellipse at 50% 45%,#1b5960 0%,#102b37 36%,#09151f 72%,#050b11 100%);box-shadow:inset 0 0 35px #000c,0 0 22px #38b9a51c}
+#player .player-visual-stage:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,#a8f4e00a 0 1px,transparent 1px 4px),linear-gradient(90deg,transparent,#5ce0c00c 50%,transparent)}
+#player .player-visual-stage:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 45px #02080c}
+#player #xpVisualizer{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+#player .visualizer-topline{position:absolute;z-index:2;left:12px;right:12px;top:11px;display:flex;justify-content:space-between;gap:8px;color:#b9e4d8;font:9px monospace;letter-spacing:1.1px;text-shadow:0 0 8px #50d9c5}
+#player #xpVizStatus{color:#a9f2b9;white-space:nowrap}
+#player .visualizer-axis{position:absolute;z-index:2;bottom:10px;left:13px;right:13px;display:flex;justify-content:space-between;color:#79b8ba;font:8px monospace;letter-spacing:1.3px}
+#player .visualizer-center-mark{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);font-size:33px;color:#b7f3dc;opacity:.13;text-shadow:0 0 22px #6effd0;pointer-events:none}
+#player .player-disc{width:76px;margin:0 auto 10px;border:2px solid #67917b;background:radial-gradient(circle,#d4f4ce 0 4%,#193b31 5% 12%,#9ab78a 13% 15%,#101d1a 16% 57%,#315748 58% 61%,#0a1110 62%);box-shadow:0 0 20px #65d7a52c,inset 0 0 12px #000}
+#player .player-disc span{font-size:7px;letter-spacing:1px}
+#player #trackTitle{display:block;color:#f0f7ee;font-size:16px;line-height:1.3;letter-spacing:.3px;overflow-wrap:anywhere}
+#player #trackArtist{margin-top:5px;color:#8eaaa0;font-size:9px;letter-spacing:1.2px}
+#player .player-controls{gap:17px;margin:17px 0 13px}
+#player .player-controls button{width:47px;height:45px;border:1px solid #55766a;border-radius:13px;background:linear-gradient(145deg,#263e36,#14251f);color:#cdebd8;box-shadow:0 4px 12px #0006;font-size:17px}
+#player .player-controls button.main-play{width:62px;height:56px;border-radius:17px;border:1px solid #7ed8a5;background:linear-gradient(145deg,#54bd83,#23704f);color:#061b12;font-size:24px;box-shadow:0 0 20px #42d18b38,inset 0 1px #ffffff66}
+#player #currentTime,#player #durationTime{color:#91b4a5;font:10px monospace}
+#player #trackProgress{height:7px;accent-color:#65d79b;filter:drop-shadow(0 0 4px #55d99766)}
+#player label[for="playerVolume"]{color:#a8c5b5;font-size:9px;letter-spacing:1.2px}
+#player #volumeValue{color:#9ce4b6;font:10px monospace}
+#player #playerVolume{accent-color:#70d9a0}
+#player>.panel:nth-of-type(2),#player>.xp-audio-panel{background:linear-gradient(150deg,#17231f,#101719);border:1px solid #405b50;border-radius:12px;padding:14px;box-shadow:0 8px 22px #0005}
+#player .xp-audio-panel .xp-viz-head{border-bottom:1px solid #345247}
+#player .xp-audio-panel .xp-viz-head h2{color:#d8eadb;font-size:13px;letter-spacing:1.4px}
+#player .xp-audio-panel .xp-viz-head small{color:#83ad9a}
+#player .eq-live-mark{font:9px monospace;color:#8ce0aa;white-space:nowrap}
+#player .xp-audio-panel>p{color:#91a99e;font-size:11px}
+#player .eq-grid{gap:7px;margin-top:13px}
+#player .eq-band{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:112px;padding:10px 3px 8px;border:1px solid #34564b;border-radius:8px;background:linear-gradient(180deg,#1a3029,#0d1715);box-shadow:inset 0 1px #ffffff0b}
+#player .eq-band input{height:76px;accent-color:#7be0a7;filter:drop-shadow(0 0 4px #5de49b55)}
+#player .eq-band label{color:#a7cabb;font:9px monospace;white-space:nowrap}
+#player .eq-reset-row{align-items:center;margin-top:13px!important}
+#player .eq-reset-row button{border:1px solid #4a7461;border-radius:8px;background:#1b382c;color:#bce8cb;padding:8px 13px;font:10px monospace;letter-spacing:.8px}
+#player .panel:has(#trackList){background:linear-gradient(145deg,#17221e,#101719);border:1px solid #40594f;border-radius:12px}
+#player #trackList .item{border:1px solid #2e4b40;border-radius:8px;background:#101b18;margin:7px 0;padding:9px}
+#player #trackList .item .avatar{background:#1e4434;color:#9ce5b7;border-radius:8px}
+#player #trackList .item .meta b{color:#d7e9dc}
+#player #trackList .item .meta p{color:#86a496}
+#player #addTracks{background:linear-gradient(135deg,#3e9c6b,#236044);border:1px solid #70c895;color:#f0fff4;border-radius:8px}
+#player #clearTracks{border-radius:8px}
+#player #sleepTimer{background:#111e19;color:#cce2d3;border:1px solid #3b5c4b;border-radius:8px}
+@media(max-width:380px){#player .player-visual-stage{height:164px;min-height:164px;max-height:164px}#player #trackTitle{font-size:14px}#player .eq-grid{gap:4px}#player .eq-band{padding-left:1px;padding-right:1px}#player .eq-band label{font-size:8px}}
+@media(prefers-reduced-motion:reduce){#player .player-disc{animation:none!important}}
+
+/* RADIO CONSOLA UNIFICADA: un solo módulo con controles integrados */
+#player .radio-console{display:flex;flex-direction:column;gap:12px;max-height:calc(100dvh - 155px);overflow-y:auto;overscroll-behavior:contain;padding:14px;background:linear-gradient(160deg,#17231e 0%,#0b1112 72%);border:1px solid #496353;border-radius:14px;box-shadow:inset 0 0 24px #0009,0 8px 28px #0008}
+#player .radio-console-head{position:sticky;top:-14px;z-index:5;margin:-14px -14px 0;padding:12px 14px;background:#111b19ed;border-bottom:1px solid #385044;backdrop-filter:blur(8px)}
+#player .radio-console-section{padding:4px 0}
+#player .radio-console .xp-audio-panel{background:transparent;border:0;border-radius:0;box-shadow:none;margin:0;padding:4px 0}
+#player .radio-console-divider{height:1px;flex:none;background:linear-gradient(90deg,transparent,#557766,transparent);margin:2px 0}
+#player .radio-track-info{display:flex;align-items:center;justify-content:center;gap:12px;text-align:left;min-width:0}
+#player .radio-track-copy{min-width:0;overflow-wrap:anywhere}
+#player .radio-track-copy strong{display:block;color:#e2f1e7}
+#player .radio-console .player-visual-stage{min-height:170px}
+#player .radio-console .player-controls{margin:4px auto}
+#player .radio-volume-head{margin-top:2px}
+#player .radio-sleep select{flex:1;min-width:0}
+@media(max-width:600px){#player .radio-console{max-height:calc(100dvh - 130px);padding:11px;gap:10px}#player .radio-console-head{top:-11px;margin:-11px -11px 0;padding:10px 11px}#player .radio-track-info{justify-content:flex-start}#player .radio-console .player-visual-stage{min-height:150px}}
+
+
+/* Fondo fotográfico real de la Zona para el escenario del reproductor */
+#player .radio-console .player-visual-stage{
+ background-image:linear-gradient(90deg,#02060938 0%,#02060908 42%,#02060930 100%),linear-gradient(0deg,#02060978 0%,transparent 42%),url("https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2427420/a917f54315fc37a7484287c56256f148ccedbfa7/ss_a917f54315fc37a7484287c56256f148ccedbfa7.jpg");
+ background-size:cover;background-position:center 48%;background-repeat:no-repeat;
+}
+#player .radio-console .player-visual-stage canvas{background:transparent}
+
+
+/* RADIO v57 · distribución inspirada en la referencia: una sola pantalla */
+#player .radio-console{
+ display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);
+ grid-template-areas:
+ "head head"
+ "visual track"
+ "visual controls"
+ "visual time"
+ "visual progress"
+ "visual volumehead"
+ "visual volume"
+ "visual playlist"
+ "eq eq"
+ "sleep sleep";
+ grid-template-rows:auto auto auto auto auto auto auto minmax(150px,1fr) auto auto;
+ align-items:start;gap:10px 14px;
+ max-height:calc(100dvh - 145px);overflow-y:auto;
+ padding:12px;background:linear-gradient(160deg,#211d17 0%,#0b0d0e 72%);
+ border:2px solid #66543a;border-radius:12px;
+ box-shadow:inset 0 0 24px #000b,0 8px 28px #0009;
+}
+#player .radio-console-head{grid-area:head;position:static;margin:0;padding:8px 10px;background:linear-gradient(90deg,#211b13,#111);border:1px solid #55432b;border-radius:7px}
+#player .radio-console-head h2{color:#e0b13c!important;letter-spacing:2px}
+#player .radio-console .player-visual-stage{grid-area:visual;width:100%;height:100%;min-height:390px;max-height:none;margin:0;border:1px solid #66543a;border-radius:7px;background-size:cover;background-position:center}
+#player .radio-console .player-visual-stage:before{background:linear-gradient(0deg,#0008,transparent 35%);z-index:1}
+#player .radio-console .player-visual-stage:after{box-shadow:inset 0 0 30px #0009}
+#player .radio-console .player-visual-stage canvas{z-index:2;opacity:.9}
+#player .radio-console .visualizer-topline,#player .radio-console .visualizer-axis{display:none}
+#player .radio-console .visualizer-center-mark{display:none}
+#player .radio-track-info{grid-area:track;justify-content:flex-start;padding:12px;border:1px solid #66543a;border-radius:7px;background:#090909d9}
+#player .radio-track-info .player-disc{display:none}
+#player .radio-track-copy strong{font-size:clamp(17px,2vw,25px);color:#e4b42f}
+#player .radio-track-copy .media-muted{font-size:13px;color:#bbb}
+#player .radio-console .player-controls{grid-area:controls;justify-content:center;gap:22px;margin:0;padding:3px}
+#player .radio-console .player-controls button{border-radius:50%;border:1px solid #80632b;background:linear-gradient(145deg,#3a3020,#111);color:#eee0bd}
+#player .radio-console .player-controls button.main-play{width:66px;height:66px;background:linear-gradient(145deg,#f1c34a,#8b5b13);border:2px solid #d4a52f;color:#17120a}
+#player .radio-console>.row:has(#currentTime){grid-area:time;color:#ddd}
+#player .radio-console #trackProgress{grid-area:progress;width:100%;accent-color:#e6ad27}
+#player .radio-console .radio-volume-head{grid-area:volumehead;margin:0}
+#player .radio-console #playerVolume{grid-area:volume;width:100%;accent-color:#e6ad27}
+#player .radio-console>.radio-console-section:not(.xp-audio-panel){grid-area:playlist;min-width:0;padding:10px;border:1px solid #66543a;border-radius:7px;background:#080808d9}
+#player .radio-console-section:not(.xp-audio-panel)>.row h2{color:#e0b13c;font-size:13px}
+#player .radio-console #trackList{max-height:170px;overflow-y:auto}
+#player .radio-console-divider{display:none}
+#player .radio-console .xp-audio-panel{grid-area:eq;padding:12px;border:1px solid #66543a;border-radius:7px;background:#111!important}
+#player .radio-console .xp-viz-head h2{color:#e0b13c!important}
+#player .radio-console .eq-band{background:linear-gradient(#292116,#100e0b);border-color:#66543a}
+#player .radio-console .eq-band input{accent-color:#e4ae32}
+#player .radio-console .radio-sleep{grid-area:sleep;padding:12px;border:1px solid #66543a;border-radius:7px;background:#111}
+#player .radio-console .radio-sleep h2{color:#e0b13c}
+@media(max-width:650px){
+ #player .radio-console{
+  display:flex;flex-direction:column;gap:10px;
+  max-height:calc(100dvh - 125px);padding:9px;
+ }
+ #player .radio-console-head{width:100%}
+ #player .radio-console .player-visual-stage{height:220px;min-height:220px;max-height:220px;width:100%}
+ #player .radio-track-info{width:100%}
+ #player .radio-console .player-controls{width:100%}
+ #player .radio-console>.row:has(#currentTime){width:100%}
+ #player .radio-console #trackProgress,#player .radio-console #playerVolume{width:100%}
+ #player .radio-console-section:not(.xp-audio-panel){width:100%}
+ #player .radio-console #trackList{max-height:190px}
+ #player .radio-console .xp-audio-panel,#player .radio-console .radio-sleep{width:100%}
+}
+
+
+/* RADIO FULLSCREEN v58 · interfaz HUD superpuesta, sin marcos externos */
+#player{padding:0!important;margin:0!important}
+#player .radio-fullscreen{position:relative;width:100%;height:calc(100dvh - 125px);min-height:360px;max-height:none;aspect-ratio:auto;overflow:hidden;margin:0;border:0;border-radius:0;background-color:#050708;background-image:linear-gradient(90deg,#02060910,#02060925),url("./radio-stalker-campfire.jpg?v=67");background-size:100% 100%;background-position:center;background-repeat:no-repeat;box-shadow:none}
+/* RADIO v67 · fondo panorámico Stalker fijo; sin llama artificial superpuesta */
+#player .radio-bg-shade{position:absolute;inset:0;background:linear-gradient(90deg,transparent 35%,#05060740 67%,#05060788 100%),linear-gradient(0deg,#030404b8 0%,transparent 24%,transparent 75%,#03040455 100%);pointer-events:none}
+#player .radio-overlay-header{position:absolute;z-index:5;left:0;right:0;top:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px;background:linear-gradient(90deg,#070707d9,#09090970,transparent);pointer-events:none}
+#player .radio-brand{display:flex;align-items:center;gap:12px;color:#dba72f;text-shadow:0 2px 5px #000}
+#player .radio-rad{font-size:40px;line-height:1}
+#player .radio-brand b{display:block;font:900 clamp(17px,2.5vw,29px) Impact,sans-serif;letter-spacing:2px}
+#player .radio-brand i{color:#f2c04a;font-style:normal}
+#player .radio-brand small{display:block;font:bold 11px Arial;letter-spacing:2px;color:#e7c36d}
+#player .radio-live{display:flex;align-items:center;gap:9px;color:#4be51e;font:bold clamp(14px,2vw,23px) Arial;text-shadow:0 0 12px #39d51d}
+#player .radio-signal{display:flex;align-items:end;gap:3px;height:25px}
+#player .radio-signal i{display:block;width:5px;background:#40e41b;box-shadow:0 0 7px #48e622;animation:radioSignal .8s infinite alternate}
+#player .radio-signal i:nth-child(1){height:9px}.radio-signal i:nth-child(2){height:15px;animation-delay:.15s}.radio-signal i:nth-child(3){height:20px;animation-delay:.3s}.radio-signal i:nth-child(4){height:25px;animation-delay:.45s}
+@keyframes radioSignal{to{opacity:.45;transform:scaleY(.65)}}
+#player #xpVisualizer{position:absolute;z-index:2;left:1.5%;bottom:12%;width:27%;height:12%;pointer-events:none}
+#player .radio-track-card{position:absolute;z-index:4;right:2%;top:12%;width:32%;padding:12px 15px;background:#08090bd9;border:1px solid #9a7837;border-radius:5px;box-shadow:0 4px 18px #000b;color:#eee}
+#player .radio-track-meta strong{display:block;color:#f1bd35;font-size:clamp(16px,2.3vw,28px);line-height:1.2}
+#player .radio-track-meta span{display:block;color:#ddd;font-size:clamp(12px,1.7vw,21px);margin-top:2px}
+#player .radio-track-time{display:flex;justify-content:space-between;font:12px monospace;margin-top:5px}
+#player #trackProgress{width:100%;height:7px;accent-color:#eab32d;margin:8px 0 0}
+#player .radio-main-controls{position:absolute;z-index:4;right:5%;top:39%;width:26%;display:flex;align-items:center;justify-content:space-around}
+#player .radio-main-controls button{border:0;background:#09090988;color:#eee;font-size:clamp(25px,4vw,44px);min-width:46px;min-height:46px;text-shadow:0 2px 7px #000}
+#player .radio-main-controls button.main-play{width:clamp(66px,9vw,112px);height:clamp(66px,9vw,112px);border-radius:50%;border:3px solid #bd8e22;background:radial-gradient(#f3c74c,#6f4810);color:#1b1306;font-size:clamp(28px,4vw,48px);box-shadow:0 0 20px #eab22c55}
+#player .radio-volume{position:absolute;z-index:4;right:4%;top:50%;width:28%;display:flex;align-items:center;gap:9px;color:#e4bd5c;font:11px Arial}
+#player .radio-volume input{flex:1;min-width:0;accent-color:#e5ae2e}
+#player .radio-playlist{position:absolute;z-index:4;right:2%;top:56%;bottom:17%;width:32%;padding:8px 10px;background:#050607d9;border:1px solid #96743b;border-radius:5px;overflow:hidden}
+#player .radio-list-title{color:#efbd3b;font-weight:bold;font-size:clamp(12px,1.6vw,19px);padding-bottom:6px;border-bottom:1px solid #795b2a}
+#player .radio-list-title small{float:right;color:#aaa;font-size:10px}
+#player #trackList{height:calc(100% - 27px);overflow:auto;display:block}
+#player #trackList .item{display:flex;align-items:center;gap:6px;padding:5px 4px;margin:2px 0;background:#10101080;border:0;border-bottom:1px solid #7774;border-radius:0;color:#ddd}
+#player #trackList .item .avatar{display:none}
+#player #trackList .item .meta{min-width:0;flex:1}
+#player #trackList .item .meta b{color:#ddd;font-size:clamp(11px,1.4vw,16px)}
+#player #trackList .item .meta p{display:none}
+#player #trackList .item button{padding:4px 7px}
+#player .radio-bottom-tools{position:absolute;z-index:5;left:0;right:0;bottom:0;height:14%;min-height:58px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:5px 10px;background:linear-gradient(0deg,#050505ed,#0808088c);border-top:1px solid #8a6a35}
+#player .radio-tool{display:flex;align-items:center;justify-content:center;gap:clamp(5px,1vw,14px);min-width:0;padding:4px;color:#eee;background:#08080899;border:1px solid #80643b;border-radius:5px;font-weight:bold;font-size:clamp(9px,1.2vw,15px);text-shadow:0 2px 5px #000}
+#player .radio-tool b{font-size:clamp(20px,3vw,37px);color:#e9b83a}
+#player .radio-tool.active{background:#76551d99;border-color:#e7b536;color:#ffdf70}
+#player .radio-float-panel{position:absolute;z-index:10;right:2%;bottom:16%;width:min(440px,48%);max-height:65%;overflow:auto;padding:12px;background:#090a0bed;border:1px solid #c09232;border-radius:7px;box-shadow:0 8px 25px #000d;color:#eee}
+#player .radio-float-panel[hidden]{display:none}
+#player .radio-float-head{display:flex;justify-content:space-between;align-items:center;color:#efbd3b;font-weight:bold;margin-bottom:10px}
+#player .radio-float-head button,#player .radio-eq-footer button{background:#302414;color:#f3c24a;border:1px solid #92702e;padding:7px 10px}
+#player #radioLyricsText{width:100%;min-height:130px;background:#171717;color:#eee;border:1px solid #66502a;padding:8px}
+#player #saveRadioLyrics{margin-top:8px;background:#79571d;color:#fff;padding:8px 12px}
+#player .radio-eq-footer{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:10px}
+#player .radio-eq-footer label{display:flex;gap:8px;align-items:center;font-size:11px}
+#player .radio-eq-footer select{max-width:120px}
+#player .radio-hidden-status{display:none}
+@media(orientation:landscape) and (max-height:600px){
+ #player{position:fixed!important;z-index:5000;inset:0!important;width:100vw!important;height:100dvh!important;background:#000!important;padding:0!important}
+ #player .radio-fullscreen{width:100vw;height:100dvh;min-height:0}
+ #player .radio-overlay-header{height:10%;padding:4px 14px}
+ #player .radio-track-card{top:12%;right:2%;width:31%}
+ #player .radio-main-controls{top:38%;right:3%}
+ #player .radio-volume{top:51%}
+ #player .radio-playlist{top:57%;bottom:16%;width:31%}
+ #player .radio-bottom-tools{height:15%;min-height:50px}
+}
+@media(orientation:portrait){
+ #player .radio-fullscreen{height:calc(100dvh - 120px);min-height:450px;background-color:#050708!important;background-size:contain!important;background-position:center center!important;background-repeat:no-repeat!important}
+ #player .radio-overlay-header{height:54px;padding:5px 9px}
+ #player .radio-rad{font-size:27px}
+ #player .radio-brand b{font-size:17px}
+ #player .radio-brand small{font-size:8px}
+ #player .radio-track-card{top:13%;right:2%;width:46%;padding:7px}
+ #player .radio-main-controls{top:37%;right:1%;width:48%}
+ #player .radio-volume{top:50%;right:2%;width:44%}
+ #player .radio-playlist{top:57%;right:2%;width:46%;bottom:18%}
+ #player .radio-bottom-tools{height:16%;min-height:65px;padding:3px;gap:2px}
+ #player .radio-tool{flex-direction:column;gap:0;font-size:8px}
+ #player .radio-tool b{font-size:20px}
+ #player #xpVisualizer{width:38%;height:10%;bottom:18%}
+ #player .radio-float-panel{width:94%;right:3%;bottom:18%;max-height:70%}
+}
+
+
+/* RADIO v59 · créditos de letra y ajuste panorámico */
+#player{position:relative}
+#player .radio-lyrics-eye{position:absolute;z-index:12;top:12%;right:2%;width:42px;height:42px;border-radius:50%;border:1px solid #d0a33d;background:#050606c9;color:#f2c24d;font-size:23px;box-shadow:0 2px 12px #000a}
+#player .radio-credits{position:absolute;z-index:11;left:31%;right:31%;top:24%;bottom:18%;overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;text-align:center;padding:8vh 14px 6vh;color:#f2e8cc;text-shadow:0 2px 5px #000,0 0 12px #000;mask-image:linear-gradient(transparent 0%,#000 12%,#000 88%,transparent 100%);scrollbar-width:thin;scrollbar-color:#b98c35 #15120d}
+#player .radio-credits[hidden],#player .radio-lyrics-eye[hidden]{display:none}
+#player #radioCreditsText{font:clamp(16px,2.1vw,27px)/1.8 Georgia,serif;white-space:pre-wrap;letter-spacing:.3px}
+#player .radio-credits.paused{outline:1px solid #c69a42;background:#05050535}
+#player .radio-credits-hint{position:absolute;top:5px;left:0;right:0;color:#e8c45d;font:10px monospace;letter-spacing:2px}
+#player .radio-lyrics-eye{cursor:pointer}
+@media(orientation:landscape) and (max-height:600px){
+ #player{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;margin:0!important;padding:0!important;z-index:9998!important;overflow:hidden!important}
+ #player .radio-fullscreen{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;background-position:center center!important;background-size:100% 100%!important}
+ #player .radio-overlay-header{height:9%;padding:3px 16px}
+ #player .radio-brand b{font-size:clamp(16px,3.2vh,25px)}
+ #player .radio-brand small{font-size:clamp(8px,1.5vh,11px)}
+ #player .radio-rad{font-size:clamp(24px,5vh,38px)}
+ #player .radio-track-card{top:12%;right:2%;width:29%;padding:7px 10px}
+ #player .radio-track-meta strong{font-size:clamp(15px,2.8vh,22px)}
+ #player .radio-track-meta span{font-size:clamp(10px,1.9vh,15px)}
+ #player .radio-main-controls{top:37%;right:3%;width:27%;gap:12px}
+ #player .radio-main-controls button{font-size:clamp(20px,4.8vh,34px);min-width:38px;min-height:38px}
+ #player .radio-main-controls button.main-play{width:clamp(54px,11vh,82px);height:clamp(54px,11vh,82px);font-size:clamp(24px,5vh,38px);border-width:2px}
+ #player .radio-volume{top:51%;right:3%;width:25%;font-size:10px}
+ #player .radio-playlist{top:58%;right:2%;bottom:16%;width:29%;padding:6px 9px}
+ #player .radio-list-title{font-size:clamp(11px,2.2vh,16px)}
+ #player #trackList .item{padding:3px;font-size:12px}
+ #player .radio-bottom-tools{height:14%;min-height:0;padding:4px 8px;gap:4px}
+ #player .radio-tool{font-size:clamp(9px,1.8vh,13px);gap:7px;padding:2px}
+ #player .radio-tool b{font-size:clamp(17px,3.2vh,25px)}
+ #player .radio-float-panel{right:2%;bottom:16%;width:min(420px,40%);max-height:72%}
+ #player .radio-credits{left:29%;right:29%;top:16%;bottom:15%;padding:5vh 12px}
+ #player #radioCreditsText{font-size:clamp(15px,2.5vh,22px);line-height:1.65}
+ #player .radio-lyrics-eye{top:11%;right:2%;width:36px;height:36px;font-size:20px}
+}
+@media(orientation:portrait){
+ #player .radio-credits{left:12%;right:12%;top:20%;bottom:18%;padding:5vh 12px}
+ #player #radioCreditsText{font-size:clamp(15px,2.2vh,21px)}
+ #player .radio-lyrics-eye{top:12%;right:3%}
+}
+
+
+/* RADIO v60 · créditos ascendentes y proporciones panorámicas */
+#player .radio-credits{left:25%;right:25%;top:15%;bottom:14%;padding:0 14px;overflow-y:auto;scroll-behavior:auto;touch-action:pan-y;overscroll-behavior:contain}
+#player #radioCreditsText{display:block;margin-top:100%;padding-bottom:100%;font-size:clamp(16px,2.3vh,25px);line-height:1.75}
+#player .radio-lyrics-eye{width:30px;height:30px;top:10%;right:1.5%;font-size:16px;opacity:.82}
+#player .radio-lyrics-eye:active{transform:scale(.94)}
+@media(orientation:landscape) and (max-height:600px){
+ #player .radio-track-card{top:11%;right:2%;width:clamp(220px,27vw,360px);max-width:30vw;padding:5px 9px}
+ #player .radio-track-meta strong{font-size:clamp(13px,2.2vh,19px)}
+ #player .radio-track-meta span{font-size:clamp(8px,1.45vh,11px)}
+ #player .radio-track-time{font-size:clamp(9px,1.4vh,12px)}
+ #player .radio-main-controls{top:39%;right:3%;width:26%;gap:clamp(5px,1.6vw,14px)}
+ #player .radio-main-controls button{min-width:32px;min-height:32px;font-size:clamp(17px,3.4vh,25px);padding:3px}
+ #player .radio-main-controls button.main-play{width:clamp(43px,8vh,62px);height:clamp(43px,8vh,62px);min-width:0;min-height:0;font-size:clamp(19px,3.8vh,29px)}
+ #player .radio-volume{top:51%;right:3%;width:24%;font-size:9px}
+ #player .radio-playlist{top:59%;right:2%;bottom:16%;width:27%;padding:4px 7px}
+ #player .radio-list-title{font-size:clamp(9px,1.7vh,12px)}
+ #player #trackList .item{padding:2px 4px;font-size:10px;margin:3px 0}
+ #player .radio-bottom-tools{height:13%;padding:2px 7px;gap:3px}
+ #player .radio-tool{font-size:clamp(8px,1.35vh,10px);gap:3px;padding:1px}
+ #player .radio-tool b{font-size:clamp(14px,2.4vh,19px)}
+ #player .radio-credits{left:23%;right:23%;top:14%;bottom:14%;padding:0 10px}
+ #player #radioCreditsText{font-size:clamp(14px,2.15vh,20px);line-height:1.55}
+ #player .radio-lyrics-eye{top:10%;right:1.2%;width:27px;height:27px;font-size:14px}
+}
+@media(orientation:portrait){
+ #player .radio-credits{left:8%;right:8%;top:19%;bottom:17%;padding:0 10px}
+ #player #radioCreditsText{font-size:clamp(15px,2.1vh,20px);line-height:1.65}
+ #player .radio-lyrics-eye{top:12%;right:3%;width:28px;height:28px}
+}
+
+
+/* v61 · controles reubicables y play independiente para créditos */
+#player .radio-draggable{touch-action:pan-y;cursor:grab}
+#player .radio-draggable.dragging{z-index:90!important;cursor:grabbing;filter:drop-shadow(0 4px 12px #000)}
+#player .radio-credits-controls{position:absolute;z-index:65;top:12%;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:9px;padding:5px 10px;border:1px solid #b58a32;background:#090b0bdc;border-radius:24px;color:#f4d27a}
+#player .radio-credits-controls[hidden]{display:none}
+#player #radioCreditsPlay{width:34px;height:34px;border-radius:50%;border:1px solid #d4a83e;background:#33250b;color:#ffd66b;font-size:17px}
+#player #radioCreditsClock{font:12px monospace;letter-spacing:1px}
+#player .radio-lyrics-eye{z-index:66}
+
+
+/* v62 · límites estrictos del escenario y formato de letras */
+#player .radio-draggable{user-select:none;-webkit-user-select:none;touch-action:pan-y}
+#player .radio-draggable.dragging{touch-action:none!important;z-index:120!important;transition:none!important}
+#player #radioCreditsText{white-space:normal}
+#player #radioCreditsText .rich-inline-link{color:inherit;text-decoration:underline}
+
+
+/* v63 · evitar selección/callout del navegador y dejar fija la barra inferior */
+#player #zoneCampfire,#player #zoneCampfire *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#player #zoneCampfire input,#player #zoneCampfire textarea,#player #zoneCampfire select,#player #zoneCampfire button{-webkit-user-select:none;user-select:none}
+#player #zoneCampfire .radio-bottom-tools{touch-action:manipulation}
+#player #zoneCampfire .radio-draggable{touch-action:none!important; -webkit-user-drag:none}
+#player #zoneCampfire .radio-draggable.dragging{touch-action:none!important}
+
+
+/* v65 · zonas de agarre visibles y cómodas para volumen y transporte */
+#player #zoneCampfire .radio-volume{
+ padding:13px 15px;min-height:48px;border:1px solid #d0a33d66;
+ border-radius:12px;background:rgba(5,8,8,.48);
+ box-shadow:0 3px 12px #0006;backdrop-filter:blur(3px);
+}
+#player #zoneCampfire .radio-volume input{min-height:28px;touch-action:pan-x}
+#player #zoneCampfire .radio-main-controls{
+ min-height:104px;padding:10px 16px;border:1px solid #d0a33d66;
+ border-radius:16px;background:rgba(5,8,8,.42);
+ box-shadow:0 3px 14px #0006;backdrop-filter:blur(3px);
+}
+#player #zoneCampfire .radio-main-controls button{position:relative;z-index:1}
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -207,13 +572,26 @@ body.keyboard-visible footer{display:none}
  <p class="muted cop-footnote">Todos los objetos comienzan en cero. Usá + y − para registrar lo que llevás. La munición se cuenta por caja/paquete, según la presentación indicada. El peso se calcula automáticamente.</p>
 </div></section><section id="map" class="view"><div class="panel"><div class="row"><h2>MAPA DE CAMPO · GPS</h2><span class="compass-mini" id="mapLive">SIN POSICIÓN</span></div><p class="muted">CARTOGRAFÍA SATELITAL · POSICIÓN REAL DEL DISPOSITIVO</p><div class="map-frame-wrap"><iframe id="fieldMapFrame" title="Mapa GPS de campo" loading="lazy" referrerpolicy="no-referrer" src="about:blank"></iframe><div class="map-placeholder" id="mapPlaceholder">ACTIVÁ EL GPS PARA CARGAR EL MAPA Y MARCAR TU POSICIÓN</div></div><div class="compass-grid map-readouts"><div class="compass-data"><span>LATITUD</span><b id="mapLat">--</b></div><div class="compass-data"><span>LONGITUD</span><b id="mapLon">--</b></div><div class="compass-data"><span>PRECISIÓN</span><b id="mapAccuracy">--</b></div><div class="compass-data"><span>ÚLTIMA ACTUALIZACIÓN</span><b id="mapUpdated">--</b></div></div><div class="compass-controls"><button class="btn" id="mapLocate">⌖ LOCALIZARME</button><button id="mapStop">DETENER GPS</button><button id="mapOpenExternal">ABRIR MAPA COMPLETO</button></div><div id="mapStatus" class="compass-status">El mapa se carga cuando autorizás el acceso a la ubicación.</div></div>
 <div class="panel"><div class="row"><h2>PUNTOS DE CAMPO</h2><span class="compass-mini" id="mapPointCount">0 MARCAS</span></div><input id="mapPointName" maxlength="50" placeholder="Nombre del lugar / referencia"><textarea id="mapPointNote" rows="2" placeholder="Notas: refugio, anomalía, escondite, camino..."></textarea><div class="compass-controls"><button class="btn" id="mapSavePoint">⚑ GUARDAR MI POSICIÓN</button></div><div id="mapPoints" class="stack"><div class="empty">Todavía no guardaste puntos de campo.</div></div><p class="muted">Tus puntos guardados quedan en este dispositivo. Para mostrar el mapa, OpenStreetMap recibe la solicitud de las coordenadas que estás viendo. Se necesita conexión a Internet.</p></div></section>
-<section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>ACTUALIZADOR DE LA PDA</h2><p class="muted">Buscá nuevas versiones de PDA // ZONA e instalalas sin desinstalar la aplicación. Tus perfiles, contactos, mensajes y registros guardados no se borran durante una actualización.</p><button class="btn" id="pdaCheckUpdates" type="button">↻ BUSCAR ACTUALIZACIONES</button><div id="pdaUpdateStatus" class="statusline" role="status" aria-live="polite">SISTEMA DE ACTUALIZACIÓN LISTO · VERSIÓN 50</div><small class="muted">Se necesita conexión a Internet. La PDA se reiniciará si encuentra una versión nueva.</small></div><div class="panel"><h2>FRECUENCIAS Y COMUNICACIONES</h2><p>Configurá los canales de comunicación de tu PDA. Algunas frecuencias requieren conexión con la red de la Zona.</p></div></section>
+<section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>ACTUALIZADOR DE LA PDA</h2><p class="muted">Buscá nuevas versiones de PDA // ZONA e instalalas sin desinstalar la aplicación. Tus perfiles, contactos, mensajes y registros guardados no se borran durante una actualización.</p><button class="btn" id="pdaCheckUpdates" type="button">↻ BUSCAR ACTUALIZACIONES</button><div id="pdaUpdateStatus" class="statusline" role="status" aria-live="polite">SISTEMA DE ACTUALIZACIÓN LISTO · VERSIÓN 52</div><small class="muted">Se necesita conexión a Internet. La PDA se reiniciará si encuentra una versión nueva.</small></div><div class="panel"><h2>FRECUENCIAS Y COMUNICACIONES</h2><p>Configurá los canales de comunicación de tu PDA. Algunas frecuencias requieren conexión con la red de la Zona.</p></div></section>
 
 <section id="gallery" class="view"><div class="panel"><div class="row"><h2>GALERÍA DE CAMPO</h2><span id="galleryCount" class="muted">0 FOTOS</span></div><p class="muted">Fotos guardadas únicamente en este dispositivo.</p><div class="media-actions"><button class="btn" id="galleryCamera">📷 ABRIR CÁMARA</button><button class="btn" id="galleryChoose">▧ ELEGIR FOTOS</button></div><input id="galleryCameraInput" type="file" accept="image/*" capture="environment" multiple style="display:none"><input id="galleryFileInput" type="file" accept="image/*" multiple style="display:none"><div id="galleryGrid" class="media-grid"><div class="empty">Todavía no hay fotografías.</div></div></div></section>
-<section id="player" class="view"><div class="panel"><div class="row"><h2>REPRODUCTOR DE LA ZONA</h2><span id="playerStatus" class="media-muted">EN ESPERA</span></div><div id="playerDisc" class="player-disc"><span id="discLabel">PDA // AUDIO</span></div><div style="text-align:center"><strong id="trackTitle">Ninguna pista seleccionada</strong><div id="trackArtist" class="media-muted">Cargá música desde tu dispositivo</div></div><div class="player-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div><div class="row"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"><div class="row" style="margin-top:8px"><label for="playerVolume" class="muted">VOLUMEN</label><span id="volumeValue" class="muted">80%</span></div><input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen"></div>
-<div class="panel"><div class="row"><h2>LISTA DE REPRODUCCIÓN</h2><span id="trackCount" class="muted">0 PISTAS</span></div><div class="media-actions"><button class="btn" id="addTracks">＋ AGREGAR MP3 / AUDIO</button><button id="clearTracks" class="danger">VACIAR LISTA</button></div><input id="trackFileInput" type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav,.flac" multiple style="display:none"><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div>
-<div class="panel"><h2>ECUALIZADOR · 5 BANDAS</h2><p class="muted">Filtros de audio reales. Ajustá cada frecuencia mientras suena la música.</p><div class="eq-grid"><div class="eq-band"><input data-native-control class="eq-slider" data-freq="60" type="range" min="-12" max="12" step="1" value="0" orient="vertical"><label>60 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="250" type="range" min="-12" max="12" step="1" value="0"><label>250 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="1000" type="range" min="-12" max="12" step="1" value="0"><label>1 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="4000" type="range" min="-12" max="12" step="1" value="0"><label>4 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="12000" type="range" min="-12" max="12" step="1" value="0"><label>12 kHz</label></div></div><div class="row" style="margin-top:9px"><small class="muted">−12 dB</small><button id="resetEQ">RESTABLECER</button><small class="muted">+12 dB</small></div></div>
-<div class="panel"><h2>TEMPORIZADOR DE APAGADO</h2><p class="muted">Detiene la música automáticamente después del tiempo elegido.</p><div class="row"><select id="sleepTimer"><option value="0">Desactivado</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option><option value="90">90 minutos</option></select><button id="cancelSleep">CANCELAR</button></div><small id="sleepStatus" class="media-muted">Sin temporizador activo.</small></div></section>
+<section id="player" class="view">
+<div id="zoneCampfire" class="zone-campfire player-visual-stage radio-fullscreen" aria-label="Radio de la Zona">
+ <div class="radio-bg-shade"></div>
+
+ <header class="radio-overlay-header"><div class="radio-brand"><span class="radio-rad">☢</span><div><b>PDA <i>// ZONA</i></b><small>RADIO DE LA ZONA</small></div></div><div class="radio-live"><span class="radio-signal"><i></i><i></i><i></i><i></i></span><b>EN VIVO</b></div></header>
+ <canvas id="xpVisualizer" aria-label="Espectro de frecuencias en vivo"></canvas>
+ <div class="radio-track-card"><div class="radio-track-meta"><strong id="trackTitle">Ninguna pista seleccionada</strong><span id="trackArtist">Cargá música desde tu dispositivo</span></div><div class="radio-track-time"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"></div>
+ <div class="radio-main-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div>
+ <div class="radio-volume"><span>VOL</span><input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen"><small id="volumeValue">80%</small></div>
+ <div class="radio-playlist"><div class="radio-list-title">♫ &nbsp;LISTA DE REPRODUCCIÓN <small id="trackCount">0 PISTAS</small></div><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div>
+ <div class="radio-bottom-tools"><button id="addTracks" class="radio-tool"><b>＋</b><span>AGREGAR<br>CANCIÓN</span></button><button id="lyricsToggle" class="radio-tool"><b>☷</b><span>VER LETRA</span></button><button id="shuffleToggle" class="radio-tool"><b>⤨</b><span>ALEATORIO</span></button><button id="repeatToggle" class="radio-tool"><b>⟳</b><span>REPETIR</span></button><button id="eqToggle" class="radio-tool"><b>▥</b><span>ECUALIZADOR</span></button></div>
+ <input id="trackFileInput" type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav,.flac" multiple style="display:none">
+ <div id="radioLyricsPanel" class="radio-float-panel" hidden><div class="radio-float-head">LETRA DE LA CANCIÓN <button type="button" data-close-panel="radioLyricsPanel">✕</button></div><textarea id="radioLyricsText" rows="7" placeholder="Pegá o escribí la letra de esta canción..."></textarea><button id="saveRadioLyrics">OK · MOSTRAR LETRA</button></div><button id="lyricsEye" class="radio-lyrics-eye" type="button" aria-label="Ocultar letra" title="Ocultar letra" hidden>◉</button><div id="radioCreditsControls" class="radio-credits-controls" hidden><button id="radioCreditsPlay" type="button">▶</button><span id="radioCreditsClock">00:00</span></div><div id="radioCredits" class="radio-credits" hidden><div id="radioCreditsText"></div></div>
+ <div id="radioEqPanel" class="radio-float-panel" hidden><div class="radio-float-head">ECUALIZADOR DE LA ZONA <button type="button" data-close-panel="radioEqPanel">✕</button></div><div class="eq-grid">
+ <div class="eq-band"><input data-native-control class="eq-slider" data-freq="60" type="range" min="-12" max="12" step="1" value="0" orient="vertical"><label>60 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="250" type="range" min="-12" max="12" step="1" value="0"><label>250 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="1000" type="range" min="-12" max="12" step="1" value="0"><label>1 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="4000" type="range" min="-12" max="12" step="1" value="0"><label>4 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="12000" type="range" min="-12" max="12" step="1" value="0"><label>12 kHz</label></div></div><div class="radio-eq-footer"><button id="resetEQ">↺ RESTABLECER</button><label>APAGADO AUTOMÁTICO <select id="sleepTimer"><option value="0">Desactivado</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option><option value="90">90 minutos</option></select></label><button id="cancelSleep">CANCELAR</button><small id="sleepStatus">Sin temporizador activo.</small></div></div>
+ <div id="playerDisc" class="radio-hidden-status"><span id="discLabel">PDA // AUDIO</span></div><button id="clearTracks" type="button" class="radio-hidden-status">VACIAR LISTA</button><span id="playerStatus" class="radio-hidden-status">EN ESPERA</span><span id="xpVizStatus" class="radio-hidden-status">● EN ESPERA</span>
+</div></section>
 <audio id="zonaAudio" preload="metadata" playsinline></audio><div id="galleryOverlay" class="media-overlay"><button class="overlay-close" id="galleryClose">✕</button><img id="galleryLarge" alt="Fotografía ampliada"><button id="galleryDelete" class="danger" style="position:absolute;bottom:18px">ELIMINAR FOTO</button></div>
 </main><footer>PDA // ZONA · DATOS LOCALES EN ESTE NAVEGADOR</footer>
 <div id="pdaKeyboard" class="hidden" aria-label="Teclado PDA">
@@ -302,6 +680,12 @@ function richText(value,currentId){
   .replace(/\[color=(#[0-9a-f]{6})\]([\s\S]*?)\[\/color\]/gi,(_,c,t)=>'<span style="color:'+c+'">'+t+'</span>')
   .replace(/\[size=(small|normal|large|huge)\]([\s\S]*?)\[\/size\]/gi,(_,z,t)=>'<span style="font-size:'+({small:'12px',normal:'15px',large:'19px',huge:'24px'})[z]+'">'+t+'</span>')
   .replace(/\[font=(mono|serif|sans)\]([\s\S]*?)\[\/font\]/gi,(_,f,t)=>'<span style="font-family:'+({mono:'monospace',serif:'Georgia,serif',sans:'Arial,sans-serif'})[f]+'">'+t+'</span>');
+ // Acepta también variantes habituales de etiquetas escritas manualmente.
+ out=out.replace(/\[(?:bold|negrita)\]([\s\S]*?)\[\/(?:bold|negrita)\]/gi,'<strong>$1</strong>')
+  .replace(/\[(?:italic|cursiva)\]([\s\S]*?)\[\/(?:italic|cursiva)\]/gi,'<em>$1</em>')
+  .replace(/\[(?:big|grande)\]([\s\S]*?)\[\/(?:big|grande)\]/gi,'<span style="font-size:24px">$1</span>')
+  .replace(/\[(?:medium|mediano)\]([\s\S]*?)\[\/(?:medium|mediano)\]/gi,'<span style="font-size:19px">$1</span>')
+  .replace(/\[(?:tiny|chiquito)\]([\s\S]*?)\[\/(?:tiny|chiquito)\]/gi,'<span style="font-size:12px">$1</span>');
  return linkEncyclopediaReferences(out,currentId).replace(/\r?\n/g,'<br>');
 }
 function linkEncyclopediaReferences(html,currentId){
@@ -1271,18 +1655,24 @@ async function addPhotos(files){for(const file of [...files]){if(!file.type.star
 let openedPhotoId=null,galleryObjectUrls=[];function openGalleryPhoto(id){const item=galleryItems.find(x=>x.id===id);if(!item)return;openedPhotoId=id;$('galleryLarge').src=URL.createObjectURL(item.blob);$('galleryOverlay').classList.add('open')}
 async function deleteOpenedPhoto(){if(!openedPhotoId||!confirm('¿Eliminar esta fotografía de este dispositivo?'))return;await mediaDelete(openedPhotoId);$('galleryOverlay').classList.remove('open');$('galleryLarge').src='';openedPhotoId=null;await loadGallery()}
 $('galleryCamera').onclick=()=>$('galleryCameraInput').click();$('galleryChoose').onclick=()=>$('galleryFileInput').click();$('galleryCameraInput').onchange=async e=>{await addPhotos(e.target.files||[]);e.target.value=''};$('galleryFileInput').onchange=async e=>{await addPhotos(e.target.files||[]);e.target.value=''};$('galleryGrid').onclick=e=>{const img=e.target.closest('[data-photo]');if(img)openGalleryPhoto(img.dataset.photo)};$('galleryClose').onclick=()=>{$('galleryOverlay').classList.remove('open');$('galleryLarge').src='';openedPhotoId=null};$('galleryDelete').onclick=deleteOpenedPhoto;$('galleryOverlay').onclick=e=>{if(e.target===$('galleryOverlay'))$('galleryClose').click()};
-function setupEqualizer(){const audio=$('zonaAudio');if(eqContext)return;const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;try{eqContext=new Ctx();eqSource=eqContext.createMediaElementSource(audio);const freqs=[60,250,1000,4000,12000];eqFilters=freqs.map((f,i)=>{const node=eqContext.createBiquadFilter();node.type=i===0?'lowshelf':i===4?'highshelf':'peaking';node.frequency.value=f;node.Q.value=1;node.gain.value=Number(document.querySelector(`.eq-slider[data-freq="${f}"]`).value);return node});eqSource.connect(eqFilters[0]);for(let i=0;i<eqFilters.length-1;i++)eqFilters[i].connect(eqFilters[i+1]);eqFilters.at(-1).connect(eqContext.destination)}catch(e){eqContext=null;eqFilters=[]}}
+function setupEqualizer(){const audio=$('zonaAudio');if(eqContext)return;const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;try{eqContext=new Ctx();eqSource=eqContext.createMediaElementSource(audio);const freqs=[60,250,1000,4000,12000];eqFilters=freqs.map((f,i)=>{const node=eqContext.createBiquadFilter();node.type=i===0?'lowshelf':i===4?'highshelf':'peaking';node.frequency.value=f;node.Q.value=1;node.gain.value=Number(document.querySelectorAll('.eq-slider')[i].value);return node});eqAnalyser=eqContext.createAnalyser();eqAnalyser.fftSize=256;eqAnalyser.smoothingTimeConstant=.84;eqSource.connect(eqFilters[0]);for(let i=0;i<eqFilters.length-1;i++)eqFilters[i].connect(eqFilters[i+1]);eqFilters.at(-1).connect(eqAnalyser);eqAnalyser.connect(eqContext.destination)}catch(e){eqContext=null;eqFilters=[];eqAnalyser=null}}
+function resizeZoneVisualizer(){const c=$('xpVisualizer');if(!c)return;const r=c.getBoundingClientRect(),d=Math.min(window.devicePixelRatio||1,2);c.width=Math.max(1,Math.round(r.width*d));c.height=Math.max(1,Math.round(r.height*d));c.getContext('2d').setTransform(d,0,0,d,0,0)}
+let eqAnalyser=null,zoneVizFrame=0;
+function drawZoneVisualizer(){const c=$('xpVisualizer');if(!c||!eqAnalyser||$('zonaAudio').paused){stopZoneVisualizer();return}const x=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight;if(!w||!h){$('xpVizStatus').textContent='● LIVE · '+$('zonaAudio').currentTime.toFixed(1)+'s';zoneVizFrame=requestAnimationFrame(drawZoneVisualizer);return}const bins=new Uint8Array(eqAnalyser.frequencyBinCount);eqAnalyser.getByteFrequencyData(bins);x.clearRect(0,0,w,h);const cx=w*.5,cy=h*.48;for(let j=0;j<3;j++){const v=bins.slice(j*8,j*8+12).reduce((p,q)=>p+q,0)/12/255;x.beginPath();x.arc(cx,cy,18+j*13+v*22,0,Math.PI*2);x.strokeStyle=j===0?'rgba(255,211,133,'+(.18+v*.4)+')':'rgba(160,205,185,'+(.08+v*.22)+')';x.lineWidth=1+v*2.2;x.shadowBlur=8+v*15;x.shadowColor=j===0?'#ffb75e':'#a6d9c4';x.stroke()}x.shadowBlur=0;const n=48,bw=Math.max(2,w/(n*1.75));for(let i=0;i<n;i++){const v=bins[Math.floor(i*bins.length/n)]/255,bh=5+v*h*.48,px=(w-n*(bw+2))/2+i*(bw+2),g=x.createLinearGradient(0,h-8-bh,0,h-8);g.addColorStop(0,'rgba(255,205,128,.9)');g.addColorStop(1,'rgba(118,170,137,.15)');x.fillStyle=g;x.fillRect(px,h-8-bh,bw,bh)}zoneVizFrame=requestAnimationFrame(drawZoneVisualizer)}
+function startZoneVisualizer(){if(!eqAnalyser)return;cancelAnimationFrame(zoneVizFrame);resizeZoneVisualizer();drawZoneVisualizer()}
+function stopZoneVisualizer(){if(zoneVizFrame)cancelAnimationFrame(zoneVizFrame);zoneVizFrame=0;const c=$('xpVisualizer');if(c)c.getContext('2d').clearRect(0,0,c.width,c.height);if($('xpVizStatus'))$('xpVizStatus').textContent='● EN ESPERA'}
+window.addEventListener('resize',()=>{if(!$('zonaAudio').paused)resizeZoneVisualizer()});
 function applyEQ(){const values=[...document.querySelectorAll('.eq-slider')].map(el=>Number(el.value));localStorage.setItem('zona_music_eq',JSON.stringify(values));if(!eqFilters.length)return;document.querySelectorAll('.eq-slider').forEach((el,i)=>{eqFilters[i].gain.setTargetAtTime(Number(el.value),eqContext.currentTime,.025)})}
 document.querySelectorAll('.eq-slider').forEach(el=>el.addEventListener('input',applyEQ));$('resetEQ').onclick=()=>{document.querySelectorAll('.eq-slider').forEach(el=>el.value=0);applyEQ();localStorage.setItem('zona_music_eq','[0,0,0,0,0]')};
 async function loadMusic(){try{musicItems=(await mediaAll()).filter(x=>x.kind==='track').sort((a,b)=>a.created-b.created);renderTracks()}catch(e){$('trackList').innerHTML='<div class="empty">No se pudo abrir la lista de música.</div>'}}
 function renderTracks(){$('trackCount').textContent=musicItems.length+' PISTAS';$('trackList').innerHTML=musicItems.map((x,i)=>`<div class="item"><div class="avatar">♫</div><div class="meta"><b>${esc(x.name)}</b><p>${esc(x.type||'Audio')}</p></div><button class="btn" data-play-track="${esc(x.id)}">▶</button><button class="delete-one" data-delete-track="${esc(x.id)}" title="Eliminar pista">×</button></div>`).join('')||'<div class="empty">Todavía no hay música cargada.</div>'}
 async function addTracks(files){for(const file of [...files]){if(!file.type.startsWith('audio/')&&!/\.(mp3|m4a|ogg|wav|flac|aac)$/i.test(file.name))continue;try{await mediaPut({id:mediaId(),kind:'track',name:file.name.replace(/\.[^.]+$/,''),type:file.type,blob:file,created:Date.now()})}catch(e){alert('No se pudo guardar '+file.name+'. Puede faltar espacio disponible.');break}}await loadMusic()}
-function updatePlayerUI(){$('playTrack').textContent=$('zonaAudio').paused?'▶':'Ⅱ';$('playerStatus').textContent=$('zonaAudio').paused?'EN PAUSA':'REPRODUCIENDO';$('playerDisc').classList.toggle('playing',!$('zonaAudio').paused);$('trackProgress').value=$('zonaAudio').duration?Math.round($('zonaAudio').currentTime/$('zonaAudio').duration*1000):0;$('currentTime').textContent=fmtTime($('zonaAudio').currentTime);$('durationTime').textContent=fmtTime($('zonaAudio').duration)}
+function updatePlayerUI(){$('zoneCampfire')?.classList.toggle('is-playing',!$('zonaAudio').paused);$('playTrack').textContent=$('zonaAudio').paused?'▶':'Ⅱ';$('playerStatus').textContent=$('zonaAudio').paused?'EN PAUSA':'REPRODUCIENDO';$('playerDisc').classList.toggle('playing',!$('zonaAudio').paused);$('trackProgress').value=$('zonaAudio').duration?Math.round($('zonaAudio').currentTime/$('zonaAudio').duration*1000):0;$('currentTime').textContent=fmtTime($('zonaAudio').currentTime);$('durationTime').textContent=fmtTime($('zonaAudio').duration)}
 async function playTrack(id,autoplay=true){const item=musicItems.find(x=>x.id===id);if(!item)return;const audio=$('zonaAudio');if(currentTrackId!==id){if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=URL.createObjectURL(item.blob);audio.src=currentObjectUrl;currentTrackId=id;$('trackTitle').textContent=item.name;$('trackArtist').textContent='BIBLIOTECA LOCAL · '+(musicItems.findIndex(x=>x.id===id)+1)+'/'+musicItems.length;$('discLabel').textContent=item.name;audio.load()}if(autoplay){try{setupEqualizer();if(eqContext?.state==='suspended')await eqContext.resume();audio.volume=Number($('playerVolume').value);await audio.play();if('mediaSession'in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:item.name,artist:'PDA // ZONA',album:'Biblioteca local'});navigator.mediaSession.playbackState='playing'} }catch(e){alert('El navegador no pudo reproducir este archivo. Probá con MP3 o M4A.')}}updatePlayerUI()}
 function stepTrack(direction){if(!musicItems.length)return;let i=musicItems.findIndex(x=>x.id===currentTrackId);i=i<0?(direction>0?0:musicItems.length-1):(i+direction+musicItems.length)%musicItems.length;playTrack(musicItems[i].id,true)}
 $('addTracks').onclick=()=>$('trackFileInput').click();$('trackFileInput').onchange=async e=>{await addTracks(e.target.files||[]);e.target.value=''};$('trackList').onclick=e=>{const play=e.target.closest('[data-play-track]'),del=e.target.closest('[data-delete-track]');if(play)playTrack(play.dataset.playTrack,true);if(del)removeTrack(del.dataset.deleteTrack)};
 async function removeTrack(id){if(!confirm('¿Eliminar esta pista de la biblioteca?'))return;if(currentTrackId===id){$('zonaAudio').pause();$('zonaAudio').removeAttribute('src');$('zonaAudio').load();if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=null;currentTrackId=null;$('trackTitle').textContent='Ninguna pista seleccionada';$('trackArtist').textContent='Cargá música desde tu dispositivo';updatePlayerUI()}await mediaDelete(id);await loadMusic()}
-$('clearTracks').onclick=async()=>{if(!musicItems.length||!confirm('¿Eliminar todas las pistas guardadas en este dispositivo?'))return;$('zonaAudio').pause();for(const item of musicItems)await mediaDelete(item.id);if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=null;currentTrackId=null;$('trackTitle').textContent='Ninguna pista seleccionada';await loadMusic();updatePlayerUI()};$('playTrack').onclick=()=>{const a=$('zonaAudio');if(a.paused){if(currentTrackId)playTrack(currentTrackId,true);else if(musicItems.length)playTrack(musicItems[0].id,true)}else a.pause()};$('prevTrack').onclick=()=>stepTrack(-1);$('nextTrack').onclick=()=>stepTrack(1);$('zonaAudio').addEventListener('timeupdate',updatePlayerUI);$('zonaAudio').addEventListener('loadedmetadata',updatePlayerUI);$('zonaAudio').addEventListener('play',updatePlayerUI);$('zonaAudio').addEventListener('pause',()=>{updatePlayerUI();if('mediaSession'in navigator)navigator.mediaSession.playbackState='paused'});$('zonaAudio').addEventListener('ended',()=>stepTrack(1));$('trackProgress').oninput=e=>{const a=$('zonaAudio');if(a.duration)a.currentTime=a.duration*Number(e.target.value)/1000};$('playerVolume').oninput=e=>{const v=Number(e.target.value);$('zonaAudio').volume=v;$('volumeValue').textContent=Math.round(v*100)+'%';localStorage.setItem('zona_music_volume',String(v))};$('zonaAudio').volume=Number(localStorage.getItem('zona_music_volume')||.8);$('playerVolume').value=$('zonaAudio').volume;$('volumeValue').textContent=Math.round($('zonaAudio').volume*100)+'%';
+$('clearTracks').onclick=async()=>{if(!musicItems.length||!confirm('¿Eliminar todas las pistas guardadas en este dispositivo?'))return;$('zonaAudio').pause();for(const item of musicItems)await mediaDelete(item.id);if(currentObjectUrl)URL.revokeObjectURL(currentObjectUrl);currentObjectUrl=null;currentTrackId=null;$('trackTitle').textContent='Ninguna pista seleccionada';await loadMusic();updatePlayerUI()};$('playTrack').onclick=()=>{const a=$('zonaAudio');if(a.paused){if(currentTrackId)playTrack(currentTrackId,true);else if(musicItems.length)playTrack(musicItems[0].id,true)}else a.pause()};$('prevTrack').onclick=()=>stepTrack(-1);$('nextTrack').onclick=()=>stepTrack(1);$('zonaAudio').addEventListener('play',startZoneVisualizer);$('zonaAudio').addEventListener('pause',stopZoneVisualizer);$('zonaAudio').addEventListener('ended',stopZoneVisualizer);$('zonaAudio').addEventListener('timeupdate',updatePlayerUI);$('zonaAudio').addEventListener('loadedmetadata',updatePlayerUI);$('zonaAudio').addEventListener('play',updatePlayerUI);$('zonaAudio').addEventListener('pause',()=>{updatePlayerUI();if('mediaSession'in navigator)navigator.mediaSession.playbackState='paused'});$('zonaAudio').addEventListener('ended',()=>{if($('zonaAudio').loop)return;if(shuffle){const pool=musicItems.filter(x=>x.id!==currentTrackId);if(pool.length)playTrack(pool[Math.floor(Math.random()*pool.length)].id,true)}else stepTrack(1)});$('trackProgress').oninput=e=>{const a=$('zonaAudio');if(a.duration)a.currentTime=a.duration*Number(e.target.value)/1000};$('playerVolume').oninput=e=>{const v=Number(e.target.value);$('zonaAudio').volume=v;$('volumeValue').textContent=Math.round(v*100)+'%';localStorage.setItem('zona_music_volume',String(v))};$('zonaAudio').volume=Number(localStorage.getItem('zona_music_volume')||.8);$('playerVolume').value=$('zonaAudio').volume;$('volumeValue').textContent=Math.round($('zonaAudio').volume*100)+'%';
 if('mediaSession'in navigator){try{navigator.mediaSession.setActionHandler('play',()=>playTrack(currentTrackId||musicItems[0]?.id,true));navigator.mediaSession.setActionHandler('pause',()=>$('zonaAudio').pause());navigator.mediaSession.setActionHandler('previoustrack',()=>stepTrack(-1));navigator.mediaSession.setActionHandler('nexttrack',()=>stepTrack(1));navigator.mediaSession.setActionHandler('seekbackward',d=>{$('zonaAudio').currentTime=Math.max(0,$('zonaAudio').currentTime-(d.seekOffset||10))});navigator.mediaSession.setActionHandler('seekforward',d=>{$('zonaAudio').currentTime=Math.min($('zonaAudio').duration||Infinity,$('zonaAudio').currentTime+(d.seekOffset||10))})}catch(e){}}
 function cancelSleepTimer(){if(sleepTimeout)clearTimeout(sleepTimeout);sleepTimeout=null;sleepEndsAt=0;$('sleepStatus').textContent='Sin temporizador activo.';$('sleepTimer').value='0'}function startSleepTimer(minutes){cancelSleepTimer();if(!minutes)return;sleepEndsAt=Date.now()+minutes*60000;sleepTimeout=setTimeout(()=>{$('zonaAudio').pause();cancelSleepTimer();$('sleepStatus').textContent='Temporizador finalizado · reproducción detenida.'},minutes*60000);$('sleepStatus').textContent='La música se detendrá en '+minutes+' minutos.'}$('sleepTimer').onchange=e=>startSleepTimer(Number(e.target.value));$('cancelSleep').onclick=cancelSleepTimer;
 // La reproducción permanece en el mismo elemento de audio al cambiar de sección; Android/Chrome puede mostrar controles de pantalla bloqueada.
@@ -1503,4 +1893,69 @@ initPdaComms();
 if ('serviceWorker' in navigator) {
  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('PDA offline:',err)));
 }
+
+/* Controles adicionales del HUD de radio */
+let radioShuffleMode=false;
+(()=>{const $=id=>document.getElementById(id);let repeat=false;
+ const openPanel=id=>{['radioLyricsPanel','radioEqPanel'].forEach(x=>$(x).hidden=x!==id)};
+ document.querySelectorAll('[data-close-panel]').forEach(b=>b.addEventListener('click',()=>openPanel('')));
+ $('eqToggle').addEventListener('click',()=>{const p=$('radioEqPanel');if(!p.hidden){openPanel('');return}openPanel('radioEqPanel')});
+ $('shuffleToggle').addEventListener('click',()=>{radioShuffleMode=!radioShuffleMode;$('shuffleToggle').classList.toggle('active',radioShuffleMode);$('shuffleToggle').setAttribute('aria-pressed',String(radioShuffleMode))});
+ $('repeatToggle').addEventListener('click',()=>{repeat=!repeat;$('repeatToggle').classList.toggle('active',repeat);$('repeatToggle').setAttribute('aria-pressed',String(repeat));$('zonaAudio').loop=repeat});
+ $('zonaAudio').addEventListener('ended',()=>{if(repeat)return;if(radioShuffleMode&&musicItems.length>1){const choices=musicItems.filter(x=>x.id!==currentTrackId);if(choices.length)playTrack(choices[Math.floor(Math.random()*choices.length)].id,true)}});
+})();
+
+
+/* Letras: guardar primero y arrancar el desplazamiento con su propio Play */
+(()=>{const $=id=>document.getElementById(id),stage=$('zoneCampfire');
+ let timer=null,playing=false,elapsed=0,lastTick=0,lyricsMode=false;
+ const key=()=> 'zona_lyrics_'+(typeof currentTrackId!=='undefined'&&currentTrackId||$('trackTitle').textContent||'sin-pista');
+ const box=$('radioCredits'),clock=$('radioCreditsClock'),play=$('radioCreditsPlay');
+ const fmt=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(Math.floor(n%60)).padStart(2,'0');
+ const stop=()=>{if(timer){clearInterval(timer);timer=null}playing=false;play.textContent='▶'};
+ const closeEditor=()=>{$('radioLyricsPanel').hidden=true;if(typeof closePdaKeyboard==='function')closePdaKeyboard()};
+ const openEditor=()=>{$('radioLyricsPanel').hidden=false;$('radioEqPanel').hidden=true;$('radioLyricsText').value=localStorage.getItem(key())||'';if(typeof openPdaKeyboard==='function')openPdaKeyboard($('radioLyricsText'));else $('radioLyricsText').focus()};
+ const showReady=()=>{const text=localStorage.getItem(key())||$('radioLyricsText').value;if(!text.trim()){openEditor();return}stop();elapsed=0;clock.textContent='00:00';$('radioCreditsText').innerHTML=richText(text);box.scrollTop=0;box.hidden=false;$('radioCreditsControls').hidden=false;$('lyricsEye').hidden=false;$('radioLyricsPanel').hidden=true;lyricsMode=true;stage.querySelector('.radio-playlist').style.visibility='hidden'};
+ const run=()=>{if(playing){stop();return}const max=box.scrollHeight-box.clientHeight;if(box.scrollTop>=max-1){box.scrollTop=0;elapsed=0}playing=true;play.textContent='Ⅱ';lastTick=Date.now();timer=setInterval(()=>{const now=Date.now(),dt=(now-lastTick)/1000;lastTick=now;box.scrollTop=Math.min(box.scrollHeight-box.clientHeight,box.scrollTop+dt*8);elapsed+=dt;clock.textContent=fmt(elapsed);if(box.scrollTop>=box.scrollHeight-box.clientHeight-1)stop()},50)};
+ $('lyricsToggle').addEventListener('click',()=>{if(lyricsMode){stop();box.hidden=true;$('radioCreditsControls').hidden=true;$('lyricsEye').hidden=true;lyricsMode=false;stage.querySelector('.radio-playlist').style.visibility='';return}openEditor()});
+ $('saveRadioLyrics').textContent='OK · GUARDAR LETRA';
+ $('saveRadioLyrics').addEventListener('click',()=>{localStorage.setItem(key(),$('radioLyricsText').value);closeEditor();showReady()});
+ play.addEventListener('click',run);
+ $('lyricsEye').addEventListener('click',()=>{stop();box.hidden=true;$('radioCreditsControls').hidden=true;$('lyricsEye').hidden=true});
+ stage.addEventListener('click',e=>{if(e.target.closest('button,input,textarea,.radio-track-card,.radio-main-controls,.radio-playlist,.radio-bottom-tools,.radio-volume,#radioCreditsControls,#radioCredits'))return;if(lyricsMode&&box.hidden){box.hidden=false;$('radioCreditsControls').hidden=false;$('lyricsEye').hidden=false}});
+ box.addEventListener('pointerdown',()=>{if(playing)stop()});box.addEventListener('wheel',()=>{if(playing)stop()},{passive:true});
+})();
+
+/* Arrastre limitado al interior del escenario: conserva el punto exacto donde se toma */
+(()=>{const stage=document.getElementById('zoneCampfire');if(!stage)return;
+ const selectors=['.radio-overlay-header','.radio-track-card','.radio-main-controls','.radio-volume','.radio-playlist','#lyricsEye','#radioCreditsControls','#radioLyricsPanel','#radioEqPanel'];
+ const orient=()=>matchMedia('(orientation:landscape)').matches?'landscape':'portrait';
+ selectors.forEach(sel=>{const el=stage.querySelector(sel);if(!el)return;const k='pda_radio_drag_'+orient()+'_'+(el.id||el.classList[0]);
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+  const place=(x,y,save)=>{const r=stage.getBoundingClientRect(),w=el.offsetWidth,h=el.offsetHeight;
+   const maxX=Math.max(0,r.width-w),maxY=Math.max(0,r.height-h);
+   const px=clamp(x,0,maxX),py=clamp(y,0,maxY);
+   el.style.left=(px/r.width*100)+'%';el.style.top=(py/r.height*100)+'%';el.style.right='auto';el.style.bottom='auto';
+   if(save)localStorage.setItem(k,JSON.stringify({x:px/r.width*100,y:py/r.height*100}));
+  };
+  try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}
+  let hold=null,drag=false,offsetX=0,offsetY=0,pointerId=null;
+  el.style.touchAction='none';
+  el.addEventListener('pointerdown',e=>{
+   if(e.target.closest('input,textarea,select,button'))return;
+   if(e.pointerType==='mouse'&&e.button!==0)return;
+   const r=el.getBoundingClientRect();offsetX=e.clientX-r.left;offsetY=e.clientY-r.top;pointerId=e.pointerId;
+   try{el.setPointerCapture(pointerId)}catch{}
+   hold=setTimeout(()=>{drag=true;el.classList.add('dragging');},420);
+   e.preventDefault();
+  });
+  el.addEventListener('pointermove',e=>{
+   if(e.pointerId!==pointerId)return;
+   if(drag){const r=stage.getBoundingClientRect();place(e.clientX-r.left-offsetX,e.clientY-r.top-offsetY,false)}
+  });
+  const finish=e=>{if(e&&pointerId!==null&&e.pointerId!==pointerId)return;clearTimeout(hold);hold=null;if(drag){const r=stage.getBoundingClientRect(),b=el.getBoundingClientRect();place(b.left-r.left,b.top-r.top,true);el.classList.remove('dragging')}drag=false;try{if(pointerId!==null&&el.hasPointerCapture(pointerId))el.releasePointerCapture(pointerId)}catch{}pointerId=null};
+  el.addEventListener('pointerup',finish);el.addEventListener('pointercancel',finish);
+  window.addEventListener('resize',()=>{try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}});
+ });
+})();
 </script></body></html>
