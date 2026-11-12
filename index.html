@@ -410,7 +410,7 @@ async function pdaLoadProfile(){
  try{
   await pdaInvoke('addNpcStoryContact',{npcId:1});
   if(!contacts.some(c=>Number(c.npcId)===1)){
-   contacts.unshift({id:'npc_1',npcId:1,name:'Cuervo Gris',role:'Guardián de la Zona · Técnico de la PDA',alignment:'ally',vital:'alive',bio:'Tu compañero técnico en la Zona. Canal de conversación GPT.',npcStory:true,portraitIndex:0});
+   contacts.unshift({id:'npc_1',npcId:1,name:'Cuervo Gris',role:'Guardián de la Zona · Técnico de la PDA',alignment:'ally',vital:'alive',bio:'Tu compañero técnico en la Zona. Siempre atento a la frecuencia.',npcStory:true,portraitIndex:0});
    save();renderContacts();
   }
  }catch(e){console.warn('Cuervo Gris:',e)}
@@ -573,7 +573,7 @@ async function pdaLoadCuervoChat(){
  const data=await pdaInvoke('listCuervoChat');
  pdaCuervoMessages=data.messages||[];
  pdaRenderCuervoChat();
- $('chatConnectionState').textContent='RADIO GPT · CUERVO GRIS';
+ $('chatConnectionState').textContent='FRECUENCIA ACTIVA · CUERVO GRIS';
 }
 function pdaRenderChat(){
  const id=$('chatWho').value,contact=pdaCurrentContact(),story=!!contact?.npcStory,cuervo=story&&Number(contact.npcId)===1;
@@ -583,7 +583,7 @@ function pdaRenderChat(){
  $('msg').readOnly=!!(story&&!cuervo);
  $('msg').placeholder=cuervo?'Transmití un mensaje a Cuervo Gris...':'Tocá aquí para escribir...';
  if(story){$('missionComposer').classList.add('hidden');document.body.classList.toggle('npc-story-open',!cuervo)}else document.body.classList.remove('npc-story-open');
- if(cuervo){$('npcStoryDialogue').innerHTML='';if(!pdaCuervoMessages.length)$('chatBox').innerHTML='<div class="empty">ABRIENDO CANAL GPT...</div>';$('chatConnectionState').textContent='RADIO GPT · CUERVO GRIS';return}
+ if(cuervo){$('npcStoryDialogue').innerHTML='';if(!pdaCuervoMessages.length)$('chatBox').innerHTML='<div class="empty">SINTONIZANDO LA FRECUENCIA...</div>';$('chatConnectionState').textContent='FRECUENCIA ACTIVA · CUERVO GRIS';return}
  if(story){$('chatBox').innerHTML='';$('chatConnectionState').textContent='CANAL NARRATIVO';return}
  if(!id){$('chatBox').innerHTML='<div class="empty">Agregá un contacto primero.</div>';return}
  const local=(chats[id]||[]).map((m,i)=>({...m,local:true,localIndex:i,sortAt:0}));
