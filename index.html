@@ -1781,7 +1781,7 @@ $('invSuitPicker').addEventListener('click',e=>{const b=e.target.closest('[data-
 document.addEventListener('click',e=>{if(!e.target.closest('.cop-suit-wrap'))$('invSuitPicker').classList.add('hidden');});
 renderSuitPicker();
 function saveInventory(){localStorage.setItem('zona_pda_inventory_v1',JSON.stringify(inventoryData));}
-try{if(localStorage.getItem('zona_barbas_ojo_flow_v2')!=='1'){const ojo=inventoryCatalog.find(x=>x.kind==='artifact'&&x.name==='Ojo');if(ojo){inventoryData.quantities[ojo.id]=1;saveInventory();barbasDeliveryData.quantities[ojo.id]=0;barbasDeliveryData.history=barbasDeliveryData.history.filter(h=>h.id!==ojo.id);saveBarbasDeliveries();localStorage.setItem('zona_barbas_ojo_flow_v2','1');localStorage.setItem('zona_barbas_ojo_quest_v2',JSON.stringify({stage:'awaiting_artifact',itemId:ojo.id,startedAt:new Date().toISOString()}));}}}catch(e){console.warn('No se pudo preparar el encargo de Barbas.',e)}
+
 function invFmt(n){return Number(n).toFixed(2).replace('.',',')}
 function renderInvStats(){
  const entries=inventoryCatalog.map(x=>({x,q:Math.max(0,Number(inventoryData.quantities[x.id])||0)}));
@@ -1821,6 +1821,7 @@ try{barbasDeliveryData=JSON.parse(localStorage.getItem('zona_barbas_deliveries_v
 if(!barbasDeliveryData.quantities||typeof barbasDeliveryData.quantities!=='object')barbasDeliveryData.quantities={};
 if(!Array.isArray(barbasDeliveryData.history))barbasDeliveryData.history=[];
 function saveBarbasDeliveries(){localStorage.setItem('zona_barbas_deliveries_v1',JSON.stringify(barbasDeliveryData))}
+try{if(localStorage.getItem('zona_barbas_ojo_flow_v2')!=='1'){const ojo=inventoryCatalog.find(x=>x.kind==='artifact'&&x.name==='Ojo');if(ojo){inventoryData.quantities[ojo.id]=1;saveInventory();barbasDeliveryData.quantities[ojo.id]=0;barbasDeliveryData.history=barbasDeliveryData.history.filter(h=>h.id!==ojo.id);saveBarbasDeliveries();localStorage.setItem('zona_barbas_ojo_flow_v2','1');localStorage.setItem('zona_barbas_ojo_quest_v2',JSON.stringify({stage:'awaiting_artifact',itemId:ojo.id,startedAt:new Date().toISOString()}));}}}catch(e){console.warn('No se pudo preparar el encargo de Barbas.',e)}
 let barbasOjoQuest={stage:'awaiting_artifact',itemId:null};
 try{barbasOjoQuest={...barbasOjoQuest,...JSON.parse(localStorage.getItem('zona_barbas_ojo_quest_v2')||'{}')}}catch(e){}
 function saveBarbasOjoQuest(){localStorage.setItem('zona_barbas_ojo_quest_v2',JSON.stringify(barbasOjoQuest))}
