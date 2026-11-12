@@ -483,6 +483,16 @@ body.keyboard-visible footer{display:none}
  #player .radio-lyrics-eye{top:12%;right:3%;width:28px;height:28px}
 }
 
+
+/* v61 · controles reubicables y play independiente para créditos */
+#player .radio-draggable{touch-action:pan-y;cursor:grab}
+#player .radio-draggable.dragging{z-index:90!important;cursor:grabbing;filter:drop-shadow(0 4px 12px #000)}
+#player .radio-credits-controls{position:absolute;z-index:65;top:12%;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:9px;padding:5px 10px;border:1px solid #b58a32;background:#090b0bdc;border-radius:24px;color:#f4d27a}
+#player .radio-credits-controls[hidden]{display:none}
+#player #radioCreditsPlay{width:34px;height:34px;border-radius:50%;border:1px solid #d4a83e;background:#33250b;color:#ffd66b;font-size:17px}
+#player #radioCreditsClock{font:12px monospace;letter-spacing:1px}
+#player .radio-lyrics-eye{z-index:66}
+
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -546,7 +556,7 @@ body.keyboard-visible footer{display:none}
  <div class="radio-playlist"><div class="radio-list-title">♫ &nbsp;LISTA DE REPRODUCCIÓN <small id="trackCount">0 PISTAS</small></div><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div>
  <div class="radio-bottom-tools"><button id="addTracks" class="radio-tool"><b>＋</b><span>AGREGAR<br>CANCIÓN</span></button><button id="lyricsToggle" class="radio-tool"><b>☷</b><span>VER LETRA</span></button><button id="shuffleToggle" class="radio-tool"><b>⤨</b><span>ALEATORIO</span></button><button id="repeatToggle" class="radio-tool"><b>⟳</b><span>REPETIR</span></button><button id="eqToggle" class="radio-tool"><b>▥</b><span>ECUALIZADOR</span></button></div>
  <input id="trackFileInput" type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav,.flac" multiple style="display:none">
- <div id="radioLyricsPanel" class="radio-float-panel" hidden><div class="radio-float-head">LETRA DE LA CANCIÓN <button type="button" data-close-panel="radioLyricsPanel">✕</button></div><textarea id="radioLyricsText" rows="7" placeholder="Pegá o escribí la letra de esta canción..."></textarea><button id="saveRadioLyrics">OK · MOSTRAR LETRA</button></div><button id="lyricsEye" class="radio-lyrics-eye" type="button" aria-label="Ocultar letra" title="Ocultar letra" hidden>◉</button><div id="radioCredits" class="radio-credits" hidden><div id="radioCreditsText"></div></div>
+ <div id="radioLyricsPanel" class="radio-float-panel" hidden><div class="radio-float-head">LETRA DE LA CANCIÓN <button type="button" data-close-panel="radioLyricsPanel">✕</button></div><textarea id="radioLyricsText" rows="7" placeholder="Pegá o escribí la letra de esta canción..."></textarea><button id="saveRadioLyrics">OK · MOSTRAR LETRA</button></div><button id="lyricsEye" class="radio-lyrics-eye" type="button" aria-label="Ocultar letra" title="Ocultar letra" hidden>◉</button><div id="radioCreditsControls" class="radio-credits-controls" hidden><button id="radioCreditsPlay" type="button">▶</button><span id="radioCreditsClock">00:00</span></div><div id="radioCredits" class="radio-credits" hidden><div id="radioCreditsText"></div></div>
  <div id="radioEqPanel" class="radio-float-panel" hidden><div class="radio-float-head">ECUALIZADOR DE LA ZONA <button type="button" data-close-panel="radioEqPanel">✕</button></div><div class="eq-grid">
  <div class="eq-band"><input data-native-control class="eq-slider" data-freq="60" type="range" min="-12" max="12" step="1" value="0" orient="vertical"><label>60 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="250" type="range" min="-12" max="12" step="1" value="0"><label>250 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="1000" type="range" min="-12" max="12" step="1" value="0"><label>1 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="4000" type="range" min="-12" max="12" step="1" value="0"><label>4 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="12000" type="range" min="-12" max="12" step="1" value="0"><label>12 kHz</label></div></div><div class="radio-eq-footer"><button id="resetEQ">↺ RESTABLECER</button><label>APAGADO AUTOMÁTICO <select id="sleepTimer"><option value="0">Desactivado</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option><option value="90">90 minutos</option></select></label><button id="cancelSleep">CANCELAR</button><small id="sleepStatus">Sin temporizador activo.</small></div></div>
  <div id="playerDisc" class="radio-hidden-status"><span id="discLabel">PDA // AUDIO</span></div><button id="clearTracks" type="button" class="radio-hidden-status">VACIAR LISTA</button><span id="playerStatus" class="radio-hidden-status">EN ESPERA</span><span id="xpVizStatus" class="radio-hidden-status">● EN ESPERA</span>
@@ -1859,51 +1869,37 @@ let radioShuffleMode=false;
 })();
 
 
-/* Letras estilo créditos: edición, guardado local, desplazamiento táctil y botón ojo */
-(()=>{const $=id=>document.getElementById(id),audio=$('zonaAudio'),stage=$('zoneCampfire');
- let creditsTimer=null,creditsPausedUntil=0,lyricsVisible=false,lyricsMode=false;
- const lyricKey=()=> 'zona_lyrics_'+(typeof currentTrackId!=='undefined'&&currentTrackId||$('trackTitle').textContent||'sin-pista');
- const stopCredits=()=>{if(creditsTimer){clearInterval(creditsTimer);creditsTimer=null}};
- const closeLyricsEditor=()=>{ $('radioLyricsPanel').hidden=true; if(typeof closePdaKeyboard==='function')closePdaKeyboard(); };
- const startCredits=()=>{
-  stopCredits();const box=$('radioCredits');box.scrollTop=0;creditsPausedUntil=0;
-  creditsTimer=setInterval(()=>{
-   if(!lyricsVisible||Date.now()<creditsPausedUntil)return;
-   const bottom=box.scrollHeight-box.clientHeight;
-   if(box.scrollTop<bottom)box.scrollTop=Math.min(bottom,box.scrollTop+0.42);
-   else stopCredits();
-  },50);
- };
- const showCredits=()=>{
-  const text=localStorage.getItem(lyricKey())||$('radioLyricsText').value;
-  if(!text.trim()){openLyricsEditor();return}
-  $('radioCreditsText').textContent=text;
-  $('radioCredits').hidden=false;$('lyricsEye').hidden=false;
-  stage.querySelector('.radio-playlist').style.visibility='hidden';
-  $('radioLyricsPanel').hidden=true;
-  lyricsVisible=true;lyricsMode=true;startCredits();
- };
- const hideCredits=()=>{
-  lyricsVisible=false;stopCredits();$('radioCredits').hidden=true;$('lyricsEye').hidden=true; 
- };
- const openLyricsEditor=()=>{
-  $('radioLyricsPanel').hidden=false;$('radioEqPanel').hidden=true;
-  $('radioLyricsText').value=localStorage.getItem(lyricKey())||'';
-  if(typeof openPdaKeyboard==='function')openPdaKeyboard($('radioLyricsText'));else $('radioLyricsText').focus();
- };
- $('lyricsToggle').addEventListener('click',()=>{if(lyricsMode){hideCredits();lyricsMode=false;stage.querySelector('.radio-playlist').style.visibility='';return}openLyricsEditor()});
- $('saveRadioLyrics').addEventListener('click',()=>{localStorage.setItem(lyricKey(),$('radioLyricsText').value);closeLyricsEditor();showCredits()});
- $('lyricsEye').addEventListener('click',hideCredits);
- stage.addEventListener('click',e=>{
-  if(e.target.closest('button,input,textarea,.radio-track-card,.radio-main-controls,.radio-playlist,.radio-bottom-tools,.radio-volume'))return;
-  if(lyricsMode&&!lyricsVisible)showCredits();
- });
- stage.addEventListener('touchstart',e=>{if(lyricsVisible&&e.target.closest('#radioCredits'))creditsPausedUntil=Date.now()+2800},{passive:true});
- const credits=$('radioCredits');
- credits.addEventListener('pointerdown',()=>{creditsPausedUntil=Date.now()+6500});
- credits.addEventListener('wheel',()=>{creditsPausedUntil=Date.now()+6500},{passive:true});
- credits.addEventListener('scroll',()=>{creditsPausedUntil=Date.now()+6500},{passive:true});
- audio.addEventListener('loadedmetadata',()=>{if(lyricsMode){const saved=localStorage.getItem(lyricKey());if(saved)$('radioCreditsText').textContent=saved}});
+/* Letras: guardar primero y arrancar el desplazamiento con su propio Play */
+(()=>{const $=id=>document.getElementById(id),stage=$('zoneCampfire');
+ let timer=null,playing=false,elapsed=0,lastTick=0,lyricsMode=false;
+ const key=()=> 'zona_lyrics_'+(typeof currentTrackId!=='undefined'&&currentTrackId||$('trackTitle').textContent||'sin-pista');
+ const box=$('radioCredits'),clock=$('radioCreditsClock'),play=$('radioCreditsPlay');
+ const fmt=n=>String(Math.floor(n/60)).padStart(2,'0')+':'+String(Math.floor(n%60)).padStart(2,'0');
+ const stop=()=>{if(timer){clearInterval(timer);timer=null}playing=false;play.textContent='▶'};
+ const closeEditor=()=>{$('radioLyricsPanel').hidden=true;if(typeof closePdaKeyboard==='function')closePdaKeyboard()};
+ const openEditor=()=>{$('radioLyricsPanel').hidden=false;$('radioEqPanel').hidden=true;$('radioLyricsText').value=localStorage.getItem(key())||'';if(typeof openPdaKeyboard==='function')openPdaKeyboard($('radioLyricsText'));else $('radioLyricsText').focus()};
+ const showReady=()=>{const text=localStorage.getItem(key())||$('radioLyricsText').value;if(!text.trim()){openEditor();return}stop();elapsed=0;clock.textContent='00:00';$('radioCreditsText').textContent=text;box.scrollTop=0;box.hidden=false;$('radioCreditsControls').hidden=false;$('lyricsEye').hidden=false;$('radioLyricsPanel').hidden=true;lyricsMode=true;stage.querySelector('.radio-playlist').style.visibility='hidden'};
+ const run=()=>{if(playing){stop();return}const max=box.scrollHeight-box.clientHeight;if(box.scrollTop>=max-1){box.scrollTop=0;elapsed=0}playing=true;play.textContent='Ⅱ';lastTick=Date.now();timer=setInterval(()=>{const now=Date.now(),dt=(now-lastTick)/1000;lastTick=now;box.scrollTop=Math.min(box.scrollHeight-box.clientHeight,box.scrollTop+dt*8);elapsed+=dt;clock.textContent=fmt(elapsed);if(box.scrollTop>=box.scrollHeight-box.clientHeight-1)stop()},50)};
+ $('lyricsToggle').addEventListener('click',()=>{if(lyricsMode){stop();box.hidden=true;$('radioCreditsControls').hidden=true;$('lyricsEye').hidden=true;lyricsMode=false;stage.querySelector('.radio-playlist').style.visibility='';return}openEditor()});
+ $('saveRadioLyrics').textContent='OK · GUARDAR LETRA';
+ $('saveRadioLyrics').addEventListener('click',()=>{localStorage.setItem(key(),$('radioLyricsText').value);closeEditor();showReady()});
+ play.addEventListener('click',run);
+ $('lyricsEye').addEventListener('click',()=>{stop();box.hidden=true;$('radioCreditsControls').hidden=true;$('lyricsEye').hidden=true});
+ stage.addEventListener('click',e=>{if(e.target.closest('button,input,textarea,.radio-track-card,.radio-main-controls,.radio-playlist,.radio-bottom-tools,.radio-volume,#radioCreditsControls,#radioCredits'))return;if(lyricsMode&&box.hidden){box.hidden=false;$('radioCreditsControls').hidden=false;$('lyricsEye').hidden=false}});
+ box.addEventListener('pointerdown',()=>{if(playing)stop()});box.addEventListener('wheel',()=>{if(playing)stop()},{passive:true});
 })();
 
+/* Mantener pulsado y arrastrar los módulos flotantes; posición independiente por orientación */
+(()=>{const stage=document.getElementById('zoneCampfire');if(!stage)return;
+ const selectors=['.radio-track-card','.radio-main-controls','.radio-volume','.radio-playlist','.radio-bottom-tools','#lyricsEye','#radioCreditsControls'];
+ const orient=()=>matchMedia('(orientation:landscape)').matches?'landscape':'portrait';
+ selectors.forEach(sel=>{const el=stage.querySelector(sel);if(!el)return;const k='pda_radio_drag_'+orient()+'_'+(el.id||el.classList[0]);
+  try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.right='auto';el.style.bottom='auto'}}catch{}
+  let timer=null,drag=false,sx=0,sy=0;
+  el.addEventListener('pointerdown',e=>{if(e.target.closest('input,textarea,select'))return;sx=e.clientX;sy=e.clientY;timer=setTimeout(()=>{drag=true;el.classList.add('dragging');try{el.setPointerCapture(e.pointerId)}catch{}},350)});
+  el.addEventListener('pointermove',e=>{if(!timer&&!drag)return;if(drag){const r=stage.getBoundingClientRect(),x=Math.max(0,Math.min(98,(e.clientX-r.left)/r.width*100)),y=Math.max(0,Math.min(94,(e.clientY-r.top)/r.height*100));el.style.left=x+'%';el.style.top=y+'%';el.style.right='auto';el.style.bottom='auto'}});
+  const end=()=>{clearTimeout(timer);timer=null;if(drag){const r=stage.getBoundingClientRect(),b=el.getBoundingClientRect();localStorage.setItem(k,JSON.stringify({x:(b.left-r.left)/r.width*100,y:(b.top-r.top)/r.height*100}));el.classList.remove('dragging')}drag=false};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+ });
+})();
 </script></body></html>
