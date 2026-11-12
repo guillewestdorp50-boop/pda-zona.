@@ -207,7 +207,7 @@ body.keyboard-visible footer{display:none}
  <p class="muted cop-footnote">Todos los objetos comienzan en cero. Usá + y − para registrar lo que llevás. La munición se cuenta por caja/paquete, según la presentación indicada. El peso se calcula automáticamente.</p>
 </div></section><section id="map" class="view"><div class="panel"><div class="row"><h2>MAPA DE CAMPO · GPS</h2><span class="compass-mini" id="mapLive">SIN POSICIÓN</span></div><p class="muted">CARTOGRAFÍA SATELITAL · POSICIÓN REAL DEL DISPOSITIVO</p><div class="map-frame-wrap"><iframe id="fieldMapFrame" title="Mapa GPS de campo" loading="lazy" referrerpolicy="no-referrer" src="about:blank"></iframe><div class="map-placeholder" id="mapPlaceholder">ACTIVÁ EL GPS PARA CARGAR EL MAPA Y MARCAR TU POSICIÓN</div></div><div class="compass-grid map-readouts"><div class="compass-data"><span>LATITUD</span><b id="mapLat">--</b></div><div class="compass-data"><span>LONGITUD</span><b id="mapLon">--</b></div><div class="compass-data"><span>PRECISIÓN</span><b id="mapAccuracy">--</b></div><div class="compass-data"><span>ÚLTIMA ACTUALIZACIÓN</span><b id="mapUpdated">--</b></div></div><div class="compass-controls"><button class="btn" id="mapLocate">⌖ LOCALIZARME</button><button id="mapStop">DETENER GPS</button><button id="mapOpenExternal">ABRIR MAPA COMPLETO</button></div><div id="mapStatus" class="compass-status">El mapa se carga cuando autorizás el acceso a la ubicación.</div></div>
 <div class="panel"><div class="row"><h2>PUNTOS DE CAMPO</h2><span class="compass-mini" id="mapPointCount">0 MARCAS</span></div><input id="mapPointName" maxlength="50" placeholder="Nombre del lugar / referencia"><textarea id="mapPointNote" rows="2" placeholder="Notas: refugio, anomalía, escondite, camino..."></textarea><div class="compass-controls"><button class="btn" id="mapSavePoint">⚑ GUARDAR MI POSICIÓN</button></div><div id="mapPoints" class="stack"><div class="empty">Todavía no guardaste puntos de campo.</div></div><p class="muted">Tus puntos guardados quedan en este dispositivo. Para mostrar el mapa, OpenStreetMap recibe la solicitud de las coordenadas que estás viendo. Se necesita conexión a Internet.</p></div></section>
-<section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>FRECUENCIAS Y COMUNICACIONES</h2><p>Configurá los canales de comunicación de tu PDA. Algunas frecuencias requieren conexión con la red de la Zona.</p></div></section>
+<section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>ACTUALIZADOR DE LA PDA</h2><p class="muted">Buscá nuevas versiones de PDA // ZONA e instalalas sin desinstalar la aplicación. Tus perfiles, contactos, mensajes y registros guardados no se borran durante una actualización.</p><button class="btn" id="pdaCheckUpdates" type="button">↻ BUSCAR ACTUALIZACIONES</button><div id="pdaUpdateStatus" class="statusline" role="status" aria-live="polite">SISTEMA DE ACTUALIZACIÓN LISTO · VERSIÓN 49</div><small class="muted">Se necesita conexión a Internet. La PDA se reiniciará si encuentra una versión nueva.</small></div><div class="panel"><h2>FRECUENCIAS Y COMUNICACIONES</h2><p>Configurá los canales de comunicación de tu PDA. Algunas frecuencias requieren conexión con la red de la Zona.</p></div></section>
 
 <section id="gallery" class="view"><div class="panel"><div class="row"><h2>GALERÍA DE CAMPO</h2><span id="galleryCount" class="muted">0 FOTOS</span></div><p class="muted">Fotos guardadas únicamente en este dispositivo.</p><div class="media-actions"><button class="btn" id="galleryCamera">📷 ABRIR CÁMARA</button><button class="btn" id="galleryChoose">▧ ELEGIR FOTOS</button></div><input id="galleryCameraInput" type="file" accept="image/*" capture="environment" multiple style="display:none"><input id="galleryFileInput" type="file" accept="image/*" multiple style="display:none"><div id="galleryGrid" class="media-grid"><div class="empty">Todavía no hay fotografías.</div></div></div></section>
 <section id="player" class="view"><div class="panel"><div class="row"><h2>REPRODUCTOR DE LA ZONA</h2><span id="playerStatus" class="media-muted">EN ESPERA</span></div><div id="playerDisc" class="player-disc"><span id="discLabel">PDA // AUDIO</span></div><div style="text-align:center"><strong id="trackTitle">Ninguna pista seleccionada</strong><div id="trackArtist" class="media-muted">Cargá música desde tu dispositivo</div></div><div class="player-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div><div class="row"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"><div class="row" style="margin-top:8px"><label for="playerVolume" class="muted">VOLUMEN</label><span id="volumeValue" class="muted">80%</span></div><input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen"></div>
@@ -1455,6 +1455,49 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
  }
  requestAnimationFrame(frame);
 })();
+
+/* Actualizador integrado: verifica el service worker y conserva los datos locales. */
+const PDA_SW_BUILD='pda-zona-shell-v49';
+let pdaUpdateCheckRunning=false;
+function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
+if('serviceWorker' in navigator){
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+  if(pdaUpdateCheckRunning){pdaUpdateMessage('ACTUALIZACIÓN APLICADA · REINICIANDO PDA...');window.location.reload();}
+ });
+}
+const pdaUpdateButton=document.getElementById('pdaCheckUpdates');
+if(pdaUpdateButton)pdaUpdateButton.addEventListener('click',async()=>{
+ if(!('serviceWorker' in navigator)){pdaUpdateMessage('ESTE NAVEGADOR NO ADMITE ACTUALIZACIONES AUTOMÁTICAS.');return;}
+ if(pdaUpdateCheckRunning)return;
+ pdaUpdateButton.disabled=true;pdaUpdateMessage('CONTACTANDO AL PUESTO DE CONTROL...');
+ try{
+  const registration=await navigator.serviceWorker.getRegistration('./')||await navigator.serviceWorker.register('./sw.js');
+  let updateFound=false;
+  registration.addEventListener('updatefound',()=>{
+   updateFound=true;
+   const installing=registration.installing;
+   if(installing)installing.addEventListener('statechange',()=>{
+    if(installing.state==='installed'&&navigator.serviceWorker.controller){pdaUpdateCheckRunning=true;pdaUpdateMessage('NUEVA VERSIÓN DESCARGADA · APLICANDO...');
+    }
+   });
+  });
+  await registration.update();
+  const worker=registration.active||navigator.serviceWorker.controller;
+  let activeBuild=null;
+  if(worker){
+   activeBuild=await new Promise(resolve=>{
+    const channel=new MessageChannel(),timeout=setTimeout(()=>resolve(null),2500);
+    channel.port1.onmessage=e=>{clearTimeout(timeout);resolve(e.data&&e.data.cache||null);};
+    worker.postMessage({type:'PDA_GET_VERSION'},[channel.port2]);
+   });
+  }
+  if(activeBuild&&activeBuild!==PDA_SW_BUILD){pdaUpdateCheckRunning=true;pdaUpdateMessage('VERSIÓN NUEVA DETECTADA · REINICIANDO...');window.location.reload();return;}
+  if(updateFound){pdaUpdateCheckRunning=true;pdaUpdateMessage('DESCARGANDO ACTUALIZACIÓN... ESPERÁ UN MOMENTO.');}
+  else if(activeBuild===PDA_SW_BUILD){pdaUpdateMessage('PDA ACTUALIZADA · NO HAY VERSIONES NUEVAS.');}
+  else{pdaUpdateMessage('NO SE PUDO CONFIRMAR LA VERSIÓN. COMPROBÁ TU CONEXIÓN Y REINTENTÁ.');}
+ }catch(error){console.warn('PDA updater:',error);pdaUpdateMessage('NO SE PUDO BUSCAR. REVISÁ INTERNET Y VOLVÉ A INTENTAR.');}
+ finally{setTimeout(()=>{pdaUpdateButton.disabled=false;},1200);}
+});
 
 initPdaComms();
 if ('serviceWorker' in navigator) {
