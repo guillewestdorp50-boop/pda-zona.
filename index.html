@@ -609,7 +609,7 @@ function pdaRenderChat(){
    return pdaChatLineMarkup(!!m.me,contact,who,m.time,'',audio);
   }
   const body=m.remote?'<div>'+esc(m.body||'')+'</div>':'<div>'+richText(m.text)+'</div>';
-  const remove=!m.remote&&m.me?'<button class="delete-one" onclick="deleteMessage(\\''+id+'\\','+m.localIndex+')" aria-label="Eliminar este mensaje">×</button>':'';
+  const remove=!m.remote&&m.me?`<button class="delete-one" onclick="deleteMessage('${id}',${m.localIndex})" aria-label="Eliminar este mensaje">×</button>`:'';
   return pdaChatLineMarkup(!!m.me,contact,who,m.time,body,remove);
  }).join('')||'<div class="empty">Canal abierto. Todavía no hay mensajes.</div>';
  $('chatBox').scrollTop=$('chatBox').scrollHeight;$('chatConnectionState').textContent=contact?.remoteConversationId?'RED EN LÍNEA':'ARCHIVO LOCAL';
