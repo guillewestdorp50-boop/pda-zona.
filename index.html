@@ -333,6 +333,84 @@ body.keyboard-visible footer{display:none}
  #player .radio-console .xp-audio-panel,#player .radio-console .radio-sleep{width:100%}
 }
 
+
+/* RADIO FULLSCREEN v58 · interfaz HUD superpuesta, sin marcos externos */
+#player{padding:0!important;margin:0!important}
+#player .radio-fullscreen{position:relative;width:100%;height:calc(100dvh - 125px);min-height:360px;max-height:none;aspect-ratio:auto;overflow:hidden;margin:0;border:0;border-radius:0;background-image:linear-gradient(90deg,#02060910,#02060925),url("https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2427420/a917f54315fc37a7484287c56256f148ccedbfa7/ss_a917f54315fc37a7484287c56256f148ccedbfa7.jpg");background-size:cover;background-position:center 52%;box-shadow:none}
+#player .radio-bg-shade{position:absolute;inset:0;background:linear-gradient(90deg,transparent 35%,#05060740 67%,#05060788 100%),linear-gradient(0deg,#030404b8 0%,transparent 24%,transparent 75%,#03040455 100%);pointer-events:none}
+#player .radio-overlay-header{position:absolute;z-index:5;left:0;right:0;top:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px;background:linear-gradient(90deg,#070707d9,#09090970,transparent);pointer-events:none}
+#player .radio-brand{display:flex;align-items:center;gap:12px;color:#dba72f;text-shadow:0 2px 5px #000}
+#player .radio-rad{font-size:40px;line-height:1}
+#player .radio-brand b{display:block;font:900 clamp(17px,2.5vw,29px) Impact,sans-serif;letter-spacing:2px}
+#player .radio-brand i{color:#f2c04a;font-style:normal}
+#player .radio-brand small{display:block;font:bold 11px Arial;letter-spacing:2px;color:#e7c36d}
+#player .radio-live{display:flex;align-items:center;gap:9px;color:#4be51e;font:bold clamp(14px,2vw,23px) Arial;text-shadow:0 0 12px #39d51d}
+#player .radio-signal{display:flex;align-items:end;gap:3px;height:25px}
+#player .radio-signal i{display:block;width:5px;background:#40e41b;box-shadow:0 0 7px #48e622;animation:radioSignal .8s infinite alternate}
+#player .radio-signal i:nth-child(1){height:9px}.radio-signal i:nth-child(2){height:15px;animation-delay:.15s}.radio-signal i:nth-child(3){height:20px;animation-delay:.3s}.radio-signal i:nth-child(4){height:25px;animation-delay:.45s}
+@keyframes radioSignal{to{opacity:.45;transform:scaleY(.65)}}
+#player #xpVisualizer{position:absolute;z-index:2;left:1.5%;bottom:12%;width:27%;height:12%;pointer-events:none}
+#player .radio-track-card{position:absolute;z-index:4;right:2%;top:12%;width:32%;padding:12px 15px;background:#08090bd9;border:1px solid #9a7837;border-radius:5px;box-shadow:0 4px 18px #000b;color:#eee}
+#player .radio-track-meta strong{display:block;color:#f1bd35;font-size:clamp(16px,2.3vw,28px);line-height:1.2}
+#player .radio-track-meta span{display:block;color:#ddd;font-size:clamp(12px,1.7vw,21px);margin-top:2px}
+#player .radio-track-time{display:flex;justify-content:space-between;font:12px monospace;margin-top:5px}
+#player #trackProgress{width:100%;height:7px;accent-color:#eab32d;margin:8px 0 0}
+#player .radio-main-controls{position:absolute;z-index:4;right:5%;top:39%;width:26%;display:flex;align-items:center;justify-content:space-around}
+#player .radio-main-controls button{border:0;background:#09090988;color:#eee;font-size:clamp(25px,4vw,44px);min-width:46px;min-height:46px;text-shadow:0 2px 7px #000}
+#player .radio-main-controls button.main-play{width:clamp(66px,9vw,112px);height:clamp(66px,9vw,112px);border-radius:50%;border:3px solid #bd8e22;background:radial-gradient(#f3c74c,#6f4810);color:#1b1306;font-size:clamp(28px,4vw,48px);box-shadow:0 0 20px #eab22c55}
+#player .radio-volume{position:absolute;z-index:4;right:4%;top:50%;width:28%;display:flex;align-items:center;gap:9px;color:#e4bd5c;font:11px Arial}
+#player .radio-volume input{flex:1;min-width:0;accent-color:#e5ae2e}
+#player .radio-playlist{position:absolute;z-index:4;right:2%;top:56%;bottom:17%;width:32%;padding:8px 10px;background:#050607d9;border:1px solid #96743b;border-radius:5px;overflow:hidden}
+#player .radio-list-title{color:#efbd3b;font-weight:bold;font-size:clamp(12px,1.6vw,19px);padding-bottom:6px;border-bottom:1px solid #795b2a}
+#player .radio-list-title small{float:right;color:#aaa;font-size:10px}
+#player #trackList{height:calc(100% - 27px);overflow:auto;display:block}
+#player #trackList .item{display:flex;align-items:center;gap:6px;padding:5px 4px;margin:2px 0;background:#10101080;border:0;border-bottom:1px solid #7774;border-radius:0;color:#ddd}
+#player #trackList .item .avatar{display:none}
+#player #trackList .item .meta{min-width:0;flex:1}
+#player #trackList .item .meta b{color:#ddd;font-size:clamp(11px,1.4vw,16px)}
+#player #trackList .item .meta p{display:none}
+#player #trackList .item button{padding:4px 7px}
+#player .radio-bottom-tools{position:absolute;z-index:5;left:0;right:0;bottom:0;height:14%;min-height:58px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:5px 10px;background:linear-gradient(0deg,#050505ed,#0808088c);border-top:1px solid #8a6a35}
+#player .radio-tool{display:flex;align-items:center;justify-content:center;gap:clamp(5px,1vw,14px);min-width:0;padding:4px;color:#eee;background:#08080899;border:1px solid #80643b;border-radius:5px;font-weight:bold;font-size:clamp(9px,1.2vw,15px);text-shadow:0 2px 5px #000}
+#player .radio-tool b{font-size:clamp(20px,3vw,37px);color:#e9b83a}
+#player .radio-tool.active{background:#76551d99;border-color:#e7b536;color:#ffdf70}
+#player .radio-float-panel{position:absolute;z-index:10;right:2%;bottom:16%;width:min(440px,48%);max-height:65%;overflow:auto;padding:12px;background:#090a0bed;border:1px solid #c09232;border-radius:7px;box-shadow:0 8px 25px #000d;color:#eee}
+#player .radio-float-panel[hidden]{display:none}
+#player .radio-float-head{display:flex;justify-content:space-between;align-items:center;color:#efbd3b;font-weight:bold;margin-bottom:10px}
+#player .radio-float-head button,#player .radio-eq-footer button{background:#302414;color:#f3c24a;border:1px solid #92702e;padding:7px 10px}
+#player #radioLyricsText{width:100%;min-height:130px;background:#171717;color:#eee;border:1px solid #66502a;padding:8px}
+#player #saveRadioLyrics{margin-top:8px;background:#79571d;color:#fff;padding:8px 12px}
+#player .radio-eq-footer{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:10px}
+#player .radio-eq-footer label{display:flex;gap:8px;align-items:center;font-size:11px}
+#player .radio-eq-footer select{max-width:120px}
+#player .radio-hidden-status{display:none}
+@media(orientation:landscape) and (max-height:600px){
+ #player{position:fixed!important;z-index:5000;inset:0!important;width:100vw!important;height:100dvh!important;background:#000!important;padding:0!important}
+ #player .radio-fullscreen{width:100vw;height:100dvh;min-height:0}
+ #player .radio-overlay-header{height:10%;padding:4px 14px}
+ #player .radio-track-card{top:12%;right:2%;width:31%}
+ #player .radio-main-controls{top:38%;right:3%}
+ #player .radio-volume{top:51%}
+ #player .radio-playlist{top:57%;bottom:16%;width:31%}
+ #player .radio-bottom-tools{height:15%;min-height:50px}
+}
+@media(orientation:portrait){
+ #player .radio-fullscreen{height:calc(100dvh - 120px);min-height:450px}
+ #player .radio-overlay-header{height:54px;padding:5px 9px}
+ #player .radio-rad{font-size:27px}
+ #player .radio-brand b{font-size:17px}
+ #player .radio-brand small{font-size:8px}
+ #player .radio-track-card{top:13%;right:2%;width:46%;padding:7px}
+ #player .radio-main-controls{top:37%;right:1%;width:48%}
+ #player .radio-volume{top:50%;right:2%;width:44%}
+ #player .radio-playlist{top:57%;right:2%;width:46%;bottom:18%}
+ #player .radio-bottom-tools{height:16%;min-height:65px;padding:3px;gap:2px}
+ #player .radio-tool{flex-direction:column;gap:0;font-size:8px}
+ #player .radio-tool b{font-size:20px}
+ #player #xpVisualizer{width:38%;height:10%;bottom:18%}
+ #player .radio-float-panel{width:94%;right:3%;bottom:18%;max-height:70%}
+}
+
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -385,32 +463,21 @@ body.keyboard-visible footer{display:none}
 <section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>ACTUALIZADOR DE LA PDA</h2><p class="muted">Buscá nuevas versiones de PDA // ZONA e instalalas sin desinstalar la aplicación. Tus perfiles, contactos, mensajes y registros guardados no se borran durante una actualización.</p><button class="btn" id="pdaCheckUpdates" type="button">↻ BUSCAR ACTUALIZACIONES</button><div id="pdaUpdateStatus" class="statusline" role="status" aria-live="polite">SISTEMA DE ACTUALIZACIÓN LISTO · VERSIÓN 52</div><small class="muted">Se necesita conexión a Internet. La PDA se reiniciará si encuentra una versión nueva.</small></div><div class="panel"><h2>FRECUENCIAS Y COMUNICACIONES</h2><p>Configurá los canales de comunicación de tu PDA. Algunas frecuencias requieren conexión con la red de la Zona.</p></div></section>
 
 <section id="gallery" class="view"><div class="panel"><div class="row"><h2>GALERÍA DE CAMPO</h2><span id="galleryCount" class="muted">0 FOTOS</span></div><p class="muted">Fotos guardadas únicamente en este dispositivo.</p><div class="media-actions"><button class="btn" id="galleryCamera">📷 ABRIR CÁMARA</button><button class="btn" id="galleryChoose">▧ ELEGIR FOTOS</button></div><input id="galleryCameraInput" type="file" accept="image/*" capture="environment" multiple style="display:none"><input id="galleryFileInput" type="file" accept="image/*" multiple style="display:none"><div id="galleryGrid" class="media-grid"><div class="empty">Todavía no hay fotografías.</div></div></div></section>
-<section id="player" class="view"><div class="panel radio-console">
-<div class="row radio-console-head"><h2>REPRODUCTOR DE LA ZONA</h2><span id="playerStatus" class="media-muted">EN ESPERA</span></div>
-<div id="zoneCampfire" class="zone-campfire player-visual-stage" role="img" aria-label="Escena de Stalker junto a una fogata">
-<canvas id="xpVisualizer" aria-label="Espectro de frecuencias en vivo"></canvas>
-<div class="visualizer-topline"><span>▰ PDA // AUDIO SPECTRUM</span><span id="xpVizStatus">● EN ESPERA</span></div>
-<div class="visualizer-axis"><span>LOW</span><span>MID</span><span>HIGH</span><span>LIVE SIGNAL</span></div>
-<div class="visualizer-center-mark">◉</div>
-</div>
-<div class="radio-track-info"><div id="playerDisc" class="player-disc"><span id="discLabel">PDA // AUDIO</span></div><div class="radio-track-copy"><strong id="trackTitle">Ninguna pista seleccionada</strong><div id="trackArtist" class="media-muted">Cargá música desde tu dispositivo</div></div></div>
-<div class="player-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div>
-<div class="row"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div>
-<input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción">
-<div class="row radio-volume-head"><label for="playerVolume" class="muted">VOLUMEN</label><span id="volumeValue" class="muted">80%</span></div>
-<input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen">
-<div class="radio-console-divider"></div>
-<div class="radio-console-section"><div class="row"><h2>LISTA DE REPRODUCCIÓN</h2><span id="trackCount" class="muted">0 PISTAS</span></div><div class="media-actions"><button class="btn" id="addTracks">＋ AGREGAR MP3 / AUDIO</button><button id="clearTracks" class="danger">VACIAR LISTA</button></div><input id="trackFileInput" type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav,.flac" multiple style="display:none"><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div>
-<div class="radio-console-divider"></div>
-<div class="radio-console-section xp-audio-panel"><div class="xp-viz-head"><div><h2>ECUALIZADOR DE AUDIO</h2><small>5 BANDAS · FILTROS DIGITALES</small></div><span class="eq-live-mark">● DSP ACTIVO</span></div><p class="muted">Moldeá el sonido de tu música en tiempo real.</p><div class="eq-grid">
-<div class="eq-band"><input data-native-control class="eq-slider" data-freq="60" type="range" min="-12" max="12" step="1" value="0" orient="vertical"><label>60 Hz</label></div>
-<div class="eq-band"><input data-native-control class="eq-slider" data-freq="250" type="range" min="-12" max="12" step="1" value="0"><label>250 Hz</label></div>
-<div class="eq-band"><input data-native-control class="eq-slider" data-freq="1000" type="range" min="-12" max="12" step="1" value="0"><label>1 kHz</label></div>
-<div class="eq-band"><input data-native-control class="eq-slider" data-freq="4000" type="range" min="-12" max="12" step="1" value="0"><label>4 kHz</label></div>
-<div class="eq-band"><input data-native-control class="eq-slider" data-freq="12000" type="range" min="-12" max="12" step="1" value="0"><label>12 kHz</label></div>
-</div><div class="row eq-reset-row"><small class="muted">−12 dB</small><button id="resetEQ">↺ RESTABLECER</button><small class="muted">+12 dB</small></div></div>
-<div class="radio-console-divider"></div>
-<div class="radio-console-section radio-sleep"><h2>TEMPORIZADOR DE APAGADO</h2><p class="muted">Detiene la música automáticamente después del tiempo elegido.</p><div class="row"><select id="sleepTimer"><option value="0">Desactivado</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option><option value="90">90 minutos</option></select><button id="cancelSleep">CANCELAR</button></div><small id="sleepStatus" class="media-muted">Sin temporizador activo.</small></div>
+<section id="player" class="view">
+<div id="zoneCampfire" class="zone-campfire player-visual-stage radio-fullscreen" aria-label="Radio de la Zona">
+ <div class="radio-bg-shade"></div>
+ <header class="radio-overlay-header"><div class="radio-brand"><span class="radio-rad">☢</span><div><b>PDA <i>// ZONA</i></b><small>RADIO DE LA ZONA</small></div></div><div class="radio-live"><span class="radio-signal"><i></i><i></i><i></i><i></i></span><b>EN VIVO</b></div></header>
+ <canvas id="xpVisualizer" aria-label="Espectro de frecuencias en vivo"></canvas>
+ <div class="radio-track-card"><div class="radio-track-meta"><strong id="trackTitle">Ninguna pista seleccionada</strong><span id="trackArtist">Cargá música desde tu dispositivo</span></div><div class="radio-track-time"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"></div>
+ <div class="radio-main-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div>
+ <div class="radio-volume"><span>VOL</span><input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen"><small id="volumeValue">80%</small></div>
+ <div class="radio-playlist"><div class="radio-list-title">♫ &nbsp;LISTA DE REPRODUCCIÓN <small id="trackCount">0 PISTAS</small></div><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div>
+ <div class="radio-bottom-tools"><button id="addTracks" class="radio-tool"><b>＋</b><span>AGREGAR<br>CANCIÓN</span></button><button id="lyricsToggle" class="radio-tool"><b>☷</b><span>VER LETRA</span></button><button id="shuffleToggle" class="radio-tool"><b>⤨</b><span>ALEATORIO</span></button><button id="repeatToggle" class="radio-tool"><b>⟳</b><span>REPETIR</span></button><button id="eqToggle" class="radio-tool"><b>▥</b><span>ECUALIZADOR</span></button></div>
+ <input id="trackFileInput" type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav,.flac" multiple style="display:none">
+ <div id="radioLyricsPanel" class="radio-float-panel" hidden><div class="radio-float-head">LETRA DE LA CANCIÓN <button type="button" data-close-panel="radioLyricsPanel">✕</button></div><textarea id="radioLyricsText" placeholder="Pegá o escribí la letra de esta canción..."></textarea><button id="saveRadioLyrics">GUARDAR LETRA</button></div>
+ <div id="radioEqPanel" class="radio-float-panel" hidden><div class="radio-float-head">ECUALIZADOR DE LA ZONA <button type="button" data-close-panel="radioEqPanel">✕</button></div><div class="eq-grid">
+ <div class="eq-band"><input data-native-control class="eq-slider" data-freq="60" type="range" min="-12" max="12" step="1" value="0" orient="vertical"><label>60 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="250" type="range" min="-12" max="12" step="1" value="0"><label>250 Hz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="1000" type="range" min="-12" max="12" step="1" value="0"><label>1 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="4000" type="range" min="-12" max="12" step="1" value="0"><label>4 kHz</label></div><div class="eq-band"><input data-native-control class="eq-slider" data-freq="12000" type="range" min="-12" max="12" step="1" value="0"><label>12 kHz</label></div></div><div class="radio-eq-footer"><button id="resetEQ">↺ RESTABLECER</button><label>APAGADO AUTOMÁTICO <select id="sleepTimer"><option value="0">Desactivado</option><option value="15">15 minutos</option><option value="30">30 minutos</option><option value="60">60 minutos</option><option value="90">90 minutos</option></select></label><button id="cancelSleep">CANCELAR</button><small id="sleepStatus">Sin temporizador activo.</small></div></div>
+ <span id="playerStatus" class="radio-hidden-status">EN ESPERA</span><span id="xpVizStatus" class="radio-hidden-status">● EN ESPERA</span>
 </div></section>
 <audio id="zonaAudio" preload="metadata" playsinline></audio><div id="galleryOverlay" class="media-overlay"><button class="overlay-close" id="galleryClose">✕</button><img id="galleryLarge" alt="Fotografía ampliada"><button id="galleryDelete" class="danger" style="position:absolute;bottom:18px">ELIMINAR FOTO</button></div>
 </main><footer>PDA // ZONA · DATOS LOCALES EN ESTE NAVEGADOR</footer>
@@ -1707,4 +1774,17 @@ initPdaComms();
 if ('serviceWorker' in navigator) {
  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('PDA offline:',err)));
 }
+
+/* Controles adicionales del HUD de radio */
+(()=>{const $=id=>document.getElementById(id);let shuffle=false,repeat=false;
+ const openPanel=id=>{['radioLyricsPanel','radioEqPanel'].forEach(x=>$(x).hidden=x!==id)};
+ document.querySelectorAll('[data-close-panel]').forEach(b=>b.addEventListener('click',()=>openPanel('')));
+ $('lyricsToggle').addEventListener('click',()=>{const p=$('radioLyricsPanel');if(!p.hidden){openPanel('');return}openPanel('radioLyricsPanel');const key='zona_lyrics_'+(window.currentTrackId||$('trackTitle').textContent);$('radioLyricsText').value=localStorage.getItem(key)||''});
+ $('saveRadioLyrics').addEventListener('click',()=>{const key='zona_lyrics_'+(window.currentTrackId||$('trackTitle').textContent);localStorage.setItem(key,$('radioLyricsText').value);$('saveRadioLyrics').textContent='GUARDADA';setTimeout(()=>$('saveRadioLyrics').textContent='GUARDAR LETRA',1200)});
+ $('eqToggle').addEventListener('click',()=>{const p=$('radioEqPanel');if(!p.hidden){openPanel('');return}openPanel('radioEqPanel')});
+ $('shuffleToggle').addEventListener('click',()=>{shuffle=!shuffle;$('shuffleToggle').classList.toggle('active',shuffle);$('shuffleToggle').setAttribute('aria-pressed',String(shuffle))});
+ $('repeatToggle').addEventListener('click',()=>{repeat=!repeat;$('repeatToggle').classList.toggle('active',repeat);$('repeatToggle').setAttribute('aria-pressed',String(repeat));$('zonaAudio').loop=repeat});
+ $('zonaAudio').addEventListener('ended',()=>{if(repeat)return;if(shuffle&&Array.isArray(window.musicItems)&&musicItems.length>1){const choices=musicItems.filter(x=>x.id!==window.currentTrackId);if(choices.length)window.playTrack?.(choices[Math.floor(Math.random()*choices.length)].id,true)}});
+})();
+
 </script></body></html>
