@@ -500,6 +500,14 @@ body.keyboard-visible footer{display:none}
 #player #radioCreditsText{white-space:normal}
 #player #radioCreditsText .rich-inline-link{color:inherit;text-decoration:underline}
 
+
+/* v63 · evitar selección/callout del navegador y dejar fija la barra inferior */
+#player #zoneCampfire,#player #zoneCampfire *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#player #zoneCampfire input,#player #zoneCampfire textarea,#player #zoneCampfire select,#player #zoneCampfire button{-webkit-user-select:none;user-select:none}
+#player #zoneCampfire .radio-bottom-tools{touch-action:manipulation}
+#player #zoneCampfire .radio-draggable{touch-action:pan-y; -webkit-user-drag:none}
+#player #zoneCampfire .radio-draggable.dragging{touch-action:none!important}
+
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -1898,7 +1906,7 @@ let radioShuffleMode=false;
 
 /* Arrastre limitado al interior del escenario: conserva el punto exacto donde se toma */
 (()=>{const stage=document.getElementById('zoneCampfire');if(!stage)return;
- const selectors=['.radio-track-card','.radio-main-controls','.radio-volume','.radio-playlist','.radio-bottom-tools','#lyricsEye','#radioCreditsControls'];
+ const selectors=['.radio-overlay-header','.radio-track-card','.radio-main-controls','.radio-volume','.radio-playlist','#lyricsEye','#radioCreditsControls','#radioLyricsPanel','#radioEqPanel'];
  const orient=()=>matchMedia('(orientation:landscape)').matches?'landscape':'portrait';
  selectors.forEach(sel=>{const el=stage.querySelector(sel);if(!el)return;const k='pda_radio_drag_'+orient()+'_'+(el.id||el.classList[0]);
   const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
@@ -1911,7 +1919,7 @@ let radioShuffleMode=false;
   try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}
   let hold=null,drag=false,offsetX=0,offsetY=0,pointerId=null;
   el.addEventListener('pointerdown',e=>{
-   if(e.target.closest('input,textarea,select'))return;
+   if(e.target.closest('input,textarea,select,button'))return;
    const r=el.getBoundingClientRect();offsetX=e.clientX-r.left;offsetY=e.clientY-r.top;pointerId=e.pointerId;
    hold=setTimeout(()=>{drag=true;el.classList.add('dragging');el.style.touchAction='none';try{el.setPointerCapture(pointerId)}catch{}},420);
   });
