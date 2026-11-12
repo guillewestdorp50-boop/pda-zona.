@@ -1094,7 +1094,9 @@ async function send(){
   try{const client=await pdaEnsureSession();const {error}=await client.from('pda_messages').insert({conversation_id:contact.remoteConversationId,sender_id:pdaUserId,message_type:'text',body:text});if(error)throw error;$('msg').value='';clearDraft('msg');saveDrafts();await pdaLoadRemoteMessages(contact);pdaRenderChat();playPdaBeep('message')}
   catch(e){alert('No se pudo transmitir. El texto sigue en el cuadro para que no lo pierdas. '+(e.message||''))}
  }else{
-  (chats[id]??=[]).push({me:true,who:'TÚ',text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});$('msg').value='';clearDraft('msg');save();saveDrafts();renderChat();playPdaBeep('message')
+  (chats[id]??=[]).push({me:true,who:'TÚ',text,time:new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})});
+  pdaTryBarbasArtifactDelivery(text,contact);
+  $('msg').value='';clearDraft('msg');save();saveDrafts();renderChat();playPdaBeep('message')
  }
 }
 $('send').onclick=send;
@@ -1806,6 +1808,24 @@ try{barbasDeliveryData=JSON.parse(localStorage.getItem('zona_barbas_deliveries_v
 if(!barbasDeliveryData.quantities||typeof barbasDeliveryData.quantities!=='object')barbasDeliveryData.quantities={};
 if(!Array.isArray(barbasDeliveryData.history))barbasDeliveryData.history=[];
 function saveBarbasDeliveries(){localStorage.setItem('zona_barbas_deliveries_v1',JSON.stringify(barbasDeliveryData))}
+function pdaTryBarbasArtifactDelivery(message,contact){
+ if(!contact||contact.npcStory||contact.remoteConversationId||!/barbas/i.test(contact.name||''))return null;
+ const normalized=String(message||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();
+ const deliveryIntent=/(?:\\b(?:te\\s+)?(?:he\\s+)?(?:traido|traje|traigo|entrego|entregar|dejo|deje|doy)\\b|\\baqui\\s+(?:tienes|esta)\\b)/.test(normalized);
+ if(!deliveryIntent)return null;
+ const matches=inventoryCatalog.filter(x=>x.kind==='artifact'&&new RegExp('(^|[^a-z0-9])'+x.name.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().replace(/[.*+?^{}$()|[\\]\\\\]/g,'\\\\function saveBarbasDeliveries(){localStorage.setItem('zona_barbas_deliveries_v1',JSON.stringify(barbasDeliveryData))}
+')+'($|[^a-z0-9])').test(normalized));
+ if(matches.length!==1)return null;
+ const item=matches[0],backpack=Math.max(0,Number(inventoryData.quantities[item.id])||0);
+ if(backpack<1)return {status:'empty',item};
+ const delivered=Math.max(0,Number(barbasDeliveryData.quantities[item.id])||0);
+ inventoryData.quantities[item.id]=backpack-1;
+ barbasDeliveryData.quantities[item.id]=delivered+1;
+ barbasDeliveryData.history.push({action:'give',id:item.id,name:item.name,time:new Date().toLocaleString('es-AR'),source:'chat'});
+ barbasDeliveryData.history=barbasDeliveryData.history.slice(-100);
+ saveInventory();saveBarbasDeliveries();renderInventory();renderBarbasArtifactPanel();
+ return {status:'delivered',item};
+}
 function renderBarbasArtifactPanel(){
  const panel=$('barbasArtifactPanel');if(!panel)return;if(!window.pdaInventoryReady){panel.classList.add('hidden');return;}
  const contact=pdaCurrentContact(),isManualBarbas=!!contact&&!contact.npcStory&&!contact.remoteConversationId&&/barbas/i.test(contact.name||'');
