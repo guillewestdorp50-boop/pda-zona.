@@ -508,6 +508,20 @@ body.keyboard-visible footer{display:none}
 #player #zoneCampfire .radio-draggable{touch-action:none!important; -webkit-user-drag:none}
 #player #zoneCampfire .radio-draggable.dragging{touch-action:none!important}
 
+
+/* v65 · zonas de agarre visibles y cómodas para volumen y transporte */
+#player #zoneCampfire .radio-volume{
+ padding:13px 15px;min-height:48px;border:1px solid #d0a33d66;
+ border-radius:12px;background:rgba(5,8,8,.48);
+ box-shadow:0 3px 12px #0006;backdrop-filter:blur(3px);
+}
+#player #zoneCampfire .radio-volume input{min-height:28px;touch-action:pan-x}
+#player #zoneCampfire .radio-main-controls{
+ min-height:104px;padding:10px 16px;border:1px solid #d0a33d66;
+ border-radius:16px;background:rgba(5,8,8,.42);
+ box-shadow:0 3px 14px #0006;backdrop-filter:blur(3px);
+}
+#player #zoneCampfire .radio-main-controls button{position:relative;z-index:1}
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -664,6 +678,12 @@ function richText(value,currentId){
   .replace(/\[color=(#[0-9a-f]{6})\]([\s\S]*?)\[\/color\]/gi,(_,c,t)=>'<span style="color:'+c+'">'+t+'</span>')
   .replace(/\[size=(small|normal|large|huge)\]([\s\S]*?)\[\/size\]/gi,(_,z,t)=>'<span style="font-size:'+({small:'12px',normal:'15px',large:'19px',huge:'24px'})[z]+'">'+t+'</span>')
   .replace(/\[font=(mono|serif|sans)\]([\s\S]*?)\[\/font\]/gi,(_,f,t)=>'<span style="font-family:'+({mono:'monospace',serif:'Georgia,serif',sans:'Arial,sans-serif'})[f]+'">'+t+'</span>');
+ // Acepta también variantes habituales de etiquetas escritas manualmente.
+ out=out.replace(/\[(?:bold|negrita)\]([\s\S]*?)\[\/(?:bold|negrita)\]/gi,'<strong>$1</strong>')
+  .replace(/\[(?:italic|cursiva)\]([\s\S]*?)\[\/(?:italic|cursiva)\]/gi,'<em>$1</em>')
+  .replace(/\[(?:big|grande)\]([\s\S]*?)\[\/(?:big|grande)\]/gi,'<span style="font-size:24px">$1</span>')
+  .replace(/\[(?:medium|mediano)\]([\s\S]*?)\[\/(?:medium|mediano)\]/gi,'<span style="font-size:19px">$1</span>')
+  .replace(/\[(?:tiny|chiquito)\]([\s\S]*?)\[\/(?:tiny|chiquito)\]/gi,'<span style="font-size:12px">$1</span>');
  return linkEncyclopediaReferences(out,currentId).replace(/\r?\n/g,'<br>');
 }
 function linkEncyclopediaReferences(html,currentId){
