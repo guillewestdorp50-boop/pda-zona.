@@ -452,6 +452,37 @@ body.keyboard-visible footer{display:none}
  #player .radio-lyrics-eye{top:12%;right:3%}
 }
 
+
+/* RADIO v60 · créditos ascendentes y proporciones panorámicas */
+#player .radio-credits{left:25%;right:25%;top:15%;bottom:14%;padding:0 14px;overflow-y:auto;scroll-behavior:auto;touch-action:pan-y;overscroll-behavior:contain}
+#player #radioCreditsText{display:block;margin-top:100%;padding-bottom:100%;font-size:clamp(16px,2.3vh,25px);line-height:1.75}
+#player .radio-lyrics-eye{width:30px;height:30px;top:10%;right:1.5%;font-size:16px;opacity:.82}
+#player .radio-lyrics-eye:active{transform:scale(.94)}
+@media(orientation:landscape) and (max-height:600px){
+ #player .radio-track-card{top:11%;right:2%;width:clamp(220px,27vw,360px);max-width:30vw;padding:5px 9px}
+ #player .radio-track-meta strong{font-size:clamp(13px,2.2vh,19px)}
+ #player .radio-track-meta span{font-size:clamp(8px,1.45vh,11px)}
+ #player .radio-track-time{font-size:clamp(9px,1.4vh,12px)}
+ #player .radio-main-controls{top:39%;right:3%;width:26%;gap:clamp(5px,1.6vw,14px)}
+ #player .radio-main-controls button{min-width:32px;min-height:32px;font-size:clamp(17px,3.4vh,25px);padding:3px}
+ #player .radio-main-controls button.main-play{width:clamp(43px,8vh,62px);height:clamp(43px,8vh,62px);min-width:0;min-height:0;font-size:clamp(19px,3.8vh,29px)}
+ #player .radio-volume{top:51%;right:3%;width:24%;font-size:9px}
+ #player .radio-playlist{top:59%;right:2%;bottom:16%;width:27%;padding:4px 7px}
+ #player .radio-list-title{font-size:clamp(9px,1.7vh,12px)}
+ #player #trackList .item{padding:2px 4px;font-size:10px;margin:3px 0}
+ #player .radio-bottom-tools{height:13%;padding:2px 7px;gap:3px}
+ #player .radio-tool{font-size:clamp(8px,1.35vh,10px);gap:3px;padding:1px}
+ #player .radio-tool b{font-size:clamp(14px,2.4vh,19px)}
+ #player .radio-credits{left:23%;right:23%;top:14%;bottom:14%;padding:0 10px}
+ #player #radioCreditsText{font-size:clamp(14px,2.15vh,20px);line-height:1.55}
+ #player .radio-lyrics-eye{top:10%;right:1.2%;width:27px;height:27px;font-size:14px}
+}
+@media(orientation:portrait){
+ #player .radio-credits{left:8%;right:8%;top:19%;bottom:17%;padding:0 10px}
+ #player #radioCreditsText{font-size:clamp(15px,2.1vh,20px);line-height:1.65}
+ #player .radio-lyrics-eye{top:12%;right:3%;width:28px;height:28px}
+}
+
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -1835,12 +1866,13 @@ let radioShuffleMode=false;
  const stopCredits=()=>{if(creditsTimer){clearInterval(creditsTimer);creditsTimer=null}};
  const closeLyricsEditor=()=>{ $('radioLyricsPanel').hidden=true; if(typeof closePdaKeyboard==='function')closePdaKeyboard(); };
  const startCredits=()=>{
-  stopCredits();const box=$('radioCredits');box.scrollTop=0;creditsTimer=setInterval(()=>{
+  stopCredits();const box=$('radioCredits');box.scrollTop=0;creditsPausedUntil=0;
+  creditsTimer=setInterval(()=>{
    if(!lyricsVisible||Date.now()<creditsPausedUntil)return;
    const bottom=box.scrollHeight-box.clientHeight;
-   if(box.scrollTop<bottom)box.scrollTop=Math.min(bottom,box.scrollTop+0.22);
+   if(box.scrollTop<bottom)box.scrollTop=Math.min(bottom,box.scrollTop+0.42);
    else stopCredits();
-  },40);
+  },50);
  };
  const showCredits=()=>{
   const text=localStorage.getItem(lyricKey())||$('radioLyricsText').value;
@@ -1866,7 +1898,7 @@ let radioShuffleMode=false;
   if(e.target.closest('button,input,textarea,.radio-track-card,.radio-main-controls,.radio-playlist,.radio-bottom-tools,.radio-volume'))return;
   if(lyricsMode&&!lyricsVisible)showCredits();
  });
- stage.addEventListener('touchstart',e=>{if(lyricsVisible&&e.target.closest('#radioCredits'))creditsPausedUntil=Date.now()+6500},{passive:true});
+ stage.addEventListener('touchstart',e=>{if(lyricsVisible&&e.target.closest('#radioCredits'))creditsPausedUntil=Date.now()+2800},{passive:true});
  const credits=$('radioCredits');
  credits.addEventListener('pointerdown',()=>{creditsPausedUntil=Date.now()+6500});
  credits.addEventListener('wheel',()=>{creditsPausedUntil=Date.now()+6500},{passive:true});
