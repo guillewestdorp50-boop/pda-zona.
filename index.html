@@ -266,6 +266,73 @@ body.keyboard-visible footer{display:none}
 }
 #player .radio-console .player-visual-stage canvas{background:transparent}
 
+
+/* RADIO v57 · distribución inspirada en la referencia: una sola pantalla */
+#player .radio-console{
+ display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);
+ grid-template-areas:
+ "head head"
+ "visual track"
+ "visual controls"
+ "visual time"
+ "visual progress"
+ "visual volumehead"
+ "visual volume"
+ "visual playlist"
+ "eq eq"
+ "sleep sleep";
+ grid-template-rows:auto auto auto auto auto auto auto minmax(150px,1fr) auto auto;
+ align-items:start;gap:10px 14px;
+ max-height:calc(100dvh - 145px);overflow-y:auto;
+ padding:12px;background:linear-gradient(160deg,#211d17 0%,#0b0d0e 72%);
+ border:2px solid #66543a;border-radius:12px;
+ box-shadow:inset 0 0 24px #000b,0 8px 28px #0009;
+}
+#player .radio-console-head{grid-area:head;position:static;margin:0;padding:8px 10px;background:linear-gradient(90deg,#211b13,#111);border:1px solid #55432b;border-radius:7px}
+#player .radio-console-head h2{color:#e0b13c!important;letter-spacing:2px}
+#player .radio-console .player-visual-stage{grid-area:visual;width:100%;height:100%;min-height:390px;max-height:none;margin:0;border:1px solid #66543a;border-radius:7px;background-size:cover;background-position:center}
+#player .radio-console .player-visual-stage:before{background:linear-gradient(0deg,#0008,transparent 35%);z-index:1}
+#player .radio-console .player-visual-stage:after{box-shadow:inset 0 0 30px #0009}
+#player .radio-console .player-visual-stage canvas{z-index:2;opacity:.9}
+#player .radio-console .visualizer-topline,#player .radio-console .visualizer-axis{display:none}
+#player .radio-console .visualizer-center-mark{display:none}
+#player .radio-track-info{grid-area:track;justify-content:flex-start;padding:12px;border:1px solid #66543a;border-radius:7px;background:#090909d9}
+#player .radio-track-info .player-disc{display:none}
+#player .radio-track-copy strong{font-size:clamp(17px,2vw,25px);color:#e4b42f}
+#player .radio-track-copy .media-muted{font-size:13px;color:#bbb}
+#player .radio-console .player-controls{grid-area:controls;justify-content:center;gap:22px;margin:0;padding:3px}
+#player .radio-console .player-controls button{border-radius:50%;border:1px solid #80632b;background:linear-gradient(145deg,#3a3020,#111);color:#eee0bd}
+#player .radio-console .player-controls button.main-play{width:66px;height:66px;background:linear-gradient(145deg,#f1c34a,#8b5b13);border:2px solid #d4a52f;color:#17120a}
+#player .radio-console>.row:has(#currentTime){grid-area:time;color:#ddd}
+#player .radio-console #trackProgress{grid-area:progress;width:100%;accent-color:#e6ad27}
+#player .radio-console .radio-volume-head{grid-area:volumehead;margin:0}
+#player .radio-console #playerVolume{grid-area:volume;width:100%;accent-color:#e6ad27}
+#player .radio-console>.radio-console-section:not(.xp-audio-panel){grid-area:playlist;min-width:0;padding:10px;border:1px solid #66543a;border-radius:7px;background:#080808d9}
+#player .radio-console-section:not(.xp-audio-panel)>.row h2{color:#e0b13c;font-size:13px}
+#player .radio-console #trackList{max-height:170px;overflow-y:auto}
+#player .radio-console-divider{display:none}
+#player .radio-console .xp-audio-panel{grid-area:eq;padding:12px;border:1px solid #66543a;border-radius:7px;background:#111!important}
+#player .radio-console .xp-viz-head h2{color:#e0b13c!important}
+#player .radio-console .eq-band{background:linear-gradient(#292116,#100e0b);border-color:#66543a}
+#player .radio-console .eq-band input{accent-color:#e4ae32}
+#player .radio-console .radio-sleep{grid-area:sleep;padding:12px;border:1px solid #66543a;border-radius:7px;background:#111}
+#player .radio-console .radio-sleep h2{color:#e0b13c}
+@media(max-width:650px){
+ #player .radio-console{
+  display:flex;flex-direction:column;gap:10px;
+  max-height:calc(100dvh - 125px);padding:9px;
+ }
+ #player .radio-console-head{width:100%}
+ #player .radio-console .player-visual-stage{height:220px;min-height:220px;max-height:220px;width:100%}
+ #player .radio-track-info{width:100%}
+ #player .radio-console .player-controls{width:100%}
+ #player .radio-console>.row:has(#currentTime){width:100%}
+ #player .radio-console #trackProgress,#player .radio-console #playerVolume{width:100%}
+ #player .radio-console-section:not(.xp-audio-panel){width:100%}
+ #player .radio-console #trackList{max-height:190px}
+ #player .radio-console .xp-audio-panel,#player .radio-console .radio-sleep{width:100%}
+}
+
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
