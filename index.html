@@ -1183,6 +1183,7 @@ pdaKeys.addEventListener('click',e=>{
  const btn=e.target.closest('button[data-k]'); if(!btn)return;
  if(suppressKeyClick){e.preventDefault();return}
  const k=btn.dataset.k;
+ swipeSuggestionRange=null;
  if(k==='hide'||k==='done'){closePdaKeyboard();return}
  if(k==='shift'){const now=Date.now();if(capsLock){capsLock=false;shiftOn=false}else if(shiftOn&&now-lastShiftTap<500){capsLock=true;shiftOn=true}else{shiftOn=true}lastShiftTap=now;updateShiftKey();return}
  if(k==='symbols'){symbolMode=!symbolMode;$('letterLayout').classList.toggle('hidden',symbolMode);$('numberLayout').classList.toggle('hidden',!symbolMode);$('keyboardModeBtn').textContent=symbolMode?'ABC':'?123';hideSwipeSuggestions();return}
