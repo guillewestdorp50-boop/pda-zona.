@@ -24,3 +24,9 @@ self.addEventListener('fetch', event => {
     return response;
   })));
 });
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'PDA_GET_VERSION' && event.ports && event.ports[0]) {
+    event.ports[0].postMessage({ cache: CACHE });
+  }
+});
