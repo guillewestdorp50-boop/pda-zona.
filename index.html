@@ -1813,7 +1813,8 @@ function pdaTryBarbasArtifactDelivery(message,contact){
  const normalizeArtifactText=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
  const normalized=normalizeArtifactText(message);
  const deliveryIntent=/\b(?:te\s+)?(?:he\s+)?(?:traido|traje|traigo|entrego|entregar|dejo|deje|doy)\b|\baqui\s+(?:tienes|esta)\b/.test(normalized);
- if(!deliveryIntent)return null;
+ const negatedDelivery=/\bno\s+(?:te\s+(?:lo\s+)?)?(?:he\s+)?(?:traido|traje|traigo|entrego|entregar|dejo|deje|doy)\b/.test(normalized);
+ if(!deliveryIntent||negatedDelivery)return null;
  const padded=' '+normalized+' ';
  const matches=inventoryCatalog.filter(x=>x.kind==='artifact'&&padded.includes(' '+normalizeArtifactText(x.name)+' '));
  if(matches.length!==1)return null;
