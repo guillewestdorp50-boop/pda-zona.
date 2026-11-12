@@ -258,6 +258,14 @@ body.keyboard-visible footer{display:none}
 #player .radio-sleep select{flex:1;min-width:0}
 @media(max-width:600px){#player .radio-console{max-height:calc(100dvh - 130px);padding:11px;gap:10px}#player .radio-console-head{top:-11px;margin:-11px -11px 0;padding:10px 11px}#player .radio-track-info{justify-content:flex-start}#player .radio-console .player-visual-stage{min-height:150px}}
 
+
+/* Fondo fotográfico real de la Zona para el escenario del reproductor */
+#player .radio-console .player-visual-stage{
+ background-image:linear-gradient(90deg,#02060938 0%,#02060908 42%,#02060930 100%),linear-gradient(0deg,#02060978 0%,transparent 42%),url("https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2427420/a917f54315fc37a7484287c56256f148ccedbfa7/ss_a917f54315fc37a7484287c56256f148ccedbfa7.jpg");
+ background-size:cover;background-position:center 48%;background-repeat:no-repeat;
+}
+#player .radio-console .player-visual-stage canvas{background:transparent}
+
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
