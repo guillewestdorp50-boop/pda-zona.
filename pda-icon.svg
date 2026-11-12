@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<rect width="512" height="512" fill="#000"/>
+<g fill="#ffdf16" stroke="#ffdf16">
+<circle cx="256" cy="205" r="151" fill="none" stroke-width="13"/>
+<path d="M224 184 164 92a112 112 0 0 1 184 0l-60 92a54 54 0 0 0-64 0Z" stroke="none"/>
+<path d="m224 226-108-8a112 112 0 0 0 92 159l38-105a54 54 0 0 1-22-46Z" stroke="none"/>
+<path d="m288 226 108-8a112 112 0 0 1-92 159l-38-105a54 54 0 0 0 22-46Z" stroke="none"/>
+<circle cx="256" cy="205" r="31"/>
+</g>
+<text x="256" y="445" fill="#ffdf16" font-family="Arial,Helvetica,sans-serif" font-size="68" font-weight="900" text-anchor="middle" letter-spacing="3">P.D.A.</text>
+</svg>
