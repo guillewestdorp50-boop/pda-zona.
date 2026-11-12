@@ -1047,12 +1047,25 @@ const inventoryCatalog=[["medical","Botiquines","Botiquín militar",0.1,"Army_Me
 const inventoryCategories=['TODOS',...new Set(inventoryCatalog.map(x=>x.category))];
 let inventoryData={};
 try{inventoryData=JSON.parse(localStorage.getItem('zona_pda_inventory_v1')||'{}')||{}}catch(e){inventoryData={}}
-if(!inventoryData.quantities){
- inventoryData.quantities={};
- // Migración conservadora: copia los registros antiguos de artefactos al nuevo inventario.
- // La clave anterior queda intacta como respaldo.
- try{const old=JSON.parse(localStorage.getItem('zona_artifact_inventory')||'[]');old.forEach((a,i)=>{const id='legacy_'+(a.id||i);inventoryData.quantities[id]=Math.max(0,Number(a.qty)||1);inventoryCatalog.push({id,kind:'artifact',category:'Artefactos',name:a.name||'Artefacto registrado',weight:Math.max(0,Number(a.weight)||0),image:'',glyph:a.symbol||'✦',unit:'Registro anterior',legacy:true});});}catch(e){}
- localStorage.setItem('zona_pda_inventory_v1',JSON.stringify(inventoryData));
+if(!inventoryData||typeof inventoryData!=='object'||Array.isArray(inventoryData))inventoryData={};
+if(!inventoryData.quantities||typeof inventoryData.quantities!=='object'||Array.isArray(inventoryData.quantities))inventoryData.quantities={};
+// Migración segura y repetible: recupera artefactos del formato anterior incluso
+// si el inventario nuevo ya existe. Nunca pisa cantidades actuales ni borra el respaldo.
+let inventoryMigrationChanged=false;
+try{
+ const oldArtifacts=JSON.parse(localStorage.getItem('zona_artifact_inventory')||'[]');
+ if(Array.isArray(oldArtifacts))oldArtifacts.forEach((a,i)=>{
+  if(!a||typeof a!=='object')return;
+  const id='legacy_'+(a.id||i);
+  if(!inventoryCatalog.some(x=>x.id===id))inventoryCatalog.push({id,kind:'artifact',category:'Artefactos',name:a.name||'Artefacto registrado',weight:Math.max(0,Number(a.weight)||0),image:'',glyph:a.symbol||'✦',unit:'Registro anterior',legacy:true});
+  if(!Object.prototype.hasOwnProperty.call(inventoryData.quantities,id)){
+   inventoryData.quantities[id]=Math.max(0,Number(a.qty)||1);
+   inventoryMigrationChanged=true;
+  }
+ });
+}catch(e){console.warn('PDA inventario: no se pudo revisar el respaldo anterior.',e)}
+if(inventoryMigrationChanged||!localStorage.getItem('zona_pda_inventory_v1')){
+ try{localStorage.setItem('zona_pda_inventory_v1',JSON.stringify(inventoryData))}catch(e){console.warn('PDA inventario: no se pudo guardar la migración.',e)}
 }
 let inventoryCategory='TODOS',inventorySearch='';
 const copSuits=[
