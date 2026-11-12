@@ -1436,9 +1436,9 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
  function unlockAudio(){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume();}catch(e){}}
  // Clic breve de banda ancha: chasquido seco, sin tono electrónico sostenido.
  function tick(){if(!audio||audio.state!=='running')return;try{const now=audio.currentTime,n=Math.max(1,Math.floor(audio.sampleRate*.018)),buffer=audio.createBuffer(1,n,audio.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<n;i++)data[i]=(Math.random()*2-1)*(1-i/n);const src=audio.createBufferSource(),filter=audio.createBiquadFilter(),gain=audio.createGain();src.buffer=buffer;filter.type='bandpass';filter.frequency.value=3900;filter.Q.value=.8;gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.045,now+.002);gain.gain.exponentialRampToValueAtTime(.0001,now+.018);src.connect(filter);filter.connect(gain);gain.connect(audio.destination);src.start(now);src.stop(now+.019);}catch(e){}}
- function geiger(){if(geigerStarted)return;geigerStarted=true;unlockAudio();geigerStart=performance.now();const pulse=()=>{if(performance.now()-geigerStart>=680)return;tick();geigerTimer=setTimeout(pulse,65+Math.random()*115);};pulse();}
+ function geiger(){if(geigerStarted)return;geigerStarted=true;unlockAudio();geigerStart=performance.now();const pulse=()=>{if(performance.now()-geigerStart>=1550)return;tick();geigerTimer=setTimeout(pulse,65+Math.random()*115);};pulse();}
  const unlock=()=>unlockAudio();window.addEventListener('pointerdown',unlock,{once:true,passive:true});window.addEventListener('keydown',unlock,{once:true});
- const start=performance.now(),duration=3900;let glitchTimer=null;
+ const start=performance.now(),duration=4900;let glitchTimer=null;
  function finish(){clearInterval(clockTimer);clearTimeout(glitchTimer);clearTimeout(geigerTimer);if(audio&&audio.state!=='closed')audio.close().catch(()=>{});cancelAnimationFrame(raf);root.classList.add('boot-hidden');setTimeout(()=>root.remove(),430);}
  function frame(now){const elapsed=now-start,p=Math.min(100,Math.round(elapsed/duration*100));$b('bootProgress').style.width=p+'%';$b('bootPercent').textContent=p+'%';
   if(elapsed<900)$b('bootStatus').textContent='INICIANDO TERMINAL...';
