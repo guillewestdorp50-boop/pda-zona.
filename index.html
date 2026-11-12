@@ -1843,6 +1843,9 @@ function renderBarbasArtifactPanel(){
  }else{
   actions.innerHTML='<div class="statusline"><span class="statusdot status-alive"></span>MISIÓN COMPLETADA · PAGO RECIBIDO: 18.000 RU</div>';
  }
+ const events=barbasDeliveryData.history.filter(h=>h.id===ojo.id).slice(-5).map(h=>h.action==='give'?'OBJETO PERDIDO · OJO':h.action==='paid'?'DINERO RECIBIDO · 18.000 RU':'').filter(Boolean);
+ if(barbasOjoQuest.stage==='completed')events.push('MISIÓN ACTUALIZADA · MISIÓN COMPLETADA');
+ $('barbasArtifactHistory').innerHTML=events.length?'<b>REGISTRO DE MISIÓN</b><br>'+events.join('<br>'):'<b>REGISTRO DE MISIÓN</b><br>ENTREGA PENDIENTE';
 }
 window.pdaGiveOjoToBarbas=()=>{
  const contact=pdaCurrentContact(),id=$('chatWho').value;if(!contact||!/barbas/i.test(contact.name||'')||barbasOjoQuest.stage!=='awaiting_artifact')return;
