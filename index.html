@@ -493,6 +493,13 @@ body.keyboard-visible footer{display:none}
 #player #radioCreditsClock{font:12px monospace;letter-spacing:1px}
 #player .radio-lyrics-eye{z-index:66}
 
+
+/* v62 · límites estrictos del escenario y formato de letras */
+#player .radio-draggable{user-select:none;-webkit-user-select:none;touch-action:pan-y}
+#player .radio-draggable.dragging{touch-action:none!important;z-index:120!important;transition:none!important}
+#player #radioCreditsText{white-space:normal}
+#player #radioCreditsText .rich-inline-link{color:inherit;text-decoration:underline}
+
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -1878,7 +1885,7 @@ let radioShuffleMode=false;
  const stop=()=>{if(timer){clearInterval(timer);timer=null}playing=false;play.textContent='▶'};
  const closeEditor=()=>{$('radioLyricsPanel').hidden=true;if(typeof closePdaKeyboard==='function')closePdaKeyboard()};
  const openEditor=()=>{$('radioLyricsPanel').hidden=false;$('radioEqPanel').hidden=true;$('radioLyricsText').value=localStorage.getItem(key())||'';if(typeof openPdaKeyboard==='function')openPdaKeyboard($('radioLyricsText'));else $('radioLyricsText').focus()};
- const showReady=()=>{const text=localStorage.getItem(key())||$('radioLyricsText').value;if(!text.trim()){openEditor();return}stop();elapsed=0;clock.textContent='00:00';$('radioCreditsText').textContent=text;box.scrollTop=0;box.hidden=false;$('radioCreditsControls').hidden=false;$('lyricsEye').hidden=false;$('radioLyricsPanel').hidden=true;lyricsMode=true;stage.querySelector('.radio-playlist').style.visibility='hidden'};
+ const showReady=()=>{const text=localStorage.getItem(key())||$('radioLyricsText').value;if(!text.trim()){openEditor();return}stop();elapsed=0;clock.textContent='00:00';$('radioCreditsText').innerHTML=richText(text);box.scrollTop=0;box.hidden=false;$('radioCreditsControls').hidden=false;$('lyricsEye').hidden=false;$('radioLyricsPanel').hidden=true;lyricsMode=true;stage.querySelector('.radio-playlist').style.visibility='hidden'};
  const run=()=>{if(playing){stop();return}const max=box.scrollHeight-box.clientHeight;if(box.scrollTop>=max-1){box.scrollTop=0;elapsed=0}playing=true;play.textContent='Ⅱ';lastTick=Date.now();timer=setInterval(()=>{const now=Date.now(),dt=(now-lastTick)/1000;lastTick=now;box.scrollTop=Math.min(box.scrollHeight-box.clientHeight,box.scrollTop+dt*8);elapsed+=dt;clock.textContent=fmt(elapsed);if(box.scrollTop>=box.scrollHeight-box.clientHeight-1)stop()},50)};
  $('lyricsToggle').addEventListener('click',()=>{if(lyricsMode){stop();box.hidden=true;$('radioCreditsControls').hidden=true;$('lyricsEye').hidden=true;lyricsMode=false;stage.querySelector('.radio-playlist').style.visibility='';return}openEditor()});
  $('saveRadioLyrics').textContent='OK · GUARDAR LETRA';
@@ -1889,17 +1896,32 @@ let radioShuffleMode=false;
  box.addEventListener('pointerdown',()=>{if(playing)stop()});box.addEventListener('wheel',()=>{if(playing)stop()},{passive:true});
 })();
 
-/* Mantener pulsado y arrastrar los módulos flotantes; posición independiente por orientación */
+/* Arrastre limitado al interior del escenario: conserva el punto exacto donde se toma */
 (()=>{const stage=document.getElementById('zoneCampfire');if(!stage)return;
  const selectors=['.radio-track-card','.radio-main-controls','.radio-volume','.radio-playlist','.radio-bottom-tools','#lyricsEye','#radioCreditsControls'];
  const orient=()=>matchMedia('(orientation:landscape)').matches?'landscape':'portrait';
  selectors.forEach(sel=>{const el=stage.querySelector(sel);if(!el)return;const k='pda_radio_drag_'+orient()+'_'+(el.id||el.classList[0]);
-  try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){el.style.left=p.x+'%';el.style.top=p.y+'%';el.style.right='auto';el.style.bottom='auto'}}catch{}
-  let timer=null,drag=false,sx=0,sy=0;
-  el.addEventListener('pointerdown',e=>{if(e.target.closest('input,textarea,select'))return;sx=e.clientX;sy=e.clientY;timer=setTimeout(()=>{drag=true;el.classList.add('dragging');try{el.setPointerCapture(e.pointerId)}catch{}},350)});
-  el.addEventListener('pointermove',e=>{if(!timer&&!drag)return;if(drag){const r=stage.getBoundingClientRect(),x=Math.max(0,Math.min(98,(e.clientX-r.left)/r.width*100)),y=Math.max(0,Math.min(94,(e.clientY-r.top)/r.height*100));el.style.left=x+'%';el.style.top=y+'%';el.style.right='auto';el.style.bottom='auto'}});
-  const end=()=>{clearTimeout(timer);timer=null;if(drag){const r=stage.getBoundingClientRect(),b=el.getBoundingClientRect();localStorage.setItem(k,JSON.stringify({x:(b.left-r.left)/r.width*100,y:(b.top-r.top)/r.height*100}));el.classList.remove('dragging')}drag=false};
-  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+  const place=(x,y,save)=>{const r=stage.getBoundingClientRect(),w=el.offsetWidth,h=el.offsetHeight;
+   const maxX=Math.max(0,r.width-w),maxY=Math.max(0,r.height-h);
+   const px=clamp(x,0,maxX),py=clamp(y,0,maxY);
+   el.style.left=(px/r.width*100)+'%';el.style.top=(py/r.height*100)+'%';el.style.right='auto';el.style.bottom='auto';
+   if(save)localStorage.setItem(k,JSON.stringify({x:px/r.width*100,y:py/r.height*100}));
+  };
+  try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}
+  let hold=null,drag=false,offsetX=0,offsetY=0,pointerId=null;
+  el.addEventListener('pointerdown',e=>{
+   if(e.target.closest('input,textarea,select'))return;
+   const r=el.getBoundingClientRect();offsetX=e.clientX-r.left;offsetY=e.clientY-r.top;pointerId=e.pointerId;
+   hold=setTimeout(()=>{drag=true;el.classList.add('dragging');el.style.touchAction='none';try{el.setPointerCapture(pointerId)}catch{}},420);
+  });
+  el.addEventListener('pointermove',e=>{
+   if(!hold&&!drag)return;
+   if(drag){const r=stage.getBoundingClientRect();place(e.clientX-r.left-offsetX,e.clientY-r.top-offsetY,false)}
+  });
+  const finish=()=>{clearTimeout(hold);hold=null;if(drag){const r=stage.getBoundingClientRect(),b=el.getBoundingClientRect();place(b.left-r.left,b.top-r.top,true);el.classList.remove('dragging');el.style.touchAction='pan-y'}drag=false;pointerId=null};
+  el.addEventListener('pointerup',finish);el.addEventListener('pointercancel',finish);
+  window.addEventListener('resize',()=>{try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}});
  });
 })();
 </script></body></html>
