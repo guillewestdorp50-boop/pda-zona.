@@ -598,10 +598,21 @@ async function initPdaComms(){
 $('newM').onclick=()=>{$('mTitle').value='';$('mDesc').value='';$('mEditor').classList.remove('hidden')};$('cancelM').onclick=()=>$('mEditor').classList.add('hidden');
 $('saveM').onclick=()=>{if(!$('mTitle').value.trim())return alert('Poné un título');missions.unshift({id:Date.now(),title:$('mTitle').value,desc:$('mDesc').value,done:false,date:new Date().toLocaleDateString('es-AR')});save();['mTitle','mDesc'].forEach(clearDraft);saveDrafts();renderM();$('mEditor').classList.add('hidden');playPdaBeep('missionStart')};
 function pdaMissionCountdownMarkup(m){
- const deadline=Date.parse(m.due_at||'');
- if(!Number.isFinite(deadline)||!['offered','accepted','pending_review'].includes(m.status))return '';
- const label=m.status==='pending_review'?'PLAZO ORIGINAL · ':'TIEMPO RESTANTE · ';
- return '<small class="mission-countdown" data-mission-deadline="'+deadline+'" data-mission-label="'+label+'">⌛ CALCULANDO TIEMPO…</small>';
+ if(m.status==='offered')return '';
+ if(m.status==='accepted'){
+  const deadline=Date.parse(m.due_at||'');
+  if(!Number.isFinite(deadline))return '';
+  return '<small class="mission-countdown" data-mission-deadline="'+deadline+'">⌛ CALCULANDO TIEMPO…</small>';
+ }
+ if(['pending_review','completed','failed','expired'].includes(m.status)){
+  const start=Date.parse(m.responded_at||''),stop=Date.parse(m.completed_at||m.finalized_at||m.due_at||'');
+  if(Number.isFinite(start)&&Number.isFinite(stop)&&stop>=start){
+   const seconds=Math.floor((stop-start)/1000),h=Math.floor(seconds/3600),min=Math.floor(seconds%3600/60),sec=seconds%60;
+   const clock=[h,min,sec].map(n=>String(n).padStart(2,'0')).join(':');
+   return '<small class="mission-countdown">⏱ DURACIÓN REGISTRADA · '+clock+'</small>';
+  }
+ }
+ return '';
 }
 function pdaUpdateMissionCountdowns(){
  document.querySelectorAll('[data-mission-deadline]').forEach(el=>{
@@ -610,8 +621,7 @@ function pdaUpdateMissionCountdowns(){
   const remaining=Math.max(0,Math.ceil((deadline-Date.now())/1000));
   const hours=Math.floor(remaining/3600),minutes=Math.floor((remaining%3600)/60),seconds=remaining%60;
   const clock=[hours,minutes,seconds].map(n=>String(n).padStart(2,'0')).join(':');
-  const label=el.dataset.missionLabel||'TIEMPO RESTANTE · ';
-  el.textContent=remaining>0?'⌛ '+label+clock:'⌛ PLAZO AGOTADO · 00:00:00';
+  el.textContent=remaining>0?'⌛ TIEMPO RESTANTE · '+clock:'⌛ PLAZO AGOTADO · 00:00:00';
  });
 }
 setInterval(pdaUpdateMissionCountdowns,1000);
