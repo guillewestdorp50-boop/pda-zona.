@@ -320,6 +320,12 @@ function initRichEditors(){
 function updateMissionAlert(){let ids=[];try{ids=JSON.parse(localStorage.getItem('zona_unread_remote_missions')||'[]')}catch{}const active=ids.length>0;const dot=$('missionAlertDot'),button=document.querySelector('nav button[data-tab="missions"]');if(dot)dot.classList.toggle('hidden',!active);if(button)button.classList.toggle('mission-alert',active)}function clearMissionAlert(){localStorage.setItem('zona_unread_remote_missions','[]');updateMissionAlert()}function go(t){currentPdaTab=t;if(t==='missions')clearMissionAlert();document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===t));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===t));if(t==='chat')renderChat();if(t==='missions')renderM();if(t==='relationship')renderTrato();if(t==='emissions')renderEmissions();if(t==='artifacts')renderInventory();if(t==='map')renderMapPoints();if(!welcomeFallbackTriggered&&!welcomeInProgress)speakSidorovich(t)}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.tab));
 function home(){$('cc').textContent=contacts.length;$('mc').textContent=Object.values(chats).flat().length;$('xc').textContent=missions.filter(x=>!x.done).length+(pdaRemoteMissions||[]).filter(x=>x.assigned_to===pdaUserId&&(x.status==='offered'||x.status==='accepted')).length+(pdaNpcMissions||[]).filter(x=>x.status==='offered'||x.status==='accepted').length;$('nc').textContent=notes.length;$('activity').textContent=notes[0]?.title||missions[0]?.title||'Sin actividad registrada.'}
+const pdaCanonicalPortraits={
+ 2:{url:'https://pbs.twimg.com/media/D97oXpLXsAYIyVn.jpg',label:'Sidorovich'},
+ 4:{url:'https://media.moddb.com/images/mods/1/32/31562/20170208013533_1.jpg',label:'Barbas'},
+ 13:{url:'https://upload.wikimedia.org/wikipedia/commons/2/22/%D0%97%D0%BE%D0%B2_%D0%9F%D1%80%D0%B8%D0%BF%D1%8F%D1%82%D0%B8_-_%D0%9C%D0%B0%D0%B9%D0%BE%D1%80_%D0%94%D0%B5%D0%B3%D1%82%D1%8F%D1%80%D0%B5%D0%B2_%D0%98%D0%BD%D1%82%D1%80%D0%BE.png',label:'Mayor Degtyarev'},
+ 14:{url:'https://s2-atb-checklist.com/cards/card-23.webp?v=2',label:'Zulu'}
+};
 function vital(c){return c.vital||'alive'}
 function vitalLabel(v){return v==='dead'?'MUERTO':v==='lost'?'PERDIDO':'VIVO'}
 function alignment(c){return c.alignment||'neutral'}
@@ -328,7 +334,8 @@ function renderContacts(){
  const previousChat=$('chatWho')?.value;
  $('contactList').innerHTML=contacts.map(c=>{
   const portrait=Number(c.portraitIndex||0)%25,px=(portrait%5)*25,py=Math.floor(portrait/5)*25;
-  const photo=c.npcStory?'<div class="contact-avatar npc-portrait" role="img" aria-label="Retrato de '+esc(c.name)+'" style="background-image:url(assets/stalker-portraits.webp);background-size:500% 500%;background-position:'+px+'% '+py+'%"></div>':c.photo?'<img class="contact-avatar" src="'+c.photo+'" alt="Foto de '+esc(c.name)+'">':'<div class="avatar">'+esc(c.name.slice(0,2))+'</div>';
+  const canonicalPortrait=c.npcStory?pdaCanonicalPortraits[Number(c.npcId)]:null;
+  const photo=c.npcStory?(canonicalPortrait?'<img class="contact-avatar" src="'+esc(canonicalPortrait.url)+'" alt="Retrato oficial de '+esc(c.name)+'">':'<div class="contact-avatar npc-portrait" role="img" aria-label="Retrato de '+esc(c.name)+'" style="background-image:url(assets/stalker-portraits.webp);background-size:500% 500%;background-position:'+px+'% '+py+'%"></div>'):c.photo?'<img class="contact-avatar" src="'+c.photo+'" alt="Foto de '+esc(c.name)+'">':'<div class="avatar">'+esc(c.name.slice(0,2))+'</div>';
   return '<div class="item">'+photo+'<div class="meta"><b>'+esc(c.name)+'</b><p>'+esc(c.role)+'</p><div class="statusline"><span class="contact-alignment align-'+alignment(c)+'">'+alignmentLabel(alignment(c))+'</span><span>·</span><span class="statusdot status-'+vital(c)+'"></span>'+vitalLabel(vital(c))+'</div>'+(c.bio?'<div class="rich-output" style="font-size:12px;margin:5px 0">'+richText(c.bio)+'</div>':'')+'</div><select class="statusSelect" aria-label="Estado vital" onchange="setVital(\''+c.id+'\',this.value)"><option value="alive" '+(vital(c)==='alive'?'selected':'')+'>🟢 Vivo</option><option value="dead" '+(vital(c)==='dead'?'selected':'')+'>🔴 Muerto</option><option value="lost" '+(vital(c)==='lost'?'selected':'')+'>🟡 Perdido</option></select>'+(c.remote?'<button onclick="renameRemoteContact(\''+c.id+'\')">RENOMBRAR</button>':'')+'<button onclick="editC(\''+c.id+'\')">EDITAR</button><button class="btn" onclick="chatC(\''+c.id+'\')">CHAT</button><button class="delete-one" onclick="deleteContact(\''+c.id+'\')" aria-label="Eliminar contacto" title="Eliminar contacto">×</button></div>';
  }).join('')||'<div class="empty">Sin contactos.</div>';
  $('chatWho').innerHTML=contacts.map(c=>'<option value="'+c.id+'">'+esc(c.name)+'</option>').join('');
@@ -659,7 +666,8 @@ function renderNpcChat(){
   const portrait=Number(e.portrait_index||0)%25,px=(portrait%5)*25,py=Math.floor(portrait/5)*25;
   const isPlayer=e.event_type==='player_response';
   const author=isPlayer?'TU PDA':(e.npc_name||'STALKER')+' · '+(e.npc_faction||'ZONA');
-  const avatar=isPlayer?'':('<div class="npc-portrait" role="img" aria-label="Retrato de '+esc(e.npc_name||'stalker')+'" style="width:34px;height:34px;min-width:34px;background-image:url(assets/stalker-portraits.webp);background-size:500% 500%;background-position:'+px+'% '+py+'%;border:1px solid var(--line)"></div>');
+  const canonicalPortrait=pdaCanonicalPortraits[Number(e.npc_id)];
+  const avatar=isPlayer?'':(canonicalPortrait?'<img src="'+esc(canonicalPortrait.url)+'" alt="Retrato de '+esc(e.npc_name||'stalker')+'" style="width:34px;height:34px;min-width:34px;object-fit:cover;border:1px solid var(--line)">':'<div class="npc-portrait" role="img" aria-label="Retrato de '+esc(e.npc_name||'stalker')+'" style="width:34px;height:34px;min-width:34px;background-image:url(assets/stalker-portraits.webp);background-size:500% 500%;background-position:'+px+'% '+py+'%;border:1px solid var(--line)"></div>');
   return '<div class="row" style="justify-content:'+(isPlayer?'flex-end':'flex-start')+';align-items:flex-end;gap:7px">'+avatar+'<div class="bubble '+(isPlayer?'me':'')+'"><div class="who">'+esc(author)+'</div><div style="white-space:pre-wrap">'+esc(e.body)+'</div><small class="muted">'+new Date(e.created_at).toLocaleString('es-AR',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'})+'</small></div></div>';
  }).join('')||'<div class="empty">SIN TRANSMISIONES DE STALKERS.</div>';
  box.scrollTop=box.scrollHeight;
