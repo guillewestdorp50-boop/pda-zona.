@@ -134,7 +134,44 @@ body.keyboard-visible footer{display:none}
 }.mission-countdown{display:block;margin-top:5px;color:#d8b66c;font:700 10px/1.3 monospace;letter-spacing:.6px}.pda-profile-card{display:flex;align-items:center;gap:12px}.pda-profile-avatar{width:76px;height:76px;min-width:76px;border-radius:50%;object-fit:cover;border:2px solid #8ca96b;background:#0d130c;box-shadow:0 0 12px #0008}.pda-profile-placeholder{display:grid;place-items:center;color:var(--m);font:700 10px monospace;text-align:center}.pda-profile-info{flex:1;min-width:0}.pda-profile-info strong{display:block;color:var(--g);font:800 16px monospace;overflow-wrap:anywhere}.pda-profile-info small{display:block;margin:4px 0 8px}.pda-profile-actions{display:flex;gap:6px;flex-wrap:wrap}.pda-profile-actions button{font-size:11px;padding:7px 9px}.pda-profile-readonly{margin-top:12px;padding:11px;background:linear-gradient(145deg,#182317,#0b110a);border:1px solid #536744}.pda-profile-detail{margin-bottom:10px}.pda-profile-detail small{display:block;color:#9eaf83;font:800 9px monospace;letter-spacing:1px}.pda-profile-detail strong{display:block;color:#d8e9b8;font:800 13px monospace;margin-top:4px}.pda-profile-detail p{margin:5px 0 0;color:#d6dfc8;font:13px/1.45 system-ui;white-space:pre-wrap;overflow-wrap:anywhere}.pda-profile-card{position:relative}.pda-profile-edit-icon{width:29px;height:29px;min-width:29px;padding:0!important;display:grid;place-items:center;align-self:flex-start;margin-left:auto;border:1px solid #71875a;background:#172214;color:#d8e9b8;font:700 17px/1 monospace;border-radius:3px;box-shadow:0 0 7px #0008}.pda-profile-edit-icon:active{filter:brightness(1.5);transform:scale(.96)}
 
 .npc-story-open #pdaKeyboard,.npc-story-open #customKeyboard{display:none!important}.npc-story-dialogue{background:linear-gradient(145deg,#202b1c,#0c120b);border:1px solid #718653;padding:13px;margin:10px 0;color:#e0e9d3}.npc-story-date{font:10px monospace;letter-spacing:1px;color:#d8b66c;margin-bottom:8px}.npc-story-line{font:16px/1.6 Georgia,serif;margin:8px 0 14px}.npc-story-choices{display:grid;gap:8px}.npc-story-choice{width:100%;text-align:left;white-space:normal;line-height:1.4;padding:11px;background:#293821;border:1px solid #718653;color:#e8f4d8;border-radius:3px}.npc-story-choice:active{background:#536d3d}.npc-story-response{padding:12px;background:#172115;border-left:3px solid #a8c77a;font:15px/1.6 Georgia,serif;margin:12px 0}.npc-story-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;font:11px monospace;color:#c6df9c}.npc-story-stats span{padding:5px 8px;border:1px solid #586b45;background:#11190f}
+
+/* Secuencia cinematográfica de arranque PDA // ZONA */
+#pdaBoot{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;overflow:hidden;background:#000;color:#f4d21b;isolation:isolate;opacity:1;visibility:visible;transition:opacity .38s ease,visibility .38s ease}
+#pdaBoot.boot-hidden{opacity:0;visibility:hidden;pointer-events:none}
+#pdaBoot canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+#pdaBoot .boot-scan{position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,#fff0 0 3px,#f6d51a08 4px,#fff0 5px 8px);opacity:.28}
+#pdaBoot .boot-content{width:min(88vw,520px);min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(12px,3vh,25px);padding:24px 0;text-align:center}
+#pdaBoot .boot-symbol{font:900 clamp(112px,30vw,220px)/.9 system-ui;color:#ffdf16;text-shadow:0 0 10px #f6d51a88,0 0 36px #f6d51a55;transform-origin:center;transition:filter .12s}
+#pdaBoot .boot-brand{font:900 clamp(25px,7vw,42px)/1 monospace;letter-spacing:.28em;padding-left:.28em;color:#ffdf16;text-shadow:0 0 15px #f6d51a55}
+#pdaBoot .boot-time{font:700 clamp(21px,6vw,29px) monospace;letter-spacing:.08em;color:#f4d21b}
+#pdaBoot .boot-date{font:500 12px monospace;letter-spacing:.12em;color:#b9a52b}
+#pdaBoot .boot-status{font:700 11px monospace;letter-spacing:.16em;color:#e8d45a;min-height:16px}
+#pdaBoot .boot-track{width:min(76vw,340px);height:5px;background:#29240b;border:1px solid #746317;overflow:hidden}
+#pdaBoot .boot-progress{height:100%;width:0;background:#ffe21b;box-shadow:0 0 12px #ffe21b;transition:width .09s linear}
+#pdaBoot .boot-percent{font:700 11px monospace;color:#d9c34a;letter-spacing:.12em}
+#pdaBoot .boot-noise{position:absolute;inset:0;pointer-events:none;opacity:0;background:repeating-linear-gradient(0deg,transparent 0 7px,#ffe21b20 8px 9px,transparent 10px 15px),linear-gradient(90deg,transparent 0 12%,#fff2 13%,transparent 14% 72%,#ffe21b22 73%,transparent 74%);mix-blend-mode:screen}
+#pdaBoot.boot-glitch .boot-noise{opacity:.9;animation:bootNoise .12s steps(2) infinite}
+#pdaBoot.boot-glitch .boot-symbol{filter:drop-shadow(5px 0 #ff3d18) drop-shadow(-5px 0 #47d9ff);transform:translateX(2px) skewX(-2deg)}
+#pdaBoot.boot-blackout .boot-content{opacity:0}
+#pdaBoot.boot-restored .boot-status{color:#ffe21b;text-shadow:0 0 10px #ffe21b}
+@keyframes bootNoise{0%{transform:translate(0,0);clip-path:inset(0 0 65% 0)}50%{transform:translate(-4px,2px);clip-path:inset(35% 0 25% 0)}100%{transform:translate(3px,-1px);clip-path:inset(72% 0 0 0)}}
+@media(orientation:landscape){#pdaBoot .boot-content{width:min(76vw,700px);min-height:100svh;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto auto;align-content:center;justify-items:center;column-gap:3vw;row-gap:2vh}#pdaBoot .boot-symbol{grid-column:1;grid-row:1/5;font-size:min(43vh,230px)}#pdaBoot .boot-brand{grid-column:2;grid-row:1}#pdaBoot .boot-time{grid-column:2;grid-row:2}#pdaBoot .boot-date{grid-column:2;grid-row:3}#pdaBoot .boot-status,#pdaBoot .boot-track,#pdaBoot .boot-percent{grid-column:2}#pdaBoot .boot-track{width:min(38vw,340px)}}
+@media(prefers-reduced-motion:reduce){#pdaBoot.boot-glitch .boot-noise{animation:none}}
+
 </style></head><body>
+
+<div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
+ <canvas id="bootParticles" aria-hidden="true"></canvas><div class="boot-scan"></div><div class="boot-noise"></div>
+ <div class="boot-content">
+  <div class="boot-symbol" aria-hidden="true">☢</div>
+  <div class="boot-brand">P.D.A.</div>
+  <div><div id="bootClock" class="boot-time">--:--:--</div><div id="bootDate" class="boot-date">SINCRONIZANDO RELOJ...</div></div>
+  <div id="bootStatus" class="boot-status">INICIANDO TERMINAL...</div>
+  <div class="boot-track"><div id="bootProgress" class="boot-progress"></div></div>
+  <div id="bootPercent" class="boot-percent">0%</div>
+ </div>
+</div>
+
 <header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><div class="header-tools"><button class="btn" id="sidorovichToggle" type="button" aria-label="Silenciar o activar la voz de Sidorovich">🔊 SIDO: ON</button><button class="btn" id="orientationBtn">↻ HORIZONTAL</button><button class="btn" id="fullscreenBtn">⛶ PANTALLA COMPLETA</button></div></div><div class="row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span></div></header>
 <nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES<span id="missionAlertDot" class="mission-alert-dot hidden" aria-label="Misión nueva"></span></button><button data-tab="ranking">RANKING</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="gallery">GALERÍA</button><button data-tab="player">REPRODUCTOR</button><button data-tab="compass">BRÚJULA</button><button data-tab="artifacts">INVENTARIO</button><button data-tab="map">MAPA GPS</button><button data-tab="data">DATOS</button></nav>
 <main>
@@ -1383,6 +1420,37 @@ function openMapPoint(id){const p=mapPoints.find(x=>x.id===id);if(!p)return;$('f
 function deleteMapPoint(id){mapPoints=mapPoints.filter(p=>p.id!==id);localStorage.setItem('zona_map_points',JSON.stringify(mapPoints));renderMapPoints();}renderMapPoints();
 // Rotación: se solicita solo tras un toque del usuario; el navegador puede no admitir bloqueo.
 $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();if(screen.orientation&&screen.orientation.lock){await screen.orientation.lock('landscape');$('orientationBtn').textContent='↻ HORIZONTAL ACTIVA';}else{$('orientationBtn').textContent='USÁ GIRO AUTOMÁTICO';alert('Este navegador no permite forzar la orientación. Activá “Giro automático” en los ajustes rápidos de Android. La PDA se adapta al formato horizontal.');}}catch(e){$('orientationBtn').textContent='USÁ GIRO AUTOMÁTICO';alert('Android o el navegador no permitió bloquear la orientación. Activá “Giro automático” en los ajustes rápidos y girá el teléfono. La interfaz se adapta automáticamente.');}});
+
+
+/* Arranque visual aislado: no interviene en perfiles, mensajes ni sincronización */
+(function pdaBootSequence(){
+ const root=document.getElementById('pdaBoot');if(!root)return;
+ const $b=id=>document.getElementById(id);
+ const clock=()=>{const d=new Date();$b('bootClock').textContent=d.toLocaleTimeString('es-AR',{hour12:false});$b('bootDate').textContent=d.toLocaleDateString('es-AR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}).toLocaleUpperCase('es-AR');};
+ clock();const clockTimer=setInterval(clock,250);
+ const canvas=$b('bootParticles'),ctx=canvas.getContext('2d');let w=0,h=0,particles=[],raf=0;
+ function resize(){const dpr=Math.min(window.devicePixelRatio||1,2);w=innerWidth;h=innerHeight;canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);particles=Array.from({length:Math.max(22,Math.min(68,Math.round(w*h/15000)))},()=>({x:Math.random()*w,y:Math.random()*h,r:.4+Math.random()*1.7,v:.12+Math.random()*.48,a:.12+Math.random()*.55,phase:Math.random()*6.28}));}
+ function draw(){ctx.clearRect(0,0,w,h);for(const p of particles){p.y-=p.v;p.x+=Math.sin(p.phase+=.012)*.18;if(p.y< -4){p.y=h+4;p.x=Math.random()*w;}ctx.globalAlpha=p.a*(.72+.28*Math.sin(p.phase));ctx.fillStyle='#ffdf16';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;raf=requestAnimationFrame(draw);}
+ resize();window.addEventListener('resize',resize);draw();
+ let audio=null,audioUnlocked=false,geigerStarted=false;
+ function unlockAudio(){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return; if(!audio)audio=new AC();if(audio.state==='suspended')audio.resume().then(()=>{audioUnlocked=true;});else audioUnlocked=true;}catch(e){}}
+ function tick(){if(!audio||audio.state!=='running')return;try{const now=audio.currentTime,osc=audio.createOscillator(),gain=audio.createGain();osc.type='square';osc.frequency.setValueAtTime(1250+Math.random()*850,now);gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.055,now+.003);gain.gain.exponentialRampToValueAtTime(.0001,now+.027);osc.connect(gain);gain.connect(audio.destination);osc.start(now);osc.stop(now+.03);}catch(e){}}
+ function geiger(){if(geigerStarted)return;geigerStarted=true;unlockAudio();let count=0;const pulse=()=>{tick();count++;if(count<27)setTimeout(pulse,Math.max(48,180-count*4)+Math.random()*95);};pulse();}
+ const unlock=()=>unlockAudio();window.addEventListener('pointerdown',unlock,{once:true,passive:true});window.addEventListener('keydown',unlock,{once:true});
+ const start=performance.now(),duration=3900;let glitchTimer=null;
+ function finish(){clearInterval(clockTimer);clearTimeout(glitchTimer);cancelAnimationFrame(raf);root.classList.add('boot-hidden');setTimeout(()=>root.remove(),430);}
+ function frame(now){const elapsed=now-start,p=Math.min(100,Math.round(elapsed/duration*100));$b('bootProgress').style.width=p+'%';$b('bootPercent').textContent=p+'%';
+  if(elapsed<900)$b('bootStatus').textContent='INICIANDO TERMINAL...';
+  else if(elapsed<1900)$b('bootStatus').textContent='CARGANDO FRECUENCIAS...';
+  else if(elapsed<2550)$b('bootStatus').textContent='ERROR DE SINCRONIZACIÓN';
+  else if(elapsed<3250)$b('bootStatus').textContent='SEÑAL DE RADIACIÓN DETECTADA';
+  else {$b('bootStatus').textContent='SISTEMA RESTABLECIDO';root.classList.add('boot-restored');}
+  if(elapsed>1750&&elapsed<2580){root.classList.add('boot-glitch');if(Math.random()<.08)root.classList.add('boot-blackout');else root.classList.remove('boot-blackout');if(!glitchTimer){glitchTimer=setTimeout(()=>{root.classList.remove('boot-glitch','boot-blackout');},800);}}
+  if(elapsed>=2550&&elapsed<3400){root.classList.remove('boot-glitch','boot-blackout');root.classList.add('boot-restored');if(!geigerStarted)geiger();}
+  if(elapsed<duration)requestAnimationFrame(frame);else{ $b('bootProgress').style.width='100%';$b('bootPercent').textContent='100%';$b('bootStatus').textContent='SISTEMA RESTABLECIDO';setTimeout(finish,360);}
+ }
+ requestAnimationFrame(frame);
+})();
 
 initPdaComms();
 if ('serviceWorker' in navigator) {
