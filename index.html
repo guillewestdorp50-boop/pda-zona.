@@ -371,7 +371,7 @@ body.keyboard-visible footer{display:none}
 #player #trackList .item .meta b{color:#ddd;font-size:clamp(11px,1.4vw,16px)}
 #player #trackList .item .meta p{display:none}
 #player #trackList .item button{padding:4px 7px}
-#player .radio-bottom-tools{position:absolute;z-index:5;left:0;right:0;bottom:0;height:14%;min-height:58px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:5px 10px;background:linear-gradient(0deg,#050505ed,#0808088c);border-top:1px solid #8a6a35}
+#player .radio-bottom-tools{position:absolute;z-index:5;left:0;right:0;bottom:0;height:14%;min-height:58px;display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:5px 10px;background:linear-gradient(0deg,#050505ed,#0808088c);border-top:1px solid #8a6a35}
 #player .radio-tool{display:flex;align-items:center;justify-content:center;gap:clamp(5px,1vw,14px);min-width:0;padding:4px;color:#eee;background:#08080899;border:1px solid #80643b;border-radius:5px;font-weight:bold;font-size:clamp(9px,1.2vw,15px);text-shadow:0 2px 5px #000}
 #player .radio-tool b{font-size:clamp(20px,3vw,37px);color:#e9b83a}
 #player .radio-tool.active{background:#76551d99;border-color:#e7b536;color:#ffdf70}
@@ -527,13 +527,10 @@ body.keyboard-visible footer{display:none}
 /* RADIO v77 · lista plegable y controles ajustables al gesto de pellizco */
 #player .radio-list-title{position:relative;padding-right:34px}
 #player #playlistClose{position:absolute;right:0;top:-3px;width:28px;height:26px;border:1px solid #96743b;border-radius:5px;background:#15130f;color:#f3c24a;font-size:19px;line-height:18px}
-#player .radio-playlist-toggle{position:absolute;z-index:95;right:3%;top:54%;padding:9px 12px;border:1px solid #b58a32;border-radius:22px;background:#080a09e8;color:#f2c24d;font-weight:bold;box-shadow:0 2px 12px #000a}
-#player .radio-playlist-toggle[hidden]{display:none}
 #player .radio-playlist{top:57%;bottom:auto;height:min(300px,42vh);max-height:42vh;display:flex;flex-direction:column;overflow:hidden;transform-origin:top left}
 #player #trackList{height:auto;min-height:0;flex:1 1 auto;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 #player #trackList .item{min-height:48px}
-#player .radio-pinchable{--radio-pinch-scale:1;transform-origin:center center}
-#player .radio-pinchable{scale:var(--radio-pinch-scale)}
+#player .radio-pinchable{--radio-pinch-scale:1;transform-origin:center center;touch-action:none}
 @media(orientation:landscape){#player .radio-playlist{height:min(240px,48vh);max-height:48vh}}
 
 </style></head><body>
@@ -597,8 +594,8 @@ body.keyboard-visible footer{display:none}
  <div class="radio-track-card"><div class="radio-track-meta"><strong id="trackTitle">Ninguna pista seleccionada</strong><span id="trackArtist">Cargá música desde tu dispositivo</span></div><div class="radio-track-time"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"></div>
  <div class="radio-main-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div>
  <div class="radio-volume"><span>VOL</span><input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen"><small id="volumeValue">80%</small></div>
- <div class="radio-playlist" id="radioPlaylist"><div class="radio-list-title">♫ &nbsp;LISTA DE REPRODUCCIÓN <small id="trackCount">0 PISTAS</small><button type="button" id="playlistClose" aria-label="Minimizar lista" title="Minimizar lista">—</button></div><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div><button type="button" id="playlistToggle" class="radio-playlist-toggle" aria-label="Mostrar lista de reproducción" hidden>♫ LISTA</button>
- <div class="radio-bottom-tools"><button id="addTracks" class="radio-tool"><b>＋</b><span>AGREGAR<br>CANCIÓN</span></button><button id="lyricsToggle" class="radio-tool"><b>☷</b><span>VER LETRA</span></button><button id="shuffleToggle" class="radio-tool"><b>⤨</b><span>ALEATORIO</span></button><button id="repeatToggle" class="radio-tool"><b>⟳</b><span>REPETIR</span></button><button id="eqToggle" class="radio-tool"><b>▥</b><span>ECUALIZADOR</span></button></div>
+ <div class="radio-playlist" id="radioPlaylist"><div class="radio-list-title">♫ &nbsp;LISTA DE REPRODUCCIÓN <small id="trackCount">0 PISTAS</small><button type="button" id="playlistClose" aria-label="Minimizar lista" title="Minimizar lista">—</button></div><div id="trackList" class="stack"><div class="empty">Todavía no hay música cargada.</div></div></div>
+ <div class="radio-bottom-tools"><button id="playlistToggle" class="radio-tool" type="button"><b>♫</b><span>LISTA</span></button><button id="addTracks" class="radio-tool"><b>＋</b><span>AGREGAR<br>CANCIÓN</span></button><button id="lyricsToggle" class="radio-tool"><b>☷</b><span>VER LETRA</span></button><button id="shuffleToggle" class="radio-tool"><b>⤨</b><span>ALEATORIO</span></button><button id="repeatToggle" class="radio-tool"><b>⟳</b><span>REPETIR</span></button><button id="eqToggle" class="radio-tool"><b>▥</b><span>ECUALIZADOR</span></button></div>
  <input id="trackFileInput" type="file" accept="audio/*,.mp3,.m4a,.ogg,.wav,.flac" multiple style="display:none">
  <div id="radioLyricsPanel" class="radio-float-panel" hidden><div class="radio-float-head">LETRA DE LA CANCIÓN <button type="button" data-close-panel="radioLyricsPanel">✕</button></div><textarea id="radioLyricsText" rows="7" placeholder="Pegá o escribí la letra de esta canción..."></textarea><button id="saveRadioLyrics">OK · MOSTRAR LETRA</button></div><button id="lyricsEye" class="radio-lyrics-eye" type="button" aria-label="Ocultar letra" title="Ocultar letra" hidden>◉</button><div id="radioCreditsControls" class="radio-credits-controls" hidden><button id="radioCreditsPlay" type="button">▶</button><span id="radioCreditsClock">00:00</span></div><div id="radioCredits" class="radio-credits" hidden><div id="radioCreditsText"></div></div>
  <div id="radioEqPanel" class="radio-float-panel" hidden><div class="radio-float-head">ECUALIZADOR DE LA ZONA <button type="button" data-close-panel="radioEqPanel">✕</button></div><div class="eq-grid">
@@ -1996,7 +1993,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v78';
+const PDA_SW_BUILD='pda-zona-shell-v79';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
@@ -2047,7 +2044,7 @@ if ('serviceWorker' in navigator) {
 let radioShuffleMode=false;
 (()=>{const $=id=>document.getElementById(id);let repeat=false;
  const openPanel=id=>{['radioLyricsPanel','radioEqPanel'].forEach(x=>$(x).hidden=x!==id)};
- const playlist=$('radioPlaylist'),playlistToggle=$('playlistToggle');$('playlistClose').addEventListener('click',()=>{playlist.hidden=true;playlistToggle.hidden=false;localStorage.setItem('pda_radio_playlist_hidden','1')});playlistToggle.addEventListener('click',()=>{playlist.hidden=false;playlistToggle.hidden=true;localStorage.setItem('pda_radio_playlist_hidden','0')});if(localStorage.getItem('pda_radio_playlist_hidden')==='1'){playlist.hidden=true;playlistToggle.hidden=false;}
+ const playlist=$('radioPlaylist'),playlistToggle=$('playlistToggle');$('playlistClose').addEventListener('click',()=>{playlist.hidden=true;localStorage.setItem('pda_radio_playlist_hidden','1')});playlistToggle.addEventListener('click',()=>{playlist.hidden=!playlist.hidden;localStorage.setItem('pda_radio_playlist_hidden',playlist.hidden?'1':'0')});if(localStorage.getItem('pda_radio_playlist_hidden')==='1')playlist.hidden=true;
  document.querySelectorAll('[data-close-panel]').forEach(b=>b.addEventListener('click',()=>openPanel('')));
  $('eqToggle').addEventListener('click',()=>{const p=$('radioEqPanel');if(!p.hidden){openPanel('');return}openPanel('radioEqPanel')});
  $('shuffleToggle').addEventListener('click',()=>{radioShuffleMode=!radioShuffleMode;$('shuffleToggle').classList.toggle('active',radioShuffleMode);$('shuffleToggle').setAttribute('aria-pressed',String(radioShuffleMode))});
@@ -2079,7 +2076,7 @@ let radioShuffleMode=false;
 
 /* Arrastre limitado al interior del escenario: conserva el punto exacto donde se toma */
 (()=>{const stage=document.getElementById('zoneCampfire');if(!stage)return;
- const selectors=['.radio-overlay-header','.radio-track-card','.radio-main-controls','.radio-volume','.radio-playlist','#lyricsEye','#radioCreditsControls','#radioLyricsPanel','#radioEqPanel','#playlistToggle'];
+ const selectors=['.radio-overlay-header','.radio-track-card','.radio-main-controls','.radio-volume','.radio-playlist','#lyricsEye','#radioCreditsControls','#radioLyricsPanel','#radioEqPanel'];
  const orient=()=>matchMedia('(orientation:landscape)').matches?'landscape':'portrait';
  selectors.forEach(sel=>{const el=stage.querySelector(sel);if(!el)return;el.classList.add('radio-pinchable');const k='pda_radio_drag_'+orient()+'_'+(el.id||el.classList[0]);
   const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
@@ -2092,11 +2089,6 @@ let radioShuffleMode=false;
   try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}
   const sk='pda_radio_scale_'+orient()+'_'+(el.id||el.classList[0]);let pinchStart=0,pinchBase=1;
   try{const z=Number(localStorage.getItem(sk));if(z>0){el.style.setProperty('--radio-pinch-scale',String(z));el.dataset.pinchScale=String(z)}}catch{}
-  const activePointers=new Map();let pinchIds=null;
-  const pointDown=e=>{if(!el.contains(e.target))return;activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(activePointers.size===2){const pts=[...activePointers.values()];pinchIds=[...activePointers.keys()];pinchStart=Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y)||1;pinchBase=Number(el.dataset.pinchScale||1);clearTimeout(hold);hold=null;drag=false;el.classList.remove('dragging')}};
-  const pointMove=e=>{if(!activePointers.has(e.pointerId))return;activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinchIds&&pinchIds.every(id=>activePointers.has(id))){const a=activePointers.get(pinchIds[0]),b=activePointers.get(pinchIds[1]);const d=Math.hypot(a.x-b.x,a.y-b.y);const z=clamp(pinchBase*d/pinchStart,.55,1.6);el.style.setProperty('--radio-pinch-scale',String(z));el.dataset.pinchScale=String(z);e.preventDefault()}};
-  const pointUp=e=>{if(!activePointers.has(e.pointerId))return;activePointers.delete(e.pointerId);if(pinchIds){localStorage.setItem(sk,String(Number(el.dataset.pinchScale||1)));pinchIds=null;pinchStart=0} };
-  el.addEventListener('pointerdown',pointDown,true);el.addEventListener('pointermove',pointMove,true);el.addEventListener('pointerup',pointUp,true);el.addEventListener('pointercancel',pointUp,true);
   let hold=null,drag=false,offsetX=0,offsetY=0,pointerId=null;
   el.style.touchAction='none';
   el.addEventListener('pointerdown',e=>{
@@ -2115,5 +2107,13 @@ let radioShuffleMode=false;
   el.addEventListener('pointerup',finish);el.addEventListener('pointercancel',finish);
   window.addEventListener('resize',()=>{try{const p=JSON.parse(localStorage.getItem(k)||'null');if(p){const r=stage.getBoundingClientRect();place(r.width*p.x/100,r.height*p.y/100,false)}}catch{}});
  });
+})();
+/* v79 · pellizco multitáctil capturado en el escenario completo */
+(()=>{const stage=document.getElementById('zoneCampfire');if(!stage)return;let target=null,start=0,base=1,ids=[];
+ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),scaleOf=el=>Number(el.dataset.pinchScale||1);
+ stage.addEventListener('touchstart',e=>{if(e.touches.length!==2)return;const a=e.touches[0],b=e.touches[1],ea=document.elementFromPoint(a.clientX,a.clientY),eb=document.elementFromPoint(b.clientX,b.clientY),x=ea?.closest('.radio-pinchable'),y=eb?.closest('.radio-pinchable');if(!x||x!==y)return;target=x;ids=[a.identifier,b.identifier];start=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY)||1;base=scaleOf(target);e.preventDefault();},{capture:true,passive:false});
+ stage.addEventListener('touchmove',e=>{if(!target||e.touches.length<2)return;const a=[...e.touches].find(t=>t.identifier===ids[0]),b=[...e.touches].find(t=>t.identifier===ids[1]);if(!a||!b)return;const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),z=clamp(base*d/start,.45,1.65);target.style.setProperty('--radio-pinch-scale',String(z));target.style.scale=String(z);target.dataset.pinchScale=String(z);e.preventDefault();},{capture:true,passive:false});
+ const end=()=>{if(!target)return;const key='pda_radio_scale_'+(matchMedia('(orientation:landscape)').matches?'landscape':'portrait')+'_'+(target.id||target.classList[0]);localStorage.setItem(key,String(scaleOf(target)));target=null;ids=[];start=0;};
+ stage.addEventListener('touchend',e=>{if(target&&e.touches.length<2)end();},{capture:true,passive:true});stage.addEventListener('touchcancel',end,{capture:true,passive:true});
 })();
 </script></body></html>
