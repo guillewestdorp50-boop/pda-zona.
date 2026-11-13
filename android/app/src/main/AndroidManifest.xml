@@ -12,7 +12,7 @@
         android:theme="@style/Theme.PdaZona">
 
         <activity
-            android:name=".PdaLauncherActivity"
+            android:name="com.pdazona.app.PdaLauncherActivity"
             android:exported="true"
             android:hardwareAccelerated="true"
             android:theme="@style/Theme.PdaZona.Starting"
@@ -24,7 +24,7 @@
         </activity>
 
         <receiver
-            android:name=".PdaWidgetProvider"
+            android:name="com.pdazona.app.PdaWidgetProvider"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
