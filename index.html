@@ -544,6 +544,42 @@ body.keyboard-visible footer{display:none}
 
 /* Indicador meteorológico compacto de campo */
 .pda-status-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pda-weather{margin-left:auto;display:flex;align-items:center;gap:6px;padding:4px 7px;border:1px solid #46583a;background:#0b110a;border-radius:3px;color:var(--g);font:11px monospace;white-space:nowrap;min-height:27px}.pda-weather #weatherIcon{font-size:16px;line-height:1}.pda-weather #weatherTemp{font-size:13px;font-weight:700}.pda-weather #weatherHumidity{color:var(--m);font-size:10px}.pda-weather #weatherSource{color:#81956c;font-size:8px;text-decoration:none;letter-spacing:.2px}.pda-weather button{border:0;background:transparent;color:var(--a);font-size:16px;padding:0 2px;min-width:22px;min-height:22px}.pda-weather.stale{opacity:.65}@media(max-width:420px){.pda-status-row{gap:6px}.pda-weather{margin-left:0}.pda-weather #weatherHumidity{font-size:9px}}
+
+/* Módulo CLIMA · consola ambiental propia PDA-Z */
+.climate-console{background:radial-gradient(ellipse at 85% 0%,#35432b 0,#1c2818 42%,#10170f 100%);border-color:#73885a}
+.climate-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.climate-kicker,.climate-section-label{font:800 10px monospace;letter-spacing:1.5px;color:#d8b66c}
+.climate-live{font:700 9px monospace;color:#a9c78a;letter-spacing:.7px}
+.climate-live i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#7be06e;box-shadow:0 0 8px #7be06e}
+.climate-now{display:flex;align-items:center;gap:15px;padding:15px;margin:12px 0;background:#0b110a99;border:1px solid #647b4b}
+.climate-now-icon{font-size:43px;line-height:1;min-width:52px;text-align:center}
+.climate-now strong{display:block;font:900 35px monospace;color:#e1edc7}
+.climate-now span,.climate-now small{display:block;font:10px monospace;color:#b9c99f;letter-spacing:.7px}
+.climate-now small{margin-top:5px;color:#8da17a}
+.climate-section-label{margin:12px 0 8px}
+.climate-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.climate-cell{min-width:0;padding:11px;background:linear-gradient(145deg,#202a1c,#0d130c);border:1px solid #536744;box-shadow:inset 0 0 12px #0007}
+.climate-cell small{display:block;color:#c5ae72;font:800 10px monospace;letter-spacing:1px}
+.climate-cell b{display:block;margin:5px 0;color:#dce9c5;font:900 clamp(17px,4.8vw,23px) monospace;overflow-wrap:anywhere}
+.climate-cell em{display:block;color:#8fa17b;font:10px system-ui;font-style:normal}
+.climate-grid-two .climate-cell b{font-size:22px}
+.climate-highlight{border-color:#9b8953;background:linear-gradient(145deg,#35301d,#14170f)}
+.climate-sunline{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:10px;padding:11px;background:#0c120b;border:1px solid #46583a;color:#b6c79c;font:10px monospace}
+.climate-sunline b{color:#e0d09a;margin-left:5px}
+.climate-alert-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.climate-alert{min-width:0;padding:10px;background:#151e13;border:1px solid #46583a}
+.climate-alert span{display:block;color:#c7b57e;font:800 10px monospace;letter-spacing:.4px}
+.climate-alert b{display:block;margin:7px 0 4px;color:#dce9c5;font:800 13px monospace;overflow-wrap:anywhere}
+.climate-alert b.climate-unknown{color:#a2a58d}
+.climate-alert small{display:block;color:#8fa17b;font-size:10px;line-height:1.35}
+.climate-footnote{margin:11px 0 0;color:#8d9b7e;font-size:10px;line-height:1.4}
+.climate-footer .row{padding:5px 0;border-bottom:1px solid #35452b;font:10px monospace;gap:12px}
+.climate-footer .row b{color:#c7d8ae;text-align:right}
+.climate-footer a{color:#c3d99f;text-decoration:none}
+.climate-refresh{width:100%;margin-top:12px;padding:12px}
+@media(min-width:620px){.climate-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.climate-grid-two{grid-template-columns:repeat(4,minmax(0,1fr))}.climate-alert-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(orientation:landscape) and (max-height:600px){#climate .climate-grid{grid-template-columns:repeat(4,minmax(0,1fr))}#climate .climate-alert-grid{grid-template-columns:repeat(3,minmax(0,1fr))}#climate .panel{padding:9px}}
+
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -559,7 +595,7 @@ body.keyboard-visible footer{display:none}
 </div>
 
 <header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><div class="header-tools"><button class="btn" id="sidorovichToggle" type="button" aria-label="Silenciar o activar la voz de Sidorovich">🔊 SIDO: ON</button><button class="btn" id="orientationBtn">↻ HORIZONTAL</button><button class="btn" id="fullscreenBtn">⛶ PANTALLA COMPLETA</button></div></div><div class="row pda-status-row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span><div id="pdaWeather" class="pda-weather" role="status" aria-live="polite"><span id="weatherIcon">◌</span><span id="weatherTemp">--°</span><span id="weatherHumidity">HUM --%</span><a id="weatherSource" href="https://open-meteo.com/" target="_blank" rel="noopener" aria-label="Datos meteorológicos de Open-Meteo">OPEN-METEO</a><button id="weatherRefresh" type="button" aria-label="Actualizar clima" title="Actualizar clima">↻</button></div></div></header>
-<nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES<span id="missionAlertDot" class="mission-alert-dot hidden" aria-label="Misión nueva"></span></button><button data-tab="ranking">RANKING</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="gallery">GALERÍA</button><button data-tab="player">REPRODUCTOR</button><button data-tab="compass">BRÚJULA</button><button data-tab="artifacts">INVENTARIO</button><button data-tab="map">MAPA GPS</button><button data-tab="data">DATOS</button></nav>
+<nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES<span id="missionAlertDot" class="mission-alert-dot hidden" aria-label="Misión nueva"></span></button><button data-tab="ranking">RANKING</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="climate">CLIMA</button><button data-tab="gallery">GALERÍA</button><button data-tab="player">REPRODUCTOR</button><button data-tab="compass">BRÚJULA</button><button data-tab="artifacts">INVENTARIO</button><button data-tab="map">MAPA GPS</button><button data-tab="data">DATOS</button></nav>
 <main>
 <section id="home" class="view active"><div class="panel"><h2>IDENTIDAD DEL STALKER</h2><div class="pda-profile-card"><img id="pdaProfileAvatar" class="pda-profile-avatar hidden" alt="Foto de perfil del Stalker"><div id="pdaProfilePlaceholder" class="pda-profile-avatar pda-profile-placeholder">SIN<br>FOTOGRAFÍA</div><div class="pda-profile-info"><strong id="pdaProfileName">STALKER</strong><small id="pdaProfileStatus" class="muted">PERFIL DE CAMPO</small></div><button class="pda-profile-edit-icon hidden" id="pdaEditProfileBtn" type="button" aria-label="Editar perfil" title="Editar perfil">✎</button></div><div id="pdaProfileReadOnly" class="pda-profile-readonly hidden"><div class="pda-profile-detail"><small>FACCION</small><strong id="pdaProfileFactionView">—</strong></div><div class="pda-profile-detail"><small>BIOGRAFÍA</small><p id="pdaProfileBioView"></p></div></div><div id="pdaProfileEditor" class="stack" style="margin-top:12px"><div class="pda-profile-actions"><input id="pdaProfilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><button class="btn" type="button" id="pdaChooseProfilePhoto">📷 ELEGIR FOTO</button></div><label class="muted" for="pdaProfileDisplayName">NOMBRE DE STALKER</label><input id="pdaProfileDisplayName" maxlength="40" placeholder="Tu nombre en la Zona"><label class="muted" for="pdaProfileFaction">FACCION</label><input id="pdaProfileFaction" maxlength="32" placeholder="Ej.: Solitarios, Deber, Libertad"><label class="muted" for="pdaProfileBio">BIOGRAFÍA · MÁXIMO 500 CARACTERES</label><textarea id="pdaProfileBio" maxlength="500" rows="3" placeholder="Contá brevemente quién sos en la Zona..."></textarea><button class="btn" id="pdaSaveProfileBtn" type="button">GUARDAR PERFIL</button></div></div><div class="panel pda-wallet-panel"><div class="row" style="align-items:center;justify-content:space-between"><div><div class="cop-kicker">REGISTRO PERSONAL</div><h2 style="margin:3px 0">ECONOMÍA DEL STALKER</h2></div><span class="tag">RU</span></div><div class="muted" style="font:800 10px monospace;letter-spacing:1px;margin-top:10px">DINERO DISPONIBLE</div><strong id="pdaWalletBalance" style="display:block;font:900 30px monospace;color:var(--g);margin:4px 0">PENDIENTE</strong><small id="pdaWalletStatus" class="muted">Registrá tu saldo actual para iniciar el contador.</small><div style="border-top:1px solid var(--line);margin-top:12px;padding-top:9px" class="row"><span class="muted">GANADO CON BARBAS</span><strong id="pdaWalletEarned">0 RU</strong></div><div id="pdaWalletPrices" class="muted" style="font-size:11px;margin-top:8px">PRECIOS REGISTRADOS · OJO: 18.000 RU</div></div><div class="panel"><h2>TERMINAL ACTIVO</h2><p>Bienvenido a la Zona, stalker. Tus registros se guardan en este dispositivo.</p><div class="row"><div>CONTACTOS <b id="cc">4</b></div><div>MENSAJES <b id="mc">0</b></div></div><div class="row"><div>MISIONES <b id="xc">0</b></div><div>NOTAS <b id="nc">0</b></div></div></div><div class="panel"><h2>ÚLTIMA ACTIVIDAD</h2><div id="activity" class="muted">Sin actividad registrada.</div></div></section>
 <section id="contacts" class="view"><div class="panel"><div class="row"><h2>DIRECTORIO</h2><button class="btn" id="newC">+ NUEVO</button></div><p class="muted">Estado vital editable: verde = vivo · rojo = muerto · amarillo = perdido.</p>
@@ -573,6 +609,51 @@ body.keyboard-visible footer{display:none}
 <section id="missions" class="view"><div class="panel"><div class="row"><h2>MISIONES</h2><button class="btn" id="newM">+ NUEVA</button></div><div id="missionInbox" class="stack"></div><div id="missionList" class="stack"></div></div><div id="mEditor" class="panel hidden"><input id="mTitle" placeholder="Título"><textarea id="mDesc" placeholder="Objetivo / ubicación / recompensa"></textarea><div class="row"><button class="btn" id="saveM">GUARDAR</button><button id="cancelM">CANCELAR</button></div></div></section><section id="ranking" class="view"><div class="panel" style="background:linear-gradient(145deg,#293323,#0c110b);border-color:#8a7549"><small style="color:#d8b66c;letter-spacing:2px">PDA // ZONA · CLASIFICACIÓN OFICIAL</small><h2>RANKING DE LOS MEJORES STALKERS</h2><p class="muted">100 nombres de la Zona. Las misiones verificadas suman puntos y cambian las posiciones automáticamente.</p><div class="row"><b>TOP 100 · 98 NPC + 2 PDA</b><small id="rankingUpdated" class="muted">SINCRONIZANDO...</small></div></div><div class="panel" id="rankingJoinPanel"><h2>INSCRIPCIÓN DE PDA</h2><p class="muted" id="rankingJoinText">Los dos lugares de PDA están reservados. Cada stalker debe inscribirse desde su propio dispositivo.</p><button class="btn" id="rankingJoinBtn" type="button">PARTICIPAR DEL RANKING</button></div><div id="rankingList" class="stack"><div class="empty">CARGANDO REGISTROS...</div></div></section><div id="rankingProfileModal" class="ranking-profile-modal hidden" role="dialog" aria-modal="true" aria-labelledby="rankingProfileTitle"><div class="ranking-profile-sheet"><div class="row"><small class="muted">ARCHIVO DE STALKER · PDA//ZONA</small><button class="btn" id="rankingProfileClose" type="button">✕</button></div><div id="rankingProfileContent"></div></div></div>
 <section id="encyclopedia" class="view"><div class="panel"><h2>ENCICLOPEDIA DE LA ZONA</h2><p class="muted">Tu inventario de campo. Sumá o descontá unidades de cada elemento.</p><div class="row"><select id="encyCategory"><option value="Mutantes">Mutantes</option><option value="Artefactos">Artefactos</option><option value="Armas">Armas</option><option value="Botiquines">Botiquines</option><option value="Medicamentos">Medicamentos</option><option value="Radiación">Radiación</option><option value="Lugares">Lugares</option></select></div><div class="row" style="margin-top:8px"><input id="encyName" placeholder="Nombre del elemento o lugar"><input id="encyQty" type="number" min="0" step="1" value="1" style="max-width:82px" aria-label="Cantidad inicial"></div><textarea id="encyDescription" placeholder="Descripción: características, aspecto, peligros, utilidad, ubicación..."></textarea><div class="photo-tools"><img id="encyPhotoPreview" class="contact-photo-preview" alt="Vista previa de la imagen" src="" style="display:none"><div id="encyPhotoPlaceholder" class="contact-photo-preview contact-photo-empty">SIN FOTO</div><div style="flex:1;min-width:140px"><input id="encyPhotoInput" type="file" accept="image/*" style="display:none"><button type="button" id="chooseEncyPhoto" class="btn">📷 ELEGIR FOTO</button><button type="button" id="removeEncyPhoto" style="margin-top:6px">QUITAR FOTO</button><p class="muted">Agregá una imagen propia a cada ficha.</p></div></div><button class="btn" id="encyAdd" style="width:100%;margin-top:8px">+ AGREGAR A LA ENCICLOPEDIA</button></div><div class="panel"><div class="row"><h2>ÍNDICE DE ARCHIVOS</h2><select id="encyFilter" style="max-width:150px"><option value="Todos">Todas las categorías</option><option>Mutantes</option><option>Artefactos</option><option>Armas</option><option>Botiquines</option><option>Medicamentos</option><option>Radiación</option><option>Lugares</option></select></div><input id="encySearch" type="search" placeholder="Buscar palabra, mutante, artefacto o lugar..." style="margin:8px 0"><div id="encyList" class="stack"></div></div></section><section id="journal" class="view"><div class="panel"><h2>DIARIO PERSONAL</h2><input id="nTitle" placeholder="Título de la anotación"><textarea id="nBody" placeholder="Escribí lo que ocurrió en la Zona..."></textarea><button class="btn" id="saveN">GUARDAR ANOTACIÓN</button></div><div class="panel"><h2>ENTRADAS</h2><div id="noteList" class="stack"></div></div></section>
 <section id="emissions" class="view"><div class="panel"><h2>CONTROL DE EMISIONES</h2><p class="muted">Iniciá una sesión para activar la señal. La PDA emitirá un pitido cada 20 segundos hasta que cierres la sesión o apagues los pitidos.</p><div class="row"><button class="btn" id="startEmission">▶ INICIAR SESIÓN</button><button class="btn danger" id="powerEmission">⏻ APAGAR PITIDOS</button></div><div id="emissionStatus" class="statusline" style="margin-top:12px">SIN EMISIÓN ACTIVA</div></div><div class="panel"><div class="row"><h2>REGISTRAR / EDITAR EMISIÓN</h2><button class="btn" id="newEmission">+ NUEVA</button></div><input id="emTitle" placeholder="Nombre o motivo de la emisión"><label class="muted" for="emDate">Fecha</label><input id="emDate" type="date"><div class="row"><div style="flex:1"><label class="muted" for="emStart">Comenzó</label><input id="emStart" type="time"></div><div style="flex:1"><label class="muted" for="emEnd">Terminó</label><input id="emEnd" type="time"><button class="btn" type="button" id="emEndNow" style="margin-top:6px;width:100%">■ TERMINÓ · AHORA</button></div></div><textarea id="emNotes" placeholder="Detalles / observaciones (opcional)"></textarea><div class="row"><button class="btn" id="saveEmission">GUARDAR EMISIÓN</button><button id="cancelEmission">CANCELAR</button></div></div><div class="panel"><h2>REGISTRO DE EMISIONES</h2><div id="emissionList" class="stack"></div></div></section>
+<section id="climate" class="view">
+ <div class="panel climate-console">
+  <div class="climate-heading"><div><div class="climate-kicker">PDA-Z / SISTEMA AMBIENTAL</div><h2>◈ CLIMA · TELEMETRÍA DE CAMPO</h2></div><span class="climate-live"><i></i> <span id="climateConnection">EN ESPERA GPS</span></span></div>
+  <p class="muted">LECTURAS ATMOSFÉRICAS LOCALES · PRONÓSTICO Y VARIABLES AMBIENTALES</p>
+  <div class="climate-now"><div class="climate-now-icon" id="climateIcon">◌</div><div><strong id="climateNowTemp">--°</strong><span id="climateDescription">ESPERANDO DATOS</span><small id="climateUpdated">SIN ACTUALIZACIÓN</small></div></div>
+  <div class="climate-section-label">▸ TELEMETRÍA ATMOSFÉRICA</div>
+  <div class="climate-grid">
+   <div class="climate-cell"><small>TEMP</small><b id="climateTemp">--°C</b><em>Temperatura ambiente</em></div>
+   <div class="climate-cell"><small>SENS TÉRM</small><b id="climateFeels">--°C</b><em>Sensación térmica</em></div>
+   <div class="climate-cell"><small>HUM</small><b id="climateHumidity">--%</b><em>Humedad relativa</em></div>
+   <div class="climate-cell"><small>UV</small><b id="climateUV">--</b><em>Índice ultravioleta</em></div>
+   <div class="climate-cell"><small>RAD SOL</small><b id="climateRadiation">-- W/m²</b><em>Radiación solar de onda corta</em></div>
+   <div class="climate-cell"><small>NUB</small><b id="climateCloud">--%</b><em>Cobertura nubosa</em></div>
+   <div class="climate-cell"><small>VIENTO</small><b id="climateWind">-- km/h</b><em id="climateWindDir">Dirección --</em></div>
+   <div class="climate-cell"><small>PRES</small><b id="climatePressure">-- hPa</b><em>Presión en superficie</em></div>
+  </div>
+ </div>
+ <div class="panel">
+  <div class="climate-section-label">▸ PRECIPITACIONES · PRÓXIMAS HORAS</div>
+  <div class="climate-grid climate-grid-two">
+   <div class="climate-cell climate-highlight"><small>PROB LLUVIA</small><b id="climateRainChance">--%</b><em>Probabilidad horaria prevista</em></div>
+   <div class="climate-cell"><small>PRECIP</small><b id="climateRainAmount">-- mm</b><em>Acumulación horaria prevista</em></div>
+   <div class="climate-cell"><small>PROB MÁX DÍA</small><b id="climateRainMax">--%</b><em>Máxima probabilidad diaria</em></div>
+   <div class="climate-cell"><small>ACUM DÍA</small><b id="climateRainDay">-- mm</b><em>Precipitación total prevista</em></div>
+  </div>
+  <div class="climate-sunline"><span>☼ AMANECER <b id="climateSunrise">--:--</b></span><span>☾ ATARDECER <b id="climateSunset">--:--</b></span></div>
+ </div>
+ <div class="panel">
+  <div class="climate-section-label">▸ ALERTAS Y FENÓMENOS EXTREMOS</div>
+  <div class="climate-alert-grid">
+   <div class="climate-alert"><span>⛈ TORMENTA ELÉCTRICA</span><b id="climateStorm">SIN SEÑAL</b><small id="climateStormDetail">Pronóstico horario; sin porcentaje específico disponible</small></div>
+   <div class="climate-alert"><span>◈ TORNADO</span><b class="climate-unknown">N/D</b><small>Sin modelo local de probabilidad</small></div>
+   <div class="climate-alert"><span>◉ HURACÁN</span><b class="climate-unknown">N/D</b><small>Sin modelo local de probabilidad</small></div>
+   <div class="climate-alert"><span>⌁ ACTIVIDAD SÍSMICA</span><b class="climate-unknown">SIN FEED</b><small>Monitoreo sísmico no conectado</small></div>
+   <div class="climate-alert"><span>☢ EMISIÓN</span><b class="climate-unknown">NO CALCULABLE</b><small>Fenómeno de la Zona; sin predictor validado</small></div>
+  </div>
+  <p class="climate-footnote">N/D = dato no disponible. La PDA no asigna porcentajes ficticios a fenómenos sin un modelo verificable.</p>
+ </div>
+ <div class="panel climate-footer">
+  <div class="row"><span class="muted">COORDENADAS · GPS DEL DISPOSITIVO</span><b id="climateGpsStatus">EN ESPERA</b></div>
+  <div class="row"><span class="muted">ACTUALIZACIÓN AUTOMÁTICA</span><b>30 MIN</b></div>
+  <div class="row"><span class="muted">FUENTE METEOROLÓGICA</span><a href="https://open-meteo.com/" target="_blank" rel="noopener">OPEN-METEO ↗</a></div>
+  <button class="btn climate-refresh" id="climateRefresh" type="button">↻ ACTUALIZAR TELEMETRÍA</button>
+ </div>
+</section>
 <section id="compass" class="view"><div class="panel"><div class="row"><h2>INSTRUMENTO DE NAVEGACIÓN</h2><span class="compass-live" id="compassLive">EN ESPERA</span></div><p class="muted">BRÚJULA MILITAR PDA-Z / MK-II · INSTRUMENTOS DE CAMPO</p><div class="compass-wrap">
 <div class="compass-instrument"><div class="compass-topline"><span class="compass-mini">SERIE PDA-Z / MK-II · Nº 0471</span><span class="compass-mini" id="compassClock">--:--:--</span></div><div class="compass-dial" aria-label="Brújula militar de 360 grados"><div class="compass-mark">N</div><div class="compass-mark south">S</div><div class="compass-mark east">E</div><div class="compass-mark west">O</div><div id="compassDegrees" class="compass-degrees" aria-hidden="true"></div><div id="compassNeedle" class="compass-needle"><svg viewBox="0 0 200 200" aria-hidden="true"><path d="M100 5 L116 96 L100 86 L84 96 Z" fill="#bd3027" stroke="#e7a08b" stroke-width="2"/><path d="M100 195 L84 104 L100 114 L116 104 Z" fill="#c7c3ad" stroke="#eee5cb" stroke-width="2"/><path d="M100 5 L100 86" stroke="#f2b4a2" stroke-width="1.5"/><path d="M100 195 L100 114" stroke="#fff" stroke-width="1" opacity=".55"/></svg></div><div class="compass-center"></div></div><div class="compass-readouts"><div><div id="compassHeading" class="compass-readout">---°</div><div id="compassDirection" class="compass-direction">SIN RUMBO</div><div class="compass-subread">AZIMUT · 0–360°</div></div></div><div id="compassStatus" class="compass-status">Activá el sensor para obtener el rumbo del dispositivo.</div><div class="compass-controls"><button class="btn" id="compassStart">◉ ACTIVAR SENSOR</button><button id="compassStop">DETENER</button></div></div>
 <div class="compass-layout-side">
@@ -1351,16 +1432,66 @@ if(activeEmission()){emissionSoundOn=localStorage.getItem('zona_emission_sound_o
 renderEmissions();
 function updateClock(){let now=new Date();$('clock').textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);$('dateAR').textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(now)}
 setInterval(updateClock,1000);updateClock();
-// Clima real compacto: usa la ubicación GPS del dispositivo y Open-Meteo.
+// Clima PDA-Z: indicador compacto + telemetría ambiental ampliada.
 (()=>{
  const box=$('pdaWeather'),icon=$('weatherIcon'),temp=$('weatherTemp'),hum=$('weatherHumidity'),refresh=$('weatherRefresh');if(!box||!navigator.geolocation)return;
  const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false;
  const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};
- function paint(data,stale=false){icon.textContent=data.icon;temp.textContent=Math.round(data.temperature)+'°';hum.textContent='HUM '+Math.round(data.humidity)+'%';box.classList.toggle('stale',stale);box.title=(data.description||'Clima actual')+' · '+(stale?'Último dato guardado':('Actualizado '+new Date(data.updated).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})));}
+ const $c=id=>document.getElementById(id);
+ const put=(id,value)=>{const el=$c(id);if(el)el.textContent=value};
+ const direction=d=>{if(!Number.isFinite(Number(d)))return '--';return ['N','NE','E','SE','S','SO','O','NO'][Math.round(((Number(d)%360)+360)%360/45)%8]};
+ function paint(data,stale=false){
+  icon.textContent=data.icon;temp.textContent=Math.round(data.temperature)+'°';hum.textContent='HUM '+Math.round(data.humidity)+'%';box.classList.toggle('stale',stale);
+  box.title=(data.description||'Clima actual')+' · '+(stale?'Último dato guardado':('Actualizado '+new Date(data.updated).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})));
+  put('climateConnection',stale?'ÚLTIMO REGISTRO · SIN CONEXIÓN':'TELEMETRÍA EN LÍNEA');
+  put('climateGpsStatus',stale?'COORDENADAS EN CACHÉ':'GPS FIJADO');
+  put('climateIcon',data.icon);put('climateNowTemp',Math.round(data.temperature)+'°');put('climateDescription',(data.description||'CONDICIONES VARIABLES').toUpperCase());
+  put('climateUpdated',(stale?'ÚLTIMO DATO · ':'ACTUALIZADO · ')+new Date(data.updated).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}));
+  put('climateTemp',Number.isFinite(data.temperature)?data.temperature.toFixed(1)+'°C':'--°C');
+  put('climateFeels',Number.isFinite(data.feels)?data.feels.toFixed(1)+'°C':'--°C');
+  put('climateHumidity',Number.isFinite(data.humidity)?Math.round(data.humidity)+'%':'--%');
+  put('climateUV',Number.isFinite(data.uv)?data.uv.toFixed(1):'--');
+  put('climateRadiation',Number.isFinite(data.radiation)?Math.round(data.radiation)+' W/m²':'-- W/m²');
+  put('climateCloud',Number.isFinite(data.cloud)?Math.round(data.cloud)+'%':'--%');
+  put('climateWind',Number.isFinite(data.wind)?Math.round(data.wind)+' km/h':'-- km/h');
+  put('climateWindDir','Dirección '+direction(data.windDirection));
+  put('climatePressure',Number.isFinite(data.pressure)?Math.round(data.pressure)+' hPa':'-- hPa');
+  put('climateRainChance',Number.isFinite(data.rainChance)?Math.round(data.rainChance)+'%':'--%');
+  put('climateRainAmount',Number.isFinite(data.rainAmount)?data.rainAmount.toFixed(1)+' mm':'-- mm');
+  put('climateRainMax',Number.isFinite(data.rainMax)?Math.round(data.rainMax)+'%':'--%');
+  put('climateRainDay',Number.isFinite(data.rainDay)?data.rainDay.toFixed(1)+' mm':'-- mm');
+  const time=v=>v?new Date(v).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}):'--:--';
+  put('climateSunrise',time(data.sunrise));put('climateSunset',time(data.sunset));
+  const storm=Number(data.code)>=95&&Number(data.code)<=99;
+  put('climateStorm',storm?'TORMENTA PRONOSTICADA':'SIN SEÑAL HORARIA');
+  put('climateStormDetail',storm?'El pronóstico horario indica tormenta; no hay porcentaje específico disponible.':(Number.isFinite(data.cape)&&data.cape>=500?'Hay energía convectiva; no equivale a probabilidad de tormenta.':'El pronóstico horario no indica tormenta eléctrica.'));
+ }
  const symbols={0:['☀','Despejado'],1:['🌤','Mayormente despejado'],2:['⛅','Parcialmente nublado'],3:['☁','Nublado'],45:['🌫','Niebla'],48:['🌫','Niebla'],51:['🌦','Llovizna'],53:['🌦','Llovizna'],55:['🌧','Llovizna intensa'],56:['🌧','Llovizna helada'],57:['🌧','Llovizna helada'],61:['🌧','Lluvia'],63:['🌧','Lluvia'],65:['🌧','Lluvia intensa'],66:['🌧','Lluvia helada'],67:['🌧','Lluvia helada'],71:['❄','Nieve'],73:['❄','Nieve'],75:['❄','Nieve intensa'],77:['❄','Granizo menudo'],80:['🌦','Chaparrones'],81:['🌧','Chaparrones'],82:['⛈','Chaparrones fuertes'],85:['🌨','Nieve'],86:['🌨','Nieve intensa'],95:['⛈','Tormenta'],96:['⛈','Tormenta con granizo'],99:['⛈','Tormenta fuerte']};
- async function loadWeather(lat,lon){if(busy)return;busy=true;try{const url='https://api.open-meteo.com/v1/forecast?latitude='+encodeURIComponent(lat)+'&longitude='+encodeURIComponent(lon)+'&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code&timezone=auto';const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);const json=await response.json(),c=json.current;if(!c)throw new Error('Sin datos actuales');const w=symbols[c.weather_code]||['◌','Condiciones variables'];const data={temperature:c.temperature_2m,humidity:c.relative_humidity_2m,feels:c.apparent_temperature,icon:c.is_day?w[0]:(c.weather_code===0?'☾':w[0]),description:w[1],updated:Date.now()};localStorage.setItem(cacheKey,JSON.stringify(data));paint(data,false);}catch(e){const old=cached();if(old)paint(old,true);else{icon.textContent='?';temp.textContent='--°';hum.textContent='SIN DATOS';box.title='No se pudo obtener el clima. Revisá la conexión.';}}finally{busy=false;}}
- function locate(){if(!navigator.geolocation){box.title='Este navegador no ofrece GPS';return;}icon.textContent='⌖';box.title='Solicitando ubicación GPS…';navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};loadWeather(lastCoords.lat,lastCoords.lon);},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});}
- refresh?.addEventListener('click',locate);const old=cached();if(old)paint(old,true);locate();setInterval(()=>{if(lastCoords)loadWeather(lastCoords.lat,lastCoords.lon);else locate();},30*60*1000);
+ async function loadWeather(lat,lon){
+  if(busy)return;busy=true;
+  try{
+   const params='current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,surface_pressure&hourly=precipitation_probability,precipitation,shortwave_radiation,uv_index,cape&daily=sunrise,sunset,uv_index_max,precipitation_probability_max,precipitation_sum&forecast_days=1&timezone=auto';
+   const url='https://api.open-meteo.com/v1/forecast?latitude='+encodeURIComponent(lat)+'&longitude='+encodeURIComponent(lon)+'&'+params;
+   const response=await fetch(url,{cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);
+   const json=await response.json(),c=json.current,h=json.hourly||{},d=json.daily||{};if(!c)throw new Error('Sin datos actuales');
+   const w=symbols[c.weather_code]||['◌','Condiciones variables'];
+   const times=h.time||[];let hi=0,best=Infinity;times.forEach((t,i)=>{const delta=Math.abs(new Date(t).getTime()-new Date(c.time).getTime());if(delta<best){best=delta;hi=i;}});
+   const at=(key)=>Array.isArray(h[key])?Number(h[key][hi]):NaN;
+   const first=(key)=>Array.isArray(d[key])?d[key][0]:null;
+   const data={temperature:Number(c.temperature_2m),humidity:Number(c.relative_humidity_2m),feels:Number(c.apparent_temperature),icon:c.is_day?w[0]:(c.weather_code===0?'☾':w[0]),description:w[1],updated:Date.now(),uv:at('uv_index'),radiation:at('shortwave_radiation'),cloud:Number(c.cloud_cover),wind:Number(c.wind_speed_10m),windDirection:Number(c.wind_direction_10m),pressure:Number(c.surface_pressure),rainChance:at('precipitation_probability'),rainAmount:at('precipitation'),rainMax:Number(first('precipitation_probability_max')),rainDay:Number(first('precipitation_sum')),sunrise:first('sunrise'),sunset:first('sunset'),cape:at('cape'),code:Number(c.weather_code)};
+   localStorage.setItem(cacheKey,JSON.stringify(data));paint(data,false);
+  }catch(e){const old=cached();if(old)paint(old,true);else{icon.textContent='?';temp.textContent='--°';hum.textContent='SIN DATOS';box.title='No se pudo obtener el clima. Revisá la conexión.';put('climateConnection','SIN DATOS');put('climateGpsStatus','SIN FIJACIÓN GPS');}}
+  finally{busy=false;}
+ }
+ function locate(){
+  if(!navigator.geolocation){box.title='Este navegador no ofrece GPS';put('climateConnection','GPS NO DISPONIBLE');return;}
+  icon.textContent='⌖';box.title='Solicitando ubicación GPS…';
+  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};loadWeather(lastCoords.lat,lastCoords.lon);},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});
+ }
+ refresh?.addEventListener('click',e=>{e.stopPropagation();locate();});
+ $c('climateRefresh')?.addEventListener('click',locate);
+ box.addEventListener('click',e=>{if(e.target.closest('button,a'))return;go('climate')});
+ const old=cached();if(old)paint(old,true);locate();setInterval(()=>{if(lastCoords)loadWeather(lastCoords.lat,lastCoords.lon);else locate();},30*60*1000);
 })();
 $('fullscreenBtn').onclick=async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();$('fullscreenBtn').textContent='⛶ SALIR DE PANTALLA COMPLETA'}else{await document.exitFullscreen();$('fullscreenBtn').textContent='⛶ PANTALLA COMPLETA'}}catch(e){alert('El navegador no permite pantalla completa en esta vista. Abrí la PDA en Chrome y probá nuevamente.')}}
 document.addEventListener('fullscreenchange',()=>{$('fullscreenBtn').textContent=document.fullscreenElement?'⛶ SALIR DE PANTALLA COMPLETA':'⛶ PANTALLA COMPLETA'});
@@ -2017,7 +2148,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v83';
+const PDA_SW_BUILD='pda-zona-shell-v84';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
