@@ -686,6 +686,18 @@ body.spend-keyboard-open #pdaSpendOverlay .pda-economy-modal{max-height:calc(100
 .orientation-indicator .orientation-arrow{display:inline-block;color:#75ff55;font-size:1.35em;font-weight:900;line-height:1;text-shadow:0 0 3px #75ff55,0 0 7px #75ff55,0 0 13px #49ff39;animation:orientationArrowGlow 1.15s ease-in-out infinite;}
 @keyframes orientationArrowGlow{0%,100%{opacity:.72;text-shadow:0 0 2px #75ff55,0 0 5px #75ff55,0 0 9px #49ff39;}50%{opacity:1;text-shadow:0 0 4px #a4ff83,0 0 10px #75ff55,0 0 19px #49ff39,0 0 27px #49ff3988;}}
 
+/* Perfil de pantalla exclusivo de Ilai: Samsung Galaxy A12, respetando su fuente preferida. */
+body.pda-ilai-device{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@media(max-width:420px){
+ body.pda-ilai-device header{padding:14px 12px}
+ body.pda-ilai-device header .row:first-child{display:flex;flex-direction:column;align-items:stretch;gap:9px}
+ body.pda-ilai-device header .row:first-child>div:first-child{min-width:0}
+ body.pda-ilai-device .header-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:6px}
+ body.pda-ilai-device .header-tools>button{min-width:0;width:100%;padding:9px 5px;font-size:11px;white-space:nowrap}
+ body.pda-ilai-device .header-tools .orientation-indicator{grid-column:1/-1;width:100%;min-width:0;padding:9px 6px;font-size:14px;text-align:center;white-space:normal}
+ body.pda-ilai-device .pda-status-row{gap:7px}
+ body.pda-ilai-device .pda-weather{max-width:100%;margin-left:0;flex-wrap:wrap;white-space:normal}
+}
 /* PDA // ZONA · tablero financiero neón conectado al registro real */
 .economy-terminal{background:radial-gradient(ellipse at 82% 0%,#263d9a88 0%,transparent 42%),linear-gradient(145deg,#111b45 0%,#080e29 62%,#170d3b 100%);border:1px solid #725cff;border-radius:15px;box-shadow:0 0 22px #542cff35,inset 0 0 30px #246dff18}
 .economy-terminal:after{background:repeating-linear-gradient(0deg,transparent 0 3px,#b7bfff08 4px);opacity:.42}
@@ -1220,6 +1232,7 @@ async function pdaEnsureSession(){
  let {data:{session}}=await client.auth.getSession();
  if(!session){const {data,error}=await client.auth.signInAnonymously();if(error)throw error;session=data.session}
  pdaUserId=session.user.id;
+ document.body.classList.toggle('pda-ilai-device',pdaUserId==='f7b0836a-e88b-4d5a-9073-070ccece982d');
  return client;
 }
 let pdaProfile=null,pdaProfileEditing=null;
