@@ -1,19 +1,29 @@
 package com.pdazona.app
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
-import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.net.Uri
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.FrameLayout
+import android.webkit.GeolocationPermissions
 import android.webkit.JavascriptInterface
+import android.webkit.PermissionRequest
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
+import android.webkit.ValueCallback
 import android.webkit.WebViewClient
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -27,11 +37,18 @@ import java.util.Locale
 /** APK-only adapter: the PWA remains the source of Lebedev's texts and behavior. */
 class PdaLauncherActivity : Activity() {
     private lateinit var webView: WebView
+    private lateinit var rootLayout: FrameLayout
     private var tts: TextToSpeech? = null
     private var ttsReady = false
     private var pageReady = false
     private var pickerShown = false
     private var availableVoices: List<android.speech.tts.Voice> = emptyList()
+    private var filePathCallback: ValueCallback<Array<Uri>>? = null
+    private var pendingWebPermissionRequest: PermissionRequest? = null
+    private var pendingGeoCallback: GeolocationPermissions.Callback? = null
+    private var pendingGeoOrigin: String? = null
+    private var customView: View? = null
+    private var customViewCallback: WebChromeClient.CustomViewCallback? = null
 
     companion object {
         private const val START_URL = "https://guillewestdorp50-boop.github.io/pda-zona./"
@@ -40,6 +57,9 @@ class PdaLauncherActivity : Activity() {
         private const val VOICE_KEY = "selected_voice"
         private const val VOICE_CONFIGURED_KEY = "voice_configured"
         private const val VOICE_PREFIX = "android:"
+        private const val FILE_CHOOSER_REQUEST = 4101
+        private const val WEB_PERMISSION_REQUEST = 4102
+        private const val LOCATION_PERMISSION_REQUEST = 4103
         private const val DOCUMENT_START_SCRIPT = """
 (function(){
   let voices=[];
@@ -80,8 +100,13 @@ class PdaLauncherActivity : Activity() {
     }
 
     private fun hideSystemBars() {
-        window.statusBarColor = Color.BLACK
-        window.navigationBarColor = Color.BLACK
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            window.attributes = window.attributes.apply {
+                layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            }
+        }
         WindowCompat.setDecorFitsSystemWindows(window, false)
         WindowInsetsControllerCompat(window, window.decorView).let { controller ->
             controller.hide(WindowInsetsCompat.Type.systemBars())
@@ -91,18 +116,6 @@ class PdaLauncherActivity : Activity() {
     }
 
     private inner class PdaNativeBridge {
-        @JavascriptInterface
-        fun setOrientation(value: String) {
-            runOnUiThread {
-                requestedOrientation = when (value) {
-                    "landscape" -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                    "portrait" -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                    else -> return@runOnUiThread
-                }
-                hideSystemBars()
-            }
-        }
-
         @JavascriptInterface
         fun speak(text: String, voiceUri: String, lang: String, rate: Double,
                   pitch: Double, volume: Double, utteranceId: String) {
