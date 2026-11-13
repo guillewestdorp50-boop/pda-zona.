@@ -78,3 +78,7 @@ end;
 $$;
 revoke all on function public.pda_credit_ru(uuid,bigint,bigint,uuid) from public,anon,authenticated;
 grant execute on function public.pda_credit_ru(uuid,bigint,bigint,uuid) to service_role;
+
+create index if not exists pda_wallet_events_conversation_idx on public.pda_wallet_events(conversation_id);
+create index if not exists pda_wallet_events_sender_idx on public.pda_wallet_events(sender_user_id);
+create index if not exists pda_wallet_credits_user_idx on public.pda_wallet_credits(user_id);
