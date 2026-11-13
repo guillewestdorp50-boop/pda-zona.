@@ -1833,7 +1833,7 @@ function updateClock(){let now=new Date();$('clock').textContent=new Intl.DateTi
 setInterval(updateClock,1000);updateClock();
 // Clima PDA-Z: indicador compacto + telemetría ambiental ampliada.
 (()=>{
- const box=$('pdaWeather'),icon=$('weatherIcon'),temp=$('weatherTemp'),hum=$('weatherHumidity'),refresh=$('weatherRefresh');if(!box||!navigator.geolocation)return;
+ const box=$('pdaWeather'),icon=$('weatherIcon'),temp=$('weatherTemp'),hum=$('weatherHumidity'),refresh=$('weatherRefresh');if(!box)return;if(!navigator.geolocation){climateBootCheckFailed=true;climateBootCheckReady=true;setTimeout(playAutomaticWelcome,0);return;}
  const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false,lightningBusy=false,lastLightningData=null;const lightningCacheKey='zona_lightning_last_v1',lightningVoiceKey='zona_lightning_voice_level_v1',lightningVoiceAtKey='zona_lightning_voice_at_v1';let lightningLastVoiceLevel=Number(localStorage.getItem(lightningVoiceKey)||0),lightningLastVoiceAt=Number(localStorage.getItem(lightningVoiceAtKey)||0);if(lightningLastVoiceAt&&Date.now()-lightningLastVoiceAt>15*60*1000)lightningLastVoiceLevel=0;
  const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};const cachedLightning=()=>{try{return JSON.parse(localStorage.getItem(lightningCacheKey)||'null')}catch{return null}};window.zonaLightningCurrent=cachedLightning();
  const $c=id=>document.getElementById(id);
@@ -2140,7 +2140,7 @@ setInterval(updateClock,1000);updateClock();
  function locate(){
   if(!navigator.geolocation){box.title='Este navegador no ofrece GPS';put('climateConnection','GPS NO DISPONIBLE');paintLightning({ok:false,error:'gps_unavailable'},true);return;}
   icon.textContent='⌖';box.title='Solicitando ubicación GPS…';
-  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};Promise.allSettled([loadWeather(lastCoords.lat,lastCoords.lon),loadLightning(lastCoords.lat,lastCoords.lon)]).then(()=>{climateBootCheckReady=true;playAutomaticWelcome();});},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';paintLightning({ok:false,error:'gps_unavailable'},true);climateBootCheckFailed=true;climateBootCheckReady=true;playAutomaticWelcome();},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});
+  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};Promise.allSettled([loadWeather(lastCoords.lat,lastCoords.lon),loadLightning(lastCoords.lat,lastCoords.lon)]).then(()=>{const bootTemp=Number(window.zonaWeatherCurrent?.temperature);if(Number.isFinite(bootTemp)&&bootTemp>=35)svarog.lastHeatVoiceLevel=bootTemp>=45?3:bootTemp>=40?2:1;climateBootCheckReady=true;playAutomaticWelcome();});},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';paintLightning({ok:false,error:'gps_unavailable'},true);climateBootCheckFailed=true;climateBootCheckReady=true;playAutomaticWelcome();},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});
  }
  refresh?.addEventListener('click',e=>{e.stopPropagation();locate();});
  $c('climateRefresh')?.addEventListener('click',locate);
