@@ -934,6 +934,7 @@ function selectedSidorovichVoice(){const uri=localStorage.getItem('zona_sidorovi
 let welcomeStartedThisOpen=false,welcomeInProgress=false,welcomeFallbackTriggered=false;
 let climateBootCheckReady=false,climateBootCheckFailed=false;
 function makeSidorovichUtterance(line){const u=new SpeechSynthesisUtterance(line);const voice=selectedSidorovichVoice();u.voice=voice;u.lang=voice?.lang||'es-AR';u.rate=.92;u.pitch=1;u.volume=1;return u;}
+/* v108: el botón CLIMA informa; las alertas se reservan para eventos automáticos. */
 function speakSidorovich(tab,alertMode=false){
  if(!sidorovichVoiceEnabled||!('speechSynthesis'in window)||typeof SpeechSynthesisUtterance==='undefined'||welcomeInProgress)return;
  let line=sidorovichLines[tab]||sidorovichLines.home;
