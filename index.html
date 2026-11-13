@@ -1836,6 +1836,7 @@ setInterval(updateClock,1000);updateClock();
  function updateSvarogAudio(){
   if(!svarog.audio)return;
   clearTimeout(svarog.timer);
+  if(svarog.channel==='emissions'){put('svarogAudioState','MODO TÉRMICO · SIN PULSOS GEIGER');return;}
   const v=Math.max(0,Math.min(100,Number(svarog.value)||0));
   put('svarogAudioState',v===0?'SIN PULSOS · 0%':v<25?'GEIGER · ACTIVIDAD BAJA':v<60?'GEIGER · ACTIVIDAD MODERADA':'GEIGER · ACTIVIDAD INTENSA');
   const tick=()=>{
@@ -1865,7 +1866,9 @@ setInterval(updateClock,1000);updateClock();
   document.querySelectorAll('.svarog-selectors button').forEach(b=>b.classList.toggle('active',b.dataset.signal===channel));
   const emissionMode=channel==='emissions';
   $c('svarogScaleLabels')?.querySelectorAll('text').forEach(t=>{const raw=Number(t.dataset.value);if(Number.isFinite(raw))t.textContent=String(emissionMode?raw/2:raw);});
-  $c('svarogInstrument')?.classList.toggle('emission-mode',emissionMode);
+  const instrumentMode=$c('svarogInstrument');
+  instrumentMode?.classList.toggle('emission-mode',emissionMode);
+  if(!emissionMode){instrumentMode?.classList.remove('emission-warning','emission-danger');svarog.emissionAnnounced=false;}
   const d=cached()||{},meta=signalMeta[channel]||['SEÑAL','SIN FEED','IDX'];
   updateSvarogMetrics(d);
   if(channel==='rain'){
