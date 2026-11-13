@@ -736,9 +736,11 @@ window.encyFollowLink=el=>{
   $('encyList')?.scrollIntoView({behavior:'smooth',block:'start'});
  }
 };
-function rememberRichSelection(field){if(!field)return;field._richSelection={start:field.selectionStart??field.value.length,end:field.selectionEnd??field.value.length};}
+function rememberRichSelection(field){if(!field)return;const start=Number.isInteger(field.selectionStart)?field.selectionStart:field.value.length,end=Number.isInteger(field.selectionEnd)?field.selectionEnd:start;field._richSelection={start:Math.max(0,Math.min(start,field.value.length)),end:Math.max(0,Math.min(end,field.value.length))};}
 function applyRichTag(field,tag,value){
- if(!field)return;const saved=field._richSelection;const start=saved?.start??field.selectionStart??field.value.length,end=saved?.end??field.selectionEnd??field.value.length;
+ if(!field)return;
+ const saved=field._richSelection||{start:field.selectionStart??field.value.length,end:field.selectionEnd??field.value.length};
+ const start=Math.max(0,Math.min(saved.start,field.value.length)),end=Math.max(start,Math.min(saved.end,field.value.length));
  const open=tag==='color'?'[color='+value+']':tag==='size'?'[size='+value+']':tag==='font'?'[font='+value+']':'['+tag+']';
  const close='[/'+tag+']',selected=field.value.slice(start,end),replacement=open+selected+close;
  field.value=field.value.slice(0,start)+replacement+field.value.slice(end);
@@ -750,13 +752,13 @@ function initRichEditors(){
  targets.forEach(field=>{
   if(field.dataset.richReady)return;field.dataset.richReady='1';
   const bar=document.createElement('div');bar.className='rich-toolbar';bar.setAttribute('aria-label','Herramientas de formato');
-  field.addEventListener('select',()=>rememberRichSelection(field));field.addEventListener('keyup',()=>rememberRichSelection(field));field.addEventListener('click',()=>rememberRichSelection(field));field.addEventListener('input',()=>rememberRichSelection(field));
+  field.addEventListener('select',()=>rememberRichSelection(field));field.addEventListener('keyup',()=>rememberRichSelection(field));field.addEventListener('click',()=>rememberRichSelection(field));field.addEventListener('input',()=>rememberRichSelection(field));field.addEventListener('blur',()=>rememberRichSelection(field));
   const addButton=(label,tag,title)=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.title=title;b.addEventListener('pointerdown',e=>e.preventDefault());b.addEventListener('click',()=>applyRichTag(field,tag));bar.appendChild(b)};
   addButton('B','b','Negrita');addButton('I','i','Cursiva');addButton('U','u','Subrayado');addButton('S','s','Tachado');
   const color=document.createElement('select');color.setAttribute('aria-label','Color de letra');color.innerHTML='<option value="#c6df9c">Color</option><option value="#ffffff">Blanco</option><option value="#ff5555">Rojo</option><option value="#55dd88">Verde</option><option value="#55aaff">Azul</option><option value="#ffd84d">Amarillo</option><option value="#ff9b45">Naranja</option><option value="#d18cff">Violeta</option><option value="#ff83c6">Rosa</option>';
-  color.addEventListener('pointerdown',()=>rememberRichSelection(field));color.addEventListener('change',()=>{applyRichTag(field,'color',color.value);color.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(color);
-  const size=document.createElement('select');size.setAttribute('aria-label','Tamaño de letra');size.innerHTML='<option value="normal">Tamaño</option><option value="small">Pequeño</option><option value="normal">Normal</option><option value="large">Grande</option><option value="huge">Extra grande</option>';size.addEventListener('pointerdown',()=>rememberRichSelection(field));size.addEventListener('change',()=>{applyRichTag(field,'size',size.value);size.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(size);
-  const font=document.createElement('select');font.setAttribute('aria-label','Tipo de letra');font.innerHTML='<option value="sans">Fuente</option><option value="sans">Sans</option><option value="serif">Serif</option><option value="mono">Monoespaciada</option>';font.addEventListener('pointerdown',()=>rememberRichSelection(field));font.addEventListener('change',()=>{applyRichTag(field,'font',font.value);font.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(font);
+  color.addEventListener('pointerdown',()=>rememberRichSelection(field));color.addEventListener('focus',()=>rememberRichSelection(field));color.addEventListener('change',()=>{applyRichTag(field,'color',color.value);color.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(color);
+  const size=document.createElement('select');size.setAttribute('aria-label','Tamaño de letra');size.innerHTML='<option value="normal">Tamaño</option><option value="small">Pequeño</option><option value="normal">Normal</option><option value="large">Grande</option><option value="huge">Extra grande</option>';size.addEventListener('pointerdown',()=>rememberRichSelection(field));size.addEventListener('focus',()=>rememberRichSelection(field));size.addEventListener('change',()=>{applyRichTag(field,'size',size.value);size.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(size);
+  const font=document.createElement('select');font.setAttribute('aria-label','Tipo de letra');font.innerHTML='<option value="sans">Fuente</option><option value="sans">Sans</option><option value="serif">Serif</option><option value="mono">Monoespaciada</option>';font.addEventListener('pointerdown',()=>rememberRichSelection(field));font.addEventListener('focus',()=>rememberRichSelection(field));font.addEventListener('change',()=>{applyRichTag(field,'font',font.value);font.selectedIndex=0;rememberRichSelection(field)});bar.appendChild(font);
   const help=document.createElement('div');help.className='rich-help';help.textContent='Seleccioná texto y elegí formato. Si no seleccionás, el formato queda listo para escribir con el teclado PDA.';bar.appendChild(help);
   field.parentNode.insertBefore(bar,field);
  });
@@ -2001,7 +2003,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v80';
+const PDA_SW_BUILD='pda-zona-shell-v81';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
