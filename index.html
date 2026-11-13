@@ -682,6 +682,56 @@ body.keyboard-visible footer{display:none}
 /* v112 · flecha de orientación con destello verde */
 .orientation-indicator .orientation-arrow{display:inline-block;color:#75ff55;font-size:1.35em;font-weight:900;line-height:1;text-shadow:0 0 3px #75ff55,0 0 7px #75ff55,0 0 13px #49ff39;animation:orientationArrowGlow 1.15s ease-in-out infinite;}
 @keyframes orientationArrowGlow{0%,100%{opacity:.72;text-shadow:0 0 2px #75ff55,0 0 5px #75ff55,0 0 9px #49ff39;}50%{opacity:1;text-shadow:0 0 4px #a4ff83,0 0 10px #75ff55,0 0 19px #49ff39,0 0 27px #49ff3988;}}
+
+/* PDA // ZONA · tablero financiero neón conectado al registro real */
+.economy-terminal{background:radial-gradient(ellipse at 82% 0%,#263d9a88 0%,transparent 42%),linear-gradient(145deg,#111b45 0%,#080e29 62%,#170d3b 100%);border:1px solid #725cff;border-radius:15px;box-shadow:0 0 22px #542cff35,inset 0 0 30px #246dff18}
+.economy-terminal:after{background:repeating-linear-gradient(0deg,transparent 0 3px,#b7bfff08 4px);opacity:.42}
+.economy-terminal-top{color:#c2c9ff;border-color:#7772ff66}
+.economy-live-dot{background:#23ff9a;box-shadow:0 0 8px #23ff9a,0 0 16px #23ff9a88}
+.economy-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(112px,.8fr);align-items:stretch;gap:12px;padding:16px 2px}
+.economy-balance-block{min-width:0;align-self:center}
+.economy-overline{color:#b5a9ff}
+.economy-big-balance{font-size:clamp(29px,8vw,48px);letter-spacing:-2px;color:#8dff75;text-shadow:0 0 18px #4aff6a77;overflow-wrap:anywhere}
+.economy-big-balance small{color:#c6ffb9}
+.economy-balance-caption{color:#b5c3ff}
+.economy-hero-stats{display:grid;gap:8px;align-content:center;border-left:1px solid #8178ff88;padding-left:12px;min-width:0}
+.economy-hero-stat{display:grid;gap:5px;min-width:0}
+.economy-hero-stat span{font:800 8px monospace;letter-spacing:.5px;color:#c4c8ff}
+.economy-hero-stat strong{font:900 clamp(13px,3.6vw,19px) monospace;white-space:nowrap}
+.economy-hero-stat.income strong{color:#24ff9a;text-shadow:0 0 12px #24ff9a66}
+.economy-hero-stat.expense strong{color:#ff526d;text-shadow:0 0 12px #ff526d66}
+.economy-chart-wrap{border:1px solid #675bff;background:linear-gradient(145deg,#07122eeb,#111038e8);border-radius:10px;padding:11px 9px 8px;box-shadow:inset 0 0 22px #6350ff16}
+.economy-chart-head{color:#d5d2ff;font-size:10px}
+.economy-chart-period,.economy-chart-foot span:last-child{color:#a6a0ff}
+.economy-chart-scroll{width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#7665ff #111638}
+.economy-chart{height:280px;display:block;margin-top:4px;overflow:visible}
+.economy-chart-grid-line{stroke:#8992d655;stroke-width:1;stroke-dasharray:4 5}
+.economy-chart-grid-label{fill:#aeb7e8;font:10px monospace}
+.economy-chart-area-path{fill:url(#ruChartFill)}
+.economy-chart-segment{fill:none;stroke-width:3;stroke-linecap:round;filter:drop-shadow(0 0 4px currentColor)}
+.economy-chart-segment.income{stroke:#20f69a;color:#20f69a}
+.economy-chart-segment.expense{stroke:#ff405f;color:#ff405f}
+.economy-chart-bubble.income{fill:#075b42;stroke:#20ff9c;stroke-width:2;filter:drop-shadow(0 0 5px #20ff9a99)}
+.economy-chart-bubble.expense{fill:#64172d;stroke:#ff4969;stroke-width:2;filter:drop-shadow(0 0 5px #ff496999)}
+.economy-chart-bubble-text{fill:#fff;font:900 12px monospace;text-anchor:middle}
+.economy-chart-point-ring{fill:#07132c;stroke-width:3}
+.economy-chart-point-ring.income{stroke:#20ff9c;filter:drop-shadow(0 0 5px #20ff9a)}
+.economy-chart-point-ring.expense{stroke:#ff4969;filter:drop-shadow(0 0 5px #ff4969)}
+.economy-chart-time{fill:#e2e4ff;font:10px monospace;text-anchor:middle}
+.economy-chart-legend{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:5px 2px 7px;font:800 8px monospace}
+.economy-chart-legend .income{color:#31ffa4}.economy-chart-legend .expense{color:#ff647b}
+.economy-chart-foot{border-color:#6c60ff55;color:#aeb7e8;font-size:8px}
+.economy-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.economy-metric{background:#0c1538;border-color:#4c4b9b;border-radius:7px}
+.economy-metric-icon.positive{color:#31ffa4;background:#31ffa41c}.economy-metric-icon.negative{color:#ff647b;background:#ff647b1c}.economy-metric-icon.neutral{color:#b5a9ff;background:#b5a9ff1c}
+.economy-metric small{color:#b3b6ed;font-size:7px}
+.economy-metric strong{color:#f2f2ff;font-size:clamp(9px,2.4vw,12px)}
+.economy-ledger-heading h2{color:#e5e2ff}
+.economy-ledger-badge{color:#b8ffdf;border-color:#31b98c}
+.economy-entry{background:linear-gradient(115deg,#111d48,#101333 58%,#1a1240);border-color:#514c9c;border-radius:9px;box-shadow:0 5px 16px #0007,inset 0 0 18px #7770ff0c}
+.economy-entry .entry-balance{color:#b9c6ff}
+@media(max-width:420px){.economy-terminal{padding:10px}.economy-hero{grid-template-columns:minmax(0,1.1fr) minmax(105px,.9fr);gap:8px}.economy-hero-stats{padding-left:8px}.economy-chart{height:260px}.economy-chart-legend{font-size:7px}.economy-metric{padding:7px 4px}}
+@media(orientation:landscape) and (max-height:600px){.economy-hero{grid-template-columns:1.4fr 1fr;padding:8px 2px}.economy-chart{height:230px}.economy-terminal{padding:10px}}
 </style><style>
 .svarog-heat-alert{display:flex;flex-direction:column;gap:6px;margin:10px 0;padding:13px;border:2px solid #ff4b24;background:repeating-linear-gradient(135deg,#3b100b,#3b100b 10px,#250a08 10px,#250a08 20px);color:#fff1d7;box-shadow:0 0 18px #ff321d88;animation:heatPulse .8s steps(2,end) infinite}
  .svarog-heat-alert.heat-danger{border-color:#ff1717;background:repeating-linear-gradient(135deg,#5a0808,#5a0808 10px,#300606 10px,#300606 20px);box-shadow:0 0 24px #ff1717aa}.svarog-heat-alert.lightning-alert{border-color:#d6b34e;background:repeating-linear-gradient(135deg,#34280b,#34280b 10px,#211a08 10px,#211a08 20px);box-shadow:0 0 18px #d6b34e66}.svarog-heat-alert.lightning-alert.heat-danger{border-color:#ff1717;background:repeating-linear-gradient(135deg,#5a0808,#5a0808 10px,#300606 10px,#300606 20px)}
@@ -711,9 +761,9 @@ body.keyboard-visible footer{display:none}
 <section id="economy" class="view">
  <div class="economy-terminal">
   <div class="economy-terminal-top"><span><i class="economy-live-dot"></i> ZONA EXCHANGE · RED FINANCIERA</span><span id="economyLiveClock">SINCRONIZANDO</span></div>
-  <div class="economy-hero"><div><div class="economy-overline">BALANCE DE LA BILLETERA</div><div class="economy-big-balance" id="pdaEconomyBalance">— <small>RU</small></div><div class="economy-balance-caption"><span class="economy-live-dot"></span> SALDO CENTRAL SINCRONIZADO</div></div><div class="economy-coin">₽<span>RU</span></div></div>
-  <div class="economy-chart-wrap"><div class="economy-chart-head"><span>VOLUMEN DE OPERACIONES</span><span class="economy-chart-period">HISTORIAL COMPLETO</span></div><svg class="economy-chart" viewBox="0 0 640 128" preserveAspectRatio="none" aria-label="Visualización decorativa de actividad financiera"><defs><linearGradient id="ruChartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#a8ef69" stop-opacity=".34"/><stop offset="1" stop-color="#a8ef69" stop-opacity="0"/></linearGradient><filter id="ruGlow"><feGaussianBlur stdDeviation="4"/></filter></defs><path class="economy-chart-area" id="ruChartArea" d="M0 110 L640 110 L640 128 L0 128 Z"/><path class="economy-chart-glow" id="ruChartGlow" d="M0 110 L640 110"/><path class="economy-chart-line" id="ruChartLine" d="M0 110 L640 110"/><circle class="economy-chart-point" id="ruChartPoint" cx="640" cy="110" r="4"/></svg><div class="economy-chart-foot"><span>REGISTRO DE OPERACIONES</span><span>DATOS ACTUALIZADOS EN TIEMPO REAL</span></div></div>
-  <div class="economy-metrics"><div class="economy-metric"><span class="economy-metric-icon positive">↗</span><div><small>INGRESOS</small><strong id="pdaEconomyIn">+0 RU</strong></div></div><div class="economy-metric"><span class="economy-metric-icon negative">↘</span><div><small>EGRESOS</small><strong id="pdaEconomyOut">−0 RU</strong></div></div><div class="economy-metric"><span class="economy-metric-icon neutral">≋</span><div><small>MOVIMIENTOS</small><strong id="pdaEconomyCount">0</strong></div></div></div>
+  <div class="economy-hero"><div class="economy-balance-block"><div class="economy-overline">DINERO DISPONIBLE</div><div class="economy-big-balance" id="pdaEconomyBalance">— <small>RU</small></div><div class="economy-balance-caption"><span class="economy-live-dot"></span> SALDO CENTRAL SINCRONIZADO</div></div><div class="economy-hero-stats"><div class="economy-hero-stat income"><span>↗ INGRESOS TOTALES</span><strong id="pdaEconomyIn">+0 RU</strong></div><div class="economy-hero-stat expense"><span>↘ GASTOS TOTALES</span><strong id="pdaEconomyOut">−0 RU</strong></div></div></div>
+  <div class="economy-chart-wrap"><div class="economy-chart-head"><span>FLUJO DE RUBL0S</span><span class="economy-chart-period">MOVIMIENTOS REALES</span></div><div class="economy-chart-scroll" id="ruChartScroll"><svg class="economy-chart" id="ruChartSvg" viewBox="0 0 640 280" role="img" aria-label="Gráfico de ingresos y gastos reales, con importes, fechas y horas"><defs><linearGradient id="ruChartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#8d6bff" stop-opacity=".2"/><stop offset="1" stop-color="#168dff" stop-opacity=".02"/></linearGradient><filter id="ruGlow"><feGaussianBlur stdDeviation="3"/></filter></defs><g id="ruChartGrid"></g><g id="ruChartArea"></g><g id="ruChartLines"></g><g id="ruChartLabels"></g><g id="ruChartPoints"></g><g id="ruChartTimes"></g></svg></div><div class="economy-chart-legend"><span class="income">● INGRESO · RUBL0S QUE ENTRAN</span><span class="expense">● GASTO · RUBL0S QUE SALEN</span></div><div class="economy-chart-foot"><span id="ruChartCount">0 MOVIMIENTOS GRAFICADOS</span><span>DESLIZÁ PARA RECORRER</span></div></div>
+  <div class="economy-metrics"><div class="economy-metric"><span class="economy-metric-icon neutral">≋</span><div><small>MOVIMIENTOS REGISTRADOS</small><strong id="pdaEconomyCount">0</strong></div></div><div class="economy-metric"><span class="economy-metric-icon positive">↗</span><div><small>ÚLTIMO INGRESO</small><strong id="pdaEconomyLastIn">—</strong></div></div><div class="economy-metric"><span class="economy-metric-icon negative">↘</span><div><small>ÚLTIMO GASTO</small><strong id="pdaEconomyLastOut">—</strong></div></div></div>
  </div>
  <div class="economy-ledger-heading"><div><div class="economy-overline">BLOCKCHAIN LOCAL · REGISTRO INMUTABLE</div><h2>MOVIMIENTOS DE RUBLOS</h2></div><span class="economy-ledger-badge"><i class="economy-live-dot"></i> REGISTRADO</span></div>
  <div id="pdaEconomyList" class="pda-economy-list"><div class="empty">CONECTANDO CON EL REGISTRO CENTRAL…</div></div>
@@ -1555,27 +1605,69 @@ async function pdaLoadEconomyLedger(){
 }
 function pdaRenderEconomyLedger(){
  const list=$("pdaEconomyList");if(!list)return;
- $("pdaEconomyBalance").textContent=(Number(pdaWalletData.balance)||0).toLocaleString("es-AR")+" RU";
+ const money=value=>Number(value||0).toLocaleString("es-AR");
+ $("pdaEconomyBalance").textContent=money(pdaWalletData.balance)+" RU";
  const entries=pdaEconomyEntries.filter(x=>pdaIsChild()?x.user_id===pdaChildUserId:(x.user_id===pdaParentUserId||x.movement_type==="expense")).filter(x=>!(x.movement_type==="reward_received"&&!pdaIsChild()));
+ const isIncome=entry=>entry.movement_type==="artifact_income"||entry.movement_type==="reward_received";
+ const isExpense=entry=>entry.movement_type==="reward_sent"||entry.movement_type==="expense";
  $("pdaEconomyCount").textContent=String(entries.length);
- const income=entries.filter(x=>x.movement_type==="artifact_income"||x.movement_type==="reward_received").reduce((sum,x)=>sum+Number(x.amount||0),0);
- const outcome=entries.filter(x=>x.movement_type==="reward_sent"||x.movement_type==="expense").reduce((sum,x)=>sum+Number(x.amount||0),0);
- const inNode=$("pdaEconomyIn"),outNode=$("pdaEconomyOut");if(inNode)inNode.textContent="+"+income.toLocaleString("es-AR")+" RU";if(outNode)outNode.textContent="−"+outcome.toLocaleString("es-AR")+" RU";
- const chartEntries=[...entries].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)).slice(-16),chartLine=$("ruChartLine"),chartGlow=$("ruChartGlow"),chartArea=$("ruChartArea"),chartPoint=$("ruChartPoint");
- if(chartEntries.length){const maxAmount=Math.max(1,...chartEntries.map(x=>Number(x.amount)||0));const pts=chartEntries.map((x,i)=>({x:chartEntries.length===1?320:i*640/(chartEntries.length-1),y:108-Math.max(5,(Number(x.amount)||0)/maxAmount*94)}));const d=pts.map((p,i)=>(i?"L":"M")+p.x.toFixed(1)+" "+p.y.toFixed(1)).join(" ");if(chartLine)chartLine.setAttribute("d",d);if(chartGlow)chartGlow.setAttribute("d",d);if(chartArea)chartArea.setAttribute("d",d+" L"+pts[pts.length-1].x.toFixed(1)+" 128 L"+pts[0].x.toFixed(1)+" 128 Z");if(chartPoint){chartPoint.setAttribute("cx",pts[pts.length-1].x);chartPoint.setAttribute("cy",pts[pts.length-1].y)}}else{if(chartLine)chartLine.setAttribute("d","M0 110 L640 110");if(chartGlow)chartGlow.setAttribute("d","M0 110 L640 110");if(chartArea)chartArea.setAttribute("d","M0 110 L640 110 L640 128 L0 128 Z");if(chartPoint){chartPoint.setAttribute("cx","640");chartPoint.setAttribute("cy","110")}}
+ const income=entries.filter(isIncome).reduce((sum,x)=>sum+Number(x.amount||0),0);
+ const outcome=entries.filter(isExpense).reduce((sum,x)=>sum+Number(x.amount||0),0);
+ const inNode=$("pdaEconomyIn"),outNode=$("pdaEconomyOut");
+ if(inNode)inNode.textContent="+"+money(income)+" RU";
+ if(outNode)outNode.textContent="−"+money(outcome)+" RU";
+ const newest=[...entries].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+ const lastIn=newest.find(isIncome),lastOut=newest.find(isExpense);
+ const lastInNode=$("pdaEconomyLastIn"),lastOutNode=$("pdaEconomyLastOut");
+ if(lastInNode)lastInNode.textContent=lastIn?"+"+money(lastIn.amount):"—";
+ if(lastOutNode)lastOutNode.textContent=lastOut?"−"+money(lastOut.amount):"—";
+
+ const chartEntries=[...entries].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)).slice(-18);
+ const grid=$("ruChartGrid"),area=$("ruChartArea"),lines=$("ruChartLines"),labels=$("ruChartLabels"),points=$("ruChartPoints"),times=$("ruChartTimes"),svg=$("ruChartSvg"),scroll=$("ruChartScroll");
+ const width=Math.max(640,chartEntries.length*112+40),height=280,baseline=132,top=48,bottom=210;
+ if(svg){svg.setAttribute("viewBox","0 0 "+width+" "+height);svg.style.width=width+"px";svg.style.minWidth=width+"px"}
+ if(grid&&area&&lines&&labels&&points&&times){
+  grid.innerHTML=[top,baseline,bottom].map((y,i)=>'<line class="economy-chart-grid-line" x1="18" y1="'+y+'" x2="'+(width-18)+'" y2="'+y+'"/><text class="economy-chart-grid-label" x="4" y="'+(y-4)+'">'+(i===0?"↑":i===1?"0":"↓")+'</text>').join("");
+  area.innerHTML="";lines.innerHTML="";labels.innerHTML="";points.innerHTML="";times.innerHTML="";
+  if(chartEntries.length){
+   const maxAmount=Math.max(1,...chartEntries.map(x=>Math.abs(Number(x.amount)||0)));
+   const step=(width-80)/Math.max(1,chartEntries.length-1);
+   const pts=chartEntries.map((entry,i)=>{
+    const incoming=isIncome(entry),amount=Math.abs(Number(entry.amount)||0),magnitude=18+(amount/maxAmount)*58;
+    return {entry,x:40+i*step,y:baseline+(incoming?-magnitude:magnitude),incoming,amount};
+   });
+   const areaPath="M "+pts[0].x+" "+baseline+" "+pts.map(p=>"L "+p.x+" "+p.y).join(" ")+" L "+pts[pts.length-1].x+" "+baseline+" Z";
+   area.innerHTML='<path class="economy-chart-area-path" d="'+areaPath+'"/>';
+   lines.innerHTML=pts.slice(1).map((p,i)=>{const prev=pts[i],mid=(prev.x+p.x)/2,cls=p.incoming?"income":"expense";return '<path class="economy-chart-segment '+cls+'" d="M '+prev.x+' '+prev.y+' Q '+mid+' '+prev.y+' '+p.x+' '+p.y+'"/>'}).join("");
+   labels.innerHTML=pts.map(p=>{
+    const sign=p.incoming?"+":"−",text=sign+money(p.amount),cls=p.incoming?"income":"expense",y=p.y-43,x=p.x;
+    const bubble='M '+(x-42)+' '+(y+7)+' Q '+(x-42)+' '+y+' '+(x-35)+' '+y+' H '+(x+35)+' Q '+(x+42)+' '+y+' '+(x+42)+' '+(y+7)+' V '+(y+24)+' Q '+(x+42)+' '+(y+31)+' '+(x+35)+' '+(y+31)+' H '+(x+9)+' L '+x+' '+(y+39)+' L '+(x-9)+' '+(y+31)+' H '+(x-35)+' Q '+(x-42)+' '+(y+31)+' '+(x-42)+' '+(y+24)+' Z';
+    return '<path class="economy-chart-bubble '+cls+'" d="'+bubble+'"/><text class="economy-chart-bubble-text" x="'+x+'" y="'+(y+20)+'">'+text+'</text>';
+   }).join("");
+   points.innerHTML=pts.map(p=>'<circle class="economy-chart-point-ring '+(p.incoming?"income":"expense")+'" cx="'+p.x+'" cy="'+p.y+'" r="6"/>').join("");
+   times.innerHTML=pts.map(p=>{
+    const date=new Date(p.entry.created_at),day=Number.isNaN(date.getTime())?"--/--":date.toLocaleDateString("es-AR",{timeZone:"America/Argentina/Buenos_Aires",day:"2-digit",month:"2-digit"});
+    const hour=Number.isNaN(date.getTime())?"--:--":date.toLocaleTimeString("es-AR",{timeZone:"America/Argentina/Buenos_Aires",hour:"2-digit",minute:"2-digit",hour12:false});
+    return '<text class="economy-chart-time" x="'+p.x+'" y="238">'+day+'</text><text class="economy-chart-time" x="'+p.x+'" y="253">'+hour+'</text>';
+   }).join("");
+  }else{
+   grid.innerHTML+='<text class="economy-chart-grid-label" x="50" y="115">TODAVÍA NO HAY MOVIMIENTOS PARA GRAFICAR</text>';
+  }
+ }
+ const chartCount=$("ruChartCount");if(chartCount)chartCount.textContent=chartEntries.length+" MOVIMIENTOS GRAFICADOS";
+ if(scroll&&chartEntries.length)scroll.scrollLeft=scroll.scrollWidth;
  const live=$("economyLiveClock");if(live)live.textContent="ACTIVO · "+new Date().toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
- if(!entries.length){list.innerHTML='<div class="empty">TODAVÍA NO HAY MOVIMIENTOS REGISTRADOS.</div>';return}
- list.innerHTML=entries.map(entry=>{
-  const type=entry.movement_type,incoming=type==="artifact_income"||type==="reward_received",sign=incoming?"+":"−";
-  const title=type==="artifact_income"?"INGRESO POR ARTEFACTOS · BARBAS":type==="reward_sent"?"RECOMPENSA ENVIADA A TU HIJO":type==="reward_received"?"RECOMPENSA RECIBIDA DE YURI":"GASTO REGISTRADO POR TU HIJO";
+ if(!entries.length){list.innerHTML='<div class="empty">TODAVÍA NO HAY MOVIMIENTOS REGISTRADOS.</div>';pdaRenderWallet();return}
+ list.innerHTML=newest.map(entry=>{
+  const type=entry.movement_type,incoming=isIncome(entry),sign=incoming?"+":"−";
+  const title=type==="artifact_income"?"INGRESO POR ARTEFACTOS · BARBAS":type==="reward_sent"?"RECOMPENSA ENVIADA A TU HIJO":type==="reward_received"?"RECOMPENSA RECIBIDA DE YURI":entry.description||"GASTO REGISTRADO";
   const date=new Date(entry.created_at),stamp=Number.isNaN(date.getTime())?"FECHA NO DISPONIBLE":date.toLocaleString("es-AR",{timeZone:"America/Argentina/Buenos_Aires",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
-  const amount=Number(entry.amount)||0,balanceLine=entry.balance_after==null?"":'<span class="entry-balance">SALDO: '+Number(entry.balance_after).toLocaleString("es-AR")+' RU</span>';
+  const amount=Number(entry.amount)||0,balanceLine=entry.balance_after==null?"":'<span class="entry-balance">SALDO: '+money(entry.balance_after)+' RU</span>';
   const owner=!pdaIsChild()&&type==="expense"?'<div class="entry-owner">REGISTRADO DESDE LA PDA DE TU HIJO</div>':"";
-  return '<article class="economy-entry '+type+'"><div class="entry-glow"></div><div class="entry-top"><span class="entry-type">✦ '+title+'</span><strong class="entry-amount">'+sign+amount.toLocaleString("es-AR")+' RU</strong></div><div class="entry-description">'+esc(entry.description||title)+'</div>'+owner+'<div class="entry-meta"><span>⌚ '+stamp+' · ARGENTINA</span>'+balanceLine+'</div></article>';
+  return '<article class="economy-entry '+type+'"><div class="entry-glow"></div><div class="entry-top"><span class="entry-type">✦ '+title+'</span><strong class="entry-amount">'+sign+money(amount)+' RU</strong></div><div class="entry-description">'+esc(entry.description||title)+'</div>'+owner+'<div class="entry-meta"><span>⌚ '+stamp+' · ARGENTINA</span>'+balanceLine+'</div></article>';
  }).join("");
  pdaRenderWallet();
 }
-
 let pdaYuriCanSend=false;
 let pdaYuriSyncBusy=false;
 function pdaYuriRenderPanel(){
