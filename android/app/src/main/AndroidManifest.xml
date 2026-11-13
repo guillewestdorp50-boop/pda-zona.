@@ -11,6 +11,18 @@
     <data android:scheme="https" android:host="guillewestdorp50-boop.github.io" android:pathPrefix="/pda-zona." />
    </intent-filter>
   </activity>
+  <service
+   android:name="com.google.androidbrowserhelper.trusted.DelegationService"
+   android:enabled="true"
+   android:exported="true">
+   <meta-data
+    android:name="android.support.customtabs.trusted.SMALL_ICON"
+    android:resource="@drawable/ic_notification" />
+   <intent-filter>
+    <action android:name="android.support.customtabs.trusted.TRUSTED_WEB_ACTIVITY_SERVICE" />
+    <category android:name="android.intent.category.DEFAULT" />
+   </intent-filter>
+  </service>
   <receiver android:name=".PdaWidgetProvider" android:exported="false">
    <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
    <meta-data android:name="android.appwidget.provider" android:resource="@xml/pda_widget_info" />
