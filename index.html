@@ -1511,7 +1511,7 @@ setInterval(updateClock,1000);updateClock();
  const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false;
  const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};
  const $c=id=>document.getElementById(id);
- const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null,needleAngle:-135,needleFrame:0};
+ const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null,needleAngle:-135,needleFrame:0,displayValue:0};
  const signalMeta={rain:['PROBABILIDAD DE LLUVIA','PRONÓSTICO HORARIO','%'],storm:['SEÑAL DE TORMENTA','CÓDIGO METEOROLÓGICO','IDX'],wind:['VELOCIDAD DEL VIENTO','OPEN-METEO · VIENTO A 10 M','km/h'],humidity:['HUMEDAD RELATIVA','OPEN-METEO · HUMEDAD','%'],uv:['ÍNDICE ULTRAVIOLETA','OPEN-METEO · UV','UV×10'],quake:['ACTIVIDAD SÍSMICA','SIN FEED SÍSMICO','IDX'],tornado:['ALERTA DE TORNADO','SIN FEED DE ALERTAS','IDX'],hurricane:['ALERTA DE HURACÁN','SIN FEED DE ALERTAS','IDX']};
  function buildSvarogScale(){
   const ticks=$c('svarogScaleTicks'),labels=$c('svarogScaleLabels');if(!ticks||!labels||ticks.childElementCount)return;
@@ -1521,24 +1521,38 @@ setInterval(updateClock,1000);updateClock();
   }
   for(let n=0;n<=100;n+=5){const a=(135+n*2.7)*Math.PI/180,r=108,t=document.createElementNS(ns,'text');t.setAttribute('x',160+Math.cos(a)*r);t.setAttribute('y',164+Math.sin(a)*r);t.setAttribute('fill','#d1f5b4');t.setAttribute('font-size','9');t.setAttribute('font-family','monospace');t.setAttribute('font-weight','bold');t.setAttribute('text-anchor','middle');t.textContent=String(n);labels.appendChild(t);}
  }
- function moveSvarogNeedle(value){
-  const needle=$c('svarogNeedle');if(!needle)return;
-  const target=-135+value*2.7,from=svarog.needleAngle,delta=target-from;
+ function animateSvarogReading(value){
+  const needle=$c('svarogNeedle'),readout=$c('svarogValue');
+  const targetAngle=-135+value*2.7,fromAngle=svarog.needleAngle,deltaAngle=targetAngle-fromAngle;
+  const fromValue=svarog.displayValue,deltaValue=value-fromValue;
   if(svarog.needleFrame)cancelAnimationFrame(svarog.needleFrame);
-  needle.classList.toggle('idle',value<.05);
-  if(Math.abs(delta)<.05){svarog.needleAngle=target;needle.style.transform='translate(-50%,-100%) rotate('+target+'deg)';return;}
-  const started=performance.now(),duration=Math.min(3600,Math.max(700,900+Math.abs(delta)*7.5));
+  if(needle)needle.classList.toggle('idle',value<.05);
+  const renderNumber=n=>{if(readout){const shown=String(Math.round(n));if(readout.textContent!==shown)readout.textContent=shown;}};
+  if(Math.abs(deltaAngle)<.05&&Math.abs(deltaValue)<.05){
+   svarog.needleAngle=targetAngle;svarog.displayValue=value;
+   if(needle)needle.style.transform='translate(-50%,-100%) rotate('+targetAngle+'deg)';
+   if(readout)readout.textContent=Number.isInteger(value)?String(value):value.toFixed(1);
+   return;
+  }
+  const started=performance.now(),duration=Math.min(3600,Math.max(700,900+Math.abs(deltaAngle)*7.5));
   const step=now=>{
-   const t=Math.min(1,(now-started)/duration),ease=t*t*(3-2*t),angle=from+delta*ease;
-   svarog.needleAngle=angle;needle.style.transform='translate(-50%,-100%) rotate('+angle+'deg)';
-   if(t<1)svarog.needleFrame=requestAnimationFrame(step);else{svarog.needleAngle=target;svarog.needleFrame=0;}
+   const t=Math.min(1,(now-started)/duration),ease=t*t*(3-2*t);
+   const angle=fromAngle+deltaAngle*ease,current=fromValue+deltaValue*ease;
+   svarog.needleAngle=angle;svarog.displayValue=current;
+   if(needle)needle.style.transform='translate(-50%,-100%) rotate('+angle+'deg)';
+   if(t<1){renderNumber(current);svarog.needleFrame=requestAnimationFrame(step);}
+   else{
+    svarog.needleAngle=targetAngle;svarog.displayValue=value;svarog.needleFrame=0;
+    if(needle)needle.style.transform='translate(-50%,-100%) rotate('+targetAngle+'deg)';
+    if(readout)readout.textContent=Number.isInteger(value)?String(value):value.toFixed(1);
+   }
   };
   svarog.needleFrame=requestAnimationFrame(step);
  }
  function drawSvarog(value,status,source,unit='%'){
   const v=Math.max(0,Math.min(100,Number(value)||0));svarog.value=v;
-  moveSvarogNeedle(v);
-  put('svarogValue',Number.isInteger(v)?String(v):v.toFixed(1));put('svarogUnit',unit);put('svarogStatus',status||'SEÑAL EN ESPERA');
+  animateSvarogReading(v);
+  put('svarogUnit',unit);put('svarogStatus',status||'SEÑAL EN ESPERA');
   updateSvarogAudio();
  }
  function updateSvarogMetrics(d){
@@ -2334,7 +2348,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v89';
+const PDA_SW_BUILD='pda-zona-shell-v90';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
