@@ -15,7 +15,8 @@
             android:name=".PdaLauncherActivity"
             android:exported="true"
             android:hardwareAccelerated="true"
-            android:theme="@style/Theme.PdaZona.Starting">
+            android:theme="@style/Theme.PdaZona.Starting"
+            android:configChanges="orientation|screenSize|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
