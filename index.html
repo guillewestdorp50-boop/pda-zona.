@@ -1512,7 +1512,7 @@ setInterval(updateClock,1000);updateClock();
  const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};
  const $c=id=>document.getElementById(id);
  const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null};
- const signalMeta={rain:['PROBABILIDAD DE LLUVIA','PRONÓSTICO HORARIO','%'],storm:['SEÑAL DE TORMENTA','CÓDIGO METEOROLÓGICO','IDX'],wind:['VELOCIDAD DEL VIENTO','OPEN-METEO · VIENTO A 10 M','km/h'],humidity:['HUMEDAD RELATIVA','OPEN-METEO · HUMEDAD','%'],uv:['ÍNDICE ULTRAVIOLETA','OPEN-METEO · UV','UV'],quake:['ACTIVIDAD SÍSMICA','SIN FEED SÍSMICO','IDX'],tornado:['ALERTA DE TORNADO','SIN FEED DE ALERTAS','IDX'],hurricane:['ALERTA DE HURACÁN','SIN FEED DE ALERTAS','IDX']};
+ const signalMeta={rain:['PROBABILIDAD DE LLUVIA','PRONÓSTICO HORARIO','%'],storm:['SEÑAL DE TORMENTA','CÓDIGO METEOROLÓGICO','IDX'],wind:['VELOCIDAD DEL VIENTO','OPEN-METEO · VIENTO A 10 M','km/h'],humidity:['HUMEDAD RELATIVA','OPEN-METEO · HUMEDAD','%'],uv:['ÍNDICE ULTRAVIOLETA','OPEN-METEO · UV','UV×10'],quake:['ACTIVIDAD SÍSMICA','SIN FEED SÍSMICO','IDX'],tornado:['ALERTA DE TORNADO','SIN FEED DE ALERTAS','IDX'],hurricane:['ALERTA DE HURACÁN','SIN FEED DE ALERTAS','IDX']};
  function buildSvarogScale(){
   const ticks=$c('svarogScaleTicks'),labels=$c('svarogScaleLabels');if(!ticks||!labels||ticks.childElementCount)return;
   const ns='http://www.w3.org/2000/svg';
@@ -1538,7 +1538,7 @@ setInterval(updateClock,1000);updateClock();
   else if(channel==='storm'){const active=Number(d.code)>=95&&Number(d.code)<=99;drawSvarog(active?100:0,active?'CÓDIGO DE TORMENTA DETECTADO':'SIN CÓDIGO DE TORMENTA','', 'IDX');}
   else if(channel==='wind'){const ok=Number.isFinite(d.wind);drawSvarog(ok?Math.min(100,d.wind):0,ok?'VELOCIDAD MEDIDA · ESCALA 0–100 KM/H':'SIN DATOS DE VIENTO','', 'km/h');}
   else if(channel==='humidity'){const ok=Number.isFinite(d.humidity);drawSvarog(ok?d.humidity:0,ok?'HUMEDAD RELATIVA MEDIDA':'SIN DATOS DE HUMEDAD','', '%');}
-  else if(channel==='uv'){const ok=Number.isFinite(d.uv);drawSvarog(ok?Math.min(100,d.uv*10):0,ok?'ÍNDICE UV MEDIDO · ESCALA ×10':'SIN DATOS UV','', 'UV');}
+  else if(channel==='uv'){const ok=Number.isFinite(d.uv);drawSvarog(ok?Math.min(100,d.uv*10):0,ok?'ÍNDICE UV MEDIDO · ESCALA ×10':'SIN DATOS UV','', 'UV×10');}
   else {const meta=signalMeta[channel];drawSvarog(0,'SIN ALERTA VERIFICADA · SIN FEED','',meta[2]);}
  }
  function startSvarogLive(){
@@ -2286,7 +2286,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v85';
+const PDA_SW_BUILD='pda-zona-shell-v86';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
