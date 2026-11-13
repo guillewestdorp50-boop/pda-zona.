@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.PdaZona.Starting" parent="@style/Theme.PdaZona">
+        <!-- Keep every Android 12+ splash surface black before the TWA starts. -->
         <item name="android:windowSplashScreenBackground">#000000</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_pda</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">#000000</item>
+        <item name="android:windowSplashScreenAnimationDuration">0</item>
         <item name="android:windowBackground">#000000</item>
     </style>
 </resources>
