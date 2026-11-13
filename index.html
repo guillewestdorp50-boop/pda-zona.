@@ -544,7 +544,7 @@ body.keyboard-visible footer{display:none}
 #player .radio-lyrics-entry small{color:#d4b45e;white-space:nowrap}
 
 /* Indicador meteorológico compacto de campo */
-.pda-status-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pda-weather{margin-left:auto;display:flex;align-items:center;gap:6px;padding:4px 7px;border:1px solid #46583a;background:#0b110a;border-radius:3px;color:var(--g);font:11px monospace;white-space:nowrap;min-height:27px}.pda-weather #weatherIcon{font-size:16px;line-height:1}.pda-weather #weatherTemp{font-size:13px;font-weight:700}.pda-weather #weatherHumidity{color:var(--m);font-size:10px}.pda-weather #weatherSource{color:#81956c;font-size:8px;text-decoration:none;letter-spacing:.2px}.pda-weather button{border:0;background:transparent;color:var(--a);font-size:16px;padding:0 2px;min-width:22px;min-height:22px}.pda-weather.stale{opacity:.65}@media(max-width:420px){.pda-status-row{gap:6px}.pda-weather{margin-left:0}.pda-weather #weatherHumidity{font-size:9px}}
+.pda-status-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pda-weather{margin-left:auto;display:flex;align-items:center;gap:6px;padding:4px 7px;border:1px solid #46583a;background:#0b110a;border-radius:3px;color:var(--g);font:11px monospace;white-space:nowrap;min-height:27px}.pda-weather #weatherIcon{font-size:16px;line-height:1}.pda-weather #weatherTemp{font-size:13px;font-weight:700}.pda-weather #weatherHumidity{color:var(--m);font-size:10px}.pda-weather #lightningIndicator{font-size:8px;font-weight:800;letter-spacing:.15px;max-width:112px;overflow:hidden;text-overflow:ellipsis;color:#a9c78a}.pda-weather #lightningIndicator.active{color:#f4c66d}.pda-weather #lightningIndicator.alert{color:#ff7770;text-shadow:0 0 6px #ff321d88}.pda-weather #lightningIndicator.unknown{color:#9a9a82}.pda-weather #weatherSource{color:#81956c;font-size:8px;text-decoration:none;letter-spacing:.2px}.pda-weather button{border:0;background:transparent;color:var(--a);font-size:16px;padding:0 2px;min-width:22px;min-height:22px}.pda-weather.stale{opacity:.65}@media(max-width:420px){.pda-status-row{gap:6px}.pda-weather{margin-left:0}.pda-weather #weatherHumidity{font-size:9px}}
 
 /* Módulo CLIMA · consola ambiental propia PDA-Z */
 .climate-console{background:radial-gradient(ellipse at 85% 0%,#35432b 0,#1c2818 42%,#10170f 100%);border-color:#73885a}
@@ -680,7 +680,7 @@ body.keyboard-visible footer{display:none}
 @media(max-width:380px){.economy-metric{gap:4px;padding:8px 4px}.economy-metric-icon{width:21px;height:21px;flex-basis:21px}.economy-chart{height:88px}.economy-terminal{padding:12px}}
 </style><style>
 .svarog-heat-alert{display:flex;flex-direction:column;gap:6px;margin:10px 0;padding:13px;border:2px solid #ff4b24;background:repeating-linear-gradient(135deg,#3b100b,#3b100b 10px,#250a08 10px,#250a08 20px);color:#fff1d7;box-shadow:0 0 18px #ff321d88;animation:heatPulse .8s steps(2,end) infinite}
- .svarog-heat-alert.heat-danger{border-color:#ff1717;background:repeating-linear-gradient(135deg,#5a0808,#5a0808 10px,#300606 10px,#300606 20px);box-shadow:0 0 24px #ff1717aa}
+ .svarog-heat-alert.heat-danger{border-color:#ff1717;background:repeating-linear-gradient(135deg,#5a0808,#5a0808 10px,#300606 10px,#300606 20px);box-shadow:0 0 24px #ff1717aa}.svarog-heat-alert.lightning-alert{border-color:#d6b34e;background:repeating-linear-gradient(135deg,#34280b,#34280b 10px,#211a08 10px,#211a08 20px);box-shadow:0 0 18px #d6b34e66}.svarog-heat-alert.lightning-alert.heat-danger{border-color:#ff1717;background:repeating-linear-gradient(135deg,#5a0808,#5a0808 10px,#300606 10px,#300606 20px)}
 .svarog-heat-alert.heat-danger strong{color:#fff}
 .svarog-heat-alert strong{font:900 13px monospace;letter-spacing:1px;color:#ffb18c}
 .svarog-heat-alert span{font:900 19px monospace}
@@ -700,7 +700,7 @@ body.keyboard-visible footer{display:none}
  </div>
 </div>
 
-<header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><div class="header-tools"><button class="btn" id="sidorovichToggle" type="button" aria-label="Silenciar o activar la voz de Lebedev">🔊 LEBEDEV: ON</button><button class="btn" id="orientationBtn">↻ HORIZONTAL</button></div></div><div class="row pda-status-row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span><div id="pdaWeather" class="pda-weather" role="status" aria-live="polite"><span id="weatherIcon">◌</span><span id="weatherTemp">--°</span><span id="weatherHumidity">HUM --%</span><a id="weatherSource" href="https://open-meteo.com/" target="_blank" rel="noopener" aria-label="Datos meteorológicos de Open-Meteo">OPEN-METEO</a><button id="weatherRefresh" type="button" aria-label="Actualizar clima" title="Actualizar clima">↻</button></div></div></header>
+<header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><div class="header-tools"><button class="btn" id="sidorovichToggle" type="button" aria-label="Silenciar o activar la voz de Lebedev">🔊 LEBEDEV: ON</button><button class="btn" id="orientationBtn">↻ HORIZONTAL</button></div></div><div class="row pda-status-row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span><div id="pdaWeather" class="pda-weather" role="status" aria-live="polite"><span id="weatherIcon">◌</span><span id="weatherTemp">--°</span><span id="weatherHumidity">HUM --%</span><span id="lightningIndicator" class="lightning-indicator unknown" role="status" aria-live="polite" title="Detector eléctrico NOAA GOES-19">⚡ RAYOS · ESPERA GPS</span><a id="weatherSource" href="https://open-meteo.com/" target="_blank" rel="noopener" aria-label="Datos meteorológicos de Open-Meteo">OPEN-METEO</a><button id="weatherRefresh" type="button" aria-label="Actualizar clima" title="Actualizar clima">↻</button></div></div></header>
 <nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES<span id="missionAlertDot" class="mission-alert-dot hidden" aria-label="Misión nueva"></span></button><button data-tab="ranking">RANKING</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="climate">CLIMA</button><button data-tab="gallery">GALERÍA</button><button data-tab="player">REPRODUCTOR</button><button data-tab="compass">BRÚJULA</button><button data-tab="artifacts">INVENTARIO</button><button data-tab="map">MAPA GPS</button><button data-tab="data">DATOS</button><button data-tab="economy">MOVIMIENTOS DE RUBLOS</button></nav>
 <main>
 <section id="home" class="view active"><div class="panel"><h2>IDENTIDAD DEL STALKER</h2><div class="pda-profile-card"><img id="pdaProfileAvatar" class="pda-profile-avatar hidden" alt="Foto de perfil del Stalker"><div id="pdaProfilePlaceholder" class="pda-profile-avatar pda-profile-placeholder">SIN<br>FOTOGRAFÍA</div><div class="pda-profile-info"><strong id="pdaProfileName">STALKER</strong><small id="pdaProfileStatus" class="muted">PERFIL DE CAMPO</small></div><button class="pda-profile-edit-icon hidden" id="pdaEditProfileBtn" type="button" aria-label="Editar perfil" title="Editar perfil">✎</button></div><div id="pdaProfileReadOnly" class="pda-profile-readonly hidden"><div class="pda-profile-detail"><small>FACCION</small><strong id="pdaProfileFactionView">—</strong></div><div class="pda-profile-detail"><small>BIOGRAFÍA</small><p id="pdaProfileBioView"></p></div></div><div id="pdaProfileEditor" class="stack" style="margin-top:12px"><div class="pda-profile-actions"><input id="pdaProfilePhotoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><button class="btn" type="button" id="pdaChooseProfilePhoto">📷 ELEGIR FOTO</button></div><label class="muted" for="pdaProfileDisplayName">NOMBRE DE STALKER</label><input id="pdaProfileDisplayName" maxlength="40" placeholder="Tu nombre en la Zona"><label class="muted" for="pdaProfileFaction">FACCION</label><input id="pdaProfileFaction" maxlength="32" placeholder="Ej.: Solitarios, Deber, Libertad"><label class="muted" for="pdaProfileBio">BIOGRAFÍA · MÁXIMO 500 CARACTERES</label><textarea id="pdaProfileBio" maxlength="500" rows="3" placeholder="Contá brevemente quién sos en la Zona..."></textarea><button class="btn" id="pdaSaveProfileBtn" type="button">GUARDAR PERFIL</button></div></div><div class="panel pda-wallet-panel"><div class="row" style="align-items:center;justify-content:space-between"><div><div class="cop-kicker">BILLETERA PERSONAL</div><h2 style="margin:3px 0">ECONOMÍA DEL STALKER</h2></div><span class="tag">RU</span></div><div class="muted" style="font:800 10px monospace;letter-spacing:1px;margin-top:10px">DINERO DISPONIBLE</div><strong id="pdaWalletBalance" style="display:block;font:900 30px monospace;color:var(--g);margin:4px 0">PENDIENTE</strong><small id="pdaWalletStatus" class="muted">Saldo sincronizado con la billetera central de la Zona.</small><div id="pdaWalletEarnedRow" style="border-top:1px solid var(--line);margin-top:12px;padding-top:9px" class="row"><span class="muted">INGRESOS POR ARTEFACTOS · BARBAS</span><strong id="pdaWalletEarned">0 RU</strong></div><button type="button" class="btn hidden" id="pdaOpenSpend" style="width:100%;margin-top:12px">− REGISTRAR GASTO</button></div><div class="panel"><h2>TERMINAL ACTIVO</h2><p>Bienvenido a la Zona, stalker. Tus registros se guardan en este dispositivo.</p><div class="row"><div>CONTACTOS <b id="cc">4</b></div><div>MENSAJES <b id="mc">0</b></div></div><div class="row"><div>MISIONES <b id="xc">0</b></div><div>NOTAS <b id="nc">0</b></div></div></div><div class="panel"><h2>ÚLTIMA ACTIVIDAD</h2><div id="activity" class="muted">Sin actividad registrada.</div></div><div id="pdaSpendOverlay" class="pda-economy-overlay"><div class="pda-economy-modal"><div class="row"><h2>REGISTRAR GASTO</h2><button type="button" id="pdaSpendCancel" class="btn">CERRAR</button></div><p class="muted">Ingresá el importe que gastaste. El saldo se actualizará al confirmar.</p><label class="muted" for="pdaSpendAmount">IMPORTE EN RU</label><input id="pdaSpendAmount" type="number" inputmode="numeric" min="1" step="1" placeholder="Ej.: 1000"><label class="muted" for="pdaSpendDescription">¿EN QUÉ LO GASTASTE? · OPCIONAL</label><input id="pdaSpendDescription" maxlength="120" placeholder="Ej.: comida, munición, reparación"><button type="button" class="btn" id="pdaSpendConfirm" style="width:100%">CONFIRMAR GASTO</button><small id="pdaSpendStatus" class="muted"></small></div></div></section>
@@ -756,9 +756,9 @@ body.keyboard-visible footer{display:none}
   </div>
   <div class="svarog-consoleline"><span id="svarogScanText">BARRIDO DE SENSORES EN CURSO</span><span id="svarogClock">--:--:--</span></div>
   <div class="svarog-selectors" id="svarogSelectors">
-   <button type="button" class="active" data-signal="rain">☂ LLUVIA</button><button type="button" data-signal="storm">ϟ TORMENTA</button><button type="button" data-signal="wind">≋ VIENTO</button><button type="button" data-signal="humidity">◌ HUMEDAD</button><button type="button" data-signal="uv">☼ RADIACIÓN UV</button><button type="button" data-signal="quake">⌁ SISMO</button>
+   <button type="button" class="active" data-signal="rain">☂ LLUVIA</button><button type="button" data-signal="storm">ϟ TORMENTA</button><button type="button" data-signal="lightning">⚡ DESCARGAS</button><button type="button" data-signal="wind">≋ VIENTO</button><button type="button" data-signal="humidity">◌ HUMEDAD</button><button type="button" data-signal="uv">☼ RADIACIÓN UV</button><button type="button" data-signal="quake">⌁ SISMO</button>
   </div>
-  <div class="svarog-selectors" style="margin-top:6px"><button type="button" data-signal="tornado">◉ TORNADO</button><button type="button" data-signal="hurricane">◉ VIENTOS EXTREMOS</button><button type="button" data-signal="hail">◆ GRANIZO</button><button type="button" data-signal="snow">❄ NIEVE</button><button type="button" data-signal="heat">♨ CALOR EXTREMO</button><button type="button" data-signal="emissions">☢ EMISIONES</button></div><div id="svarogHeatAlert" class="svarog-heat-alert hidden" role="alert" aria-live="assertive"><strong>⚠ ALERTA TÉRMICA · 35 °C O MÁS</strong><span id="svarogHeatText">TEMPERATURA EXTREMA DETECTADA</span><small>Buscá sombra, hidratate y evitá esfuerzos al aire libre</small></div>
+  <div class="svarog-selectors" style="margin-top:6px"><button type="button" data-signal="tornado">◉ TORNADO</button><button type="button" data-signal="hurricane">◉ VIENTOS EXTREMOS</button><button type="button" data-signal="hail">◆ GRANIZO</button><button type="button" data-signal="snow">❄ NIEVE</button><button type="button" data-signal="heat">♨ CALOR EXTREMO</button><button type="button" data-signal="emissions">☢ EMISIONES</button></div><div id="svarogLightningAlert" class="svarog-heat-alert lightning-alert hidden" role="alert" aria-live="assertive"><strong>⚡ ALERTA ELÉCTRICA · DESCARGAS DETECTADAS</strong><span id="svarogLightningText">ACTIVIDAD ELÉCTRICA EN EL SECTOR</span><small>NOAA GOES-19 GLM · Detecta actividad total y no distingue descargas nube-tierra de intranube</small></div><div id="svarogHeatAlert" class="svarog-heat-alert hidden" role="alert" aria-live="assertive"><strong>⚠ ALERTA TÉRMICA · 35 °C O MÁS</strong><span id="svarogHeatText">TEMPERATURA EXTREMA DETECTADA</span><small>Buscá sombra, hidratate y evitá esfuerzos al aire libre</small></div>
   <div class="svarog-audio"><div><div class="svarog-brand">▸ AUDIO DE DETECCIÓN</div><small id="svarogAudioState">PULSOS DESACTIVADOS</small></div><button type="button" id="svarogAudioToggle">♫ ACTIVAR AUDIO</button></div>
   <p class="svarog-foot">Telemetría real cuando hay datos disponibles. El barrido y el reloj son animaciones de interfaz; no representan mediciones adicionales. Canales sin fuente verificada: SIN FEED.</p>
  </div>
@@ -1767,11 +1767,11 @@ setInterval(updateClock,1000);updateClock();
 // Clima PDA-Z: indicador compacto + telemetría ambiental ampliada.
 (()=>{
  const box=$('pdaWeather'),icon=$('weatherIcon'),temp=$('weatherTemp'),hum=$('weatherHumidity'),refresh=$('weatherRefresh');if(!box||!navigator.geolocation)return;
- const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false;
- const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};
+ const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false,lightningBusy=false,lastLightningData=null;const lightningCacheKey='zona_lightning_last_v1',lightningVoiceKey='zona_lightning_voice_level_v1';let lightningLastVoiceLevel=Number(localStorage.getItem(lightningVoiceKey)||0);
+ const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};const cachedLightning=()=>{try{return JSON.parse(localStorage.getItem(lightningCacheKey)||'null')}catch{return null}};
  const $c=id=>document.getElementById(id);
  const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null,needleAngle:-135,needleFrame:0,displayValue:0,readoutValue:0,emissionAnnounced:false,heatAlarmTimer:null,heatAlarmActive:false,lastHeatVoiceLevel:0};
- const signalMeta={rain:['PROBABILIDAD DE LLUVIA','OPEN-METEO · PRONÓSTICO HORARIO','%'],storm:['SEÑAL DE TORMENTA','OPEN-METEO · CÓDIGO METEOROLÓGICO','IDX'],wind:['VELOCIDAD DEL VIENTO','OPEN-METEO · VIENTO A 10 M','km/h'],humidity:['HUMEDAD RELATIVA','OPEN-METEO · HUMEDAD','%'],uv:['ÍNDICE ULTRAVIOLETA','OPEN-METEO · UV','UV'],quake:['ACTIVIDAD SÍSMICA','FUENTE SÍSMICA PENDIENTE','IDX'],tornado:['ALERTA DE TORNADO','ALERTAS OFICIALES · SIN EVENTO CONFIRMADO','IDX'],hurricane:['VIENTOS EXTREMOS','VIENTO LOCAL · UMBRAL INFORMATIVO','km/h'],hail:['GRANIZO','OPEN-METEO · CÓDIGO DE TIEMPO ACTUAL','IDX'],snow:['NIEVE','OPEN-METEO · CÓDIGO DE TIEMPO ACTUAL','IDX'],heat:['CALOR EXTREMO','TEMPERATURA ACTUAL · UMBRAL PDA 35 °C','°C'],emissions:['EMISIONES · ESCALA TÉRMICA 0–50 °C','TEMPERATURA AMBIENTE REAL · SVAROG','°C']};
+ const signalMeta={rain:['PROBABILIDAD DE LLUVIA','OPEN-METEO · PRONÓSTICO HORARIO','%'],storm:['SEÑAL DE TORMENTA','OPEN-METEO · CÓDIGO METEOROLÓGICO','IDX'],wind:['VELOCIDAD DEL VIENTO','OPEN-METEO · VIENTO A 10 M','km/h'],humidity:['HUMEDAD RELATIVA','OPEN-METEO · HUMEDAD','%'],uv:['ÍNDICE ULTRAVIOLETA','OPEN-METEO · UV','UV'],quake:['ACTIVIDAD SÍSMICA','FUENTE SÍSMICA PENDIENTE','IDX'],tornado:['ALERTA DE TORNADO','ALERTAS OFICIALES · SIN EVENTO CONFIRMADO','IDX'],hurricane:['VIENTOS EXTREMOS','VIENTO LOCAL · UMBRAL INFORMATIVO','km/h'],hail:['GRANIZO','OPEN-METEO · CÓDIGO DE TIEMPO ACTUAL','IDX'],snow:['NIEVE','OPEN-METEO · CÓDIGO DE TIEMPO ACTUAL','IDX'],heat:['CALOR EXTREMO','TEMPERATURA ACTUAL · UMBRAL PDA 35 °C','°C'],lightning:['DESCARGAS ELÉCTRICAS','NOAA GOES-19 GLM · DETECCIÓN SATELITAL','RAYOS'],emissions:['EMISIONES · ESCALA TÉRMICA 0–50 °C','TEMPERATURA AMBIENTE REAL · SVAROG','°C']};
  function buildSvarogScale(){
   const ticks=$c('svarogScaleTicks'),labels=$c('svarogScaleLabels');if(!ticks||!labels||ticks.childElementCount)return;
   const ns='http://www.w3.org/2000/svg';
@@ -1837,7 +1837,63 @@ setInterval(updateClock,1000);updateClock();
   beat();svarog.liveTimer=setInterval(beat,1000);selectSvarog(svarog.channel);
  }
 
- function updateHeatAlert(data){
+
+ function paintLightning(data,stale=false){
+  const indicator=$c('lightningIndicator'),alertBox=$c('svarogLightningAlert'),alertText=$c('svarogLightningText');
+  if(stale||!data?.ok){
+   if(indicator){indicator.textContent='⚡ RAYOS · SIN SEÑAL';indicator.classList.remove('quiet','active','alert');indicator.classList.add('unknown');indicator.title='No se pudo verificar el estado del detector eléctrico.';}
+   if(alertBox)alertBox.classList.add('hidden');
+   if(data?.error)put('svarogScanText','DETECTOR ELÉCTRICO · SIN SEÑAL');
+   lastLightningData=data?{...data,stale:true}:null;
+   if(svarog.channel==='lightning')selectSvarog('lightning');
+   return;
+  }
+  lastLightningData={...data,stale:false};
+  try{localStorage.setItem(lightningCacheKey,JSON.stringify(lastLightningData));}catch(e){}
+  const count=Number(data.count)||0,nearest=Number.isFinite(Number(data.nearest_km))?Number(data.nearest_km):null;
+  const danger=count>0&&(nearest!==null&&nearest<=10||count>=5);
+  const level=count===0?0:danger?2:1;
+  if(indicator){
+   indicator.textContent=count===0?'⚡ SIN ACTIVIDAD':danger?'⚡ ALERTA ELÉCTRICA':'⚡ ACTIVIDAD DETECTADA';
+   indicator.classList.remove('quiet','active','alert','unknown');
+   indicator.classList.add(count===0?'quiet':danger?'alert':'active');
+   indicator.title=count===0?'Sin descargas detectadas en los últimos '+data.window_minutes+' minutos. Fuente NOAA GOES-19 GLM verificada.':count+' descargas en '+data.window_minutes+' minutos; '+(nearest===null?'distancia no disponible':'la más cercana a '+nearest.toFixed(1)+' km')+'.';
+  }
+  if(alertBox){
+   alertBox.classList.toggle('hidden',count===0);
+   alertBox.classList.toggle('heat-danger',danger);
+  }
+  if(alertText&&count>0){
+   alertText.textContent=count+' descarga'+(count===1?'':'s')+' detectada'+(count===1?'':'s')+' en un radio de '+data.radius_km+' km durante los últimos '+data.window_minutes+' minutos'+(nearest===null?'':'. La más cercana: '+nearest.toFixed(1)+' km')+'.';
+  }
+  if(count===0){lightningLastVoiceLevel=0;localStorage.setItem(lightningVoiceKey,'0');}
+  else if(level>lightningLastVoiceLevel){
+   lightningLastVoiceLevel=level;localStorage.setItem(lightningVoiceKey,String(level));
+   const phrase=danger
+    ?'¡ATENCIÓN, ATENCIÓN! ¡Actividad eléctrica intensa detectada en las proximidades! ¡Poneos a cubierto de inmediato! Alejaos de espacios abiertos y buscad refugio.'
+    :'¡Atención! Actividad eléctrica detectada en el sector. Se registran descargas atmosféricas. Buscad refugio y alejaos de espacios abiertos.';
+   if(sidorovichVoiceEnabled&&'speechSynthesis'in window&&typeof SpeechSynthesisUtterance!=='undefined'){
+    try{window.speechSynthesis.cancel();window.speechSynthesis.speak(makeSidorovichUtterance(phrase));}catch(e){console.warn('No se pudo emitir la alerta eléctrica de Lebedev:',e)}
+   }
+  }
+  if(svarog.channel==='lightning')selectSvarog('lightning');
+ }
+ async function loadLightning(lat,lon){
+  if(lightningBusy)return;lightningBusy=true;
+  try{
+   const client=await pdaEnsureSession();
+   const {data,error}=await client.functions.invoke('pda-lightning',{body:{lat,lon,radius_km:20}});
+   if(error)throw error;
+   if(!data?.ok)throw new Error(data?.error||'Detector eléctrico sin respuesta');
+   paintLightning(data,false);
+  }catch(e){
+   const old=cachedLightning();
+   if(old&&Date.now()-Number(old.observed_at?new Date(old.observed_at).getTime():0)<15*60*1000)paintLightning(old,true);
+   else paintLightning({ok:false,error:e?.message||'sin señal'},true);
+   console.warn('Detector NOAA GOES-19 no disponible:',e);
+  }finally{lightningBusy=false;}
+ }
+\n function updateHeatAlert(data){
   const alertBox=$c('svarogHeatAlert'),heatText=$c('svarogHeatText');
   const valid=data&&Number.isFinite(Number(data.temperature)),temperature=valid?Number(data.temperature):NaN,hot=valid&&temperature>=35,danger=valid&&temperature>=40,critical=valid&&temperature>=45;
   if(alertBox){alertBox.classList.toggle('hidden',!hot);alertBox.classList.toggle('heat-danger',danger);}
@@ -1919,7 +1975,7 @@ setInterval(updateClock,1000);updateClock();
   }else if(channel==='storm'){
    const ok=Number.isFinite(d.code),active=ok&&Number(d.code)>=95&&Number(d.code)<=99;
    drawSvarog(active?100:0,ok?(active?'TORMENTA EN PRONÓSTICO':'SIN SEÑAL DE TORMENTA'):'SIN DATOS METEOROLÓGICOS',meta[1],'IDX');
-  }else if(channel==='wind'){
+  }else if(channel==='lightning'){\n   const l=lastLightningData;if(!l||l.stale){drawSvarog(0,'SIN SEÑAL DEL DETECTOR ELÉCTRICO',meta[1],'RAYOS');}else{const n=Number(l.count)||0;drawSvarog(Math.min(100,n*10),n?(n+' DESCARGAS OBSERVADAS · RADIO '+l.radius_km+' KM'):'SIN DESCARGAS DETECTADAS · RADIO '+l.radius_km+' KM',meta[1],'RAYOS',n);}\n  }else if(channel==='wind'){
    const ok=Number.isFinite(d.wind);
    drawSvarog(ok?Math.min(100,Math.max(0,d.wind)):0,ok?'VELOCIDAD MEDIDA · ESCALA 0–100 KM/H':'SIN DATOS DE VIENTO',meta[1],'km/h');
   }else if(channel==='humidity'){
@@ -2014,13 +2070,13 @@ setInterval(updateClock,1000);updateClock();
  function locate(){
   if(!navigator.geolocation){box.title='Este navegador no ofrece GPS';put('climateConnection','GPS NO DISPONIBLE');return;}
   icon.textContent='⌖';box.title='Solicitando ubicación GPS…';
-  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};loadWeather(lastCoords.lat,lastCoords.lon);},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});
+  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};loadWeather(lastCoords.lat,lastCoords.lon);loadLightning(lastCoords.lat,lastCoords.lon);},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});
  }
  refresh?.addEventListener('click',e=>{e.stopPropagation();locate();});
  $c('climateRefresh')?.addEventListener('click',locate);
  box.addEventListener('click',e=>{if(e.target.closest('button,a'))return;go('climate')});
  selectSvarog('rain');
- const old=cached();if(old)paint(old,true);locate();setInterval(()=>{if(lastCoords)loadWeather(lastCoords.lat,lastCoords.lon);else locate();},30*60*1000);
+ const old=cached();if(old)paint(old,true);const oldLightning=cachedLightning();if(oldLightning)paintLightning(oldLightning,true);locate();setInterval(()=>{if(lastCoords)loadWeather(lastCoords.lat,lastCoords.lon);else locate();},30*60*1000);setInterval(()=>{if(lastCoords)loadLightning(lastCoords.lat,lastCoords.lon);},2*60*1000);
 })();
 // La PDA se abre en su vista independiente; se elimina el control web de pantalla completa. La rotación permanece intacta.
 // Teclado PDA compartido: bloquea el teclado del sistema en todos los campos editables.
