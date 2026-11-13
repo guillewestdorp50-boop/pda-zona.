@@ -594,9 +594,9 @@ body.keyboard-visible footer{display:none}
 .svarog-dial:after{content:"";position:absolute;inset:9%;border-radius:50%;border:1px solid #77c75b33;box-shadow:inset 0 0 22px #57ff3420;pointer-events:none}
 .svarog-dial svg{width:100%;height:100%;display:block;filter:drop-shadow(0 0 5px #8bff5b66)}
 .svarog-sweep{transform-origin:160px 160px;animation:svarogSweep 5s linear infinite}
-.svarog-needle{position:absolute;left:50%;top:50%;width:2px;height:37%;background:linear-gradient(90deg,#5d6256,#fff4c9 45%,#8e9984);transform-origin:50% 100%;transform:translate(-50%,-100%) rotate(-135deg);transition:transform .7s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 5px #f2f0ce,1px 0 2px #000}
+.svarog-needle{position:absolute;left:50%;top:50%;width:2px;height:37%;background:linear-gradient(90deg,#5d6256,#fff4c9 45%,#8e9984);transform-origin:50% 100%;transform:translate(-50%,-100%) rotate(-135deg);transition:none;box-shadow:0 0 5px #f2f0ce,1px 0 2px #000}
 .svarog-needle:after{content:"";position:absolute;top:-5px;left:-4px;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#9da58c 45%,#30372d 75%);border:1px solid #d1d8bb;box-shadow:0 0 8px #d8edaa}
-.svarog-needle.idle{animation:svarogIdle 1.8s ease-in-out infinite}
+.svarog-needle.idle{animation:none}
 .svarog-readout{display:flex;align-items:baseline;gap:6px;margin-top:-45px;z-index:2;padding:3px 10px;background:#071006dd;border:1px solid #6a9252;border-radius:3px;box-shadow:0 0 12px #64ff3822}
 .svarog-value{font:900 clamp(29px,8vw,42px) monospace;color:#baff9a;text-shadow:0 0 12px #72ff4e99;font-variant-numeric:tabular-nums}
 .svarog-unit{font:800 12px monospace;color:#a6bc88}
@@ -1511,7 +1511,7 @@ setInterval(updateClock,1000);updateClock();
  const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false;
  const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};
  const $c=id=>document.getElementById(id);
- const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null};
+ const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null,needleAngle:-135,needleFrame:0};
  const signalMeta={rain:['PROBABILIDAD DE LLUVIA','PRONÓSTICO HORARIO','%'],storm:['SEÑAL DE TORMENTA','CÓDIGO METEOROLÓGICO','IDX'],wind:['VELOCIDAD DEL VIENTO','OPEN-METEO · VIENTO A 10 M','km/h'],humidity:['HUMEDAD RELATIVA','OPEN-METEO · HUMEDAD','%'],uv:['ÍNDICE ULTRAVIOLETA','OPEN-METEO · UV','UV×10'],quake:['ACTIVIDAD SÍSMICA','SIN FEED SÍSMICO','IDX'],tornado:['ALERTA DE TORNADO','SIN FEED DE ALERTAS','IDX'],hurricane:['ALERTA DE HURACÁN','SIN FEED DE ALERTAS','IDX']};
  function buildSvarogScale(){
   const ticks=$c('svarogScaleTicks'),labels=$c('svarogScaleLabels');if(!ticks||!labels||ticks.childElementCount)return;
@@ -1521,9 +1521,23 @@ setInterval(updateClock,1000);updateClock();
   }
   for(let n=0;n<=100;n+=5){const a=(135+n*2.7)*Math.PI/180,r=108,t=document.createElementNS(ns,'text');t.setAttribute('x',160+Math.cos(a)*r);t.setAttribute('y',164+Math.sin(a)*r);t.setAttribute('fill','#d1f5b4');t.setAttribute('font-size','9');t.setAttribute('font-family','monospace');t.setAttribute('font-weight','bold');t.setAttribute('text-anchor','middle');t.textContent=String(n);labels.appendChild(t);}
  }
+ function moveSvarogNeedle(value){
+  const needle=$c('svarogNeedle');if(!needle)return;
+  const target=-135+value*2.7,from=svarog.needleAngle,delta=target-from;
+  if(svarog.needleFrame)cancelAnimationFrame(svarog.needleFrame);
+  needle.classList.toggle('idle',value<.05);
+  if(Math.abs(delta)<.05){svarog.needleAngle=target;needle.style.transform='translate(-50%,-100%) rotate('+target+'deg)';return;}
+  const started=performance.now(),duration=Math.min(3600,Math.max(700,900+Math.abs(delta)*7.5));
+  const step=now=>{
+   const t=Math.min(1,(now-started)/duration),ease=t*t*(3-2*t),angle=from+delta*ease;
+   svarog.needleAngle=angle;needle.style.transform='translate(-50%,-100%) rotate('+angle+'deg)';
+   if(t<1)svarog.needleFrame=requestAnimationFrame(step);else{svarog.needleAngle=target;svarog.needleFrame=0;}
+  };
+  svarog.needleFrame=requestAnimationFrame(step);
+ }
  function drawSvarog(value,status,source,unit='%'){
   const v=Math.max(0,Math.min(100,Number(value)||0));svarog.value=v;
-  const needle=$c('svarogNeedle');if(needle){needle.classList.toggle('idle',v<.05);needle.style.transform='translate(-50%,-100%) rotate('+(-135+v*2.7)+'deg)';}
+  moveSvarogNeedle(v);
   put('svarogValue',Number.isInteger(v)?String(v):v.toFixed(1));put('svarogUnit',unit);put('svarogStatus',status||'SEÑAL EN ESPERA');
   updateSvarogAudio();
  }
@@ -1562,14 +1576,14 @@ setInterval(updateClock,1000);updateClock();
      for(let i=0;i<count;i++){const fade=1-i/count;samples[i]=(Math.random()*2-1)*fade;}
      const source=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
      source.buffer=buffer;filter.type='bandpass';filter.frequency.value=3600;filter.Q.value=.9;
-     gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.075,now+.0012);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+     gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.19,now+.0012);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
      source.connect(filter);filter.connect(gain);gain.connect(ctx.destination);source.start(now);source.stop(now+duration);
     }
    }catch(e){}
    if(v<=0){svarog.timer=setTimeout(tick,1800);return;}
-   const mean=1450-(v*13.7);
-   const jitter=.55+Math.random()*.9;
-   svarog.timer=setTimeout(tick,Math.max(38,mean*jitter));
+   const mean=950*Math.exp(-v*.027);
+   const jitter=.75+Math.random()*.5;
+   svarog.timer=setTimeout(tick,Math.max(45,mean*jitter));
   };
   if(v<=0){svarog.timer=setTimeout(tick,1800);return;}
   tick();
@@ -2320,7 +2334,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v88';
+const PDA_SW_BUILD='pda-zona-shell-v89';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
