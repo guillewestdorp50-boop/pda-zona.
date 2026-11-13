@@ -49,6 +49,7 @@ class PdaLauncherActivity : Activity() {
     private var pendingGeoOrigin: String? = null
     private var customView: View? = null
     private var customViewCallback: WebChromeClient.CustomViewCallback? = null
+    private var deviceLinkStatusHandled = false
 
     companion object {
         private const val START_URL = "https://guillewestdorp50-boop.github.io/pda-zona./"
@@ -119,6 +120,8 @@ class PdaLauncherActivity : Activity() {
         @JavascriptInterface
         fun onDeviceLinkStatus(linked: Boolean) {
             runOnUiThread {
+                if (deviceLinkStatusHandled) return@runOnUiThread
+                deviceLinkStatusHandled = true
                 if (linked) loadAndroidOwnerProfile() else showAndroidDeviceLinkDialog()
             }
         }
