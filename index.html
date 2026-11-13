@@ -932,6 +932,7 @@ let sidorovichVoices=[];
 function populateSidorovichVoices(){if(!('speechSynthesis'in window))return;sidorovichVoices=window.speechSynthesis.getVoices();if(!sidorovichVoices.length)return;const saved=localStorage.getItem('zona_sidorovich_voice_uri')||'';const chosen=sidorovichVoices.find(v=>v.voiceURI===saved)||sidorovichVoices.find(v=>v.default)||sidorovichVoices.find(v=>/^es(-|$)/i.test(v.lang))||sidorovichVoices[0];if(chosen&&!saved)localStorage.setItem('zona_sidorovich_voice_uri',chosen.voiceURI);}
 function selectedSidorovichVoice(){const uri=localStorage.getItem('zona_sidorovich_voice_uri');return sidorovichVoices.find(v=>v.voiceURI===uri)||null;}
 let welcomeStartedThisOpen=false,welcomeInProgress=false,welcomeFallbackTriggered=false;
+let climateBootCheckReady=false,climateBootCheckFailed=false;
 function makeSidorovichUtterance(line){const u=new SpeechSynthesisUtterance(line);const voice=selectedSidorovichVoice();u.voice=voice;u.lang=voice?.lang||'es-AR';u.rate=.92;u.pitch=1;u.volume=1;return u;}
 function speakSidorovich(tab){
  if(!sidorovichVoiceEnabled||!('speechSynthesis'in window)||typeof SpeechSynthesisUtterance==='undefined'||welcomeInProgress)return;
@@ -963,7 +964,44 @@ function speakSidorovich(tab){
  try{window.speechSynthesis.cancel();window.speechSynthesis.speak(makeSidorovichUtterance(line));}
  catch(e){console.warn('Voz de Lebedev no disponible:',e)}
 }
-function playAutomaticWelcome(){if(welcomeStartedThisOpen||!sidorovichVoiceEnabled||!('speechSynthesis'in window)||typeof SpeechSynthesisUtterance==='undefined')return;const available=window.speechSynthesis.getVoices();if(!available.length)return;try{window.speechSynthesis.cancel();const u=makeSidorovichUtterance(sidorovichLines.home);welcomeInProgress=true;u.onstart=()=>{welcomeStartedThisOpen=true;};u.onend=()=>{welcomeStartedThisOpen=true;welcomeInProgress=false;welcomeFallbackTriggered=false;};u.onerror=()=>{welcomeInProgress=false;welcomeFallbackTriggered=false;};window.speechSynthesis.speak(u);}catch(e){welcomeInProgress=false;console.warn('No se pudo iniciar la bienvenida automática:',e)}}
+function playAutomaticWelcome(){
+ if(welcomeStartedThisOpen||!climateBootCheckReady||!sidorovichVoiceEnabled||!('speechSynthesis'in window)||typeof SpeechSynthesisUtterance==='undefined')return;
+ const available=window.speechSynthesis.getVoices();if(!available.length)return;
+ const weather=window.zonaWeatherCurrent,lightning=window.zonaLightningCurrent;
+ const weatherLive=!!(weather&&!weather.stale&&Number.isFinite(Number(weather.temperature)));
+ const lightningLive=!!(lightning&&lightning.ok&&!lightning.stale);
+ const code=Number(weather?.code),desc=String(weather?.description||'').toLowerCase();
+ const hail=weatherLive&&([96,99].includes(code)||desc.includes('granizo')||desc.includes('hail'));
+ const electrical=lightningLive&&Number(lightning.count)>0;
+ const storm=weatherLive&&code>=95&&code<=99;
+ const temp=weatherLive?Number(weather.temperature):NaN;
+ const heat=Number.isFinite(temp)&&temp>=35;
+ const danger=hail||electrical||storm||heat;
+ try{
+  window.speechSynthesis.cancel();
+  const u=makeSidorovichUtterance(danger?'':(!weatherLive||!lightningLive?'¡Atención, stalker! No pude verificar todas las condiciones meteorológicas y eléctricas de tu sector. Revisá la conexión y el GPS antes de salir.':''));
+  if(danger){
+   welcomeStartedThisOpen=true;
+   const heatLevel=heat?(temp>=45?3:temp>=40?2:1):0;
+   if(typeof svarog!=='undefined')svarog.lastHeatVoiceLevel=Math.max(svarog.lastHeatVoiceLevel||0,heatLevel);
+   speakSidorovich('climate');
+   return;
+  }
+  if(!weatherLive||!lightningLive){
+   welcomeStartedThisOpen=true;welcomeInProgress=true;
+   u.onstart=()=>{welcomeStartedThisOpen=true;};
+   u.onend=()=>{welcomeInProgress=false;welcomeFallbackTriggered=false;};
+   u.onerror=()=>{welcomeInProgress=false;welcomeFallbackTriggered=false;};
+   window.speechSynthesis.speak(u);return;
+  }
+  const greeting=makeSidorovichUtterance(sidorovichLines.home);
+  welcomeInProgress=true;
+  greeting.onstart=()=>{welcomeStartedThisOpen=true;};
+  greeting.onend=()=>{welcomeStartedThisOpen=true;welcomeInProgress=false;welcomeFallbackTriggered=false;};
+  greeting.onerror=()=>{welcomeInProgress=false;welcomeFallbackTriggered=false;};
+  window.speechSynthesis.speak(greeting);
+ }catch(e){welcomeInProgress=false;console.warn('No se pudo iniciar la bienvenida automática:',e)}
+}
 
 if('speechSynthesis'in window){populateSidorovichVoices();window.speechSynthesis.onvoiceschanged=()=>{populateSidorovichVoices();if(!welcomeStartedThisOpen)setTimeout(playAutomaticWelcome,250);};window.addEventListener('load',()=>setTimeout(playAutomaticWelcome,1200),{once:true});}
 $('sidorovichToggle').addEventListener('click',()=>{sidorovichVoiceEnabled=!sidorovichVoiceEnabled;localStorage.setItem('zona_sidorovich_voice_enabled',String(sidorovichVoiceEnabled));updateSidorovichToggle();if(sidorovichVoiceEnabled)speakSidorovich(currentPdaTab);else if('speechSynthesis'in window)window.speechSynthesis.cancel();});
@@ -1930,7 +1968,7 @@ setInterval(updateClock,1000);updateClock();
   if(heatText&&valid)heatText.textContent=critical?'EMISIÓN CRÍTICA · '+temperature.toFixed(1)+' °C · PONEOS A CUBIERTO':danger?'EMISIÓN · '+temperature.toFixed(1)+' °C · NIVEL DE PELIGRO':'TEMPERATURA '+temperature.toFixed(1)+' °C · UMBRAL PDA 35 °C';
   if(valid&&temperature<35)svarog.lastHeatVoiceLevel=0;
   const alertLevel=critical?3:danger?2:hot?1:0;
-  if(alertLevel>svarog.lastHeatVoiceLevel){
+  if(climateBootCheckReady&&alertLevel>svarog.lastHeatVoiceLevel){
    svarog.lastHeatVoiceLevel=alertLevel;
    const phrase=critical?'¡ATENCIÓN, ATENCIÓN! ¡VA A COMENZAR UNA EMISIÓN! ¡PONEOS A CUBIERTO DE INMEDIATO!':danger?'¡ATENCIÓN! ¡EMISIÓN DETECTADA! ¡La temperatura ha alcanzado un nivel peligroso!':'Cuidado, estamos registrando temperaturas elevadas. Se recomienda buscar resguardo y evitar la exposición prolongada.';
    if(sidorovichVoiceEnabled&&'speechSynthesis'in window&&typeof SpeechSynthesisUtterance!=='undefined'){
@@ -2102,7 +2140,7 @@ setInterval(updateClock,1000);updateClock();
  function locate(){
   if(!navigator.geolocation){box.title='Este navegador no ofrece GPS';put('climateConnection','GPS NO DISPONIBLE');paintLightning({ok:false,error:'gps_unavailable'},true);return;}
   icon.textContent='⌖';box.title='Solicitando ubicación GPS…';
-  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};loadWeather(lastCoords.lat,lastCoords.lon);loadLightning(lastCoords.lat,lastCoords.lon);},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';paintLightning({ok:false,error:'gps_unavailable'},true);},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});
+  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};Promise.allSettled([loadWeather(lastCoords.lat,lastCoords.lon),loadLightning(lastCoords.lat,lastCoords.lon)]).then(()=>{climateBootCheckReady=true;playAutomaticWelcome();});},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';paintLightning({ok:false,error:'gps_unavailable'},true);climateBootCheckFailed=true;climateBootCheckReady=true;playAutomaticWelcome();},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});
  }
  refresh?.addEventListener('click',e=>{e.stopPropagation();locate();});
  $c('climateRefresh')?.addEventListener('click',locate);
@@ -2800,7 +2838,7 @@ updateOrientationButton();
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v106';
+const PDA_SW_BUILD='pda-zona-shell-v107';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
