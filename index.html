@@ -1230,7 +1230,7 @@ function pdaRenderChat(){
  const all=[...local,...remote].sort((a,b)=>a.sortAt-b.sortAt);
  $('chatBox').innerHTML=all.map(m=>{
   const who=m.me?'TÚ':(m.who||contact?.name||'CONTACTO');
-  const yuriEvent=m.remote&&typeof m.body==='string'?m.body.match(/^\\[\\[PDA_YURI_EVENT:(transfer|yuri_message):(\\d+):([0-9a-f-]{36})\\]\\]([\\s\\S]*)$/i):null;
+  const yuriEvent=m.remote&&typeof m.body==='string'?m.body.match(/^\[\[PDA_YURI_EVENT:(transfer|yuri_message):(\d+):([0-9a-f-]{36})\]\]([\s\S]*)$/i):null;
   if(yuriEvent){
    const kind=yuriEvent[1],amount=Number(yuriEvent[2])||0,detail=yuriEvent[4]||'';
    const card=kind==='transfer'
