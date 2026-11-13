@@ -234,6 +234,19 @@ class PdaLauncherActivity : Activity() {
                 }
                 if (placeholder && profile.avatar_url) placeholder.classList.add('hidden');
                 if (name && profile.display_name) name.textContent = profile.display_name;
+                let attempts = 0;
+                const refreshWallet = async () => {
+                  try {
+                    if (typeof pdaRefreshYuriWallet === 'function' &&
+                        typeof contacts !== 'undefined' &&
+                        contacts.some(item => item.remoteConversationId)) {
+                      await pdaRefreshYuriWallet();
+                      return;
+                    }
+                  } catch(e) {}
+                  if (++attempts < 20) setTimeout(refreshWallet, 500);
+                };
+                refreshWallet();
               } catch(e) {
                 console.warn('PDA Android owner profile:',e);
               }
