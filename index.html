@@ -925,7 +925,7 @@ if ('serviceWorker' in navigator) {
   byId('pdaTransferDetect')?.addEventListener('click',inspectTransfer);
   byId('pdaTransferAccept')?.addEventListener('click',acceptTransfer);
   byId('pdaTransferReject')?.addEventListener('click',rejectTransfer);
-  byId('pdaTransferCodeInput')?.addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z2-9]/g,'').slice(0,10)});
+  byId('pdaTransferCodeInput')?.addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g,'').slice(0,10)});
   byId('pdaTransferCopy')?.addEventListener('click',async()=>{
    const code=byId('pdaTransferCodeValue').textContent;
    try{await navigator.clipboard.writeText(code);status('CÓDIGO COPIADO.')}catch{alert('Código: '+code)}
