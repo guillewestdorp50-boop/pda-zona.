@@ -117,6 +117,34 @@ class PdaLauncherActivity : Activity() {
 
     private inner class PdaNativeBridge {
         @JavascriptInterface
+        fun onDeviceLinkStatus(linked: Boolean) {
+            runOnUiThread {
+                if (linked) loadAndroidOwnerProfile() else showAndroidDeviceLinkDialog()
+            }
+        }
+
+        @JavascriptInterface
+        fun onDeviceLinkResult(success: Boolean, message: String) {
+            runOnUiThread {
+                if (success) {
+                    AlertDialog.Builder(this@PdaLauncherActivity)
+                        .setTitle("PDA VINCULADA")
+                        .setMessage("La APK quedó autorizada por la PDA principal.")
+                        .setPositiveButton("CONTINUAR", null)
+                        .show()
+                    loadAndroidOwnerProfile()
+                } else {
+                    AlertDialog.Builder(this@PdaLauncherActivity)
+                        .setTitle("NO SE PUDO VINCULAR")
+                        .setMessage(message.ifBlank { "Revisá el código y volvé a intentar." })
+                        .setPositiveButton("REINTENTAR") { _, _ -> showAndroidDeviceLinkDialog() }
+                        .setNegativeButton("MÁS TARDE", null)
+                        .show()
+                }
+            }
+        }
+
+        @JavascriptInterface
         fun speak(text: String, voiceUri: String, lang: String, rate: Double,
                   pitch: Double, volume: Double, utteranceId: String) {
             runOnUiThread {
@@ -139,6 +167,76 @@ class PdaLauncherActivity : Activity() {
         fun stop() {
             runOnUiThread { tts?.stop() }
         }
+    }
+
+    private fun showAndroidDeviceLinkDialog() {
+        val input = android.widget.EditText(this).apply {
+            hint = "CÓDIGO DE 8 CARACTERES"
+            isSingleLine = true
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                android.text.InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+            filters = arrayOf(android.text.InputFilter.LengthFilter(8))
+        }
+        AlertDialog.Builder(this)
+            .setTitle("VINCULAR CON LA PDA MADRE")
+            .setMessage("En la PDA madre generá un código de vinculación nuevo y escribilo acá. Es de un solo uso y vence a los 10 minutos.")
+            .setView(input)
+            .setPositiveButton("VINCULAR") { _, _ ->
+                val code = input.text.toString().trim().uppercase(Locale.ROOT)
+                val quoted = JSONObject.quote(code)
+                val script = """
+                    (async function(){
+                      try {
+                        await window.pdaInvoke('redeemAndroidDevice',{code:$quoted});
+                        window.PdaAndroid.onDeviceLinkResult(true,'');
+                      } catch(e) {
+                        window.PdaAndroid.onDeviceLinkResult(false,String(e && e.message || e));
+                      }
+                    })();
+                """.trimIndent()
+                webView.evaluateJavascript(script, null)
+            }
+            .setNegativeButton("AHORA NO", null)
+            .setCancelable(true)
+            .show()
+    }
+
+    private fun checkAndroidDeviceLink() {
+        val script = """
+            (async function(){
+              try {
+                const result = await window.pdaInvoke('androidDeviceStatus');
+                window.PdaAndroid.onDeviceLinkStatus(!!result.linked);
+              } catch(e) {
+                console.warn('PDA Android link check:',e);
+              }
+            })();
+        """.trimIndent()
+        webView.evaluateJavascript(script, null)
+    }
+
+    private fun loadAndroidOwnerProfile() {
+        val script = """
+            (async function(){
+              try {
+                const result = await window.pdaInvoke('getAndroidOwnerProfile');
+                const profile = result && result.profile;
+                if (!profile) return;
+                const avatar = document.getElementById('pdaProfileAvatar');
+                const placeholder = document.getElementById('pdaProfilePlaceholder');
+                const name = document.getElementById('pdaProfileName');
+                if (avatar && profile.avatar_url) {
+                  avatar.src = profile.avatar_url;
+                  avatar.classList.remove('hidden');
+                }
+                if (placeholder && profile.avatar_url) placeholder.classList.add('hidden');
+                if (name && profile.display_name) name.textContent = profile.display_name;
+              } catch(e) {
+                console.warn('PDA Android owner profile:',e);
+              }
+            })();
+        """.trimIndent()
+        webView.evaluateJavascript(script, null)
     }
 
     private fun selectedNativeVoice(): android.speech.tts.Voice? {
@@ -344,6 +442,7 @@ class PdaLauncherActivity : Activity() {
                     if (url.startsWith("https://$TRUSTED_HOST/")) {
                         pageReady = true
                         maybeShowVoicePicker()
+                        checkAndroidDeviceLink()
                     }
                 }
 
