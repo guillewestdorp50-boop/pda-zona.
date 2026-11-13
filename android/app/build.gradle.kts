@@ -9,8 +9,8 @@ android {
   applicationId = "com.pdazona.app"
   minSdk = 23
   targetSdk = 35
-  versionCode = 1
-  versionName = "1.0.0"
+  versionCode = 2
+  versionName = "1.1.0-webview-test"
  }
  compileOptions {
   sourceCompatibility = JavaVersion.VERSION_17
@@ -21,6 +21,5 @@ android {
  }
 }
 dependencies {
- implementation("com.google.androidbrowserhelper:androidbrowserhelper:2.5.0")
  implementation("androidx.core:core-ktx:1.15.0")
 }
