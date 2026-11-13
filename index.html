@@ -673,6 +673,12 @@ body.keyboard-visible footer{display:none}
 .economy-entry .entry-amount{text-shadow:0 0 12px #a9e97630}
 .economy-entry .entry-meta{border-color:#526d4744;font-size:9px}
 @media(max-width:380px){.economy-metric{gap:4px;padding:8px 4px}.economy-metric-icon{width:21px;height:21px;flex-basis:21px}.economy-chart{height:88px}.economy-terminal{padding:12px}}
+</style><style>
+.svarog-heat-alert{display:flex;flex-direction:column;gap:6px;margin:10px 0;padding:13px;border:2px solid #ff4b24;background:repeating-linear-gradient(135deg,#3b100b,#3b100b 10px,#250a08 10px,#250a08 20px);color:#fff1d7;box-shadow:0 0 18px #ff321d88;animation:heatPulse .8s steps(2,end) infinite}
+.svarog-heat-alert strong{font:900 13px monospace;letter-spacing:1px;color:#ffb18c}
+.svarog-heat-alert span{font:900 19px monospace}
+.svarog-heat-alert small{font:11px monospace;color:#ffe0c5}
+@keyframes heatPulse{50%{border-color:#ffb12d;box-shadow:0 0 25px #ff4b24}}
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -745,8 +751,8 @@ body.keyboard-visible footer{display:none}
   <div class="svarog-selectors" id="svarogSelectors">
    <button type="button" class="active" data-signal="rain">☂ LLUVIA</button><button type="button" data-signal="storm">ϟ TORMENTA</button><button type="button" data-signal="wind">≋ VIENTO</button><button type="button" data-signal="humidity">◌ HUMEDAD</button><button type="button" data-signal="uv">☼ RADIACIÓN UV</button><button type="button" data-signal="quake">⌁ SISMO</button>
   </div>
-  <div class="svarog-selectors" style="margin-top:6px"><button type="button" data-signal="tornado">◉ TORNADO</button><button type="button" data-signal="hurricane">◉ HURACÁN</button></div>
-  <div class="svarog-audio"><div><div class="svarog-brand">▸ AUDIO DE DETECCIÓN</div><small id="svarogAudioState">PULSOS DESACTIVADOS</small></div><button type="button" id="svarogAudioToggle">♫ ACTIVAR TICS</button></div>
+  <div class="svarog-selectors" style="margin-top:6px"><button type="button" data-signal="tornado">◉ TORNADO</button><button type="button" data-signal="hurricane">◉ VIENTOS EXTREMOS</button><button type="button" data-signal="hail">◆ GRANIZO</button><button type="button" data-signal="snow">❄ NIEVE</button><button type="button" data-signal="heat">♨ CALOR EXTREMO</button></div><div id="svarogHeatAlert" class="svarog-heat-alert hidden" role="alert" aria-live="assertive"><strong>⚠ ALERTA TÉRMICA · 35 °C O MÁS</strong><span id="svarogHeatText">TEMPERATURA EXTREMA DETECTADA</span><small>Buscá sombra, hidratate y evitá esfuerzos al aire libre</small></div>
+  <div class="svarog-audio"><div><div class="svarog-brand">▸ AUDIO DE DETECCIÓN</div><small id="svarogAudioState">PULSOS DESACTIVADOS</small></div><button type="button" id="svarogAudioToggle">♫ ACTIVAR AUDIO</button></div>
   <p class="svarog-foot">Telemetría real cuando hay datos disponibles. El barrido y el reloj son animaciones de interfaz; no representan mediciones adicionales. Canales sin fuente verificada: SIN FEED.</p>
  </div>
   <div class="climate-section-label">▸ TELEMETRÍA ATMOSFÉRICA</div>
@@ -1727,8 +1733,8 @@ setInterval(updateClock,1000);updateClock();
  const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false;
  const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};
  const $c=id=>document.getElementById(id);
- const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null,needleAngle:-135,needleFrame:0,displayValue:0};
- const signalMeta={rain:['PROBABILIDAD DE LLUVIA','PRONÓSTICO HORARIO','%'],storm:['SEÑAL DE TORMENTA','CÓDIGO METEOROLÓGICO','IDX'],wind:['VELOCIDAD DEL VIENTO','OPEN-METEO · VIENTO A 10 M','km/h'],humidity:['HUMEDAD RELATIVA','OPEN-METEO · HUMEDAD','%'],uv:['ÍNDICE ULTRAVIOLETA','OPEN-METEO · UV','UV×10'],quake:['ACTIVIDAD SÍSMICA','SIN FEED SÍSMICO','IDX'],tornado:['ALERTA DE TORNADO','SIN FEED DE ALERTAS','IDX'],hurricane:['ALERTA DE HURACÁN','SIN FEED DE ALERTAS','IDX']};
+ const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null,needleAngle:-135,needleFrame:0,displayValue:0,heatAlarmTimer:null,heatAlarmActive:false};
+ const signalMeta={rain:['PROBABILIDAD DE LLUVIA','OPEN-METEO · PRONÓSTICO HORARIO','%'],storm:['SEÑAL DE TORMENTA','OPEN-METEO · CÓDIGO METEOROLÓGICO','IDX'],wind:['VELOCIDAD DEL VIENTO','OPEN-METEO · VIENTO A 10 M','km/h'],humidity:['HUMEDAD RELATIVA','OPEN-METEO · HUMEDAD','%'],uv:['ÍNDICE ULTRAVIOLETA','OPEN-METEO · UV','UV'],quake:['ACTIVIDAD SÍSMICA','FUENTE SÍSMICA PENDIENTE','IDX'],tornado:['ALERTA DE TORNADO','ALERTAS OFICIALES · SIN EVENTO CONFIRMADO','IDX'],hurricane:['VIENTOS EXTREMOS','VIENTO LOCAL · UMBRAL INFORMATIVO','km/h'],hail:['GRANIZO','OPEN-METEO · CÓDIGO DE TIEMPO ACTUAL','IDX'],snow:['NIEVE','OPEN-METEO · CÓDIGO DE TIEMPO ACTUAL','IDX'],heat:['CALOR EXTREMO','TEMPERATURA ACTUAL · UMBRAL PDA 35 °C','°C']};
  function buildSvarogScale(){
   const ticks=$c('svarogScaleTicks'),labels=$c('svarogScaleLabels');if(!ticks||!labels||ticks.childElementCount)return;
   const ns='http://www.w3.org/2000/svg';
@@ -1791,6 +1797,34 @@ setInterval(updateClock,1000);updateClock();
   beat();svarog.liveTimer=setInterval(beat,1000);selectSvarog(svarog.channel);
  }
 
+ function updateHeatAlert(data){
+  const alertBox=$c('svarogHeatAlert'),heatText=$c('svarogHeatText');
+  const valid=data&&Number.isFinite(Number(data.temperature)),hot=valid&&Number(data.temperature)>=35;
+  if(alertBox)alertBox.classList.toggle('hidden',!hot);
+  if(heatText&&valid)heatText.textContent='TEMPERATURA '+Number(data.temperature).toFixed(1)+' °C · UMBRAL PDA 35 °C';
+  if(hot&&svarog.audio){
+   if(!svarog.heatAlarmTimer){
+    const alarm=()=>{
+     if(!svarog.audio||!svarog.heatAlarmActive)return;
+     try{
+      const ctx=svarog.ctx;if(!ctx||ctx.state!=='running')return;
+      const now=ctx.currentTime;
+      [880,660,880].forEach((freq,i)=>{
+       const osc=ctx.createOscillator(),gain=ctx.createGain(),start=now+i*.34;
+       osc.type='sawtooth';osc.frequency.setValueAtTime(freq,start);
+       gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(.72,start+.035);
+       gain.gain.setValueAtTime(.72,start+.19);gain.gain.exponentialRampToValueAtTime(.0001,start+.28);
+       osc.connect(gain);gain.connect(ctx.destination);osc.start(start);osc.stop(start+.3);
+      });
+     }catch(e){}
+    };
+    svarog.heatAlarmActive=true;alarm();svarog.heatAlarmTimer=setInterval(alarm,3200);
+   }
+  }else{
+   svarog.heatAlarmActive=false;
+   if(svarog.heatAlarmTimer){clearInterval(svarog.heatAlarmTimer);svarog.heatAlarmTimer=null;}
+  }
+ }
  function updateSvarogAudio(){
   if(!svarog.audio)return;
   clearTimeout(svarog.timer);
@@ -1838,6 +1872,18 @@ setInterval(updateClock,1000);updateClock();
   }else if(channel==='uv'){
    const ok=Number.isFinite(d.uv);
    drawSvarog(ok?Math.min(100,Math.max(0,d.uv*10)):0,ok?'ÍNDICE UV MEDIDO · ESCALA ×10':'SIN DATOS UV',meta[1],'UV×10');
+  }else if(channel==='hail'){
+   const ok=Number.isFinite(d.code),active=ok&&(Number(d.code)===96||Number(d.code)===99);
+   drawSvarog(active?100:0,ok?(active?'GRANIZO EN CONDICIÓN ACTUAL':'SIN GRANIZO EN CONDICIÓN ACTUAL'):'SIN DATOS METEOROLÓGICOS',meta[1],'IDX');
+  }else if(channel==='snow'){
+   const ok=Number.isFinite(d.code),active=ok&&([71,73,75,77,85,86].includes(Number(d.code)));
+   drawSvarog(active?100:0,ok?(active?'NIEVE EN CONDICIÓN ACTUAL':'SIN NIEVE EN CONDICIÓN ACTUAL'):'SIN DATOS METEOROLÓGICOS',meta[1],'IDX');
+  }else if(channel==='heat'){
+   const ok=Number.isFinite(d.temperature),active=ok&&d.temperature>=35;
+   drawSvarog(ok?Math.min(100,Math.max(0,d.temperature)):0,ok?(active?'ALERTA TÉRMICA · UMBRAL 35 °C SUPERADO':'TEMPERATURA BAJO UMBRAL DE ALERTA'):'SIN DATOS DE TEMPERATURA',meta[1],'°C');
+  }else if(channel==='hurricane'){
+   const ok=Number.isFinite(d.wind),active=ok&&d.wind>=75;
+   drawSvarog(ok?Math.min(100,d.wind):0,ok?(active?'VIENTO MUY INTENSO · VERIFICAR ALERTAS':'SIN VIENTO EXTREMO EN LA LECTURA'):'SIN DATOS DE VIENTO',meta[1],'km/h');
   }else{
    // Canales sin una fuente local verificada: mantener clics de exploración lentos,
    // sin inventar porcentajes ni simular una alerta inexistente.
@@ -1846,8 +1892,8 @@ setInterval(updateClock,1000);updateClock();
  }
  const selector=document.querySelector('.svarog-panel');selector?.addEventListener('click',e=>{const b=e.target.closest('button[data-signal]');if(b)selectSvarog(b.dataset.signal)});
  $c('svarogAudioToggle')?.addEventListener('click',async()=>{
-  if(!svarog.audio){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw new Error('no audio');svarog.ctx=svarog.ctx||new AC();if(svarog.ctx.state==='suspended')await svarog.ctx.resume();svarog.audio=true;put('svarogAudioToggle','♫ SILENCIAR');updateSvarogAudio();}catch(e){put('svarogAudioState','AUDIO NO DISPONIBLE EN ESTE NAVEGADOR');}}
-  else{svarog.audio=false;clearTimeout(svarog.timer);put('svarogAudioToggle','♫ ACTIVAR TICS');put('svarogAudioState','PULSOS DESACTIVADOS');}
+  if(!svarog.audio){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw new Error('no audio');svarog.ctx=svarog.ctx||new AC();if(svarog.ctx.state==='suspended')await svarog.ctx.resume();svarog.audio=true;put('svarogAudioToggle','♫ SILENCIAR');updateSvarogAudio();updateHeatAlert(cached()||{});}catch(e){put('svarogAudioState','AUDIO NO DISPONIBLE EN ESTE NAVEGADOR');}}
+  else{svarog.audio=false;clearTimeout(svarog.timer);if(svarog.heatAlarmTimer){clearInterval(svarog.heatAlarmTimer);svarog.heatAlarmTimer=null;}svarog.heatAlarmActive=false;put('svarogAudioToggle','♫ ACTIVAR AUDIO');put('svarogAudioState','AUDIO DESACTIVADO');}
  });
 
 
@@ -1879,7 +1925,7 @@ setInterval(updateClock,1000);updateClock();
   const storm=Number(data.code)>=95&&Number(data.code)<=99;
   put('climateStorm',storm?'TORMENTA PRONOSTICADA':'SIN SEÑAL HORARIA');
   put('climateStormDetail',storm?'El pronóstico horario indica tormenta; no hay porcentaje específico disponible.':(Number.isFinite(data.cape)&&data.cape>=500?'Hay energía convectiva; no equivale a probabilidad de tormenta.':'El pronóstico horario no indica tormenta eléctrica.'));
-  selectSvarog(svarog.channel);
+  selectSvarog(svarog.channel);updateHeatAlert(data);
  }
  const symbols={0:['☀','Despejado'],1:['🌤','Mayormente despejado'],2:['⛅','Parcialmente nublado'],3:['☁','Nublado'],45:['🌫','Niebla'],48:['🌫','Niebla'],51:['🌦','Llovizna'],53:['🌦','Llovizna'],55:['🌧','Llovizna intensa'],56:['🌧','Llovizna helada'],57:['🌧','Llovizna helada'],61:['🌧','Lluvia'],63:['🌧','Lluvia'],65:['🌧','Lluvia intensa'],66:['🌧','Lluvia helada'],67:['🌧','Lluvia helada'],71:['❄','Nieve'],73:['❄','Nieve'],75:['❄','Nieve intensa'],77:['❄','Granizo menudo'],80:['🌦','Chaparrones'],81:['🌧','Chaparrones'],82:['⛈','Chaparrones fuertes'],85:['🌨','Nieve'],86:['🌨','Nieve intensa'],95:['⛈','Tormenta'],96:['⛈','Tormenta con granizo'],99:['⛈','Tormenta fuerte']};
  async function loadWeather(lat,lon){
