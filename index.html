@@ -1893,7 +1893,8 @@ setInterval(updateClock,1000);updateClock();
    console.warn('Detector NOAA GOES-19 no disponible:',e);
   }finally{lightningBusy=false;}
  }
-\n function updateHeatAlert(data){
+
+ function updateHeatAlert(data){
   const alertBox=$c('svarogHeatAlert'),heatText=$c('svarogHeatText');
   const valid=data&&Number.isFinite(Number(data.temperature)),temperature=valid?Number(data.temperature):NaN,hot=valid&&temperature>=35,danger=valid&&temperature>=40,critical=valid&&temperature>=45;
   if(alertBox){alertBox.classList.toggle('hidden',!hot);alertBox.classList.toggle('heat-danger',danger);}
