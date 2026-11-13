@@ -1848,9 +1848,10 @@ setInterval(updateClock,1000);updateClock();
  function updateSvarogAudio(){
   if(!svarog.audio)return;
   clearTimeout(svarog.timer);
-  if(svarog.channel==='emissions'){put('svarogAudioState','MODO TÉRMICO · SIN PULSOS GEIGER');return;}
   const v=Math.max(0,Math.min(100,Number(svarog.value)||0));
-  put('svarogAudioState',v===0?'SIN PULSOS · 0%':v<25?'GEIGER · ACTIVIDAD BAJA':v<60?'GEIGER · ACTIVIDAD MODERADA':'GEIGER · ACTIVIDAD INTENSA');
+  const thermalMode=svarog.channel==='emissions';
+  const activity=v===0?'SIN PULSOS · 0%':v<25?'ACTIVIDAD BAJA':v<60?'ACTIVIDAD MODERADA':'ACTIVIDAD INTENSA';
+  put('svarogAudioState',thermalMode?'GEIGER SONORO · ESCALA TÉRMICA · '+activity:'GEIGER · '+activity);
   const tick=()=>{
    if(!svarog.audio)return;
    try{
