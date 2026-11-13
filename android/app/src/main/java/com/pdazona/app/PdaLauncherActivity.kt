@@ -61,8 +61,8 @@ class PdaLauncherActivity : Activity() {
       catch(e){this.speaking=false;this.pending=false;if(typeof u.onerror==='function')u.onerror({error:'native-unavailable'});}
     }
   };
-  window.SpeechSynthesisUtterance=PdaUtterance;
-  window.speechSynthesis=synth;
+  Object.defineProperty(window,'SpeechSynthesisUtterance',{configurable:true,writable:true,value:PdaUtterance});
+  Object.defineProperty(window,'speechSynthesis',{configurable:true,writable:true,value:synth});
   window.__pdaNativeTtsReady=function(json){
     try{voices=JSON.parse(json||'[]');}catch(e){voices=[];}
     synth.pending=false;
