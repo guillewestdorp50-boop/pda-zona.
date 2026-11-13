@@ -1532,7 +1532,7 @@ setInterval(updateClock,1000);updateClock();
  }
  function selectSvarog(channel){
   svarog.channel=channel;const d=cached()||{};
-  document.querySelectorAll('#svarogSelectors button').forEach(b=>b.classList.toggle('active',b.dataset.signal===channel));
+  document.querySelectorAll('.svarog-selectors button').forEach(b=>b.classList.toggle('active',b.dataset.signal===channel));
   updateSvarogMetrics(d);
   if(channel==='rain'){const ok=Number.isFinite(d.rainChance);drawSvarog(ok?d.rainChance:0,ok?'PROBABILIDAD REAL · PRÓXIMA HORA':'SIN DATOS METEOROLÓGICOS','', '%');}
   else if(channel==='storm'){const active=Number(d.code)>=95&&Number(d.code)<=99;drawSvarog(active?100:0,active?'CÓDIGO DE TORMENTA DETECTADO':'SIN CÓDIGO DE TORMENTA','', 'IDX');}
@@ -1566,7 +1566,7 @@ setInterval(updateClock,1000);updateClock();
   else if(channel==='storm'){const d=cached();const active=d&&d.code>=95&&d.code<=99;drawSvarog(active?100:0,active?'TORMENTA EN PRONÓSTICO':'SIN SEÑAL DE TORMENTA','FUENTE: OPEN-METEO · CÓDIGO WMO');}
   else {const meta=signalMeta[channel];drawSvarog(0,'0% · SIN ALERTA VERIFICADA',meta[1]);}
  }
- const selector=$c('svarogSelectors');selector?.addEventListener('click',e=>{const b=e.target.closest('button[data-signal]');if(b)selectSvarog(b.dataset.signal)});
+ const selector=document.querySelector('.svarog-panel');selector?.addEventListener('click',e=>{const b=e.target.closest('button[data-signal]');if(b)selectSvarog(b.dataset.signal)});
  $c('svarogAudioToggle')?.addEventListener('click',async()=>{
   if(!svarog.audio){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw new Error('no audio');svarog.ctx=svarog.ctx||new AC();if(svarog.ctx.state==='suspended')await svarog.ctx.resume();svarog.audio=true;put('svarogAudioToggle','♫ SILENCIAR');updateSvarogAudio();}catch(e){put('svarogAudioState','AUDIO NO DISPONIBLE EN ESTE NAVEGADOR');}}
   else{svarog.audio=false;clearTimeout(svarog.timer);put('svarogAudioToggle','♫ ACTIVAR TICS');put('svarogAudioState','PULSOS DESACTIVADOS');}
