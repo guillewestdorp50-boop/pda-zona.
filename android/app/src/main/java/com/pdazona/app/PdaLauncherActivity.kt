@@ -327,7 +327,7 @@ class PdaLauncherActivity : Activity() {
                 javaScriptEnabled = true
                 domStorageEnabled = true
                 databaseEnabled = true
-                geolocationEnabled = true
+                setGeolocationEnabled(true)
                 mediaPlaybackRequiresUserGesture = false
                 cacheMode = WebSettings.LOAD_DEFAULT
                 loadsImagesAutomatically = true
