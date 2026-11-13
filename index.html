@@ -598,6 +598,11 @@ body.keyboard-visible footer{display:none}
 .svarog-needle{position:absolute;left:50%;top:50%;width:2px;height:37%;background:linear-gradient(90deg,#5d6256,#fff4c9 45%,#8e9984);transform-origin:50% 100%;transform:translate(-50%,-100%) rotate(-135deg);transition:none;box-shadow:0 0 5px #f2f0ce,1px 0 2px #000}
 .svarog-needle:after{content:"";position:absolute;top:-5px;left:-4px;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#9da58c 45%,#30372d 75%);border:1px solid #d1d8bb;box-shadow:0 0 8px #d8edaa}
 .svarog-needle.idle{animation:none}
+.svarog-instrument.emission-mode .svarog-dial{border-color:#a3b38c;box-shadow:0 0 0 3px #10150e,0 0 24px #75ff4933,inset 0 0 25px #000}
+.svarog-instrument.emission-warning .svarog-dial{border-color:#e6a33a;box-shadow:0 0 0 3px #10150e,0 0 26px #e6a33a66,inset 0 0 25px #000}
+.svarog-instrument.emission-danger .svarog-dial{border-color:#ff342b;box-shadow:0 0 0 3px #250705,0 0 30px #ff211b99,inset 0 0 25px #000}
+.svarog-instrument.emission-danger .svarog-needle{background:linear-gradient(90deg,#54100d,#fff0d7 45%,#ff3a2f);box-shadow:0 0 8px #ff342b}
+.svarog-instrument.emission-danger .svarog-status{color:#ff645c;text-shadow:0 0 8px #ff342b88}
 .svarog-readout{display:flex;align-items:baseline;gap:6px;margin-top:-45px;z-index:2;padding:3px 10px;background:#071006dd;border:1px solid #6a9252;border-radius:3px;box-shadow:0 0 12px #64ff3822}
 .svarog-value{font:900 clamp(29px,8vw,42px) monospace;color:#baff9a;text-shadow:0 0 12px #72ff4e99;font-variant-numeric:tabular-nums}
 .svarog-unit{font:800 12px monospace;color:#a6bc88}
@@ -726,8 +731,8 @@ body.keyboard-visible footer{display:none}
 
  <div class="panel svarog-panel">
   <div class="svarog-head"><div><div class="svarog-brand">◉ SVAROG · DETECTOR DE CAMPO</div><div class="svarog-sub">UNIDAD PDA-Z · SCANNER AMBIENTAL Mk-II</div></div><span class="svarog-live"><i></i> SISTEMA ACTIVO</span></div>
-  <div class="svarog-instrument">
-   <div class="svarog-dial" role="img" aria-label="Medidor circular graduado de cero a cien, con aguja metálica">
+  <div class="svarog-instrument" id="svarogInstrument">
+   <div class="svarog-dial" id="svarogDial" role="img" aria-label="Medidor circular graduado de cero a cien, con aguja metálica">
     <svg viewBox="0 0 320 320" aria-hidden="true">
      <defs><radialGradient id="svGlow"><stop offset="0" stop-color="#173519"/><stop offset="1" stop-color="#061006"/></radialGradient><linearGradient id="svNeedleGlow"><stop stop-color="#7dff68"/><stop offset="1" stop-color="#d9ffb7"/></linearGradient></defs>
      <circle cx="160" cy="160" r="145" fill="url(#svGlow)" stroke="#42633a" stroke-width="1"/>
@@ -751,7 +756,7 @@ body.keyboard-visible footer{display:none}
   <div class="svarog-selectors" id="svarogSelectors">
    <button type="button" class="active" data-signal="rain">☂ LLUVIA</button><button type="button" data-signal="storm">ϟ TORMENTA</button><button type="button" data-signal="wind">≋ VIENTO</button><button type="button" data-signal="humidity">◌ HUMEDAD</button><button type="button" data-signal="uv">☼ RADIACIÓN UV</button><button type="button" data-signal="quake">⌁ SISMO</button>
   </div>
-  <div class="svarog-selectors" style="margin-top:6px"><button type="button" data-signal="tornado">◉ TORNADO</button><button type="button" data-signal="hurricane">◉ VIENTOS EXTREMOS</button><button type="button" data-signal="hail">◆ GRANIZO</button><button type="button" data-signal="snow">❄ NIEVE</button><button type="button" data-signal="heat">♨ CALOR EXTREMO</button></div><div id="svarogHeatAlert" class="svarog-heat-alert hidden" role="alert" aria-live="assertive"><strong>⚠ ALERTA TÉRMICA · 35 °C O MÁS</strong><span id="svarogHeatText">TEMPERATURA EXTREMA DETECTADA</span><small>Buscá sombra, hidratate y evitá esfuerzos al aire libre</small></div>
+  <div class="svarog-selectors" style="margin-top:6px"><button type="button" data-signal="tornado">◉ TORNADO</button><button type="button" data-signal="hurricane">◉ VIENTOS EXTREMOS</button><button type="button" data-signal="hail">◆ GRANIZO</button><button type="button" data-signal="snow">❄ NIEVE</button><button type="button" data-signal="heat">♨ CALOR EXTREMO</button><button type="button" data-signal="emissions">☢ EMISIONES</button></div><div id="svarogHeatAlert" class="svarog-heat-alert hidden" role="alert" aria-live="assertive"><strong>⚠ ALERTA TÉRMICA · 35 °C O MÁS</strong><span id="svarogHeatText">TEMPERATURA EXTREMA DETECTADA</span><small>Buscá sombra, hidratate y evitá esfuerzos al aire libre</small></div>
   <div class="svarog-audio"><div><div class="svarog-brand">▸ AUDIO DE DETECCIÓN</div><small id="svarogAudioState">PULSOS DESACTIVADOS</small></div><button type="button" id="svarogAudioToggle">♫ ACTIVAR AUDIO</button></div>
   <p class="svarog-foot">Telemetría real cuando hay datos disponibles. El barrido y el reloj son animaciones de interfaz; no representan mediciones adicionales. Canales sin fuente verificada: SIN FEED.</p>
  </div>
@@ -1733,47 +1738,50 @@ setInterval(updateClock,1000);updateClock();
  const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false;
  const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};
  const $c=id=>document.getElementById(id);
- const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null,needleAngle:-135,needleFrame:0,displayValue:0,heatAlarmTimer:null,heatAlarmActive:false};
- const signalMeta={rain:['PROBABILIDAD DE LLUVIA','OPEN-METEO · PRONÓSTICO HORARIO','%'],storm:['SEÑAL DE TORMENTA','OPEN-METEO · CÓDIGO METEOROLÓGICO','IDX'],wind:['VELOCIDAD DEL VIENTO','OPEN-METEO · VIENTO A 10 M','km/h'],humidity:['HUMEDAD RELATIVA','OPEN-METEO · HUMEDAD','%'],uv:['ÍNDICE ULTRAVIOLETA','OPEN-METEO · UV','UV'],quake:['ACTIVIDAD SÍSMICA','FUENTE SÍSMICA PENDIENTE','IDX'],tornado:['ALERTA DE TORNADO','ALERTAS OFICIALES · SIN EVENTO CONFIRMADO','IDX'],hurricane:['VIENTOS EXTREMOS','VIENTO LOCAL · UMBRAL INFORMATIVO','km/h'],hail:['GRANIZO','OPEN-METEO · CÓDIGO DE TIEMPO ACTUAL','IDX'],snow:['NIEVE','OPEN-METEO · CÓDIGO DE TIEMPO ACTUAL','IDX'],heat:['CALOR EXTREMO','TEMPERATURA ACTUAL · UMBRAL PDA 35 °C','°C']};
+ const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null,needleAngle:-135,needleFrame:0,displayValue:0,readoutValue:0,emissionAnnounced:false,heatAlarmTimer:null,heatAlarmActive:false};
+ const signalMeta={rain:['PROBABILIDAD DE LLUVIA','OPEN-METEO · PRONÓSTICO HORARIO','%'],storm:['SEÑAL DE TORMENTA','OPEN-METEO · CÓDIGO METEOROLÓGICO','IDX'],wind:['VELOCIDAD DEL VIENTO','OPEN-METEO · VIENTO A 10 M','km/h'],humidity:['HUMEDAD RELATIVA','OPEN-METEO · HUMEDAD','%'],uv:['ÍNDICE ULTRAVIOLETA','OPEN-METEO · UV','UV'],quake:['ACTIVIDAD SÍSMICA','FUENTE SÍSMICA PENDIENTE','IDX'],tornado:['ALERTA DE TORNADO','ALERTAS OFICIALES · SIN EVENTO CONFIRMADO','IDX'],hurricane:['VIENTOS EXTREMOS','VIENTO LOCAL · UMBRAL INFORMATIVO','km/h'],hail:['GRANIZO','OPEN-METEO · CÓDIGO DE TIEMPO ACTUAL','IDX'],snow:['NIEVE','OPEN-METEO · CÓDIGO DE TIEMPO ACTUAL','IDX'],heat:['CALOR EXTREMO','TEMPERATURA ACTUAL · UMBRAL PDA 35 °C','°C'],emissions:['EMISIONES · ESCALA TÉRMICA 0–50 °C','TEMPERATURA AMBIENTE REAL · SVAROG','°C']};
  function buildSvarogScale(){
   const ticks=$c('svarogScaleTicks'),labels=$c('svarogScaleLabels');if(!ticks||!labels||ticks.childElementCount)return;
   const ns='http://www.w3.org/2000/svg';
   for(let i=0;i<=1000;i++){const value=i/10,angle=(135+value*2.7)*Math.PI/180,r1=i%10===0?119:i%5===0?124:129,r2=139;
    const line=document.createElementNS(ns,'line');line.setAttribute('x1',160+Math.cos(angle)*r1);line.setAttribute('y1',160+Math.sin(angle)*r1);line.setAttribute('x2',160+Math.cos(angle)*r2);line.setAttribute('y2',160+Math.sin(angle)*r2);line.setAttribute('stroke',i%10===0?'#b9f79a':i%5===0?'#72bd5d':'#477a3e');line.setAttribute('stroke-width',i%10===0?'1.7':i%5===0?'1.1':'.55');ticks.appendChild(line);
   }
-  for(let n=0;n<=100;n+=5){const a=(135+n*2.7)*Math.PI/180,r=108,t=document.createElementNS(ns,'text');t.setAttribute('x',160+Math.cos(a)*r);t.setAttribute('y',164+Math.sin(a)*r);t.setAttribute('fill','#d1f5b4');t.setAttribute('font-size','9');t.setAttribute('font-family','monospace');t.setAttribute('font-weight','bold');t.setAttribute('text-anchor','middle');t.textContent=String(n);labels.appendChild(t);}
+  for(let n=0;n<=100;n+=10){const a=(135+n*2.7)*Math.PI/180,r=108,t=document.createElementNS(ns,'text');t.setAttribute('x',160+Math.cos(a)*r);t.setAttribute('y',164+Math.sin(a)*r);t.setAttribute('fill','#d1f5b4');t.setAttribute('font-size','9');t.setAttribute('font-family','monospace');t.setAttribute('font-weight','bold');t.setAttribute('text-anchor','middle');t.dataset.value=String(n);t.textContent=String(n);labels.appendChild(t);}
  }
- function animateSvarogReading(value){
+ function animateSvarogReading(value,displayValue){
   const needle=$c('svarogNeedle'),readout=$c('svarogValue');
   const targetAngle=-135+value*2.7,fromAngle=svarog.needleAngle,deltaAngle=targetAngle-fromAngle;
   const fromValue=svarog.displayValue,deltaValue=value-fromValue;
+  const targetReadout=displayValue===undefined?value:displayValue;
+  const fromReadout=Number.isFinite(svarog.readoutValue)?svarog.readoutValue:fromValue;
+  const deltaReadout=Number.isFinite(targetReadout)?targetReadout-fromReadout:0;
+  const format=n=>svarog.channel==='emissions'?Number(n).toFixed(1):String(Math.round(n));
   if(svarog.needleFrame)cancelAnimationFrame(svarog.needleFrame);
   if(needle)needle.classList.toggle('idle',value<.05);
-  const renderNumber=n=>{if(readout){const shown=String(Math.round(n));if(readout.textContent!==shown)readout.textContent=shown;}};
   if(Math.abs(deltaAngle)<.05&&Math.abs(deltaValue)<.05){
-   svarog.needleAngle=targetAngle;svarog.displayValue=value;
+   svarog.needleAngle=targetAngle;svarog.displayValue=value;svarog.readoutValue=targetReadout;
    if(needle)needle.style.transform='translate(-50%,-100%) rotate('+targetAngle+'deg)';
-   if(readout)readout.textContent=Number.isInteger(value)?String(value):value.toFixed(1);
+   if(readout)readout.textContent=Number.isFinite(targetReadout)?format(targetReadout):'--';
    return;
   }
   const started=performance.now(),duration=Math.min(3600,Math.max(700,900+Math.abs(deltaAngle)*7.5));
   const step=now=>{
    const t=Math.min(1,(now-started)/duration),ease=t*t*(3-2*t);
-   const angle=fromAngle+deltaAngle*ease,current=fromValue+deltaValue*ease;
+   const angle=fromAngle+deltaAngle*ease,current=fromValue+deltaValue*ease,shown=fromReadout+deltaReadout*ease;
    svarog.needleAngle=angle;svarog.displayValue=current;
    if(needle)needle.style.transform='translate(-50%,-100%) rotate('+angle+'deg)';
-   if(t<1){renderNumber(current);svarog.needleFrame=requestAnimationFrame(step);}
+   if(t<1){if(readout&&Number.isFinite(targetReadout))readout.textContent=format(shown);svarog.needleFrame=requestAnimationFrame(step);}
    else{
-    svarog.needleAngle=targetAngle;svarog.displayValue=value;svarog.needleFrame=0;
+    svarog.needleAngle=targetAngle;svarog.displayValue=value;svarog.readoutValue=targetReadout;svarog.needleFrame=0;
     if(needle)needle.style.transform='translate(-50%,-100%) rotate('+targetAngle+'deg)';
-    if(readout)readout.textContent=Number.isInteger(value)?String(value):value.toFixed(1);
+    if(readout)readout.textContent=Number.isFinite(targetReadout)?format(targetReadout):'--';
    }
   };
   svarog.needleFrame=requestAnimationFrame(step);
  }
- function drawSvarog(value,status,source,unit='%'){
+ function drawSvarog(value,status,source,unit='%',displayValue){
   const v=Math.max(0,Math.min(100,Number(value)||0));svarog.value=v;
-  animateSvarogReading(v);
+  animateSvarogReading(v,displayValue);
   put('svarogUnit',unit);put('svarogStatus',status||'SEÑAL EN ESPERA');
   updateSvarogAudio();
  }
@@ -1855,6 +1863,9 @@ setInterval(updateClock,1000);updateClock();
  function selectSvarog(channel){
   svarog.channel=channel;
   document.querySelectorAll('.svarog-selectors button').forEach(b=>b.classList.toggle('active',b.dataset.signal===channel));
+  const emissionMode=channel==='emissions';
+  $c('svarogScaleLabels')?.querySelectorAll('text').forEach(t=>{const raw=Number(t.dataset.value);if(Number.isFinite(raw))t.textContent=String(emissionMode?raw/2:raw);});
+  $c('svarogInstrument')?.classList.toggle('emission-mode',emissionMode);
   const d=cached()||{},meta=signalMeta[channel]||['SEÑAL','SIN FEED','IDX'];
   updateSvarogMetrics(d);
   if(channel==='rain'){
@@ -1881,6 +1892,22 @@ setInterval(updateClock,1000);updateClock();
   }else if(channel==='heat'){
    const ok=Number.isFinite(d.temperature),active=ok&&d.temperature>=35;
    drawSvarog(ok?Math.min(100,Math.max(0,d.temperature)):0,ok?(active?'ALERTA TÉRMICA · UMBRAL 35 °C SUPERADO':'TEMPERATURA BAJO UMBRAL DE ALERTA'):'SIN DATOS DE TEMPERATURA',meta[1],'°C');
+  }else if(channel==='emissions'){
+   const ok=Number.isFinite(d.temperature),temperature=ok?Number(d.temperature):null;
+   const gauge=ok?Math.min(100,Math.max(0,temperature/50*100)):0;
+   const warning=ok&&temperature>=35,danger=ok&&temperature>=40,emergency=ok&&temperature>=45;
+   const instrument=$c('svarogInstrument');
+   instrument?.classList.toggle('emission-warning',warning&&!danger);
+   instrument?.classList.toggle('emission-danger',danger);
+   if(!emergency)svarog.emissionAnnounced=false;
+   if(emergency&&!svarog.emissionAnnounced){
+    svarog.emissionAnnounced=true;
+    if(sidorovichVoiceEnabled&&'speechSynthesis'in window&&typeof SpeechSynthesisUtterance!=='undefined'){
+     try{window.speechSynthesis.cancel();window.speechSynthesis.speak(makeSidorovichUtterance('¡ATENCIÓN, ATENCIÓN! ¡TODOS A CUBIERTO! ¡VA A COMENZAR UNA EMISIÓN! ¡PÓNGANSE A CUBIERTO DE INMEDIATO!'));}catch(e){}
+    }
+   }
+   const status=!ok?'SIN DATOS DE TEMPERATURA':emergency?'¡EMISIÓN INMINENTE · TODOS A CUBIERTO!':danger?'EMISIÓN · UMBRAL 40 °C':warning?'ALERTA TÉRMICA · UMBRAL 35 °C':'TEMPERATURA NORMAL · MONITOREO ACTIVO';
+   drawSvarog(gauge,status,meta[1],'°C',temperature);
   }else if(channel==='hurricane'){
    const ok=Number.isFinite(d.wind),active=ok&&d.wind>=75;
    drawSvarog(ok?Math.min(100,d.wind):0,ok?(active?'VIENTO MUY INTENSO · VERIFICAR ALERTAS':'SIN VIENTO EXTREMO EN LA LECTURA'):'SIN DATOS DE VIENTO',meta[1],'km/h');
