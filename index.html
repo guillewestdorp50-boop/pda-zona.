@@ -2774,9 +2774,8 @@ $('mapSavePoint').addEventListener('click',()=>{if(!mapLastPosition){$('mapStatu
 function renderMapPoints(){$('mapPointCount').textContent=mapPoints.length+' MARCAS';$('mapPoints').innerHTML=mapPoints.map(p=>`<div class="map-points-item"><div class="meta"><b>${esc(p.name)}</b><p>${esc(p.note||'Sin notas')} · ${Number(p.lat).toFixed(5)}, ${Number(p.lon).toFixed(5)}</p><small>${esc(p.date||'')}</small></div><button onclick="openMapPoint('${p.id}')">VER</button><button class="danger" onclick="deleteMapPoint('${p.id}')">×</button></div>`).join('')||'<div class="empty">Todavía no guardaste puntos de campo.</div>';}
 function openMapPoint(id){const p=mapPoints.find(x=>x.id===id);if(!p)return;$('fieldMapFrame').src=mapUrl(p.lat,p.lon);$('mapPlaceholder').classList.add('hidden');$('mapStatus').textContent='PUNTO SELECCIONADO: '+p.name;}
 function deleteMapPoint(id){mapPoints=mapPoints.filter(p=>p.id!==id);localStorage.setItem('zona_map_points',JSON.stringify(mapPoints));renderMapPoints();}renderMapPoints();
-// Alterna orientación horizontal/vertical. Si la PWA instalada quedó en
-// modo standalone, solicita pantalla completa desde el toque del usuario
-// antes de pedir el bloqueo de orientación (requisito de Chrome Android).
+// Alterna orientación horizontal/vertical sin solicitar pantalla completa:
+// evita el aviso del sistema que explica cómo salir deslizando.
 function updateOrientationButton(){
  const landscape=window.matchMedia('(orientation: landscape)').matches;
  $('orientationBtn').textContent=landscape?'↻ PANTALLA VERTICAL':'↻ PANTALLA HORIZONTAL';
@@ -2786,13 +2785,6 @@ async function setPdaOrientation(target){
   if(window.PdaAndroid&&typeof window.PdaAndroid.setOrientation==='function'){
    window.PdaAndroid.setOrientation(target);
   }else{
-   const installedFullscreen=window.matchMedia('(display-mode: fullscreen)').matches;
-   if(!document.fullscreenElement&&!installedFullscreen){
-    const root=document.documentElement;
-    if(typeof root.requestFullscreen==='function'){
-     await root.requestFullscreen({navigationUI:'hide'});
-    }
-   }
    if(!screen.orientation||typeof screen.orientation.lock!=='function'){
     throw new Error('orientation-lock-unavailable');
    }
