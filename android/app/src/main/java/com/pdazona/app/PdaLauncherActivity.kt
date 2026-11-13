@@ -3,7 +3,6 @@ package com.pdazona.app
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
@@ -13,7 +12,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 
 /**
- * Android WebView launcher. Keeps the web app hosted at its existing HTTPS origin.
+ * Android WebView launcher. Loads the current published PDA from its existing HTTPS origin.
  * The PWA repository and published site are not modified by this Android wrapper.
  */
 class PdaLauncherActivity : Activity() {
@@ -21,7 +20,6 @@ class PdaLauncherActivity : Activity() {
 
     companion object {
         private const val START_URL = "https://guillewestdorp50-boop.github.io/pda-zona./"
-        private const val STATE_KEY = "pda_webview_state"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +41,8 @@ class PdaLauncherActivity : Activity() {
                 domStorageEnabled = true
                 databaseEnabled = true
                 mediaPlaybackRequiresUserGesture = false
-                cacheMode = WebSettings.LOAD_DEFAULT
+                // Fetch the current published app instead of reusing a stale HTTP resource cache.
+                cacheMode = WebSettings.LOAD_NO_CACHE
                 loadsImagesAutomatically = true
                 javaScriptCanOpenWindowsAutomatically = false
                 setSupportMultipleWindows(false)
@@ -51,6 +50,10 @@ class PdaLauncherActivity : Activity() {
                 allowContentAccess = false
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
+
+            // Clear only WebView's resource cache. Do not clear DOM storage, cookies,
+            // IndexedDB, or any data belonging to the PWA in Chrome.
+            clearCache(false)
 
             webViewClient = object : WebViewClient() {
                 override fun shouldOverrideUrlLoading(
@@ -73,14 +76,8 @@ class PdaLauncherActivity : Activity() {
         }
 
         setContentView(webView)
-
-        val restored = savedInstanceState?.let { webView.restoreState(it) }
-        if (restored == null) webView.loadUrl(START_URL)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        webView.saveState(outState)
-        super.onSaveInstanceState(outState)
+        // Always load the live published URL on launch; don't restore an old page snapshot.
+        webView.loadUrl(START_URL)
     }
 
     @Suppress("DEPRECATION")
