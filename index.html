@@ -1550,14 +1550,29 @@ setInterval(updateClock,1000);updateClock();
  function updateSvarogAudio(){
   if(!svarog.audio)return;
   clearTimeout(svarog.timer);
-  const v=svarog.value;
-  put('svarogAudioState',v===0?'SIN PULSOS · 0%':v<25?'SEÑAL BAJA · TIC LENTO':v<60?'SEÑAL MEDIA · TIC REGULAR': 'SEÑAL ALTA · TIC RÁPIDO');
+  const v=Math.max(0,Math.min(100,Number(svarog.value)||0));
+  put('svarogAudioState',v===0?'SIN PULSOS · 0%':v<25?'GEIGER · ACTIVIDAD BAJA':v<60?'GEIGER · ACTIVIDAD MODERADA':'GEIGER · ACTIVIDAD INTENSA');
   const tick=()=>{
    if(!svarog.audio)return;
-   try{if(svarog.ctx&&svarog.ctx.state==='running'){const o=svarog.ctx.createOscillator(),g=svarog.ctx.createGain();o.type='sine';o.frequency.value=760;g.gain.setValueAtTime(.0001,svarog.ctx.currentTime);g.gain.exponentialRampToValueAtTime(.035,svarog.ctx.currentTime+.008);g.gain.exponentialRampToValueAtTime(.0001,svarog.ctx.currentTime+.075);o.connect(g);g.connect(svarog.ctx.destination);o.start();o.stop(svarog.ctx.currentTime+.08);}}catch(e){}
-   const delay=v===0?1800:v<25?1150:v<60?620:v<85?320:170;
-   svarog.timer=setTimeout(tick,delay);
-  };tick();
+   try{
+    if(svarog.ctx&&svarog.ctx.state==='running'){
+     const ctx=svarog.ctx,now=ctx.currentTime,duration=.012;
+     const count=Math.max(1,Math.floor(ctx.sampleRate*duration));
+     const buffer=ctx.createBuffer(1,count,ctx.sampleRate),samples=buffer.getChannelData(0);
+     for(let i=0;i<count;i++){const fade=1-i/count;samples[i]=(Math.random()*2-1)*fade;}
+     const source=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
+     source.buffer=buffer;filter.type='bandpass';filter.frequency.value=3600;filter.Q.value=.9;
+     gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.075,now+.0012);gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+     source.connect(filter);filter.connect(gain);gain.connect(ctx.destination);source.start(now);source.stop(now+duration);
+    }
+   }catch(e){}
+   if(v<=0){svarog.timer=setTimeout(tick,1800);return;}
+   const mean=1450-(v*13.7);
+   const jitter=.55+Math.random()*.9;
+   svarog.timer=setTimeout(tick,Math.max(38,mean*jitter));
+  };
+  if(v<=0){svarog.timer=setTimeout(tick,1800);return;}
+  tick();
  }
  function selectSvarog(channel){
   svarog.channel=channel;
@@ -2286,7 +2301,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v86';
+const PDA_SW_BUILD='pda-zona-shell-v87';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
