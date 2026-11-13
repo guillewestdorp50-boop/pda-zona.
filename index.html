@@ -34,7 +34,7 @@ body.keyboard-visible footer{display:none}
 .keyrow button.wide{flex:1.7;background:#405632}
 .keyrow button.action{background:#536d3d}
 .chatbox.keyboard-open{height:22vh}
-@media(max-width:480px){header .row:first-child{align-items:flex-start}#fullscreenBtn{font-size:10px;padding:7px 8px;white-space:normal;max-width:116px}.keyrow button{padding:10px 1px;font-size:13px}}
+@media(max-width:480px){header .row:first-child{align-items:flex-start}.keyrow button{padding:10px 1px;font-size:13px}}
 
 
 /* Editor enriquecido PDA: el contenido se guarda como texto con etiquetas seguras */
@@ -98,7 +98,7 @@ body.keyboard-visible footer{display:none}
 @media(max-width:520px){.header-tools{gap:4px}.header-tools button{font-size:9px;padding:7px 6px}.artifact-slots{grid-template-columns:repeat(3,minmax(0,1fr))}.artifact-slot{min-height:100px}.artifact-glyph{width:42px;height:42px}}
 
 </style></head><body>
-<header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><div class="header-tools"><button class="btn" id="orientationBtn">↻ HORIZONTAL</button><button class="btn" id="fullscreenBtn">⛶ PANTALLA COMPLETA</button></div></div><div class="row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span></div></header>
+<header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><div class="header-tools"><button class="btn" id="orientationBtn">↻ PANTALLA HORIZONTAL</button></div></div><div class="row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span></div></header>
 <nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="gallery">GALERÍA</button><button data-tab="player">REPRODUCTOR</button><button data-tab="compass">BRÚJULA</button><button data-tab="artifacts">ARTEFACTOS</button><button data-tab="map">MAPA GPS</button><button data-tab="data">DATOS</button></nav>
 <main>
 <section id="home" class="view active"><div class="panel"><h2>TERMINAL ACTIVO</h2><p>Bienvenido a la Zona, stalker. Tus registros se guardan en este dispositivo.</p><div class="row"><div>CONTACTOS <b id="cc">4</b></div><div>MENSAJES <b id="mc">0</b></div></div><div class="row"><div>MISIONES <b id="xc">0</b></div><div>NOTAS <b id="nc">0</b></div></div></div><div class="panel"><h2>ÚLTIMA ACTIVIDAD</h2><div id="activity" class="muted">Sin actividad registrada.</div></div></section>
@@ -278,8 +278,7 @@ if(activeEmission()){emissionSoundOn=localStorage.getItem('zona_emission_sound_o
 renderEmissions();
 function updateClock(){let now=new Date();$('clock').textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);$('dateAR').textContent=new Intl.DateTimeFormat('es-AR',{timeZone:'America/Argentina/Buenos_Aires',weekday:'long',day:'2-digit',month:'long',year:'numeric'}).format(now)}
 setInterval(updateClock,1000);updateClock();
-$('fullscreenBtn').onclick=async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();$('fullscreenBtn').textContent='⛶ SALIR DE PANTALLA COMPLETA'}else{await document.exitFullscreen();$('fullscreenBtn').textContent='⛶ PANTALLA COMPLETA'}}catch(e){alert('El navegador no permite pantalla completa en esta vista. Abrí la PDA en Chrome y probá nuevamente.')}}
-document.addEventListener('fullscreenchange',()=>{$('fullscreenBtn').textContent=document.fullscreenElement?'⛶ SALIR DE PANTALLA COMPLETA':'⛶ PANTALLA COMPLETA'});
+// La PWA se inicia en modo fullscreen mediante manifest.webmanifest.
 // Teclado PDA compartido: bloquea el teclado del sistema en todos los campos editables.
 let activeField=null,shiftOn=false,capsLock=false,lastShiftTap=0,symbolMode=false;
 function updateShiftKey(){const b=pdaKeys?.querySelector('[data-k="shift"]');if(b){b.textContent=capsLock?'⇧ FIJA':shiftOn?'⇧ 1 LETRA':'⇧ MAYÚS';b.style.background=capsLock?'#8aa85c':shiftOn?'#536d3d':'';b.style.color=capsLock?'#10150f':''}}
@@ -675,8 +674,33 @@ $('mapSavePoint').addEventListener('click',()=>{if(!mapLastPosition){$('mapStatu
 function renderMapPoints(){$('mapPointCount').textContent=mapPoints.length+' MARCAS';$('mapPoints').innerHTML=mapPoints.map(p=>`<div class="map-points-item"><div class="meta"><b>${esc(p.name)}</b><p>${esc(p.note||'Sin notas')} · ${Number(p.lat).toFixed(5)}, ${Number(p.lon).toFixed(5)}</p><small>${esc(p.date||'')}</small></div><button onclick="openMapPoint('${p.id}')">VER</button><button class="danger" onclick="deleteMapPoint('${p.id}')">×</button></div>`).join('')||'<div class="empty">Todavía no guardaste puntos de campo.</div>';}
 function openMapPoint(id){const p=mapPoints.find(x=>x.id===id);if(!p)return;$('fieldMapFrame').src=mapUrl(p.lat,p.lon);$('mapPlaceholder').classList.add('hidden');$('mapStatus').textContent='PUNTO SELECCIONADO: '+p.name;}
 function deleteMapPoint(id){mapPoints=mapPoints.filter(p=>p.id!==id);localStorage.setItem('zona_map_points',JSON.stringify(mapPoints));renderMapPoints();}renderMapPoints();
-// Rotación: se solicita solo tras un toque del usuario; el navegador puede no admitir bloqueo.
-$('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscreenElement&&document.documentElement.requestFullscreen)await document.documentElement.requestFullscreen();if(screen.orientation&&screen.orientation.lock){await screen.orientation.lock('landscape');$('orientationBtn').textContent='↻ HORIZONTAL ACTIVA';}else{$('orientationBtn').textContent='USÁ GIRO AUTOMÁTICO';alert('Este navegador no permite forzar la orientación. Activá “Giro automático” en los ajustes rápidos de Android. La PDA se adapta al formato horizontal.');}}catch(e){$('orientationBtn').textContent='USÁ GIRO AUTOMÁTICO';alert('Android o el navegador no permitió bloquear la orientación. Activá “Giro automático” en los ajustes rápidos y girá el teléfono. La interfaz se adapta automáticamente.');}});
+// Alterna orientación horizontal/vertical y actualiza el mismo botón.
+function updateOrientationButton(){
+ const landscape=window.matchMedia('(orientation: landscape)').matches;
+ $('orientationBtn').textContent=landscape?'↻ PANTALLA VERTICAL':'↻ PANTALLA HORIZONTAL';
+}
+async function setPdaOrientation(target){
+ try{
+  if(window.PdaAndroid&&typeof window.PdaAndroid.setOrientation==='function'){
+   window.PdaAndroid.setOrientation(target);
+  }else if(screen.orientation&&typeof screen.orientation.lock==='function'){
+   await screen.orientation.lock(target);
+  }else{
+   throw new Error('orientation-lock-unavailable');
+  }
+  setTimeout(updateOrientationButton,250);
+ }catch(e){
+  alert('Este modo de apertura no permite fijar la orientación. Activá el giro automático del teléfono y volvé a tocar el botón.');
+ }
+}
+$('orientationBtn').addEventListener('click',()=>{
+ const landscape=window.matchMedia('(orientation: landscape)').matches;
+ setPdaOrientation(landscape?'portrait':'landscape');
+});
+window.addEventListener('resize',updateOrientationButton);
+window.addEventListener('orientationchange',updateOrientationButton);
+if(screen.orientation)screen.orientation.addEventListener('change',updateOrientationButton);
+updateOrientationButton();
 
 if ('serviceWorker' in navigator) {
  window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('PDA offline:',err)));
