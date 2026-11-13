@@ -231,6 +231,80 @@ class PdaLauncherActivity : Activity() {
         dialog.show()
     }
 
+    private fun hasAndroidPermission(permission: String): Boolean =
+        checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
+
+    private fun openFileChooser(
+        callback: ValueCallback<Array<Uri>>,
+        params: WebChromeClient.FileChooserParams
+    ): Boolean {
+        filePathCallback?.onReceiveValue(null)
+        filePathCallback = callback
+        return try {
+            startActivityForResult(params.createIntent(), FILE_CHOOSER_REQUEST)
+            true
+        } catch (_: Exception) {
+            filePathCallback?.onReceiveValue(null)
+            filePathCallback = null
+            false
+        }
+    }
+
+    private fun handleWebPermissionRequest(request: PermissionRequest) {
+        if (request.origin.scheme != "https" || request.origin.host != TRUSTED_HOST) {
+            request.deny()
+            return
+        }
+        val resources = request.resources.toList()
+        if (resources.isEmpty() || resources.any {
+                it != PermissionRequest.RESOURCE_AUDIO_CAPTURE &&
+                it != PermissionRequest.RESOURCE_VIDEO_CAPTURE
+            }) {
+            request.deny()
+            return
+        }
+        val needed = mutableListOf<String>()
+        if (PermissionRequest.RESOURCE_AUDIO_CAPTURE in resources &&
+            !hasAndroidPermission(Manifest.permission.RECORD_AUDIO)) {
+            needed += Manifest.permission.RECORD_AUDIO
+        }
+        if (PermissionRequest.RESOURCE_VIDEO_CAPTURE in resources &&
+            !hasAndroidPermission(Manifest.permission.CAMERA)) {
+            needed += Manifest.permission.CAMERA
+        }
+        if (needed.isEmpty()) {
+            request.grant(resources.toTypedArray())
+        } else {
+            pendingWebPermissionRequest?.deny()
+            pendingWebPermissionRequest = request
+            requestPermissions(needed.distinct().toTypedArray(), WEB_PERMISSION_REQUEST)
+        }
+    }
+
+    private fun handleGeolocationPrompt(
+        origin: String,
+        callback: GeolocationPermissions.Callback
+    ) {
+        if (origin != "https://$TRUSTED_HOST") {
+            callback.invoke(origin, false, false)
+            return
+        }
+        if (hasAndroidPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
+            hasAndroidPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            callback.invoke(origin, true, false)
+            return
+        }
+        pendingGeoCallback = callback
+        pendingGeoOrigin = origin
+        requestPermissions(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            LOCATION_PERMISSION_REQUEST
+        )
+    }
+
     private fun installSpeechAdapter() {
         if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
             WebViewCompat.addDocumentStartJavaScript(
@@ -253,8 +327,9 @@ class PdaLauncherActivity : Activity() {
                 javaScriptEnabled = true
                 domStorageEnabled = true
                 databaseEnabled = true
+                geolocationEnabled = true
                 mediaPlaybackRequiresUserGesture = false
-                cacheMode = WebSettings.LOAD_NO_CACHE
+                cacheMode = WebSettings.LOAD_DEFAULT
                 loadsImagesAutomatically = true
                 javaScriptCanOpenWindowsAutomatically = false
                 setSupportMultipleWindows(false)
@@ -262,7 +337,6 @@ class PdaLauncherActivity : Activity() {
                 allowContentAccess = false
                 mixedContentMode = WebSettings.MIXED_CONTENT_NEVER_ALLOW
             }
-            clearCache(false)
             addJavascriptInterface(PdaNativeBridge(), "PdaAndroid")
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView, url: String) {
@@ -291,11 +365,65 @@ class PdaLauncherActivity : Activity() {
                     } catch (_: Exception) { true }
                 }
             }
-            webChromeClient = WebChromeClient()
+            webChromeClient = object : WebChromeClient() {
+                override fun onShowFileChooser(
+                    view: WebView,
+                    callback: ValueCallback<Array<Uri>>,
+                    params: FileChooserParams
+                ): Boolean = openFileChooser(callback, params)
+
+                override fun onPermissionRequest(request: PermissionRequest) {
+                    runOnUiThread { handleWebPermissionRequest(request) }
+                }
+
+                override fun onGeolocationPermissionsShowPrompt(
+                    origin: String,
+                    callback: GeolocationPermissions.Callback
+                ) {
+                    runOnUiThread { handleGeolocationPrompt(origin, callback) }
+                }
+
+                override fun onShowCustomView(view: View, callback: CustomViewCallback) {
+                    if (customView != null) {
+                        callback.onCustomViewHidden()
+                        return
+                    }
+                    customView = view
+                    customViewCallback = callback
+                    webView.visibility = View.GONE
+                    rootLayout.addView(
+                        view,
+                        FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
+                    )
+                    hideSystemBars()
+                }
+
+                override fun onHideCustomView() {
+                    customView?.let { rootLayout.removeView(it) }
+                    customView = null
+                    webView.visibility = View.VISIBLE
+                    customViewCallback?.onCustomViewHidden()
+                    customViewCallback = null
+                    hideSystemBars()
+                }
+            }
         }
 
+        rootLayout = FrameLayout(this).apply {
+            setBackgroundColor(Color.BLACK)
+            addView(
+                webView,
+                FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
+            )
+        }
         installSpeechAdapter()
-        setContentView(webView)
+        setContentView(rootLayout)
 
         tts = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
