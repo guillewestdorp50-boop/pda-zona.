@@ -9,8 +9,8 @@ android {
   applicationId = "com.pdazona.app"
   minSdk = 23
   targetSdk = 35
-  versionCode = 3
-  versionName = "1.2.0-webview-refresh"
+  versionCode = 4
+  versionName = "1.3.0-immersive-orientation"
  }
  compileOptions {
   sourceCompatibility = JavaVersion.VERSION_17
