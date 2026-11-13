@@ -1622,7 +1622,7 @@ function pdaRenderEconomyLedger(){
  if(lastInNode)lastInNode.textContent=lastIn?"+"+money(lastIn.amount):"—";
  if(lastOutNode)lastOutNode.textContent=lastOut?"−"+money(lastOut.amount):"—";
 
- const chartEntries=[...entries].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)).slice(-18);
+ const chartEntries=[...entries].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
  const grid=$("ruChartGrid"),area=$("ruChartArea"),lines=$("ruChartLines"),labels=$("ruChartLabels"),points=$("ruChartPoints"),times=$("ruChartTimes"),svg=$("ruChartSvg"),scroll=$("ruChartScroll");
  const width=Math.max(640,chartEntries.length*112+40),height=280,baseline=132,top=48,bottom=210;
  if(svg){svg.setAttribute("viewBox","0 0 "+width+" "+height);svg.style.width=width+"px";svg.style.minWidth=width+"px"}
