@@ -826,7 +826,7 @@ if ('serviceWorker' in navigator) {
   }finally{button.disabled=false}
  }
  async function inspectTransfer(){
-  const code=byId('pdaTransferCodeInput').value.toUpperCase().replace(/[^A-Z2-9]/g,'');
+  const code=byId('pdaTransferCodeInput').value.toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g,'');
   byId('pdaTransferIncoming').classList.add('hidden');
   activeIncomingCode='';activeIncomingInfo=null;
   if(code.length!==10){status('INGRESÁ EL CÓDIGO COMPLETO DE 10 CARACTERES.');return}
@@ -842,43 +842,52 @@ if ('serviceWorker' in navigator) {
   finally{button.disabled=false}
  }
  async function replaceLocalData(values){
+  if(!values||typeof values!=='object'||Array.isArray(values))throw new Error('El contenido de los registros no es válido.');
   const oldValues={};
   for(let i=0;i<localStorage.length;i++){
    const key=localStorage.key(i);
    if(key&&!key.startsWith('sb-')&&!key.startsWith('pda_transfer_'))oldValues[key]=localStorage.getItem(key);
   }
-  const oldMedia=await mediaAll();
   const restoreLocal=()=>{
-   for(const key of Object.keys(localStorage)){
-    if(!key.startsWith('sb-')&&!key.startsWith('pda_transfer_'))localStorage.removeItem(key);
+   const keys=[];
+   for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+    if(key&&!key.startsWith('sb-')&&!key.startsWith('pda_transfer_'))keys.push(key);
    }
+   for(const key of keys)localStorage.removeItem(key);
    for(const [key,value] of Object.entries(oldValues))localStorage.setItem(key,value);
   };
   try{
-   for(const key of Object.keys(localStorage)){
-    if(!key.startsWith('sb-')&&!key.startsWith('pda_transfer_'))localStorage.removeItem(key);
+   const currentKeys=[];
+   for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+    if(key&&!key.startsWith('sb-')&&!key.startsWith('pda_transfer_'))currentKeys.push(key);
    }
+   for(const key of currentKeys)localStorage.removeItem(key);
    for(const [key,value] of Object.entries(values)){
-    if(typeof key!=='string'||typeof value!=='string'||key.startsWith('sb-')||key.startsWith('pda_transfer_'))continue;
+    if(typeof key!=='string'||typeof value!=='string'||key.startsWith('sb-')||key.startsWith('pda_transfer_')){
+     throw new Error('El paquete contiene un registro local inválido.');
+    }
     localStorage.setItem(key,value);
    }
    const db=await openMediaDB();
    await new Promise((resolve,reject)=>{
     const tx=db.transaction(MEDIA_STORE,'readwrite'),store=tx.objectStore(MEDIA_STORE);
+    tx.oncomplete=resolve;
+    tx.onerror=()=>reject(tx.error||new Error('No se pudo guardar la biblioteca multimedia.'));
+    tx.onabort=()=>reject(tx.error||new Error('Se canceló el guardado multimedia.'));
     store.clear();
-    for(const item of importedMedia)store.put(item);
-    tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('No se pudo guardar la biblioteca multimedia.'));tx.onabort=()=>reject(tx.error||new Error('Se canceló el guardado multimedia.'));
+    for(const item of importedMedia){
+     if(!item||typeof item.id!=='string'||!(item.blob instanceof Blob))throw new Error('Un archivo multimedia recibido no es válido.');
+     store.put(item);
+    }
    });
   }catch(error){
-   try{
-    restoreLocal();
-    const db=await openMediaDB();
-    await new Promise((resolve,reject)=>{
-     const tx=db.transaction(MEDIA_STORE,'readwrite'),store=tx.objectStore(MEDIA_STORE);
-     store.clear();for(const item of oldMedia)store.put(item);
-     tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
-    });
-   }catch(rollbackError){console.error('PDA transfer rollback:',rollbackError)}
+   try{restoreLocal()}
+   catch(rollbackError){
+    console.error('PDA transfer local rollback:',rollbackError);
+    throw new Error('Falló la importación y también la restauración local. No cierres esta PDA; requiere recuperación.');
+   }
    throw error;
   }
  }
