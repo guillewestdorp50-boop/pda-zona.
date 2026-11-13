@@ -14,6 +14,7 @@ create table if not exists public.pda_wallet_ledger (
 );
 create index if not exists pda_wallet_ledger_user_created_idx on public.pda_wallet_ledger(user_id,created_at desc);
 create index if not exists pda_wallet_ledger_conversation_created_idx on public.pda_wallet_ledger(conversation_id,created_at desc);
+create index if not exists pda_wallet_ledger_counterparty_idx on public.pda_wallet_ledger(counterparty_user_id);
 create unique index if not exists pda_wallet_ledger_movement_user_unique on public.pda_wallet_ledger(movement_id,user_id);
 alter table public.pda_wallet_ledger enable row level security;
 revoke all on public.pda_wallet_ledger from anon,authenticated,public;
