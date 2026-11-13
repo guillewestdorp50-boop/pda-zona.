@@ -2070,9 +2070,9 @@ setInterval(updateClock,1000);updateClock();
   finally{busy=false;}
  }
  function locate(){
-  if(!navigator.geolocation){box.title='Este navegador no ofrece GPS';put('climateConnection','GPS NO DISPONIBLE');return;}
+  if(!navigator.geolocation){box.title='Este navegador no ofrece GPS';put('climateConnection','GPS NO DISPONIBLE');paintLightning({ok:false,error:'gps_unavailable'},true);return;}
   icon.textContent='⌖';box.title='Solicitando ubicación GPS…';
-  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};loadWeather(lastCoords.lat,lastCoords.lon);loadLightning(lastCoords.lat,lastCoords.lon);},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});
+  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};loadWeather(lastCoords.lat,lastCoords.lon);loadLightning(lastCoords.lat,lastCoords.lon);},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';paintLightning({ok:false,error:'gps_unavailable'},true);},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});
  }
  refresh?.addEventListener('click',e=>{e.stopPropagation();locate();});
  $c('climateRefresh')?.addEventListener('click',locate);
@@ -2770,7 +2770,7 @@ updateOrientationButton();
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v100';
+const PDA_SW_BUILD='pda-zona-shell-v101';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
