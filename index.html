@@ -683,7 +683,8 @@ body.spend-keyboard-open #pdaSpendOverlay .pda-economy-modal{max-height:calc(100
 @media(max-width:380px){.economy-metric{gap:4px;padding:8px 4px}.economy-metric-icon{width:21px;height:21px;flex-basis:21px}.economy-chart{height:88px}.economy-terminal{padding:12px}}
 
 /* Indicador de orientación compacto: solo flecha luminosa y abreviatura. */
-.orientation-indicator{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:72px;padding:9px 13px!important;font-size:14px!important;letter-spacing:1px;white-space:nowrap}
+.orientation-indicator{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:0;padding:6px 8px!important;font-size:10px!important;letter-spacing:.5px;line-height:1.15;white-space:nowrap;max-width:100%}
+.orientation-indicator .orientation-arrow{font-size:1.15em}
 /* v112 · flecha de orientación con destello verde */
 .orientation-indicator .orientation-arrow{display:inline-block;color:#75ff55;font-size:1.35em;font-weight:900;line-height:1;text-shadow:0 0 3px #75ff55,0 0 7px #75ff55,0 0 13px #49ff39;animation:orientationArrowGlow 1.15s ease-in-out infinite;}
 @keyframes orientationArrowGlow{0%,100%{opacity:.72;text-shadow:0 0 2px #75ff55,0 0 5px #75ff55,0 0 9px #49ff39;}50%{opacity:1;text-shadow:0 0 4px #a4ff83,0 0 10px #75ff55,0 0 19px #49ff39,0 0 27px #49ff3988;}}
@@ -696,7 +697,7 @@ body.pda-ilai-device{-webkit-text-size-adjust:100%;text-size-adjust:100%}
  body.pda-ilai-device header .row:first-child>div:first-child{min-width:0}
  body.pda-ilai-device .header-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;gap:6px}
  body.pda-ilai-device .header-tools>button{min-width:0;width:100%;padding:9px 5px;font-size:11px;white-space:nowrap}
- body.pda-ilai-device .header-tools .orientation-indicator{grid-column:1/-1;width:100%;min-width:0;padding:9px 6px;font-size:14px;text-align:center;white-space:normal}
+ body.pda-ilai-device .header-tools .orientation-indicator{grid-column:1/-1;width:100%;min-width:0;padding:6px 6px!important;font-size:10px!important;text-align:center;white-space:nowrap}
  body.pda-ilai-device .pda-status-row{gap:7px}
  body.pda-ilai-device .pda-weather{max-width:100%;margin-left:0;flex-wrap:wrap;white-space:normal}
 }
@@ -2895,8 +2896,8 @@ function updateOrientationButton(){
  const landscape=window.matchMedia('(orientation: landscape)').matches;
  const indicator=$('orientationBtn');
  indicator.innerHTML=landscape
-  ? '<span class="orientation-arrow" aria-hidden="true">→</span> PH'
-  : '<span class="orientation-arrow" aria-hidden="true">↑</span> PV';
+  ? '<span class="orientation-arrow" aria-hidden="true">→</span> PANTALLA HORIZONTAL'
+  : '<span class="orientation-arrow" aria-hidden="true">↑</span> PANTALLA VERTICAL';
  indicator.setAttribute('aria-label','Orientación actual: '+(landscape?'horizontal':'vertical'));
 }
 window.addEventListener('resize',updateOrientationButton);
