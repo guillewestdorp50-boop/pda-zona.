@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.PdaZona.Starting" parent="@style/Theme.PdaZona">
+        <item name="android:windowSplashScreenBackground">#000000</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/ic_pda</item>
+        <item name="android:postSplashScreenTheme">@style/Theme.PdaZona</item>
+        <item name="android:windowBackground">#000000</item>
+    </style>
+</resources>
