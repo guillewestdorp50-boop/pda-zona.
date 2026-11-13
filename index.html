@@ -929,7 +929,7 @@ try{const saved=JSON.parse(localStorage.getItem('zona_wallet_v1')||'null');if(sa
 if(Array.isArray(pdaWalletData.history)&&pdaWalletData.history.length===1&&pdaWalletData.history[0]?.type==='payment'&&pdaWalletData.history[0]?.name==='Ojo'&&Number(pdaWalletData.history[0]?.amount)===18000&&pdaWalletData.history[0]?.time==='REGISTRO INICIAL'){pdaWalletData.balance=0;pdaWalletData.earned=0;pdaWalletData.history=[];try{localStorage.setItem('zona_wallet_v1',JSON.stringify(pdaWalletData))}catch(e){}}
 function savePdaWallet(){localStorage.setItem('zona_wallet_v1',JSON.stringify(pdaWalletData))}
 function pdaArtifactPrice(item){const key=String(item?.name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,'-');return Math.max(0,Number(pdaWalletData.prices[key]??pdaWalletData.prices[item?.id])||0)}
-function pdaRegisterBarbasPayment(item){const price=pdaArtifactPrice(item);if(!price)return 0;pdaWalletData.earned=Math.max(0,Number(pdaWalletData.earned)||0)+price;if(pdaWalletData.balance!==null&&Number.isFinite(Number(pdaWalletData.balance)))pdaWalletData.balance=Number(pdaWalletData.balance)+price;pdaWalletData.history.push({type:'payment',name:item.name,amount:price,time:new Date().toLocaleString('es-AR')});pdaWalletData.history=pdaWalletData.history.slice(-100);savePdaWallet();home();return price}
+function pdaRegisterBarbasPayment(item){const price=pdaArtifactPrice(item);if(!price)return 0;const initialBalance=pdaWalletData.balance!==null&&Number.isFinite(Number(pdaWalletData.balance))?Math.max(0,Number(pdaWalletData.balance)):0;pdaWalletData.earned=Math.max(0,Number(pdaWalletData.earned)||0)+price;if(pdaWalletData.balance!==null&&Number.isFinite(Number(pdaWalletData.balance)))pdaWalletData.balance=Number(pdaWalletData.balance)+price;pdaWalletData.history.push({type:'payment',name:item.name,amount:price,time:new Date().toLocaleString('es-AR')});pdaWalletData.history=pdaWalletData.history.slice(-100);try{const pending=JSON.parse(localStorage.getItem('zona_wallet_pending_barbas_credits')||'[]');pending.push({id:crypto.randomUUID(),amount:price,initialBalance});localStorage.setItem('zona_wallet_pending_barbas_credits',JSON.stringify(pending.slice(-100)))}catch(e){console.warn('Pago de Barbas pendiente:',e)}savePdaWallet();home();pdaFlushBarbasCredits();return price}
 function pdaRenderWallet(){const balance=$('pdaWalletBalance'),status=$('pdaWalletStatus'),earned=$('pdaWalletEarned');if(!balance||!status||!earned)return;balance.textContent=Number.isFinite(Number(pdaWalletData.balance))&&pdaWalletData.balance!==null?Number(pdaWalletData.balance).toLocaleString('es-AR')+' RU':'PENDIENTE';status.textContent='Saldo y pagos guardados automáticamente en esta PDA.';earned.textContent=(Number(pdaWalletData.earned)||0).toLocaleString('es-AR')+' RU';const prices=$('pdaWalletPrices');if(prices)prices.textContent='BARBAS · BURBUJA / OJO / GRAVI / CONCHA: 18.000 RU · LUCIÉRNAGA / LLAMA / PEZ DORADO / COPO DE NIEVE: 24.000 RU';}
 function home(){pdaRenderWallet();$('cc').textContent=contacts.length;$('mc').textContent=Object.values(chats).flat().length;$('xc').textContent=missions.filter(x=>!x.done).length+(pdaRemoteMissions||[]).filter(x=>x.assigned_to===pdaUserId&&(x.status==='offered'||x.status==='accepted')).length+(pdaNpcMissions||[]).filter(x=>x.status==='offered'||x.status==='accepted').length;$('nc').textContent=notes.length;$('activity').textContent=notes[0]?.title||missions[0]?.title||'Sin actividad registrada.'}
 
@@ -1379,11 +1379,29 @@ function pdaYuriShowEvent(event){
 }
 $('yuriIncomingClose')?.addEventListener('click',()=>{$('yuriIncomingOverlay').classList.remove('open')});
 $('yuriIncomingOverlay')?.addEventListener('click',e=>{if(e.target.id==='yuriIncomingOverlay')$('yuriIncomingOverlay').classList.remove('open')});
+let pdaBarbasCreditBusy=false;
+async function pdaFlushBarbasCredits(){
+ if(pdaBarbasCreditBusy)return;
+ pdaBarbasCreditBusy=true;
+ try{
+  let pending=[];try{pending=JSON.parse(localStorage.getItem('zona_wallet_pending_barbas_credits')||'[]')}catch{}
+  while(pending.length){
+   const item=pending[0];
+   const result=await pdaInvoke('creditBarbasPayment',{amount:Number(item.amount),initialBalance:Number(item.initialBalance)||0,operationId:item.id});
+   pdaWalletData.balance=Math.max(0,Number(result.balance)||0);
+   pending=pending.slice(1);
+   localStorage.setItem('zona_wallet_pending_barbas_credits',JSON.stringify(pending));
+   savePdaWallet();home();
+  }
+ }catch(e){console.warn('Sincronización de pagos Barbas pendiente:',e.message||e)}
+ finally{pdaBarbasCreditBusy=false}
+}
 async function pdaRefreshYuriWallet(){
  if(pdaYuriSyncBusy)return;
  const contact=contacts.find(x=>x.remoteConversationId);if(!contact)return;
  pdaYuriSyncBusy=true;
  try{
+  await pdaFlushBarbasCredits();
   const data=await pdaInvoke('getYuriWallet',{conversationId:contact.remoteConversationId,initialBalance:Number(pdaWalletData.balance)||0});
   pdaYuriCanSend=!!data.canSend;
   const nextBalance=Math.max(0,Number(data.balance)||0);
