@@ -682,6 +682,8 @@ body.spend-keyboard-open #pdaSpendOverlay .pda-economy-modal{max-height:calc(100
 .economy-entry .entry-meta{border-color:#526d4744;font-size:9px}
 @media(max-width:380px){.economy-metric{gap:4px;padding:8px 4px}.economy-metric-icon{width:21px;height:21px;flex-basis:21px}.economy-chart{height:88px}.economy-terminal{padding:12px}}
 
+/* Indicador de orientación compacto: solo flecha luminosa y abreviatura. */
+.orientation-indicator{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:72px;padding:9px 13px!important;font-size:14px!important;letter-spacing:1px;white-space:nowrap}
 /* v112 · flecha de orientación con destello verde */
 .orientation-indicator .orientation-arrow{display:inline-block;color:#75ff55;font-size:1.35em;font-weight:900;line-height:1;text-shadow:0 0 3px #75ff55,0 0 7px #75ff55,0 0 13px #49ff39;animation:orientationArrowGlow 1.15s ease-in-out infinite;}
 @keyframes orientationArrowGlow{0%,100%{opacity:.72;text-shadow:0 0 2px #75ff55,0 0 5px #75ff55,0 0 9px #49ff39;}50%{opacity:1;text-shadow:0 0 4px #a4ff83,0 0 10px #75ff55,0 0 19px #49ff39,0 0 27px #49ff3988;}}
@@ -2893,8 +2895,8 @@ function updateOrientationButton(){
  const landscape=window.matchMedia('(orientation: landscape)').matches;
  const indicator=$('orientationBtn');
  indicator.innerHTML=landscape
-  ? '<span class="orientation-arrow" aria-hidden="true">→</span> PANTALLA HORIZONTAL'
-  : '<span class="orientation-arrow" aria-hidden="true">↑</span> PANTALLA VERTICAL';
+  ? '<span class="orientation-arrow" aria-hidden="true">→</span> PH'
+  : '<span class="orientation-arrow" aria-hidden="true">↑</span> PV';
  indicator.setAttribute('aria-label','Orientación actual: '+(landscape?'horizontal':'vertical'));
 }
 window.addEventListener('resize',updateOrientationButton);
