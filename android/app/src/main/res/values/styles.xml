@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Black launcher theme fallback for the Android starting window. -->
     <style name="Theme.PdaZona" parent="@android:style/Theme.Material.NoActionBar">
         <item name="android:windowBackground">#000000</item>
         <item name="android:colorAccent">#FFDF16</item>
