@@ -12,6 +12,13 @@ android {
   versionCode = 4
   versionName = "1.3.0-immersive-orientation"
  }
+ buildTypes {
+  getByName("debug") {
+   applicationIdSuffix = ".prueba"
+   versionNameSuffix = "-prueba"
+   resValue("string", "app_name", "PDA // ZONA · PRUEBA")
+  }
+ }
  compileOptions {
   sourceCompatibility = JavaVersion.VERSION_17
   targetCompatibility = JavaVersion.VERSION_17
