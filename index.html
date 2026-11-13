@@ -1767,7 +1767,7 @@ setInterval(updateClock,1000);updateClock();
 // Clima PDA-Z: indicador compacto + telemetría ambiental ampliada.
 (()=>{
  const box=$('pdaWeather'),icon=$('weatherIcon'),temp=$('weatherTemp'),hum=$('weatherHumidity'),refresh=$('weatherRefresh');if(!box||!navigator.geolocation)return;
- const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false,lightningBusy=false,lastLightningData=null;const lightningCacheKey='zona_lightning_last_v1',lightningVoiceKey='zona_lightning_voice_level_v1';let lightningLastVoiceLevel=Number(localStorage.getItem(lightningVoiceKey)||0);
+ const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false,lightningBusy=false,lastLightningData=null;const lightningCacheKey='zona_lightning_last_v1',lightningVoiceKey='zona_lightning_voice_level_v1',lightningVoiceAtKey='zona_lightning_voice_at_v1';let lightningLastVoiceLevel=Number(localStorage.getItem(lightningVoiceKey)||0),lightningLastVoiceAt=Number(localStorage.getItem(lightningVoiceAtKey)||0);if(lightningLastVoiceAt&&Date.now()-lightningLastVoiceAt>15*60*1000)lightningLastVoiceLevel=0;
  const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};const cachedLightning=()=>{try{return JSON.parse(localStorage.getItem(lightningCacheKey)||'null')}catch{return null}};
  const $c=id=>document.getElementById(id);
  const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,liveTimer:null,needleAngle:-135,needleFrame:0,displayValue:0,readoutValue:0,emissionAnnounced:false,heatAlarmTimer:null,heatAlarmActive:false,lastHeatVoiceLevel:0};
@@ -1866,9 +1866,9 @@ setInterval(updateClock,1000);updateClock();
   if(alertText&&count>0){
    alertText.textContent=count+' descarga'+(count===1?'':'s')+' detectada'+(count===1?'':'s')+' en un radio de '+data.radius_km+' km durante los últimos '+data.window_minutes+' minutos'+(nearest===null?'':'. La más cercana: '+nearest.toFixed(1)+' km')+'.';
   }
-  if(count===0){lightningLastVoiceLevel=0;localStorage.setItem(lightningVoiceKey,'0');}
+  if(count===0){lightningLastVoiceLevel=0;lightningLastVoiceAt=0;localStorage.setItem(lightningVoiceKey,'0');localStorage.setItem(lightningVoiceAtKey,'0');}
   else if(level>lightningLastVoiceLevel){
-   lightningLastVoiceLevel=level;localStorage.setItem(lightningVoiceKey,String(level));
+   lightningLastVoiceLevel=level;lightningLastVoiceAt=Date.now();localStorage.setItem(lightningVoiceKey,String(level));localStorage.setItem(lightningVoiceAtKey,String(lightningLastVoiceAt));
    const phrase=danger
     ?'¡ATENCIÓN, ATENCIÓN! ¡Actividad eléctrica intensa detectada en las proximidades! ¡Poneos a cubierto de inmediato! Alejaos de espacios abiertos y buscad refugio.'
     :'¡Atención! Actividad eléctrica detectada en el sector. Se registran descargas atmosféricas. Buscad refugio y alejaos de espacios abiertos.';
@@ -2771,7 +2771,7 @@ updateOrientationButton();
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v103';
+const PDA_SW_BUILD='pda-zona-shell-v104';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
