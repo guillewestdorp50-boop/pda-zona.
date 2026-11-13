@@ -1814,10 +1814,10 @@ setInterval(updateClock,1000);updateClock();
   if(alertBox){alertBox.classList.toggle('hidden',!hot);alertBox.classList.toggle('heat-danger',danger);}
   if(heatText&&valid)heatText.textContent=critical?'EMISIÓN CRÍTICA · '+temperature.toFixed(1)+' °C · PONEOS A CUBIERTO':danger?'EMISIÓN · '+temperature.toFixed(1)+' °C · NIVEL DE PELIGRO':'TEMPERATURA '+temperature.toFixed(1)+' °C · UMBRAL PDA 35 °C';
   if(valid&&temperature<35)svarog.lastHeatVoiceLevel=0;
-  const alertLevel=critical?2:hot?1:0;
+  const alertLevel=critical?3:danger?2:hot?1:0;
   if(alertLevel>svarog.lastHeatVoiceLevel){
    svarog.lastHeatVoiceLevel=alertLevel;
-   const phrase=critical?'¡ATENCIÓN, ATENCIÓN! ¡VA A COMENZAR UNA EMISIÓN! ¡PONEOS A CUBIERTO DE INMEDIATO!':'Cuidado, estamos registrando temperaturas elevadas. Se recomienda buscar resguardo y evitar la exposición prolongada.';
+   const phrase=critical?'¡ATENCIÓN, ATENCIÓN! ¡VA A COMENZAR UNA EMISIÓN! ¡PONEOS A CUBIERTO DE INMEDIATO!':danger?'¡ATENCIÓN! ¡EMISIÓN DETECTADA! ¡La temperatura ha alcanzado un nivel peligroso!':'Cuidado, estamos registrando temperaturas elevadas. Se recomienda buscar resguardo y evitar la exposición prolongada.';
    if(sidorovichVoiceEnabled&&'speechSynthesis'in window&&typeof SpeechSynthesisUtterance!=='undefined'){
     try{window.speechSynthesis.cancel();window.speechSynthesis.speak(makeSidorovichUtterance(phrase));}catch(e){console.warn('No se pudo emitir la alerta de Lebedev:',e)}
    }
