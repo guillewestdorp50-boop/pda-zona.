@@ -10,4 +10,5 @@
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:windowSplashScreenBackground">#000000</item>
     </style>
+    <style name="Theme.PdaZona.Starting" parent="@style/Theme.PdaZona" />
 </resources>
