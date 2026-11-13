@@ -97,7 +97,7 @@ body.keyboard-visible footer{display:none}
 @media(orientation:landscape) and (max-height:600px){header{padding:7px 12px}header h1{font-size:17px}header .sub{font-size:10px}nav{top:55px;padding:5px;gap:4px}nav button{padding:7px 9px;font-size:11px}main{max-width:1100px;padding:8px 12px 55px}.panel{padding:10px;margin-bottom:8px}.map-frame-wrap{height:48vh;min-height:190px}.artifact-slots{grid-template-columns:repeat(4,minmax(0,1fr))}.artifact-slot{min-height:88px}.artifact-glyph{width:38px;height:38px;font-size:23px}}
 @media(max-width:520px){.header-tools{gap:4px}.header-tools button{font-size:9px;padding:7px 6px}.artifact-slots{grid-template-columns:repeat(3,minmax(0,1fr))}.artifact-slot{min-height:100px}.artifact-glyph{width:42px;height:42px}}
 
-</style></head><body>
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script></head><body>
 <header><div class="row"><div><h1>◈ PDA // ZONA</h1><div class="sub">TERMINAL DE CAMPO · COMUNICACIONES</div></div><div class="header-tools"><button class="btn" id="orientationBtn">↻ PANTALLA HORIZONTAL</button></div></div><div class="row" style="margin-top:10px"><strong id="clock" style="font:700 19px monospace;color:var(--g)">--:--:--</strong><span id="dateAR" class="muted"></span></div></header>
 <nav><button class="active" data-tab="home">INICIO</button><button data-tab="contacts">CONTACTOS</button><button data-tab="relationship">TRATO</button><button data-tab="chat">MENSAJES</button><button data-tab="missions">MISIONES</button><button data-tab="encyclopedia">ENCICLOPEDIA</button><button data-tab="journal">DIARIO</button><button data-tab="emissions">EMISIONES</button><button data-tab="gallery">GALERÍA</button><button data-tab="player">REPRODUCTOR</button><button data-tab="compass">BRÚJULA</button><button data-tab="artifacts">ARTEFACTOS</button><button data-tab="map">MAPA GPS</button><button data-tab="data">DATOS</button></nav>
 <main>
@@ -120,7 +120,36 @@ body.keyboard-visible footer{display:none}
 <p class="muted">Los registros se guardan en este dispositivo. El peso total se calcula con las cantidades anotadas; no representa una medición automática del equipo.</p></div></section>
 <section id="map" class="view"><div class="panel"><div class="row"><h2>MAPA DE CAMPO · GPS</h2><span class="compass-mini" id="mapLive">SIN POSICIÓN</span></div><p class="muted">CARTOGRAFÍA OPENSTREETMAP · POSICIÓN REAL DEL DISPOSITIVO</p><div class="map-frame-wrap"><iframe id="fieldMapFrame" title="Mapa GPS de campo" loading="lazy" referrerpolicy="no-referrer" src="about:blank"></iframe><div class="map-placeholder" id="mapPlaceholder">ACTIVÁ EL GPS PARA CARGAR EL MAPA Y MARCAR TU POSICIÓN</div></div><div class="compass-grid map-readouts"><div class="compass-data"><span>LATITUD</span><b id="mapLat">--</b></div><div class="compass-data"><span>LONGITUD</span><b id="mapLon">--</b></div><div class="compass-data"><span>PRECISIÓN</span><b id="mapAccuracy">--</b></div><div class="compass-data"><span>ÚLTIMA ACTUALIZACIÓN</span><b id="mapUpdated">--</b></div></div><div class="compass-controls"><button class="btn" id="mapLocate">⌖ LOCALIZARME</button><button id="mapStop">DETENER GPS</button><button id="mapOpenExternal">ABRIR MAPA COMPLETO</button></div><div id="mapStatus" class="compass-status">El mapa se carga cuando autorizás el acceso a la ubicación.</div></div>
 <div class="panel"><div class="row"><h2>PUNTOS DE CAMPO</h2><span class="compass-mini" id="mapPointCount">0 MARCAS</span></div><input id="mapPointName" maxlength="50" placeholder="Nombre del lugar / referencia"><textarea id="mapPointNote" rows="2" placeholder="Notas: refugio, anomalía, escondite, camino..."></textarea><div class="compass-controls"><button class="btn" id="mapSavePoint">⚑ GUARDAR MI POSICIÓN</button></div><div id="mapPoints" class="stack"><div class="empty">Todavía no guardaste puntos de campo.</div></div><p class="muted">Tus puntos guardados quedan en este dispositivo. Para mostrar el mapa, OpenStreetMap recibe la solicitud de las coordenadas que estás viendo. Se necesita conexión a Internet.</p></div></section>
-<section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>CONEXIÓN IA</h2><p>Esta versión funciona sin conexión para escribir y organizar tus chats. Tellama se integrará en una siguiente etapa.</p><input placeholder="URL del servidor Tellama (pendiente)" disabled></div></section>
+<section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel" id="pdaTransferPanel">
+<h2>TRANSFERENCIA ENTRE PDA</h2>
+<p class="muted">Compartí una copia única de los registros de esta PDA. Después de recibirla, cada dispositivo continuará de forma independiente.</p>
+<div class="stack">
+  <button class="btn" id="pdaTransferCreate">PREPARAR INVITACIÓN</button>
+  <div id="pdaTransferInvite" class="hidden">
+    <p><strong>INVITACIÓN LISTA · VÁLIDA POR 15 MINUTOS</strong></p>
+    <div class="panel" style="text-align:center">
+      <div class="muted">CÓDIGO DE TRANSFERENCIA</div>
+      <div id="pdaTransferCodeValue" style="font:900 27px monospace;letter-spacing:4px;color:var(--g);margin:8px 0;overflow-wrap:anywhere"></div>
+      <button class="btn" id="pdaTransferCopy">COPIAR CÓDIGO</button>
+      <div id="pdaTransferExpiry" class="muted" style="margin-top:8px"></div>
+    </div>
+    <p class="muted">Ingresá este código en la otra PDA para que pueda detectar la invitación.</p>
+  </div>
+  <div class="divider" style="border-top:1px solid var(--line);margin:8px 0"></div>
+  <h2>RECIBIR UNA COPIA</h2>
+  <input id="pdaTransferCodeInput" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CÓDIGO DE INVITACIÓN">
+  <button class="btn" id="pdaTransferDetect">DETECTAR PDA</button>
+  <div id="pdaTransferIncoming" class="hidden panel">
+    <h2>NUEVA PDA DETECTADA CERCA DE LA ZONA</h2>
+    <p id="pdaTransferIncomingText" class="muted"></p>
+    <p>¿Aceptás recibir una copia de sus datos en este dispositivo?</p>
+    <button class="btn" id="pdaTransferAccept">SINCRONIZAR</button>
+    <button class="btn danger" id="pdaTransferReject">RECHAZAR</button>
+  </div>
+  <small id="pdaTransferStatus" class="muted">Transferencia puntual · no mantiene sincronización permanente.</small>
+</div>
+</div>
+<div class="panel"><h2>CONEXIÓN IA</h2><p>Esta versión funciona sin conexión para escribir y organizar tus chats. Tellama se integrará en una siguiente etapa.</p><input placeholder="URL del servidor Tellama (pendiente)" disabled></div></section>
 
 <section id="gallery" class="view"><div class="panel"><div class="row"><h2>GALERÍA DE CAMPO</h2><span id="galleryCount" class="muted">0 FOTOS</span></div><p class="muted">Fotos guardadas únicamente en este dispositivo.</p><div class="media-actions"><button class="btn" id="galleryCamera">📷 ABRIR CÁMARA</button><button class="btn" id="galleryChoose">▧ ELEGIR FOTOS</button></div><input id="galleryCameraInput" type="file" accept="image/*" capture="environment" multiple style="display:none"><input id="galleryFileInput" type="file" accept="image/*" multiple style="display:none"><div id="galleryGrid" class="media-grid"><div class="empty">Todavía no hay fotografías.</div></div></div></section>
 <section id="player" class="view"><div class="panel"><div class="row"><h2>REPRODUCTOR DE LA ZONA</h2><span id="playerStatus" class="media-muted">EN ESPERA</span></div><div id="playerDisc" class="player-disc"><span id="discLabel">PDA // AUDIO</span></div><div style="text-align:center"><strong id="trackTitle">Ninguna pista seleccionada</strong><div id="trackArtist" class="media-muted">Cargá música desde tu dispositivo</div></div><div class="player-controls"><button id="prevTrack" aria-label="Anterior">⏮</button><button id="playTrack" class="main-play" aria-label="Reproducir">▶</button><button id="nextTrack" aria-label="Siguiente">⏭</button></div><div class="row"><small id="currentTime">0:00</small><small id="durationTime">0:00</small></div><input id="trackProgress" class="media-range" data-native-control type="range" min="0" max="1000" value="0" aria-label="Progreso de la canción"><div class="row" style="margin-top:8px"><label for="playerVolume" class="muted">VOLUMEN</label><span id="volumeValue" class="muted">80%</span></div><input id="playerVolume" class="media-range" data-native-control type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volumen"></div>
@@ -726,4 +755,182 @@ if ('serviceWorker' in navigator) {
    .catch(err=>console.warn('PDA offline:',err));
  });
 }
+</script><script>
+(()=> {
+ const PROJECT_URL='https://tdgvfuiidxpwxrnnurby.supabase.co';
+ const PUBLISHABLE_KEY='sb_publishable_G9TvfIH9viYcsSXdlASwfA_Z6Wu-aeN';
+ const BUCKET='pda-transfers';
+ let transferClient=null, activeIncomingCode='', activeIncomingInfo=null, activeTransferId='';
+ const byId=id=>document.getElementById(id);
+ const status=(message)=>{const el=byId('pdaTransferStatus');if(el)el.textContent=message};
+ async function ensureClient(){
+  if(!window.supabase?.createClient)throw new Error('No se pudo cargar el módulo seguro de transferencia.');
+  if(!transferClient)transferClient=window.supabase.createClient(PROJECT_URL,PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+  let {data:{session},error}=await transferClient.auth.getSession();
+  if(error)throw error;
+  if(!session){const result=await transferClient.auth.signInAnonymously();if(result.error)throw result.error;session=result.data.session}
+  if(!session)throw new Error('No se pudo abrir una sesión segura para esta PDA.');
+  return transferClient;
+ }
+ async function invoke(action,extra={}){
+  const client=await ensureClient();
+  const {data,error}=await client.functions.invoke('pda-data-transfer',{body:{action,...extra}});
+  if(error)throw error;
+  if(data?.error)throw new Error(data.error);
+  return data;
+ }
+ function localSnapshot(){
+  const values={};
+  for(let i=0;i<localStorage.length;i++){
+   const key=localStorage.key(i);
+   if(!key||key.startsWith('sb-')||key.startsWith('pda_transfer_'))continue;
+   values[key]=localStorage.getItem(key);
+  }
+  return values;
+ }
+ async function uploadSigned(client,upload,blob,contentType){
+  const {error}=await client.storage.from(BUCKET).uploadToSignedUrl(upload.path,upload.token,blob,{contentType:contentType||'application/octet-stream'});
+  if(error)throw error;
+ }
+ async function createTransfer(){
+  const button=byId('pdaTransferCreate');button.disabled=true;byId('pdaTransferInvite').classList.add('hidden');
+  let transferId='';
+  try{
+   status('REUNIENDO REGISTROS LOCALES Y ARCHIVOS MULTIMEDIA…');
+   const client=await ensureClient();
+   const mediaItems=await mediaAll();
+   const media=mediaItems.map(item=>{
+    if(!(item.blob instanceof Blob))throw new Error('No se pudo leer un archivo multimedia local.');
+    return {id:String(item.id),name:item.name||'Archivo',type:item.type||item.blob.type||'application/octet-stream',size:item.blob.size,kind:item.kind,created:item.created};
+   });
+   const payload={format:'PDA_ZONA_TRANSFER_V1',createdAt:new Date().toISOString(),localStorage:localSnapshot()};
+   const payloadBlob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+   status('PREPARANDO PAQUETE SEGURO…');
+   const created=await invoke('create',{senderLabel:'PDA de la Zona',media});
+   transferId=created.transferId;activeTransferId=transferId;
+   await uploadSigned(client,created.payloadUpload,payloadBlob,'application/json');
+   for(let i=0;i<mediaItems.length;i++){
+    status('TRANSMITIENDO ARCHIVOS MULTIMEDIA '+(i+1)+'/'+mediaItems.length+'…');
+    const signed=await invoke('signMediaUpload',{transferId,fileId:mediaItems[i].id});
+    await uploadSigned(client,signed,mediaItems[i].blob,mediaItems[i].type||mediaItems[i].blob.type);
+   }
+   status('VERIFICANDO INTEGRIDAD DEL PAQUETE…');
+   await invoke('publish',{transferId});
+   byId('pdaTransferCodeValue').textContent=created.code;
+   byId('pdaTransferExpiry').textContent='VENCE: '+new Date(created.expiresAt).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+   byId('pdaTransferInvite').classList.remove('hidden');
+   status('INVITACIÓN PUBLICADA. Compartí el código con la otra PDA.');
+  }catch(error){
+   if(transferId){try{await invoke('cancel',{transferId})}catch{}}
+   status('NO SE PUDO PREPARAR LA TRANSFERENCIA: '+(error.message||'Error desconocido'));
+  }finally{button.disabled=false}
+ }
+ async function inspectTransfer(){
+  const code=byId('pdaTransferCodeInput').value.toUpperCase().replace(/[^A-Z2-9]/g,'');
+  byId('pdaTransferIncoming').classList.add('hidden');
+  activeIncomingCode='';activeIncomingInfo=null;
+  if(code.length!==10){status('INGRESÁ EL CÓDIGO COMPLETO DE 10 CARACTERES.');return}
+  const button=byId('pdaTransferDetect');button.disabled=true;
+  try{
+   status('BUSCANDO SEÑAL DE OTRA PDA…');
+   const info=await invoke('inspect',{code});
+   activeIncomingCode=code;activeIncomingInfo=info;
+   byId('pdaTransferIncomingText').textContent=info.senderLabel+' solicita compartir una copia de sus datos. Archivos multimedia: '+info.mediaCount+'.';
+   byId('pdaTransferIncoming').classList.remove('hidden');
+   status('SEÑAL IDENTIFICADA. LA DECISIÓN DE RECIBIRLA ES TUYA.');
+  }catch(error){status(error.message||'No se encontró una invitación activa.')}
+  finally{button.disabled=false}
+ }
+ async function replaceLocalData(values){
+  const oldValues={};
+  for(let i=0;i<localStorage.length;i++){
+   const key=localStorage.key(i);
+   if(key&&!key.startsWith('sb-')&&!key.startsWith('pda_transfer_'))oldValues[key]=localStorage.getItem(key);
+  }
+  const oldMedia=await mediaAll();
+  const restoreLocal=()=>{
+   for(const key of Object.keys(localStorage)){
+    if(!key.startsWith('sb-')&&!key.startsWith('pda_transfer_'))localStorage.removeItem(key);
+   }
+   for(const [key,value] of Object.entries(oldValues))localStorage.setItem(key,value);
+  };
+  try{
+   for(const key of Object.keys(localStorage)){
+    if(!key.startsWith('sb-')&&!key.startsWith('pda_transfer_'))localStorage.removeItem(key);
+   }
+   for(const [key,value] of Object.entries(values)){
+    if(typeof key!=='string'||typeof value!=='string'||key.startsWith('sb-')||key.startsWith('pda_transfer_'))continue;
+    localStorage.setItem(key,value);
+   }
+   const db=await openMediaDB();
+   await new Promise((resolve,reject)=>{
+    const tx=db.transaction(MEDIA_STORE,'readwrite'),store=tx.objectStore(MEDIA_STORE);
+    store.clear();
+    for(const item of importedMedia)store.put(item);
+    tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error||new Error('No se pudo guardar la biblioteca multimedia.'));tx.onabort=()=>reject(tx.error||new Error('Se canceló el guardado multimedia.'));
+   });
+  }catch(error){
+   try{
+    restoreLocal();
+    const db=await openMediaDB();
+    await new Promise((resolve,reject)=>{
+     const tx=db.transaction(MEDIA_STORE,'readwrite'),store=tx.objectStore(MEDIA_STORE);
+     store.clear();for(const item of oldMedia)store.put(item);
+     tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);
+    });
+   }catch(rollbackError){console.error('PDA transfer rollback:',rollbackError)}
+   throw error;
+  }
+ }
+ let importedMedia=[];
+ async function acceptTransfer(){
+  if(!activeIncomingCode)return;
+  const button=byId('pdaTransferAccept');button.disabled=true;byId('pdaTransferReject').disabled=true;
+  try{
+   status('ACEPTANDO INVITACIÓN Y DESCARGANDO EL PAQUETE…');
+   const received=await invoke('accept',{code:activeIncomingCode});
+   const payloadResponse=await fetch(received.payloadUrl,{cache:'no-store'});
+   if(!payloadResponse.ok)throw new Error('No se pudo descargar el paquete principal.');
+   const payload=await payloadResponse.json();
+   if(payload?.format!=='PDA_ZONA_TRANSFER_V1'||!payload.localStorage||typeof payload.localStorage!=='object'||Array.isArray(payload.localStorage))throw new Error('El paquete recibido no tiene un formato válido.');
+   importedMedia=[];
+   for(let i=0;i<received.media.length;i++){
+    const item=received.media[i];status('RECIBIENDO ARCHIVO '+(i+1)+'/'+received.media.length+'…');
+    const response=await fetch(item.url,{cache:'no-store'});
+    if(!response.ok)throw new Error('No se pudo descargar '+(item.name||'un archivo multimedia')+'.');
+    const blob=await response.blob();
+    if(blob.size!==item.size)throw new Error('La verificación de integridad falló en '+(item.name||'un archivo')+'.');
+    importedMedia.push({id:item.id,kind:item.kind||'photo',name:item.name,type:item.type||blob.type,blob,created:item.created||Date.now()});
+   }
+   status('VALIDANDO Y GUARDANDO LA COPIA LOCAL…');
+   await replaceLocalData(payload.localStorage);
+   try{await invoke('complete',{transferId:received.transferId})}catch(cleanupError){console.warn('PDA transfer cleanup:',cleanupError)}
+   status('TRANSFERENCIA COMPLETADA. ESTA PDA YA TIENE SU COPIA INDEPENDIENTE.');
+   byId('pdaTransferIncoming').classList.add('hidden');
+   alert('DATOS RECIBIDOS\n\nLa copia quedó guardada en esta PDA. A partir de ahora, los cambios serán independientes.');
+   location.reload();
+  }catch(error){
+   status('NO SE MODIFICARON LOS DATOS ANTERIORES: '+(error.message||'Falló la transferencia.'));
+   button.disabled=false;byId('pdaTransferReject').disabled=false;
+  }
+ }
+ async function rejectTransfer(){
+  if(!activeIncomingCode)return;
+  const button=byId('pdaTransferReject');button.disabled=true;
+  try{await invoke('reject',{code:activeIncomingCode});byId('pdaTransferIncoming').classList.add('hidden');activeIncomingCode='';status('INVITACIÓN RECHAZADA. NO SE COPIÓ NINGÚN DATO.')}
+  catch(error){status(error.message||'No se pudo rechazar la invitación.');button.disabled=false}
+ }
+ function bind(){
+  byId('pdaTransferCreate')?.addEventListener('click',createTransfer);
+  byId('pdaTransferDetect')?.addEventListener('click',inspectTransfer);
+  byId('pdaTransferAccept')?.addEventListener('click',acceptTransfer);
+  byId('pdaTransferReject')?.addEventListener('click',rejectTransfer);
+  byId('pdaTransferCodeInput')?.addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z2-9]/g,'').slice(0,10)});
+  byId('pdaTransferCopy')?.addEventListener('click',async()=>{
+   const code=byId('pdaTransferCodeValue').textContent;
+   try{await navigator.clipboard.writeText(code);status('CÓDIGO COPIADO.')}catch{alert('Código: '+code)}
+  });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();
 </script></body></html>
