@@ -622,6 +622,15 @@ body.keyboard-visible footer{display:none}
 @keyframes svarogIdle{0%,100%{transform:translate(-50%,-100%) rotate(-135deg)}50%{transform:translate(-50%,-100%) rotate(-134.2deg)}}
 @media(min-width:620px){.svarog-selectors{grid-template-columns:repeat(6,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){.svarog-sweep,.svarog-live i,.svarog-needle.idle{animation:none}}
+
+/* Mensajes permanentes de Yuri dentro del historial compartido */
+.yuri-chat-event{min-width:190px;padding:10px 11px;border:1px solid #829e5d;background:linear-gradient(145deg,#293a20,#111a10);box-shadow:inset 0 0 18px #a6d66b12,0 0 10px #0006;border-radius:3px}
+.yuri-chat-kicker{font:800 10px monospace;letter-spacing:1.2px;color:#c9e99c;margin-bottom:6px;text-shadow:0 0 7px #a6d66b55}
+.yuri-chat-amount{font:900 25px monospace;letter-spacing:1px;color:#d9f6a7;text-shadow:0 0 12px #a9e66c88;margin:2px 0 5px}
+.yuri-chat-copy{font-size:13px;line-height:1.45;color:#e3edd7;white-space:pre-wrap;overflow-wrap:anywhere}
+.yuri-chat-recognition{border-color:#b59c5e;background:linear-gradient(145deg,#3a3320,#19170f)}
+.yuri-chat-recognition .yuri-chat-kicker{color:#e6ce8a;text-shadow:0 0 7px #d8b66c55}
+#yuriIncomingClose{position:relative;z-index:5;pointer-events:auto;touch-action:manipulation;cursor:pointer}
 </style></head><body>
 
 <div id="pdaBoot" role="status" aria-label="Iniciando PDA Zona">
@@ -748,7 +757,7 @@ body.keyboard-visible footer{display:none}
  <p class="muted cop-footnote">Todos los objetos comienzan en cero. Usá + y − para registrar lo que llevás. La munición se cuenta por caja/paquete, según la presentación indicada. El peso se calcula automáticamente.</p>
 </div></section><section id="map" class="view"><div class="panel"><div class="row"><h2>MAPA DE CAMPO · GPS</h2><span class="compass-mini" id="mapLive">SIN POSICIÓN</span></div><p class="muted">CARTOGRAFÍA SATELITAL · POSICIÓN REAL DEL DISPOSITIVO</p><div class="map-frame-wrap"><iframe id="fieldMapFrame" title="Mapa GPS de campo" loading="lazy" referrerpolicy="no-referrer" src="about:blank"></iframe><div class="map-placeholder" id="mapPlaceholder">ACTIVÁ EL GPS PARA CARGAR EL MAPA Y MARCAR TU POSICIÓN</div></div><div class="compass-grid map-readouts"><div class="compass-data"><span>LATITUD</span><b id="mapLat">--</b></div><div class="compass-data"><span>LONGITUD</span><b id="mapLon">--</b></div><div class="compass-data"><span>PRECISIÓN</span><b id="mapAccuracy">--</b></div><div class="compass-data"><span>ÚLTIMA ACTUALIZACIÓN</span><b id="mapUpdated">--</b></div></div><div class="compass-controls"><button class="btn" id="mapLocate">⌖ LOCALIZARME</button><button id="mapStop">DETENER GPS</button><button id="mapOpenExternal">ABRIR MAPA COMPLETO</button></div><div id="mapStatus" class="compass-status">El mapa se carga cuando autorizás el acceso a la ubicación.</div></div>
 <div class="panel"><div class="row"><h2>PUNTOS DE CAMPO</h2><span class="compass-mini" id="mapPointCount">0 MARCAS</span></div><input id="mapPointName" maxlength="50" placeholder="Nombre del lugar / referencia"><textarea id="mapPointNote" rows="2" placeholder="Notas: refugio, anomalía, escondite, camino..."></textarea><div class="compass-controls"><button class="btn" id="mapSavePoint">⚑ GUARDAR MI POSICIÓN</button></div><div id="mapPoints" class="stack"><div class="empty">Todavía no guardaste puntos de campo.</div></div><p class="muted">Tus puntos guardados quedan en este dispositivo. Para mostrar el mapa, OpenStreetMap recibe la solicitud de las coordenadas que estás viendo. Se necesita conexión a Internet.</p></div></section>
-<section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>ACTUALIZADOR DE LA PDA</h2><p class="muted">Buscá nuevas versiones de PDA // ZONA e instalalas sin desinstalar la aplicación. Tus perfiles, contactos, mensajes y registros guardados no se borran durante una actualización.</p><button class="btn" id="pdaCheckUpdates" type="button">↻ BUSCAR ACTUALIZACIONES</button><div id="pdaUpdateStatus" class="statusline" role="status" aria-live="polite">SISTEMA DE ACTUALIZACIÓN LISTO · VERSIÓN 91</div><small class="muted">Se necesita conexión a Internet. La PDA se reiniciará si encuentra una versión nueva.</small></div><div class="panel"><h2>FRECUENCIAS Y COMUNICACIONES</h2><p>Configurá los canales de comunicación de tu PDA. Algunas frecuencias requieren conexión con la red de la Zona.</p></div></section>
+<section id="data" class="view"><div class="panel"><h2>SONIDOS DE LA PDA</h2><p class="muted">Avisos electrónicos al enviar mensajes y guardar anotaciones. Señal horaria mientras la PDA permanezca abierta.</p><div class="row"><button class="btn" id="soundToggle">SONIDOS: ACTIVADOS</button><button class="btn" id="soundTest">PROBAR PITIDO</button></div><small id="soundStatus" class="muted">El audio se activa con tu primer toque.</small></div><div class="panel"><h2>GUARDADO</h2><p>La PDA guarda los cambios automáticamente en este navegador. También podés forzar el guardado ahora.</p><button class="btn" id="saveNow">GUARDAR AHORA</button> <span id="saveStatus" class="muted">Guardado automático activo</span></div><div class="panel"><h2>RESPALDO</h2><p>Exportá tus contactos, chats, misiones y diario para conservarlos fuera del navegador.</p><button class="btn" id="export">EXPORTAR JSON</button> <button class="btn danger" id="wipe">BORRAR TODO</button></div><div class="panel"><h2>ACTUALIZADOR DE LA PDA</h2><p class="muted">Buscá nuevas versiones de PDA // ZONA e instalalas sin desinstalar la aplicación. Tus perfiles, contactos, mensajes y registros guardados no se borran durante una actualización.</p><button class="btn" id="pdaCheckUpdates" type="button">↻ BUSCAR ACTUALIZACIONES</button><div id="pdaUpdateStatus" class="statusline" role="status" aria-live="polite">SISTEMA DE ACTUALIZACIÓN LISTO · VERSIÓN 92</div><small class="muted">Se necesita conexión a Internet. La PDA se reiniciará si encuentra una versión nueva.</small></div><div class="panel"><h2>FRECUENCIAS Y COMUNICACIONES</h2><p>Configurá los canales de comunicación de tu PDA. Algunas frecuencias requieren conexión con la red de la Zona.</p></div></section>
 
 <section id="gallery" class="view"><div class="panel"><div class="row"><h2>GALERÍA DE CAMPO</h2><span id="galleryCount" class="muted">0 FOTOS</span></div><p class="muted">Fotos guardadas únicamente en este dispositivo.</p><div class="media-actions"><button class="btn" id="galleryCamera">📷 ABRIR CÁMARA</button><button class="btn" id="galleryChoose">▧ ELEGIR FOTOS</button></div><input id="galleryCameraInput" type="file" accept="image/*" capture="environment" multiple style="display:none"><input id="galleryFileInput" type="file" accept="image/*" multiple style="display:none"><div id="galleryGrid" class="media-grid"><div class="empty">Todavía no hay fotografías.</div></div></div></section>
 <section id="player" class="view">
@@ -1221,6 +1230,14 @@ function pdaRenderChat(){
  const all=[...local,...remote].sort((a,b)=>a.sortAt-b.sortAt);
  $('chatBox').innerHTML=all.map(m=>{
   const who=m.me?'TÚ':(m.who||contact?.name||'CONTACTO');
+  const yuriEvent=m.remote&&typeof m.body==='string'?m.body.match(/^\\[\\[PDA_YURI_EVENT:(transfer|yuri_message):(\\d+):([0-9a-f-]{36})\\]\\]([\\s\\S]*)$/i):null;
+  if(yuriEvent){
+   const kind=yuriEvent[1],amount=Number(yuriEvent[2])||0,detail=yuriEvent[4]||'';
+   const card=kind==='transfer'
+    ?'<div class="yuri-chat-event yuri-chat-transfer"><div class="yuri-chat-kicker">✦ RECOMPENSA DE YURI</div><div class="yuri-chat-amount">+'+amount.toLocaleString('es-AR')+' RU</div><div class="yuri-chat-copy">'+esc(detail||'Yuri te ha enviado una recompensa. ¡Buen trabajo, muchacho!')+'</div></div>'
+    :'<div class="yuri-chat-event yuri-chat-recognition"><div class="yuri-chat-kicker">✧ TRANSMISIÓN DE YURI</div><div class="yuri-chat-copy">'+esc(detail)+'</div></div>';
+   return pdaChatLineMarkup(!!m.me,contact,who,m.time,card,'');
+  }
   if(m.remote&&m.message_type==='audio'){
    const audio=m.audioUrl?'<audio controls preload="none" src="'+esc(m.audioUrl)+'" style="width:100%;max-width:260px;margin-top:7px"></audio>':'<small class="muted">Audio no disponible</small>';
    return pdaChatLineMarkup(!!m.me,contact,who,m.time,'',audio);
@@ -1347,6 +1364,7 @@ async function pdaYuriTransfer(amount){
   pdaWalletData.balance=Number(result.senderBalance)||0;savePdaWallet();home();
   if(status)status.textContent='TRANSFERENCIA CONFIRMADA · −'+amount.toLocaleString('es-AR')+' RU · SALDO '+pdaWalletData.balance.toLocaleString('es-AR')+' RU';
   playPdaBeep('notify');
+  try{await pdaLoadRemoteMessages(contact);if($('chatWho').value===contact.id)pdaRenderChat()}catch(chatError){console.warn('No se pudo actualizar el historial de Yuri:',chatError)}
  }catch(e){if(status)status.textContent='TRANSFERENCIA NO REALIZADA';alert('No se pudo enviar el dinero: '+(e.message||e))}
  finally{buttons.forEach(b=>b.disabled=false)}
 }
@@ -1357,6 +1375,7 @@ async function pdaYuriSendRecognition(){
  try{
   await pdaInvoke('sendYuriRecognition',{conversationId:contact.remoteConversationId});
   const status=$('yuriTransferStatus');if(status)status.textContent='RECONOCIMIENTO TRANSMITIDO · YURI';
+  try{await pdaLoadRemoteMessages(contact);if($('chatWho').value===contact.id)pdaRenderChat()}catch(chatError){console.warn('No se pudo actualizar el historial de Yuri:',chatError)}
   playPdaBeep('message');
  }catch(e){alert('No se pudo transmitir el reconocimiento: '+(e.message||e))}
  finally{if(button)button.disabled=false}
@@ -1377,8 +1396,11 @@ function pdaYuriShowEvent(event){
  $('yuriIncomingBody').textContent=isTransfer?(event.body||'Yuri te ha enviado una recompensa. ¡Buen trabajo, muchacho!'):(event.body||'Me llegó la noticia de que cumpliste con tus tareas. El esfuerzo merece una recompensa. Te dejo unos rublitos. No los gastes todos de golpe, muchacho. En la Zona siempre conviene tener reservas.');
  overlay.classList.add('open');playPdaBeep('notify');return true;
 }
-$('yuriIncomingClose')?.addEventListener('click',()=>{$('yuriIncomingOverlay').classList.remove('open')});
-$('yuriIncomingOverlay')?.addEventListener('click',e=>{if(e.target.id==='yuriIncomingOverlay')$('yuriIncomingOverlay').classList.remove('open')});
+document.addEventListener('click',e=>{
+ const close=e.target?.closest?.('#yuriIncomingClose');
+ if(close){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation?.();$('yuriIncomingOverlay')?.classList.remove('open');return}
+ if(e.target?.id==='yuriIncomingOverlay')$('yuriIncomingOverlay')?.classList.remove('open');
+},true);
 let pdaBarbasCreditBusy=false;
 async function pdaFlushBarbasCredits(){
  if(pdaBarbasCreditBusy)return;
@@ -2434,7 +2456,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v91';
+const PDA_SW_BUILD='pda-zona-shell-v92';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
