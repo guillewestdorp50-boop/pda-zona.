@@ -448,7 +448,72 @@ class PdaLauncherActivity : Activity() {
                 runOnUiThread { maybeShowVoicePicker() }
             }
         }
-        webView.loadUrl(START_URL)
+        val restored = savedInstanceState != null &&
+            webView.restoreState(savedInstanceState) != null
+        if (!restored) webView.loadUrl(START_URL)
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == FILE_CHOOSER_REQUEST) {
+            val result = if (resultCode == RESULT_OK) {
+                WebChromeClient.FileChooserParams.parseResult(resultCode, data)
+            } else null
+            filePathCallback?.onReceiveValue(result)
+            filePathCallback = null
+            return
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            WEB_PERMISSION_REQUEST -> {
+                val request = pendingWebPermissionRequest
+                pendingWebPermissionRequest = null
+                if (request != null) {
+                    val granted = request.resources.all { resource ->
+                        when (resource) {
+                            PermissionRequest.RESOURCE_AUDIO_CAPTURE ->
+                                hasAndroidPermission(Manifest.permission.RECORD_AUDIO)
+                            PermissionRequest.RESOURCE_VIDEO_CAPTURE ->
+                                hasAndroidPermission(Manifest.permission.CAMERA)
+                            else -> false
+                        }
+                    }
+                    if (granted) request.grant(request.resources) else request.deny()
+                }
+            }
+            LOCATION_PERMISSION_REQUEST -> {
+                val origin = pendingGeoOrigin
+                val callback = pendingGeoCallback
+                pendingGeoOrigin = null
+                pendingGeoCallback = null
+                if (origin != null && callback != null) {
+                    val granted =
+                        hasAndroidPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
+                        hasAndroidPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    callback.invoke(origin, granted, false)
+                }
+            }
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (::webView.isInitialized) webView.requestLayout()
+        hideSystemBars()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        if (::webView.isInitialized) webView.saveState(outState)
+        super.onSaveInstanceState(outState)
     }
 
     private fun dispatchTtsEvent(type: String, id: String) {
@@ -462,7 +527,13 @@ class PdaLauncherActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
+        if (::webView.isInitialized) webView.onResume()
         hideSystemBars()
+    }
+
+    override fun onPause() {
+        if (::webView.isInitialized) webView.onPause()
+        super.onPause()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -477,8 +548,21 @@ class PdaLauncherActivity : Activity() {
     }
 
     override fun onDestroy() {
+        filePathCallback?.onReceiveValue(null)
+        filePathCallback = null
+        pendingWebPermissionRequest?.deny()
+        pendingWebPermissionRequest = null
+        pendingGeoCallback?.let { callback ->
+            pendingGeoOrigin?.let { callback.invoke(it, false, false) }
+        }
+        pendingGeoCallback = null
+        pendingGeoOrigin = null
+        customView?.let { if (::rootLayout.isInitialized) rootLayout.removeView(it) }
+        customView = null
+        customViewCallback = null
         if (::webView.isInitialized) {
             webView.stopLoading()
+            if (::rootLayout.isInitialized) rootLayout.removeView(webView)
             webView.destroy()
         }
         tts?.stop()
