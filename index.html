@@ -1576,10 +1576,29 @@ setInterval(updateClock,1000);updateClock();
  }
  function selectSvarog(channel){
   svarog.channel=channel;
-  document.querySelectorAll('#svarogSelectors button').forEach(b=>b.classList.toggle('active',b.dataset.signal===channel));
-  if(channel==='rain'){const d=cached();const val=d&&Number.isFinite(d.rainChance)?d.rainChance:0;drawSvarog(val,d&&Number.isFinite(d.rainChance)?'PROB. REAL · PRÓXIMA HORA':'SIN DATOS METEOROLÓGICOS','FUENTE: OPEN-METEO');}
-  else if(channel==='storm'){const d=cached();const active=d&&d.code>=95&&d.code<=99;drawSvarog(active?100:0,active?'TORMENTA EN PRONÓSTICO':'SIN SEÑAL DE TORMENTA','FUENTE: OPEN-METEO · CÓDIGO WMO');}
-  else {const meta=signalMeta[channel];drawSvarog(0,'0% · SIN ALERTA VERIFICADA',meta[1]);}
+  document.querySelectorAll('.svarog-selectors button').forEach(b=>b.classList.toggle('active',b.dataset.signal===channel));
+  const d=cached()||{},meta=signalMeta[channel]||['SEÑAL','SIN FEED','IDX'];
+  updateSvarogMetrics(d);
+  if(channel==='rain'){
+   const ok=Number.isFinite(d.rainChance);
+   drawSvarog(ok?d.rainChance:0,ok?'PROBABILIDAD REAL · PRÓXIMA HORA':'SIN DATOS METEOROLÓGICOS',meta[1],'%');
+  }else if(channel==='storm'){
+   const ok=Number.isFinite(d.code),active=ok&&Number(d.code)>=95&&Number(d.code)<=99;
+   drawSvarog(active?100:0,ok?(active?'TORMENTA EN PRONÓSTICO':'SIN SEÑAL DE TORMENTA'):'SIN DATOS METEOROLÓGICOS',meta[1],'IDX');
+  }else if(channel==='wind'){
+   const ok=Number.isFinite(d.wind);
+   drawSvarog(ok?Math.min(100,Math.max(0,d.wind)):0,ok?'VELOCIDAD MEDIDA · ESCALA 0–100 KM/H':'SIN DATOS DE VIENTO',meta[1],'km/h');
+  }else if(channel==='humidity'){
+   const ok=Number.isFinite(d.humidity);
+   drawSvarog(ok?d.humidity:0,ok?'HUMEDAD RELATIVA MEDIDA':'SIN DATOS DE HUMEDAD',meta[1],'%');
+  }else if(channel==='uv'){
+   const ok=Number.isFinite(d.uv);
+   drawSvarog(ok?Math.min(100,Math.max(0,d.uv*10)):0,ok?'ÍNDICE UV MEDIDO · ESCALA ×10':'SIN DATOS UV',meta[1],'UV×10');
+  }else{
+   // Canales sin una fuente local verificada: mantener clics de exploración lentos,
+   // sin inventar porcentajes ni simular una alerta inexistente.
+   drawSvarog(0,'SIN ALERTA VERIFICADA · SIN FEED',meta[1],meta[2]);
+  }
  }
  const selector=document.querySelector('.svarog-panel');selector?.addEventListener('click',e=>{const b=e.target.closest('button[data-signal]');if(b)selectSvarog(b.dataset.signal)});
  $c('svarogAudioToggle')?.addEventListener('click',async()=>{
@@ -2301,7 +2320,7 @@ $('orientationBtn').addEventListener('click',async()=>{try{if(!document.fullscre
 })();
 
 /* Actualizador integrado: verifica el service worker y conserva los datos locales. */
-const PDA_SW_BUILD='pda-zona-shell-v87';
+const PDA_SW_BUILD='pda-zona-shell-v88';
 let pdaUpdateCheckRunning=false;
 function pdaUpdateMessage(text){const el=document.getElementById('pdaUpdateStatus');if(el)el.textContent=text;}
 if('serviceWorker' in navigator){
