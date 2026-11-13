@@ -6,8 +6,8 @@
   "lang": "es-AR",
   "start_url": "./",
   "scope": "./",
-  "display": "standalone",
-  "orientation": "portrait",
+  "display": "fullscreen",
+  "orientation": "any",
   "background_color": "#10150f",
   "theme_color": "#11170f",
   "icons": [
