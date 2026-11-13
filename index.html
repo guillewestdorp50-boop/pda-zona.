@@ -1487,6 +1487,8 @@ setInterval(updateClock,1000);updateClock();
 (()=>{
  const box=$('pdaWeather'),icon=$('weatherIcon'),temp=$('weatherTemp'),hum=$('weatherHumidity'),refresh=$('weatherRefresh');if(!box||!navigator.geolocation)return;
  const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false;
+ const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};
+ const $c=id=>document.getElementById(id);
  const svarog={value:0,channel:'rain',audio:false,ctx:null,timer:null,feed:false};
  const signalMeta={rain:['PROBABILIDAD DE LLUVIA','PRONÓSTICO HORARIO'],storm:['SEÑAL DE TORMENTA','CÓDIGO METEOROLÓGICO'],quake:['ACTIVIDAD SÍSMICA','SIN FEED SÍSMICO'],tornado:['ALERTA DE TORNADO','SIN FEED DE ALERTAS'],hurricane:['ALERTA DE HURACÁN','SIN FEED DE ALERTAS']};
  function drawSvarog(value,status,source){
@@ -1520,8 +1522,7 @@ setInterval(updateClock,1000);updateClock();
   else{svarog.audio=false;clearTimeout(svarog.timer);put('svarogAudioToggle','♫ ACTIVAR TICS');put('svarogAudioState','PULSOS DESACTIVADOS');}
  });
 
- const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};
- const $c=id=>document.getElementById(id);
+
  const put=(id,value)=>{const el=$c(id);if(el)el.textContent=value};
  const direction=d=>{if(!Number.isFinite(Number(d)))return '--';return ['N','NE','E','SE','S','SO','O','NO'][Math.round(((Number(d)%360)+360)%360/45)%8]};
  function paint(data,stale=false){
