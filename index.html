@@ -934,31 +934,40 @@ function selectedSidorovichVoice(){const uri=localStorage.getItem('zona_sidorovi
 let welcomeStartedThisOpen=false,welcomeInProgress=false,welcomeFallbackTriggered=false;
 let climateBootCheckReady=false,climateBootCheckFailed=false;
 function makeSidorovichUtterance(line){const u=new SpeechSynthesisUtterance(line);const voice=selectedSidorovichVoice();u.voice=voice;u.lang=voice?.lang||'es-AR';u.rate=.92;u.pitch=1;u.volume=1;return u;}
-function speakSidorovich(tab){
+function speakSidorovich(tab,alertMode=false){
  if(!sidorovichVoiceEnabled||!('speechSynthesis'in window)||typeof SpeechSynthesisUtterance==='undefined'||welcomeInProgress)return;
  let line=sidorovichLines[tab]||sidorovichLines.home;
  if(tab==='climate'){
-  const d=window.zonaWeatherCurrent,lightning=window.zonaLightningCurrent,count=Number(lightning?.count)||0;
-  const nearest=Number.isFinite(Number(lightning?.nearest_km))?Number(lightning.nearest_km):null;
-  const verifiedLightning=!!(lightning?.ok&&!lightning?.stale);
-  const code=Number(d?.code),description=String(d?.description||'').toLowerCase();
-  const hailDanger=!!(d&&!d.stale&&([96,99].includes(code)||description.includes('granizo')||description.includes('hail')));
-  const electricalDanger=verifiedLightning&&count>0;
-  const heatDanger=!!(d&&!d.stale&&Number.isFinite(Number(d.temperature))&&Number(d.temperature)>=35);
-  const stormDanger=!!(d&&!d.stale&&code>=95&&code<=99);
-  if(hailDanger&&electricalDanger){
-   line='¡ATENCIÓN, ATENCIÓN! ¡Granizo y actividad eléctrica detectados en el sector! ¡Poneos a cubierto de inmediato! Permaneced dentro de un edificio o vehículo cerrado, lejos de ventanas. No salgáis hasta que pase el peligro.';
-  }else if(hailDanger){
-   line='¡ATENCIÓN, ATENCIÓN! ¡Se detecta granizo en el sector! ¡Poneos a cubierto de inmediato! Permaneced dentro de un edificio o vehículo cerrado, lejos de ventanas. No salgáis ni os acerquéis a ventanas para observar la tormenta.';
-  }else if(electricalDanger){
-   const severe=(nearest!==null&&nearest<=10)||count>=5;
-   line=severe?'¡ATENCIÓN, ATENCIÓN! ¡Actividad eléctrica intensa detectada en las proximidades! ¡Poneos a cubierto de inmediato! Alejaos de espacios abiertos y buscad refugio.':'¡Atención! Actividad eléctrica detectada en el sector. Se registran descargas atmosféricas. Buscad refugio y alejaos de espacios abiertos.';
-  }else if(stormDanger){
-   line='¡ATENCIÓN! Se ha detectado una tormenta en el sector. Buscad refugio seguro, alejaos de árboles aislados y evitad espacios abiertos.';
-  }else if(heatDanger){
-   line=Number(d.temperature)>=45?'¡ATENCIÓN, ATENCIÓN! Temperatura crítica detectada. ¡Poneos a cubierto de inmediato!':'¡Atención! Temperatura elevada y potencialmente peligrosa en el sector. Buscad resguardo y evitad la exposición.';
-  }else if(d&&Number.isFinite(Number(d.temperature))){
-   const parts=['Lectura meteorológica actualizada.',d.description?('Condición: '+d.description+'.'):'',Number.isFinite(Number(d.temperature))?('Temperatura ambiente: '+Number(d.temperature).toFixed(1)+' grados.'):'',Number.isFinite(Number(d.feels))?('Sensación térmica: '+Number(d.feels).toFixed(1)+' grados.'):'',Number.isFinite(Number(d.humidity))?('Humedad: '+Math.round(d.humidity)+' por ciento.'):'',Number.isFinite(Number(d.wind))?('Viento: '+Math.round(d.wind)+' kilómetros por hora.'):'',Number.isFinite(Number(d.rainChance))?('Probabilidad de lluvia para la próxima hora: '+Math.round(d.rainChance)+' por ciento.'):'',d.stale?'Los datos corresponden al último registro guardado.':'Datos meteorológicos en línea.','Te avisaré cuando se detecten condiciones meteorológicas peligrosas, temperaturas extremas o una posible emisión térmica. No ignores mis alertas, stalker. En la Zona, el clima también puede matarte.'];line=parts.filter(Boolean).join(' ');
+  const d=window.zonaWeatherCurrent;
+  if(!alertMode){
+   if(d&&Number.isFinite(Number(d.temperature))){
+    const parts=['Lectura meteorológica actualizada.',d.description?('Condición: '+d.description+'.'):'',Number.isFinite(Number(d.temperature))?('Temperatura ambiente: '+Number(d.temperature).toFixed(1)+' grados.'):'',Number.isFinite(Number(d.feels))?('Sensación térmica: '+Number(d.feels).toFixed(1)+' grados.'):'',Number.isFinite(Number(d.humidity))?('Humedad: '+Math.round(d.humidity)+' por ciento.'):'',Number.isFinite(Number(d.wind))?('Viento: '+Math.round(d.wind)+' kilómetros por hora.'):'',Number.isFinite(Number(d.rainChance))?('Probabilidad de lluvia para la próxima hora: '+Math.round(d.rainChance)+' por ciento.'):'',d.stale?'Los datos corresponden al último registro guardado.':'Datos meteorológicos en línea.','Las alertas importantes se anuncian automáticamente, sin necesidad de abrir esta sección.'];line=parts.filter(Boolean).join(' ');
+   }else{
+    line='No hay una lectura meteorológica disponible en este momento. Revisá la conexión y la ubicación para actualizar la telemetría.';
+   }
+  }else{
+   const lightning=window.zonaLightningCurrent,count=Number(lightning?.count)||0;
+   const nearest=Number.isFinite(Number(lightning?.nearest_km))?Number(lightning.nearest_km):null;
+   const verifiedLightning=!!(lightning?.ok&&!lightning?.stale);
+   const code=Number(d?.code),description=String(d?.description||'').toLowerCase();
+   const hailDanger=!!(d&&!d.stale&&([96,99].includes(code)||description.includes('granizo')||description.includes('hail')));
+   const electricalDanger=verifiedLightning&&count>0;
+   const heatDanger=!!(d&&!d.stale&&Number.isFinite(Number(d.temperature))&&Number(d.temperature)>=35);
+   const stormDanger=!!(d&&!d.stale&&code>=95&&code<=99);
+   if(hailDanger&&electricalDanger){
+    line='¡ATENCIÓN, ATENCIÓN! ¡Granizo y actividad eléctrica detectados en el sector! ¡Poneos a cubierto de inmediato! Permaneced dentro de un edificio o vehículo cerrado, lejos de ventanas. No salgáis hasta que pase el peligro.';
+   }else if(hailDanger){
+    line='¡ATENCIÓN, ATENCIÓN! ¡Se detecta granizo en el sector! ¡Poneos a cubierto de inmediato! Permaneced dentro de un edificio o vehículo cerrado, lejos de ventanas. No salgáis ni os acerquéis a ventanas para observar la tormenta.';
+   }else if(electricalDanger){
+    const severe=(nearest!==null&&nearest<=10)||count>=5;
+    line=severe?'¡ATENCIÓN, ATENCIÓN! ¡Actividad eléctrica intensa detectada en las proximidades! ¡Poneos a cubierto de inmediato! Alejaos de espacios abiertos y buscad refugio.':'¡Atención! Actividad eléctrica detectada en el sector. Se registran descargas atmosféricas. Buscad refugio y alejaos de espacios abiertos.';
+   }else if(stormDanger){
+    line='¡ATENCIÓN! Se ha detectado una tormenta en el sector. Buscad refugio seguro, alejaos de árboles aislados y evitad espacios abiertos.';
+   }else if(heatDanger){
+    line=Number(d.temperature)>=45?'¡ATENCIÓN, ATENCIÓN! Temperatura crítica detectada. ¡Poneos a cubierto de inmediato!':'¡Atención! Temperatura elevada y potencialmente peligrosa en el sector. Buscad resguardo y evitad la exposición.';
+   }else{
+    line='No hay una alerta meteorológica activa para anunciar.';
+   }
   }
  }
  try{window.speechSynthesis.cancel();window.speechSynthesis.speak(makeSidorovichUtterance(line));}
@@ -984,7 +993,7 @@ function playAutomaticWelcome(){
    welcomeStartedThisOpen=true;
    const heatLevel=heat?(temp>=45?3:temp>=40?2:1):0;
    if(typeof svarog!=='undefined')svarog.lastHeatVoiceLevel=Math.max(svarog.lastHeatVoiceLevel||0,heatLevel);
-   speakSidorovich('climate');
+   speakSidorovich('climate',true);
    return;
   }
   if(!weatherLive||!lightningLive){
