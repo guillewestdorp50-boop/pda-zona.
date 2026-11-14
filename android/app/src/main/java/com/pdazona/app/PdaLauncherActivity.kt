@@ -16,6 +16,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
 import android.webkit.GeolocationPermissions
 import android.webkit.JavascriptInterface
 import android.webkit.PermissionRequest
@@ -50,6 +53,46 @@ class PdaLauncherActivity : Activity() {
     private var customView: View? = null
     private var customViewCallback: WebChromeClient.CustomViewCallback? = null
     private var deviceLinkStatusHandled = false
+    private var startupStage = "Preparando el inicio de PDA // ZONA"
+
+    private fun showStartupDiagnostic(error: Throwable) {
+        runOnUiThread {
+            try {
+                val details = "ETAPA: $startupStage\\n\\nERROR: ${error.javaClass.name}\\n${error.message ?: "Sin descripción"}\\n\\nDETALLE TÉCNICO:\\n" +
+                    android.util.Log.getStackTraceString(error)
+                val content = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(28, 36, 28, 28)
+                    setBackgroundColor(Color.rgb(12, 16, 14))
+                }
+                val heading = TextView(this).apply {
+                    text = "PDA // ZONA — ERROR DE INICIO"
+                    textSize = 20f
+                    setTextColor(Color.rgb(255, 220, 90))
+                }
+                val body = TextView(this).apply {
+                    text = details
+                    textSize = 14f
+                    setTextColor(Color.WHITE)
+                    setTextIsSelectable(true)
+                }
+                val scroll = ScrollView(this).apply { addView(body) }
+                content.addView(heading)
+                content.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
+                content.addView(android.widget.Button(this).apply {
+                    text = "COPIAR INFORME"
+                    setOnClickListener {
+                        val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                        clipboard.setPrimaryClip(android.content.ClipData.newPlainText("Error PDA ZONA", details))
+                        text = "INFORME COPIADO"
+                    }
+                })
+                setContentView(content)
+            } catch (displayError: Throwable) {
+                android.util.Log.e("PDA_STARTUP", "No se pudo mostrar el diagnóstico", displayError)
+            }
+        }
+    }
 
     companion object {
         private const val START_URL = "https://guillewestdorp50-boop.github.io/pda-zona./"
@@ -462,6 +505,8 @@ class PdaLauncherActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        try {
+        startupStage = "Activando pantalla completa"
         hideSystemBars()
 
         webView = WebView(this).apply {
@@ -486,6 +531,13 @@ class PdaLauncherActivity : Activity() {
             }
             addJavascriptInterface(PdaNativeBridge(), "PdaAndroid")
             webViewClient = object : WebViewClient() {
+                override fun onRenderProcessGone(view: WebView, detail: android.webkit.RenderProcessGoneDetail): Boolean {
+                    val error = IllegalStateException("El proceso interno de WebView se cerró. didCrash=${detail.didCrash()}, priority=${detail.rendererPriorityAtExit()}")
+                    startupStage = "Motor WebView"
+                    showStartupDiagnostic(error)
+                    return true
+                }
+
                 override fun onPageFinished(view: WebView, url: String) {
                     super.onPageFinished(view, url)
                     if (url.startsWith("https://$TRUSTED_HOST/")) {
@@ -598,7 +650,13 @@ class PdaLauncherActivity : Activity() {
         }
         val restored = savedInstanceState != null &&
             webView.restoreState(savedInstanceState) != null
+        startupStage = "Cargando la PDA desde Internet"
         if (!restored) webView.loadUrl(START_URL)
+        startupStage = "Esperando la respuesta de la PDA"
+        } catch (error: Throwable) {
+            android.util.Log.e("PDA_STARTUP", "Fallo durante $startupStage", error)
+            showStartupDiagnostic(error)
+        }
     }
 
     @Suppress("DEPRECATION")
