@@ -471,21 +471,52 @@ class PdaLauncherActivity : Activity() {
         }
     }
 
+    private fun isTrustedGeolocationOrigin(origin: String): Boolean {
+        return try {
+            val uri = Uri.parse(origin)
+            uri.scheme.equals("https", ignoreCase = true) &&
+                uri.host.equals(TRUSTED_HOST, ignoreCase = true) &&
+                (uri.port == -1 || uri.port == 443) &&
+                uri.userInfo == null &&
+                (uri.path.isNullOrEmpty() || uri.path == "/") &&
+                uri.query == null &&
+                uri.fragment == null
+        } catch (error: Exception) {
+            android.util.Log.w("PDA_GEO", "No se pudo interpretar el origen: $origin", error)
+            false
+        }
+    }
+
     private fun handleGeolocationPrompt(
         origin: String,
         callback: GeolocationPermissions.Callback
     ) {
-        if (origin != "https://$TRUSTED_HOST") {
+        val fineGranted = hasAndroidPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+        val coarseGranted = hasAndroidPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        val trusted = isTrustedGeolocationOrigin(origin)
+        android.util.Log.i(
+            "PDA_GEO",
+            "Solicitud GPS: origin=[$origin], trusted=$trusted, fine=$fineGranted, coarse=$coarseGranted"
+        )
+
+        if (!trusted) {
+            android.util.Log.w("PDA_GEO", "GPS denegado: origen no confiable [$origin]")
             callback.invoke(origin, false, false)
             return
         }
-        if (hasAndroidPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
-            hasAndroidPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+        if (fineGranted || coarseGranted) {
+            android.util.Log.i("PDA_GEO", "GPS autorizado por Android para [$origin]")
             callback.invoke(origin, true, false)
             return
         }
+
+        pendingGeoCallback?.let { previous ->
+            pendingGeoOrigin?.let { previous.invoke(it, false, false) }
+        }
         pendingGeoCallback = callback
         pendingGeoOrigin = origin
+        android.util.Log.i("PDA_GEO", "Solicitando permiso Android para GPS")
         requestPermissions(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -705,6 +736,10 @@ class PdaLauncherActivity : Activity() {
                     val granted =
                         hasAndroidPermission(Manifest.permission.ACCESS_FINE_LOCATION) ||
                         hasAndroidPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    android.util.Log.i(
+                        "PDA_GEO",
+                        "Resultado permiso Android: origin=[$origin], granted=$granted, fine=${hasAndroidPermission(Manifest.permission.ACCESS_FINE_LOCATION)}, coarse=${hasAndroidPermission(Manifest.permission.ACCESS_COARSE_LOCATION)}"
+                    )
                     callback.invoke(origin, granted, false)
                 }
             }
