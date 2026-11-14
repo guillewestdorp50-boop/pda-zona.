@@ -9,8 +9,8 @@ android {
   applicationId = "com.pdazona.app"
   minSdk = 23
   targetSdk = 35
-  versionCode = 4
-  versionName = "1.3.0-immersive-orientation"
+  versionCode = 5
+  versionName = "1.3.1-android-pairing"
  }
  buildTypes {
   getByName("debug") {
