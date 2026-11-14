@@ -498,7 +498,7 @@ class PdaLauncherActivity : Activity() {
     private fun installSpeechAdapter() {
         if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
             WebViewCompat.addDocumentStartJavaScript(
-                webView, DOCUMENT_START_SCRIPT, setOf(TRUSTED_HOST)
+                webView, DOCUMENT_START_SCRIPT, setOf("https://$TRUSTED_HOST")
             )
         }
     }
