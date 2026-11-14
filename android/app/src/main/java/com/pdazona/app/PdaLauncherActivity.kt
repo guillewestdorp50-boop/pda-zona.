@@ -122,14 +122,26 @@ class PdaLauncherActivity : Activity() {
             runOnUiThread {
                 if (deviceLinkStatusHandled) return@runOnUiThread
                 deviceLinkStatusHandled = true
-                if (linked) loadAndroidOwnerProfile() else showAndroidDeviceLinkDialog()
+                if (linked) {
+                    removeAndroidDeviceLinkBanner()
+                    loadAndroidOwnerProfile()
+                } else {
+                    showAndroidDeviceLinkBanner()
+                    showAndroidDeviceLinkDialog()
+                }
             }
+        }
+
+        @JavascriptInterface
+        fun requestDeviceLink() {
+            runOnUiThread { showAndroidDeviceLinkDialog() }
         }
 
         @JavascriptInterface
         fun onDeviceLinkResult(success: Boolean, message: String) {
             runOnUiThread {
                 if (success) {
+                    removeAndroidDeviceLinkBanner()
                     AlertDialog.Builder(this@PdaLauncherActivity)
                         .setTitle("PDA VINCULADA")
                         .setMessage("La APK quedó autorizada por la PDA principal.")
@@ -202,6 +214,27 @@ class PdaLauncherActivity : Activity() {
             .setNegativeButton("AHORA NO", null)
             .setCancelable(true)
             .show()
+    }
+
+    private fun showAndroidDeviceLinkBanner() {
+        val script = """
+            (function(){
+              if (document.getElementById('pda-android-device-link-banner')) return;
+              const button = document.createElement('button');
+              button.id = 'pda-android-device-link-banner';
+              button.type = 'button';
+              button.textContent = '◈ VINCULAR CON LA PDA MADRE';
+              button.setAttribute('aria-label', 'Vincular esta APK con la PDA madre');
+              button.style.cssText = 'position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:2147483647;width:min(92vw,420px);padding:13px 16px;border:1px solid #c6df9c;border-radius:12px;background:#1b2518;color:#e0e9d3;font:700 14px system-ui;letter-spacing:1px;box-shadow:0 4px 24px #000b;';
+              button.addEventListener('click',function(){try{window.PdaAndroid.requestDeviceLink()}catch(e){console.warn('PDA link dialog:',e)}});
+              document.body.appendChild(button);
+            })();
+        """.trimIndent()
+        webView.evaluateJavascript(script, null)
+    }
+
+    private fun removeAndroidDeviceLinkBanner() {
+        webView.evaluateJavascript("document.getElementById('pda-android-device-link-banner')?.remove();", null)
     }
 
     private fun checkAndroidDeviceLink() {
