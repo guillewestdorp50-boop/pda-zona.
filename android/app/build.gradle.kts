@@ -6,11 +6,12 @@ android {
     namespace = "com.pdazona.app"
     compileSdk = 35
     defaultConfig {
-        applicationId = "com.pdazona.app"
+        // Separate package: keeps the existing PDA APK installed and untouched.
+        applicationId = "com.pdazona.chrome"
         minSdk = 23
         targetSdk = 35
-        versionCode = 7
-        versionName = "1.3.3-install-diagnostics"
+        versionCode = 1
+        versionName = "1.0.0-chrome"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -22,5 +23,4 @@ android {
 }
 dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.webkit:webkit:1.12.1")
 }
