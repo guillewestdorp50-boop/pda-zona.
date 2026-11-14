@@ -1,2 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources><string name="app_name">PDA // ZONA</string><string name="widget_description">Acceso rápido a la PDA de la Zona</string></resources>
+<resources>
+    <string name="app_name">PDA // ZONA · CHROME</string>
+    <string name="widget_description">Abrir PDA // ZONA en Google Chrome</string>
+</resources>
