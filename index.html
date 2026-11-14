@@ -1735,7 +1735,7 @@ function updateClock(){let now=new Date();$('clock').textContent=new Intl.DateTi
 setInterval(updateClock,1000);updateClock();
 // Clima PDA-Z: indicador compacto + telemetría ambiental ampliada.
 (()=>{
- const box=$('pdaWeather'),icon=$('weatherIcon'),temp=$('weatherTemp'),hum=$('weatherHumidity'),refresh=$('weatherRefresh');if(!box)return;
+ const box=$('pdaWeather'),icon=$('weatherIcon'),temp=$('weatherTemp'),hum=$('weatherHumidity'),refresh=$('weatherRefresh');if(!box||!navigator.geolocation)return;
  const cacheKey='zona_weather_last_v1';let lastCoords=null,busy=false;
  const cached=()=>{try{return JSON.parse(localStorage.getItem(cacheKey)||'null')}catch{return null}};
  const $c=id=>document.getElementById(id);
@@ -1904,7 +1904,6 @@ setInterval(updateClock,1000);updateClock();
 
 
  const put=(id,value)=>{const el=$c(id);if(el)el.textContent=value};
- const reportWeatherError=(kind,detail,gps)=>{const message=String(detail||'Sin detalle técnico').replace(/\s+/g,' ').slice(0,180);box.title=kind+' · '+message;put('climateConnection',kind);put('climateGpsStatus',gps);console.error('[PDA-Z CLIMA]',kind,message);};
  startSvarogLive();
  const direction=d=>{if(!Number.isFinite(Number(d)))return '--';return ['N','NE','E','SE','S','SO','O','NO'][Math.round(((Number(d)%360)+360)%360/45)%8]};
  function paint(data,stale=false){
@@ -1948,13 +1947,13 @@ setInterval(updateClock,1000);updateClock();
    const first=(key)=>Array.isArray(d[key])?d[key][0]:null;
    const data={temperature:Number(c.temperature_2m),humidity:Number(c.relative_humidity_2m),feels:Number(c.apparent_temperature),icon:c.is_day?w[0]:(c.weather_code===0?'☾':w[0]),description:w[1],updated:Date.now(),uv:at('uv_index'),radiation:at('shortwave_radiation'),cloud:Number(c.cloud_cover),wind:Number(c.wind_speed_10m),windDirection:Number(c.wind_direction_10m),pressure:Number(c.surface_pressure),rainChance:at('precipitation_probability'),rainAmount:at('precipitation'),rainMax:Number(first('precipitation_probability_max')),rainDay:Number(first('precipitation_sum')),sunrise:first('sunrise'),sunset:first('sunset'),cape:at('cape'),code:Number(c.weather_code)};
    localStorage.setItem(cacheKey,JSON.stringify(data));paint(data,false);
-  }catch(e){const detail=e&&e.message?e.message:String(e);const kind=/^HTTP \d+/.test(detail)?'ERROR HTTP DE OPEN-METEO':/JSON|Unexpected token|Sin datos actuales/i.test(detail)?'RESPUESTA INVÁLIDA DE OPEN-METEO':navigator.onLine===false?'DISPOSITIVO SIN CONEXIÓN':'ERROR DE RED / CORS / TLS';const old=cached();if(old)paint(old,true);else{icon.textContent='?';temp.textContent='--°';hum.textContent='SIN DATOS';}reportWeatherError(kind,detail,'GPS FIJADO · COORDENADAS OK');}
+  }catch(e){const old=cached();if(old)paint(old,true);else{icon.textContent='?';temp.textContent='--°';hum.textContent='SIN DATOS';box.title='No se pudo obtener el clima. Revisá la conexión.';put('climateConnection','SIN DATOS');put('climateGpsStatus','SIN FIJACIÓN GPS');}}
   finally{busy=false;}
  }
  function locate(){
-  if(!navigator.geolocation){reportWeatherError('GPS NO DISPONIBLE','El WebView no expone navigator.geolocation.','GPS NO DISPONIBLE');return;}
-  icon.textContent='⌖';box.title='Solicitando ubicación GPS…';put('climateConnection','OBTENIENDO UBICACIÓN');put('climateGpsStatus','SOLICITANDO FIJACIÓN GPS');
-  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};put('climateGpsStatus','GPS FIJADO · COORDENADAS OK');put('climateConnection','CONSULTANDO OPEN-METEO');loadWeather(lastCoords.lat,lastCoords.lon);},e=>{const reason=e.code===1?'PERMISO DENEGADO':e.code===2?'POSICIÓN NO DISPONIBLE':e.code===3?'TIEMPO DE ESPERA AGOTADO':'ERROR DE UBICACIÓN';const detail=(e.message||'El proveedor de ubicación no dio más detalles')+' (código '+e.code+')';const old=cached();if(old)paint(old,true);else{icon.textContent='?';temp.textContent='--°';hum.textContent='SIN DATOS';}reportWeatherError('ERROR GPS · '+reason,detail,'GPS NO FIJADO · '+reason);},{enableHighAccuracy:false,maximumAge:900000,timeout:20000});
+  if(!navigator.geolocation){box.title='Este navegador no ofrece GPS';put('climateConnection','GPS NO DISPONIBLE');return;}
+  icon.textContent='⌖';box.title='Solicitando ubicación GPS…';
+  navigator.geolocation.getCurrentPosition(p=>{lastCoords={lat:p.coords.latitude,lon:p.coords.longitude};loadWeather(lastCoords.lat,lastCoords.lon);},e=>{const old=cached();if(old)paint(old,true);box.title=e.code===1?'Permiso de ubicación denegado. Activá GPS para ver el clima local.':'No se pudo obtener GPS. Tocá ↻ para reintentar.';},{enableHighAccuracy:false,maximumAge:900000,timeout:15000});
  }
  refresh?.addEventListener('click',e=>{e.stopPropagation();locate();});
  $c('climateRefresh')?.addEventListener('click',locate);
