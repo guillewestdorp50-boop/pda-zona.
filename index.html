@@ -708,7 +708,6 @@ body.keyboard-visible footer{display:none}
  <div id="pdaEconomyList" class="pda-economy-list"><div class="empty">CONECTANDO CON EL REGISTRO CENTRAL…</div></div>
 </section>
 <section id="contacts" class="view"><div class="panel"><div class="row"><h2>DIRECTORIO</h2><button class="btn" id="newC">+ NUEVO</button></div><p class="muted">Estado vital editable: verde = vivo · rojo = muerto · amarillo = perdido.</p>
-<div class="panel pda-link-panel" id="pdaMotherLinkPanel"><h2>VINCULAR CON LA PDA MADRE</h2><p class="muted">Primero generá un código en la PDA madre: CONTACTOS → VINCULAR OTRA PDA → GENERAR CÓDIGO. Después ingresalo acá para autorizar esta APK y recuperar sus datos compartidos.</p><div class="row" style="margin:8px 0"><strong id="pdaMotherLinkStatus" class="muted">COMPROBANDO VÍNCULO…</strong></div><label class="muted" for="pdaMotherCode">CÓDIGO DE LA PDA MADRE</label><div class="row"><input id="pdaMotherCode" maxlength="8" placeholder="XXXXXXXX" autocapitalize="characters" autocomplete="one-time-code"><button class="btn" id="pdaMotherLinkButton">VINCULAR APK</button></div><small class="muted">El código es privado, de un solo uso y vence a los 10 minutos. Esta operación no modifica los movimientos ni el saldo.</small></div>
 <div class="panel pda-link-panel"><h2>VINCULAR OTRA PDA</h2><p class="muted">Conectá dos terminales con un código privado de un solo uso. El código vence a los 10 minutos.</p><label class="muted" for="pdaDisplayName">IDENTIFICACIÓN DE ESTA PDA</label><input id="pdaDisplayName" maxlength="40" value="STALKER" placeholder="Ej.: CHAZON"><div class="row" style="margin-top:8px"><button class="btn" id="createPairCode">GENERAR CÓDIGO</button><span id="pdaLinkStatus" class="muted">CENTRAL SIN CONECTAR</span></div><div id="pairCodeBox" class="hidden" style="margin-top:10px;padding:12px;text-align:center;background:#0b110a;border:1px dashed var(--line)"><div class="muted">CÓDIGO DE VINCULACIÓN · 10 MIN</div><strong id="pairCodeValue" style="font:900 28px monospace;letter-spacing:5px;color:var(--g)"></strong></div><div style="border-top:1px solid var(--line);margin:12px 0;padding-top:10px"><label class="muted" for="pairCodeInput">SI TE PASARON UN CÓDIGO</label><div class="row"><input id="pairCodeInput" maxlength="12" placeholder="XXXXXXXX" autocapitalize="characters"><button class="btn" id="redeemPairCode">VINCULAR</button></div></div><small class="muted">La otra PDA debe estar conectada a internet para recibir mensajes y audios.</small></div>
 <div id="contactList" class="stack"></div></div><div id="cEditor" class="panel hidden"><h2>CONTACTO</h2><input id="cName" placeholder="Nombre / alias"><input id="cRole" placeholder="Ocupación / facción"><label class="muted" for="cAlignment">RELACIÓN CON ESTE STALKER</label><select id="cAlignment"><option value="enemy">ENEMIGO</option><option value="neutral" selected>NEUTRAL</option><option value="friend">AMIGO</option><option value="ally">ALIADO</option></select><textarea id="cBio" placeholder="Biografía y personalidad"></textarea><div class="photo-tools"><img id="cPhotoPreview" class="contact-photo-preview" alt="Vista previa de la foto" src="" style="display:none"><div id="cPhotoPlaceholder" class="contact-photo-preview contact-photo-empty">SIN FOTO</div><div style="flex:1;min-width:140px"><input id="cPhotoInput" type="file" accept="image/*" style="display:none"><button type="button" id="chooseCPhoto" class="btn">📷 ELEGIR FOTO</button><button type="button" id="removeCPhoto" style="margin-top:6px">QUITAR FOTO</button><p class="muted">La imagen se guarda en este dispositivo.</p></div></div><div class="row"><button class="btn" id="saveC">GUARDAR</button><button id="cancelC">CANCELAR</button></div></div></section>
 <section id="relationship" class="view"><div class="panel"><h2>REGISTRO DE TRATO</h2><p class="muted">Elegí un contacto, anotá qué hiciste y calificá cómo fue el trato. La amistad cambia según tu valoración.</p><select id="tratoWho"></select><div class="panel"><div class="row"><div><div class="muted">NIVEL DE AMISTAD</div><strong id="friendScore" style="font:700 28px monospace;color:var(--g)">50 / 100</strong></div><span id="friendLabel" class="tag">NEUTRAL</span></div><div style="height:9px;background:#0b110a;border:1px solid var(--line);margin-top:10px"><div id="friendBar" style="height:100%;width:50%;background:#8eae62"></div></div></div><textarea id="tratoText" placeholder="Ej.: Le hice un regalo, lo ayudé en una misión, compartimos suministros..."></textarea><select id="tratoMood"><option value="positive">Agradable / positivo (+10 amistad)</option><option value="neutral">Neutral (sin cambios)</option><option value="negative">Desagradable / negativo (-10 amistad)</option></select><button class="btn" id="saveTrato">REGISTRAR TRATO</button></div><div class="panel"><h2>HISTORIAL DE TRATOS</h2><div id="tratoHistory" class="stack"></div></div></section>
@@ -1229,30 +1228,6 @@ $('redeemPairCode').onclick=async()=>{
  catch(e){alert('No se pudo vincular: '+(e.message||e))}
  finally{$('redeemPairCode').disabled=false}
 };
-async function pdaRefreshAndroidMotherLink(){
- const status=$('pdaMotherLinkStatus');if(!status)return;
- try{
-  const data=await pdaInvoke('androidDeviceStatus');
-  status.textContent=data.linked?'PDA VINCULADA CON LA MADRE · AUTORIZADA':'ESTA APK TODAVÍA NO ESTÁ VINCULADA';
-  status.style.color=data.linked?'var(--g)':'var(--m)';
-  $('pdaMotherLinkButton').disabled=!!data.linked;
-  $('pdaMotherCode').disabled=!!data.linked;
- }catch(e){status.textContent='NO SE PUDO COMPROBAR EL VÍNCULO';console.warn('Vínculo PDA madre:',e.message||e)}
-}
-$('pdaMotherLinkButton').onclick=async()=>{
- const code=($('pdaMotherCode')?.value||'').trim().toUpperCase();
- if(!/^[A-HJ-NP-Z2-9]{8}$/.test(code))return alert('Ingresá el código de 8 caracteres generado en la PDA madre.');
- const button=$('pdaMotherLinkButton');button.disabled=true;
- try{
-  await pdaInvoke('redeemAndroidDevice',{code});
-  $('pdaMotherCode').value='';
-  await pdaRefreshAndroidMotherLink();
-  await refreshRemoteContacts();
-  await pdaRefreshYuriWallet();
-  alert('¡APK VINCULADA CON LA PDA MADRE! La autorización quedó registrada.');
- }catch(e){alert('No se pudo vincular esta APK: '+(e.message||e));button.disabled=false}
-};
-
 function pdaFormatTime(value){return new Date(value).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}
 async function pdaLoadRemoteMessages(contact){
  const client=await pdaEnsureSession(),conversationId=contact.remoteConversationId;
@@ -1578,7 +1553,6 @@ async function initPdaComms(){
  const connect=async()=>{
   try{
    await pdaEnsureSession();
-   await pdaRefreshAndroidMotherLink();
    const jobs=[
     ['perfil',()=>pdaLoadProfile()],
     ['misión de stalker',()=>pdaInvoke('ensureNpcMission')],
