@@ -1131,7 +1131,7 @@ $('pdaDisplayName').addEventListener('change',async()=>{if(!pdaUserId)return;try
 async function pdaInvoke(action,extra={}){
  const client=await pdaEnsureSession();
  const {data,error}=await client.functions.invoke('pda-pairing',{body:{action,displayName:$('pdaDisplayName')?.value||'STALKER',...extra}});
- if(error)throw error;
+ if(error){let message=error.message||'Error de comunicación con la PDA madre.';try{const response=error.context;if(response?.clone){const payload=await response.clone().json();if(payload?.error)message=payload.error}}catch{}throw new Error(message)}
  if(data?.error)throw new Error(data.error);
  return data;
 }
@@ -1224,7 +1224,13 @@ $('redeemPairCode').onclick=async()=>{
  const code=$('pairCodeInput').value.trim();
  if(!code)return alert('Ingresá el código que te pasaron.');
  $('redeemPairCode').disabled=true;
- try{await pdaInvoke('redeem',{code});$('pairCodeInput').value='';await refreshRemoteContacts();const remote=contacts.find(x=>x.remoteConversationId);if(remote){$('chatWho').value=remote.id;renderChat()}alert('¡PDA VINCULADA! El canal privado ya está disponible en MENSAJES.');}
+ try{
+  const result=await pdaInvoke('redeemAndroidDevice',{code});
+  const status=await pdaInvoke('androidDeviceStatus');
+  if(!result?.linked||!status?.linked)throw new Error('El servidor no confirmó el vínculo con la PDA madre.');
+  $('pairCodeInput').value='';
+  alert('¡DISPOSITIVO VINCULADO A LA PDA MADRE! La autorización quedó registrada en el servidor.');
+ }
  catch(e){alert('No se pudo vincular: '+(e.message||e))}
  finally{$('redeemPairCode').disabled=false}
 };
