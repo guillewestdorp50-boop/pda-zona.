@@ -4,4 +4,4 @@ dependencyResolutionManagement {
  repositories { google(); mavenCentral() }
 }
 rootProject.name = "PDAZonaAndroid"
-include(":app")
+include(":app", ":installer")
