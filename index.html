@@ -640,6 +640,11 @@ body.keyboard-visible footer{display:none}
 .pda-economy-overlay{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:16px;background:#000d}.pda-economy-overlay.open{display:flex}.pda-economy-modal{width:min(100%,440px);background:linear-gradient(145deg,#263321,#10170f);border:1px solid #8ca76b;box-shadow:0 0 28px #000b,0 0 18px #9bc46b33;padding:16px;border-radius:5px;display:grid;gap:10px}
 /* Al ingresar un gasto, el teclado propio queda por encima del velo y la ficha se acomoda arriba. */
 body.spend-keyboard-open #pdaSpendOverlay{z-index:10;align-items:flex-start;justify-content:center;padding: max(10px,env(safe-area-inset-top)) 12px 270px;overflow-y:auto}
+body.ledger-keyboard-open #pdaLedgerEditOverlay{z-index:10;align-items:flex-start;justify-content:center;padding:max(10px,env(safe-area-inset-top)) 12px 270px;overflow-y:auto}
+body.ledger-keyboard-open #pdaLedgerEditOverlay .pda-economy-modal{max-height:calc(100dvh - 285px - env(safe-area-inset-top));overflow-y:auto}
+.economy-entry .entry-heading{display:flex;align-items:center;gap:7px;min-width:0;flex:1}
+.economy-entry .entry-edit{flex:0 0 30px;width:30px;height:30px;min-height:30px;padding:0;border:1px solid #728c5a;border-radius:4px;background:#172315;color:#d6edb8;font-size:18px;line-height:1;cursor:pointer}
+.economy-entry .entry-edit:focus-visible{outline:2px solid #b8e58a;outline-offset:2px}
 body.spend-keyboard-open #pdaSpendOverlay .pda-economy-modal{max-height:calc(100dvh - 285px - env(safe-area-inset-top));overflow-y:auto}.pda-economy-modal h2{margin:0}.pda-economy-modal .row{align-items:center}.economy-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.economy-summary>div{background:#10170f;border:1px solid #536744;padding:10px}.economy-summary small{display:block;color:var(--m);font:10px monospace;letter-spacing:1px}.economy-summary strong{display:block;color:var(--g);font:800 20px monospace;margin-top:5px}.pda-economy-list{display:grid;gap:9px}.economy-entry{position:relative;overflow:hidden;background:linear-gradient(145deg,#202c1c,#11180f);border:1px solid #536744;padding:12px;border-radius:4px;box-shadow:inset 0 0 16px #0006}.economy-entry:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#8dbb5f}.economy-entry.expense:before,.economy-entry.reward_sent:before{background:#c78c5d}.economy-entry .entry-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.economy-entry .entry-type{font:800 10px monospace;letter-spacing:1px;color:#c7dda5}.economy-entry .entry-amount{font:900 21px monospace;color:#b8e58a}.economy-entry.expense .entry-amount,.economy-entry.reward_sent .entry-amount{color:#e4ae83}.economy-entry .entry-description{font-size:13px;margin:7px 0;color:#e0e9d3}.economy-entry .entry-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;border-top:1px solid #526344;padding-top:7px;color:#a8b993;font:10px monospace}.economy-entry .entry-balance{color:#d5e7b8}.economy-entry .entry-owner{color:#d8b66c;font:10px monospace;margin-top:4px}.economy-entry .entry-glow{position:absolute;right:-30px;top:-30px;width:90px;height:90px;border-radius:50%;background:#a7d46a12;filter:blur(12px);pointer-events:none}
 
 /* ZONA EXCHANGE · interfaz financiera */
@@ -783,9 +788,19 @@ body.pda-ilai-device{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <div class="economy-chart-wrap"><div class="economy-chart-head"><span>FLUJO DE RUBL0S</span><span class="economy-chart-period">MOVIMIENTOS REALES</span></div><div class="economy-chart-scroll" id="ruChartScroll"><svg class="economy-chart" id="ruChartSvg" viewBox="0 0 640 280" role="img" aria-label="Gráfico de ingresos y gastos reales, con importes, fechas y horas"><defs><linearGradient id="ruChartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#8d6bff" stop-opacity=".2"/><stop offset="1" stop-color="#168dff" stop-opacity=".02"/></linearGradient><filter id="ruGlow"><feGaussianBlur stdDeviation="3"/></filter></defs><g id="ruChartGrid"></g><g id="ruChartArea"></g><g id="ruChartLines"></g><g id="ruChartLabels"></g><g id="ruChartPoints"></g><g id="ruChartTimes"></g></svg></div><div class="economy-chart-legend"><span class="income">● INGRESO · RUBL0S QUE ENTRAN</span><span class="expense">● GASTO · RUBL0S QUE SALEN</span></div><div class="economy-chart-foot"><span id="ruChartCount">0 MOVIMIENTOS GRAFICADOS</span><span>DESLIZÁ PARA RECORRER</span></div></div>
   <div class="economy-metrics"><div class="economy-metric"><span class="economy-metric-icon neutral">≋</span><div><small>MOVIMIENTOS REGISTRADOS</small><strong id="pdaEconomyCount">0</strong></div></div><div class="economy-metric"><span class="economy-metric-icon positive">↗</span><div><small>ÚLTIMO INGRESO</small><strong id="pdaEconomyLastIn">—</strong></div></div><div class="economy-metric"><span class="economy-metric-icon negative">↘</span><div><small>ÚLTIMO GASTO</small><strong id="pdaEconomyLastOut">—</strong></div></div></div>
  </div>
- <div class="economy-ledger-heading"><div><div class="economy-overline">BLOCKCHAIN LOCAL · REGISTRO INMUTABLE</div><h2>MOVIMIENTOS DE RUBL0S</h2></div><span class="economy-ledger-badge"><i class="economy-live-dot"></i> REGISTRADO</span></div>
+ <div class="economy-ledger-heading"><div><div class="economy-overline">REGISTRO CENTRAL · IMPORTES Y SALDOS PROTEGIDOS</div><h2>MOVIMIENTOS DE RUBL0S</h2></div><span class="economy-ledger-badge"><i class="economy-live-dot"></i> REGISTRADO</span></div>
  <div id="pdaEconomyList" class="pda-economy-list"><div class="empty">CONECTANDO CON EL REGISTRO CENTRAL…</div></div>
 </section>
+<div id="pdaLedgerEditOverlay" class="pda-economy-overlay" role="dialog" aria-modal="true" aria-labelledby="pdaLedgerEditTitle">
+ <div class="pda-economy-modal">
+  <div class="row"><h2 id="pdaLedgerEditTitle">EDITAR MOVIMIENTO</h2><button type="button" id="pdaLedgerEditClose" class="btn">CERRAR</button></div>
+  <p class="muted">Corregí la descripción. El importe, la fecha y el saldo quedan protegidos.</p>
+  <label class="muted" for="pdaLedgerEditDescription">DESCRIPCIÓN DEL MOVIMIENTO</label>
+  <input id="pdaLedgerEditDescription" maxlength="120" placeholder="Ej.: comida, combustible, reparación">
+  <button type="button" class="btn" id="pdaLedgerEditSave" style="width:100%">GUARDAR DESCRIPCIÓN</button>
+  <small id="pdaLedgerEditStatus" class="muted"></small>
+ </div>
+</div>
 <section id="contacts" class="view"><div class="panel"><div class="row"><h2>DIRECTORIO</h2><button class="btn" id="newC">+ NUEVO</button></div><p class="muted">Estado vital editable: verde = vivo · rojo = muerto · amarillo = perdido.</p>
 <div class="panel pda-link-panel"><h2>VINCULAR OTRA PDA</h2><p class="muted">Conectá dos terminales con un código privado de un solo uso. El código vence a los 10 minutos.</p><label class="muted" for="pdaDisplayName">IDENTIFICACIÓN DE ESTA PDA</label><input id="pdaDisplayName" maxlength="40" value="STALKER" placeholder="Ej.: CHAZON"><div class="row" style="margin-top:8px"><button class="btn" id="createPairCode">GENERAR CÓDIGO</button><span id="pdaLinkStatus" class="muted">CENTRAL SIN CONECTAR</span></div><div id="pairCodeBox" class="hidden" style="margin-top:10px;padding:12px;text-align:center;background:#0b110a;border:1px dashed var(--line)"><div class="muted">CÓDIGO DE VINCULACIÓN · 10 MIN</div><strong id="pairCodeValue" style="font:900 28px monospace;letter-spacing:5px;color:var(--g)"></strong></div><div style="border-top:1px solid var(--line);margin:12px 0;padding-top:10px"><label class="muted" for="pairCodeInput">SI TE PASARON UN CÓDIGO</label><div class="row"><input id="pairCodeInput" maxlength="12" placeholder="XXXXXXXX" autocapitalize="characters"><button class="btn" id="redeemPairCode">VINCULAR</button></div></div><small class="muted">La otra PDA debe estar conectada a internet para recibir mensajes y audios.</small></div>
 <div id="contactList" class="stack"></div></div><div id="cEditor" class="panel hidden"><h2>CONTACTO</h2><input id="cName" placeholder="Nombre / alias"><input id="cRole" placeholder="Ocupación / facción"><label class="muted" for="cAlignment">RELACIÓN CON ESTE STALKER</label><select id="cAlignment"><option value="enemy">ENEMIGO</option><option value="neutral" selected>NEUTRAL</option><option value="friend">AMIGO</option><option value="ally">ALIADO</option></select><textarea id="cBio" placeholder="Biografía y personalidad"></textarea><div class="photo-tools"><img id="cPhotoPreview" class="contact-photo-preview" alt="Vista previa de la foto" src="" style="display:none"><div id="cPhotoPlaceholder" class="contact-photo-preview contact-photo-empty">SIN FOTO</div><div style="flex:1;min-width:140px"><input id="cPhotoInput" type="file" accept="image/*" style="display:none"><button type="button" id="chooseCPhoto" class="btn">📷 ELEGIR FOTO</button><button type="button" id="removeCPhoto" style="margin-top:6px">QUITAR FOTO</button><p class="muted">La imagen se guarda en este dispositivo.</p></div></div><div class="row"><button class="btn" id="saveC">GUARDAR</button><button id="cancelC">CANCELAR</button></div></div></section>
@@ -1683,10 +1698,47 @@ function pdaRenderEconomyLedger(){
   const date=new Date(entry.created_at),stamp=Number.isNaN(date.getTime())?"FECHA NO DISPONIBLE":date.toLocaleString("es-AR",{timeZone:"America/Argentina/Buenos_Aires",day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});
   const amount=Number(entry.amount)||0,balanceLine=entry.balance_after==null?"":'<span class="entry-balance">SALDO: '+money(entry.balance_after)+' RU</span>';
   const owner=!pdaIsChild()&&type==="expense"?'<div class="entry-owner">REGISTRADO DESDE LA PDA DE TU HIJO</div>':"";
-  return '<article class="economy-entry '+type+'"><div class="entry-glow"></div><div class="entry-top"><span class="entry-type">✦ '+title+'</span><strong class="entry-amount">'+sign+money(amount)+' RU</strong></div><div class="entry-description">'+esc(entry.description||title)+'</div>'+owner+'<div class="entry-meta"><span>⌚ '+stamp+' · ARGENTINA</span>'+balanceLine+'</div></article>';
+  const editButton=entry.id?'<button type="button" class="entry-edit" data-ledger-edit="'+esc(entry.id)+'" aria-label="Editar descripción del movimiento" title="Editar descripción">✎</button>':"";
+  return '<article class="economy-entry '+type+'"><div class="entry-glow"></div><div class="entry-top"><div class="entry-heading"><span class="entry-type">✦ '+esc(title)+'</span>'+editButton+'</div><strong class="entry-amount">'+sign+money(amount)+' RU</strong></div><div class="entry-description">'+esc(entry.description||title)+'</div>'+owner+'<div class="entry-meta"><span>⌚ '+stamp+' · ARGENTINA</span>'+balanceLine+'</div></article>';
  }).join("");
  pdaRenderWallet();
 }
+let pdaLedgerEditTargetId="";
+function pdaOpenLedgerEdit(entry){
+ if(!entry?.id)return;
+ pdaLedgerEditTargetId=entry.id;
+ $("pdaLedgerEditDescription").value=String(entry.description||"");
+ $("pdaLedgerEditStatus").textContent="";
+ $("pdaLedgerEditOverlay").classList.add("open");
+}
+function pdaCloseLedgerEditModal(){
+ if(typeof activeField!=="undefined"&&activeField?.closest?.("#pdaLedgerEditOverlay"))closePdaKeyboard();
+ $("pdaLedgerEditOverlay")?.classList.remove("open");
+ pdaLedgerEditTargetId="";
+}
+async function pdaSaveLedgerDescription(){
+ const contact=contacts.find(x=>x.remoteConversationId),description=$("pdaLedgerEditDescription").value.trim(),movementId=pdaLedgerEditTargetId;
+ if(!contact){$("pdaLedgerEditStatus").textContent="NO HAY VÍNCULO CON LA OTRA PDA";return}
+ if(!movementId){$("pdaLedgerEditStatus").textContent="SELECCIONÁ UN MOVIMIENTO";return}
+ if(!description){$("pdaLedgerEditStatus").textContent="ESCRIBÍ UNA DESCRIPCIÓN";return}
+ const button=$("pdaLedgerEditSave");button.disabled=true;$("pdaLedgerEditStatus").textContent="GUARDANDO CORRECCIÓN…";
+ try{
+  await pdaInvoke("editYuriLedgerDescription",{conversationId:contact.remoteConversationId,movementId,description});
+  pdaCloseLedgerEditModal();
+  await pdaLoadEconomyLedger();
+  playPdaBeep("notify");
+ }catch(e){$("pdaLedgerEditStatus").textContent=e.message||"NO SE PUDO GUARDAR LA DESCRIPCIÓN"}
+ finally{button.disabled=false}
+}
+$("pdaEconomyList")?.addEventListener("click",event=>{
+ const button=event.target?.closest?.("[data-ledger-edit]");
+ if(!button)return;
+ const entry=pdaEconomyEntries.find(x=>String(x.id)===button.dataset.ledgerEdit);
+ if(entry)pdaOpenLedgerEdit(entry);
+});
+$("pdaLedgerEditClose")?.addEventListener("click",pdaCloseLedgerEditModal);
+$("pdaLedgerEditSave")?.addEventListener("click",pdaSaveLedgerDescription);
+$("pdaLedgerEditOverlay")?.addEventListener("click",event=>{if(event.target===$("pdaLedgerEditOverlay"))pdaCloseLedgerEditModal()});
 let pdaYuriCanSend=false;
 let pdaYuriSyncBusy=false;
 function pdaYuriRenderPanel(){
@@ -2285,13 +2337,14 @@ function openPdaKeyboard(field){
  activeField=field;
  field.setAttribute('readonly','readonly');
  document.body.classList.toggle('spend-keyboard-open',!!field.closest('#pdaSpendOverlay'));
+ document.body.classList.toggle('ledger-keyboard-open',!!field.closest('#pdaLedgerEditOverlay'));
  pdaKeys.classList.remove('hidden');
  document.body.classList.add('keyboard-visible');
  setTimeout(()=>field.scrollIntoView({block:'center',behavior:'smooth'}),80);
 }
 function closePdaKeyboard(){
  pdaKeys.classList.add('hidden');
- document.body.classList.remove('keyboard-visible','spend-keyboard-open');
+ document.body.classList.remove('keyboard-visible','spend-keyboard-open','ledger-keyboard-open');
  activeField=null;
 }
 document.querySelectorAll('input:not([disabled]):not([type="file"]):not([data-native-control]),textarea:not([disabled])').forEach(field=>{
