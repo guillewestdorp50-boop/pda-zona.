@@ -2,7 +2,8 @@
     <application
         android:allowBackup="false"
         android:label="Exploradores"
-        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        android:icon="@drawable/ic_launcher"
+        android:theme="@style/AppTheme"
         android:usesCleartextTraffic="false">
         <activity
             android:name=".MainActivity"
