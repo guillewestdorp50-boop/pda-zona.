@@ -1,0 +1,59 @@
+name: Exploradores APK producción
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Etiqueta de versión (por ejemplo exploradores-v1.0.0)"
+        required: true
+        default: "exploradores-v1.0.0"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+      - name: Verificar firma de producción
+        env:
+          KS: ${{ secrets.EXPLORER_KEYSTORE_BASE64 }}
+          KSP: ${{ secrets.EXPLORER_KEYSTORE_PASSWORD }}
+          ALIAS: ${{ secrets.EXPLORER_KEY_ALIAS }}
+          KP: ${{ secrets.EXPLORER_KEY_PASSWORD }}
+        run: |
+          if [ -z "$KS" ] || [ -z "$KSP" ] || [ -z "$ALIAS" ] || [ -z "$KP" ]; then
+            echo "::error::Faltan los cuatro secretos de firma permanente. No se generará un APK de depuración ni un instalador sin firma estable."
+            exit 1
+          fi
+          echo "$KS" | base64 --decode > "$RUNNER_TEMP/exploradores-release.jks"
+          echo "EXPLORER_KEYSTORE_PATH=$RUNNER_TEMP/exploradores-release.jks" >> "$GITHUB_ENV"
+          echo "EXPLORER_KEYSTORE_PASSWORD=$KSP" >> "$GITHUB_ENV"
+          echo "EXPLORER_KEY_ALIAS=$ALIAS" >> "$GITHUB_ENV"
+          echo "EXPLORER_KEY_PASSWORD=$KP" >> "$GITHUB_ENV"
+      - name: Compilar APK de producción
+        working-directory: explorador/android
+        run: gradle --no-daemon :app:assembleRelease
+      - name: Verificar APK firmado
+        working-directory: explorador/android
+        run: |
+          APK=app/build/outputs/apk/release/app-release.apk
+          test -s "$APK"
+          jarsigner -verify "$APK"
+          mkdir -p "$RUNNER_TEMP/release"
+          cp "$APK" "$RUNNER_TEMP/release/Exploradores-${{ inputs.release_tag }}.apk"
+      - name: Publicar APK de producción
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.release_tag }}
+          name: "Exploradores ${{ inputs.release_tag }}"
+          generate_release_notes: true
+          files: ${{ runner.temp }}/release/Exploradores-${{ inputs.release_tag }}.apk
