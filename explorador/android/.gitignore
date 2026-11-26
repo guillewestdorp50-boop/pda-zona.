@@ -1,0 +1,5 @@
+.gradle/
+build/
+app/build/
+app/explorer-release.jks
+local.properties
