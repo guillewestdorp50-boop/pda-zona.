@@ -81,7 +81,7 @@ const statusEl=document.getElementById('sayStatus');
 let voices=[];
 function loadVoices(){voices=speechSynthesis?.getVoices?.()||[]}
 if('speechSynthesis'in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
-function speak(text){if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);const v=voices.find(x=>/^es-AR$/i.test(x.lang))||voices.find(x=>/^es/i.test(x.lang));if(v)u.voice=v;u.lang=v?.lang||'es-AR';u.rate=.88;u.pitch=1;u.volume=1;u.onstart=()=>statusEl.textContent='🔊 '+text;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
+function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);const v=voices.find(x=>/^es-AR$/i.test(x.lang))||voices.find(x=>/^es/i.test(x.lang));if(v)u.voice=v;u.lang=v?.lang||'es-AR';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')resizeTable()}));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
 const dinoData=[
