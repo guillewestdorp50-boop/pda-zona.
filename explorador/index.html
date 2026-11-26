@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#10233c">
+<title>Exploradores — Mundo de juegos</title>
+<style>
+:root{--ink:#14243a;--sky:#dff5ff;--blue:#27a9e8;--yellow:#ffd83d;--pink:#ff6d9e;--green:#55d69a;--purple:#a58bff}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(135deg,#a9e9ff,#f9f0b7 55%,#ffc7dc);color:var(--ink);touch-action:manipulation}
+body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#app{height:100dvh;display:flex;flex-direction:column;max-width:1200px;margin:auto;padding:clamp(8px,1.5vw,18px);gap:clamp(7px,1vw,12px)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:1000;font-size:clamp(20px,3vw,32px);letter-spacing:-.7px}.mascot{width:48px;height:48px;border-radius:16px;background:#fff;display:grid;place-items:center;font-size:30px;box-shadow:0 4px 0 #8ab9cc}
+#sayStatus{font-size:clamp(11px,1.5vw,15px);font-weight:800;background:#ffffffb8;padding:8px 14px;border-radius:99px}
+nav{display:flex;gap:8px;justify-content:center}
+nav button,.back{border:0;border-radius:16px;padding:11px 18px;font-size:clamp(14px,1.8vw,19px);font-weight:950;color:#17304a;background:#fff;box-shadow:0 4px 0 #a5c5d3}
+nav button[aria-selected=true]{background:#173b62;color:#fff;box-shadow:0 4px 0 #0a2038}
+main{flex:1;min-height:0;position:relative}
+.panel{display:none;height:100%;min-height:0;background:#ffffffb8;border:3px solid #fff;border-radius:26px;padding:clamp(10px,1.8vw,20px);box-shadow:0 8px 24px #41617a22;overflow:auto}
+.panel.active{display:flex;flex-direction:column;gap:12px}
+h1{margin:0;font-size:clamp(22px,3vw,34px);line-height:1.05} .hint{margin:0;font-weight:750;color:#36516a;font-size:clamp(12px,1.5vw,16px)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.4vw,16px);flex:1;min-height:0}
+.tile{border:0;border-radius:22px;min-height:100px;padding:10px;background:var(--tile,#fff);box-shadow:0 6px 0 var(--shade,#b7cbd4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#172b40;font-size:clamp(15px,2vw,21px);font-weight:950}
+.tile:active,nav button:active{transform:translateY(3px);box-shadow:0 2px 0 var(--shade,#b7cbd4)}
+.tile .emoji{font-size:clamp(35px,6vw,65px);line-height:1.05}
+.dino-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.dino{background:#fff;border:3px solid #fff;box-shadow:0 5px 0 #b4d4dc;border-radius:20px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;padding:8px;font-weight:950;font-size:clamp(14px,1.8vw,20px);min-height:0}
+.dino svg{width:min(100%,145px);height:clamp(65px,12vh,120px)}
+.dino:active{transform:scale(.98)}
+.flipper-wrap{display:grid;grid-template-columns:1fr minmax(0,2.3fr) 1fr;gap:10px;flex:1;min-height:0;align-items:stretch}
+.flipper-key{border:0;border-radius:24px;background:linear-gradient(160deg,#ffdf57,#ff9f42);box-shadow:0 7px 0 #d27b32;font-size:clamp(18px,2.6vw,28px);font-weight:1000;color:#63360b;touch-action:none}
+.flipper-key.right{background:linear-gradient(160deg,#8ee8ff,#4cafff);box-shadow:0 7px 0 #277bc2;color:#07385d}
+#table{width:100%;height:100%;min-height:180px;border-radius:22px;background:radial-gradient(ellipse at 50% 15%,#385b91,#132747 75%);border:6px solid #f4ca59;display:block;touch-action:none}
+.flipper-caption{display:flex;align-items:center;justify-content:space-between;gap:8px}
+footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
+@media(orientation:portrait){#app{padding:8px}header{min-height:45px}.brand{font-size:20px}.mascot{width:40px;height:40px}nav button{padding:9px 10px;font-size:13px}.grid,.dino-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.flipper-wrap{grid-template-columns:1fr 1fr;grid-template-rows:1fr auto}.flipper-wrap #table{grid-column:1/3;grid-row:1}.flipper-key{min-height:64px}.panel{padding:10px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app">
+<header><div class="brand"><div class="mascot" aria-hidden="true">🦕</div><span>¡A EXPLORAR!</span></div><div id="sayStatus" aria-live="polite">Tocá y descubrí</div></header>
+<nav aria-label="Juegos">
+<button data-panel="dinos" aria-selected="true">🦖 Dinosaurios</button>
+<button data-panel="habla" aria-selected="false">🗣️ Hablemos</button>
+<button data-panel="flipper" aria-selected="false">🎱 Flipper</button>
+</nav>
+<main>
+<section class="panel active" id="dinos">
+<h1>¡Conocé a los dinosaurios!</h1><p class="hint">Elegí uno y escuchá cómo se llama.</p>
+<div class="grid dino-grid" id="dinoGrid"></div>
+</section>
+<section class="panel" id="habla">
+<h1>Botones que hablan</h1><p class="hint">Tocá el dibujo. ¡El teléfono lo dice en voz alta!</p>
+<div class="grid">
+<button class="tile" style="--tile:#ffdf70;--shade:#d4aa32" data-say="Hola"><span class="emoji">👋</span>Hola</button>
+<button class="tile" style="--tile:#8de4ff;--shade:#48a8cf" data-say="Quiero agua"><span class="emoji">💧</span>Quiero agua</button>
+<button class="tile" style="--tile:#a9f2c5;--shade:#64bf89" data-say="Estoy contento"><span class="emoji">😊</span>Estoy contento</button>
+<button class="tile" style="--tile:#ffb3d0;--shade:#d8759b" data-say="Quiero jugar"><span class="emoji">🧸</span>Quiero jugar</button>
+<button class="tile" style="--tile:#c7b8ff;--shade:#8d79d3" data-say="Necesito ayuda"><span class="emoji">🙋</span>Necesito ayuda</button>
+<button class="tile" style="--tile:#ffd0a6;--shade:#d99b68" data-say="Estoy cansado"><span class="emoji">😴</span>Estoy cansado</button>
+<button class="tile" style="--tile:#a8e6ff;--shade:#6eafcf" data-say="Uno"><span class="emoji">1️⃣</span>Uno</button>
+<button class="tile" style="--tile:#b9f0a2;--shade:#7eb86a" data-say="Dos"><span class="emoji">2️⃣</span>Dos</button>
+<button class="tile" style="--tile:#ffb6a8;--shade:#d67e70" data-say="Tres"><span class="emoji">3️⃣</span>Tres</button>
+</div>
+</section>
+<section class="panel" id="flipper">
+<div class="flipper-caption"><div><h1>¡Flipper infinito!</h1><p class="hint">La pelota sigue jugando. ¡No se pierde!</p></div><button class="back" id="newBall">↻ Otra pelota</button></div>
+<div class="flipper-wrap">
+<button class="flipper-key" id="leftKey" aria-label="Paleta izquierda">◀</button>
+<canvas id="table" aria-label="Mesa de flipper"></canvas>
+<button class="flipper-key right" id="rightKey" aria-label="Paleta derecha">▶</button>
+</div>
+</section>
+</main>
+<footer>Un lugar para descubrir, jugar y volver a intentar 💛</footer>
+</div>
+<script>
+const statusEl=document.getElementById('sayStatus');
+let voices=[];
+function loadVoices(){voices=speechSynthesis?.getVoices?.()||[]}
+if('speechSynthesis'in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+function speak(text){if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);const v=voices.find(x=>/^es-AR$/i.test(x.lang))||voices.find(x=>/^es/i.test(x.lang));if(v)u.voice=v;u.lang=v?.lang||'es-AR';u.rate=.88;u.pitch=1;u.volume=1;u.onstart=()=>statusEl.textContent='🔊 '+text;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')resizeTable()}));
+document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
+const dinoData=[['Tiranosaurio rex','🦖'],['Triceratops','🦕'],['Estegosaurio','🦕'],['Braquiosaurio','🦕'],['Velociraptor','🦖'],['Anquilosaurio','🦕']];
+const dinoGrid=document.getElementById('dinoGrid');
+dinoData.forEach(([name,emoji],i)=>{const b=document.createElement('button');b.className='dino';b.innerHTML='<span style="font-size:clamp(38px,6vw,65px)">'+emoji+'</span><span>'+name+'</span>';b.addEventListener('click',()=>speak(name));dinoGrid.appendChild(b)});
+// Flipper amable: mesa cerrada, rebote inferior y paletas amplias. La pelota nunca sale del campo.
+const canvas=document.getElementById('table'),ctx=canvas.getContext('2d');let W=700,H=420,ball={x:350,y:110,vx:2.3,vy:2.2,r:11},left=false,right=false,frame=0;
+function resizeTable(){const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;const d=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);W=canvas.width;H=canvas.height;if(ball.x>W||ball.y>H){ball.x=W/2;ball.y=H*.35}}
+function resetBall(){ball={x:W/2,y:H*.25,vx:(Math.random()>.5?1:-1)*2.6,vy:2.2,r:Math.max(9,W*.014)}}
+function draw(){frame++;ctx.clearRect(0,0,W,H);ctx.strokeStyle='#ffd65a';ctx.lineWidth=8;ctx.strokeRect(5,5,W-10,H-10);
+for(let i=0;i<7;i++){const x=W*(.16+i*.113),y=H*(.2+(i%2)*.18);ctx.beginPath();ctx.fillStyle=['#ff719b','#5bd4ff','#ffe16a','#7be0a2'][i%4];ctx.arc(x,y,Math.max(7,W*.014),0,Math.PI*2);ctx.fill()}
+const mid=H*.84,span=W*.17;ctx.lineCap='round';ctx.lineWidth=Math.max(14,W*.035);ctx.strokeStyle='#ffe16a';ctx.beginPath();ctx.moveTo(W*.28,mid+ (left?-10:10));ctx.lineTo(W*.45,mid+(left?10:-10));ctx.stroke();ctx.strokeStyle='#64d5ff';ctx.beginPath();ctx.moveTo(W*.55,mid+(right?10:-10));ctx.lineTo(W*.72,mid+(right?-10:10));ctx.stroke();
+ball.x+=ball.vx;ball.y+=ball.vy;const wall=ball.r+13;if(ball.x<wall||ball.x>W-wall)ball.vx*=-1;if(ball.y<wall)ball.vy=Math.abs(ball.vy);
+if(ball.y>mid-18&&ball.y<mid+30){if(left&&ball.x<W*.49&&ball.x>W*.2){ball.vy=-Math.abs(ball.vy)-.5;ball.vx+=.9}if(right&&ball.x>W*.51&&ball.x<W*.8){ball.vy=-Math.abs(ball.vy)-.5;ball.vx-=.9}}
+if(ball.y>H-wall){ball.y=H-wall;ball.vy=-Math.abs(ball.vy)-.8}
+ball.vx=Math.max(-7,Math.min(7,ball.vx));ball.vy=Math.max(-8,Math.min(8,ball.vy));
+ctx.beginPath();ctx.fillStyle='#fff';ctx.shadowColor='#8ceaff';ctx.shadowBlur=18;ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;requestAnimationFrame(draw)}
+function key(id,side){const el=document.getElementById(id);const on=e=>{e.preventDefault();if(side==='left')left=true;else right=true};const off=e=>{e.preventDefault();if(side==='left')left=false;else right=false};el.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,off))}
+key('leftKey','left');key('rightKey','right');document.getElementById('newBall').addEventListener('click',resetBall);window.addEventListener('resize',resizeTable);window.addEventListener('orientationchange',()=>setTimeout(resizeTable,150));resizeTable();draw();
+</script>
+</body></html>
