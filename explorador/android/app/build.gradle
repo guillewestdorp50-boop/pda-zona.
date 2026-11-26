@@ -1,0 +1,41 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'com.pdazona.explorador'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.pdazona.explorador'
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName '1.0.0'
+    }
+
+    signingConfigs {
+        release {
+            def ks = System.getenv('EXPLORER_KEYSTORE_PATH')
+            if (ks) {
+                storeFile file(ks)
+                storePassword System.getenv('EXPLORER_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('EXPLORER_KEY_ALIAS')
+                keyPassword System.getenv('EXPLORER_KEY_PASSWORD')
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (System.getenv('EXPLORER_KEYSTORE_PATH')) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
+tasks.register('copyExplorerAssets', Copy) {
+    from("$rootDir/../index.html")
+    into("$projectDir/src/main/assets")
+    rename { 'index.html' }
+}
+preBuild.dependsOn(copyExplorerAssets)
