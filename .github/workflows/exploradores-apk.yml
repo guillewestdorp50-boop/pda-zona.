@@ -22,6 +22,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Detectar versión de la aplicación
+        id: version
+        run: |
+          VERSION=$(sed -n "s/.*versionName '\\([^']*\\)'.*/\\1/p" explorador/android/app/build.gradle)
+          echo "name=$VERSION" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -62,11 +67,11 @@ jobs:
           test -s "$APK"
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK"
           mkdir -p "$RUNNER_TEMP/release"
-          cp "$APK" "$RUNNER_TEMP/release/Exploradores-${{ inputs.release_tag }}.apk"
+          cp "$APK" "$RUNNER_TEMP/release/Exploradores-${{ inputs.release_tag || format('exploradores-v{0}', steps.version.outputs.name) }}.apk"
       - name: Publicar APK de producción
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ inputs.release_tag }}
-          name: "Exploradores ${{ inputs.release_tag }}"
+          tag_name: ${{ inputs.release_tag || format('exploradores-v{0}', steps.version.outputs.name) }}
+          name: "Exploradores ${{ inputs.release_tag || format('exploradores-v{0}', steps.version.outputs.name) }}"
           generate_release_notes: true
-          files: ${{ runner.temp }}/release/Exploradores-${{ inputs.release_tag }}.apk
+          files: ${{ runner.temp }}/release/Exploradores-${{ inputs.release_tag || format('exploradores-v{0}', steps.version.outputs.name) }}.apk
