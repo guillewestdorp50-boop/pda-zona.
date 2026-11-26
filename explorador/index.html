@@ -95,6 +95,26 @@ const statusEl=document.getElementById('sayStatus');
 let voices=[];
 function loadVoices(){voices=speechSynthesis?.getVoices?.()||[]}
 if('speechSynthesis'in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+// Guía fonética: conserva el nombre escrito en pantalla y mejora cómo lo lee el locutor.
+const dinosaurPronunciation={
+ 'Triceratops':'Tricerátops',
+ 'Diplodocus':'Diplódocus',
+ 'Parasaurolophus':'Parasaurolofus',
+ 'Archaeopteryx':'Arqueópterix',
+ 'Coelophysis':'Selófisis',
+ 'Therizinosaurus':'Terizinosaurio',
+ 'Deinonychus':'Deinónicus',
+ 'Utahraptor':'Yutaraptor',
+ 'Baryonyx':'Bariónix',
+ 'Suchomimus':'Sukómimus',
+ 'Styracosaurus':'Estiracosaurio',
+ 'Centrosaurus':'Centrosaurio',
+ 'Corythosaurus':'Coritosaurio',
+ 'Lambeosaurus':'Lambeosaurio',
+ 'Psittacosaurus':'Sitacosaurio',
+ 'Euoplocephalus':'Euoplocefalo'
+};
+function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
 function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);const v=voices.find(x=>/^es-AR$/i.test(x.lang))||voices.find(x=>/^es/i.test(x.lang));if(v)u.voice=v;u.lang=v?.lang||'es-AR';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')resizeTable()}));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
@@ -122,12 +142,12 @@ async function commonsImage(english){
 }
 const cards=[];
 species.forEach(([name,english])=>{const b=document.createElement('button');b.className='dino';b.dataset.name=name.toLocaleLowerCase('es');b.dataset.english=english;b.innerHTML=fallbackArt+'<span class="dino-name">'+name+'</span>';b.addEventListener('click',()=>openDetail(name,english));dinoGrid.appendChild(b);cards.push(b)});
-function openDetail(name,english){activeSpecies={name,english};document.getElementById('detailName').textContent=name;document.getElementById('detailHint').textContent='Buscando una reconstrucción paleontológica…';document.getElementById('detailImage').src='';document.getElementById('detailImage').alt=name;document.getElementById('detailCredit').textContent='Cargando imagen…';detail.classList.add('open');speak(name);loadSpeciesImage(name,english,true)}
+function openDetail(name,english){activeSpecies={name,english};document.getElementById('detailName').textContent=name;document.getElementById('detailHint').textContent='Buscando una reconstrucción paleontológica…';document.getElementById('detailImage').src='';document.getElementById('detailImage').alt=name;document.getElementById('detailCredit').textContent='Cargando imagen…';detail.classList.add('open');speak(spokenDinosaurName(name));loadSpeciesImage(name,english,true)}
 async function loadSpeciesImage(name,english,large=false){const data=await commonsImage(english);const targets=large?[document.getElementById('detailImage')]:cards.filter(c=>c.dataset.english===english).map(c=>c.querySelector('.loading'));if(!data){if(large){document.getElementById('detailHint').textContent='No se encontró una imagen ahora. Podés volver a intentarlo con conexión.';document.getElementById('detailCredit').textContent='';}return}
  targets.forEach(node=>{if(!node)return;let img=node;if(!large){img=document.createElement('img');img.loading='lazy';img.decoding='async';img.className='dino-image';node.replaceWith(img)}img.src=data.url;img.alt=name;img.onerror=()=>{img.replaceWith(Object.assign(document.createElement('div'),{className:'loading',textContent:'🦖'}))}});
  if(large){document.getElementById('detailHint').textContent=data.title;document.getElementById('detailCredit').textContent='Imagen: '+data.artist+' · '+data.license+' · ';const a=document.createElement('a');a.href=data.source;a.target='_blank';a.rel='noopener';a.textContent='Ver fuente y licencia';document.getElementById('detailCredit').appendChild(a);}
 }
-document.getElementById('detailSpeak').addEventListener('click',()=>{if(activeSpecies)speak(activeSpecies.name)});
+document.getElementById('detailSpeak').addEventListener('click',()=>{if(activeSpecies)speak(spokenDinosaurName(activeSpecies.name))});
 document.getElementById('detailClose').addEventListener('click',()=>detail.classList.remove('open'));
 detail.addEventListener('click',e=>{if(e.target===detail)detail.classList.remove('open')});
 searchInput.addEventListener('input',()=>{const q=searchInput.value.toLocaleLowerCase('es').trim();cards.forEach(c=>c.hidden=!c.dataset.name.includes(q)&&!c.dataset.english.toLowerCase().includes(q))});
