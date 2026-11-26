@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: "Etiqueta de versión (por ejemplo exploradores-v1.0.0)"
+        description: "Etiqueta de versión (por ejemplo exploradores-v1.0.1)"
         required: true
-        default: "exploradores-v1.0.0"
+        default: "exploradores-v1.0.1"
 
 permissions:
   contents: write
