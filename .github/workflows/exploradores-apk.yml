@@ -20,6 +20,9 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - uses: android-actions/setup-android@v3
+      - name: Instalar herramientas de firma Android
+        run: sdkmanager "build-tools;35.0.0"
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.9"
@@ -47,7 +50,7 @@ jobs:
         run: |
           APK=app/build/outputs/apk/release/app-release.apk
           test -s "$APK"
-          jarsigner -verify "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK"
           mkdir -p "$RUNNER_TEMP/release"
           cp "$APK" "$RUNNER_TEMP/release/Exploradores-${{ inputs.release_tag }}.apk"
       - name: Publicar APK de producción
