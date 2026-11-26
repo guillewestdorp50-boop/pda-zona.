@@ -35,6 +35,20 @@ h1{margin:0;font-size:clamp(19px,2.5vw,27px);line-height:1.05} .hint{margin:0;fo
 .flipper-caption{display:flex;align-items:center;justify-content:space-between;gap:8px}
 footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 @media(orientation:portrait){#app{padding:6px;gap:5px}header{min-height:38px}.brand{font-size:18px}.mascot{width:34px;height:34px}nav button{padding:7px 8px;font-size:12px;border-radius:12px}.grid,.dino-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.flipper-wrap{grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;gap:7px}.flipper-wrap #table{grid-column:1/3;grid-row:1}.flipper-key{min-height:54px;border-radius:16px}.panel{padding:8px;border-radius:18px}.dino svg{height:clamp(44px,7vh,70px)}}
+
+/* Galería de dinosaurios: cuadros uniformes y buscador siempre accesible */
+#dinos{gap:7px}
+#dinos .search-row{position:sticky;top:-8px;z-index:6;flex:0 0 auto;padding:7px 0 8px;background:linear-gradient(180deg,#f5fbf8 82%,#f5fbf800);border-radius:10px}
+#dinos .search-row input{min-height:44px;font-size:15px;border:2px solid #8fc8dc;box-shadow:0 3px 10px #36516a18}
+#dinos .dino-grid{flex:0 0 auto;align-content:start;grid-auto-rows:auto;gap:9px}
+#dinos .dino{width:100%;min-width:0;min-height:0;align-self:start;justify-content:flex-start;gap:5px;padding:6px;border:2px solid #fff;border-radius:14px;box-shadow:0 4px 0 #b4d4dc}
+#dinos .dino img,#dinos .dino .loading{display:block;width:100%;height:auto;aspect-ratio:1/1;min-height:0;max-height:none;object-fit:contain;border-radius:9px;background:linear-gradient(145deg,#edf8e9,#d8e9f4);flex:0 0 auto}
+#dinos .dino .loading{display:grid;place-items:center;font-size:clamp(28px,8vw,42px)}
+#dinos .dino .dino-name{display:grid;place-items:center;width:100%;min-height:2.4em;padding:2px 1px;font-size:clamp(10px,2.9vw,14px);line-height:1.12;text-align:center;overflow-wrap:anywhere}
+#dinos .dino-detail{padding:12px}
+#dinos .detail-card{width:min(100%,560px);max-height:94dvh;padding:12px;gap:8px}
+#dinos .detail-card img{width:100%;height:auto;aspect-ratio:1/1;max-height:52vh;object-fit:contain;background:#edf5e9;border:1px solid #e1ebdf;border-radius:14px}
+#dinos .detail-card h2{text-align:center}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
