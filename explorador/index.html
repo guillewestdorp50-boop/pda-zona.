@@ -126,6 +126,7 @@ const dinosaurPronunciation={
  'Euoplocephalus':'Euoplocefalo'
 };
 function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
+let voiceLoadAttempts=0;
 function loadSpanishVoiceOptions(){
  const select=document.getElementById('spanishVoiceSelect'),info=document.getElementById('voiceStatus');
  if(!select)return;
@@ -140,6 +141,7 @@ function loadSpanishVoiceOptions(){
   select.onchange=()=>{if(select.value)window.AndroidSpeech.selectSpanishVoice(select.value);info.textContent='Voz seleccionada. Tocá PROBAR para escucharla.'};
   return;
  }
+ if(window.AndroidSpeech?.getSpanishVoices&&voiceLoadAttempts<10){voiceLoadAttempts++;info.textContent='Consultando las voces instaladas en Android…';setTimeout(loadSpanishVoiceOptions,650);return}
  const browser=voices.filter(v=>/^es([_-]|$)/i.test(v.lang));
  select.innerHTML='';
  if(browser.length){
