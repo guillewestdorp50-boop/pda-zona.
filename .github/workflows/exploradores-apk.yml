@@ -1,6 +1,12 @@
 name: Exploradores APK producción
 
 on:
+  push:
+    branches:
+      - explorador-apk-production
+    paths:
+      - "explorador/**"
+      - ".github/workflows/exploradores-apk.yml"
   workflow_dispatch:
     inputs:
       release_tag:
