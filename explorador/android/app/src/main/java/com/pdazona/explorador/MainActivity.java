@@ -157,6 +157,7 @@ public class MainActivity extends Activity {
             install.setDataAndType(apkUri, "application/vnd.android.package-archive");
             install.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(install);
+            getPreferences(MODE_PRIVATE).edit().remove("pending_update_apk").apply();
         } catch (Exception e) {
             notifyPage("Android no pudo abrir el instalador. Podés volver a intentar desde Actualizar.");
             Toast.makeText(this, "No se pudo abrir el instalador.", Toast.LENGTH_LONG).show();
