@@ -821,16 +821,24 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBasebal
 async function checkForAppUpdate(){
  if(!window.AndroidUpdater||!navigator.onLine)return;
  try{
-  const response=await fetch('https://api.github.com/repos/guillewestdorp50-boop/pda-zona./releases/latest',{headers:{'Accept':'application/vnd.github+json'},cache:'no-store'});
-  if(!response.ok)return;
-  const release=await response.json();
-  const match=(release.tag_name||'').match(/^exploradores-v(\d+)\.(\d+)\.(\d+)$/);
-  if(!match)return;
+  // El repositorio publica varios proyectos: buscar exclusivamente releases de Exploradores.
+  const response=await fetch('https://api.github.com/repos/guillewestdorp50-boop/pda-zona./releases?per_page=100',{headers:{'Accept':'application/vnd.github+json'},cache:'no-store'});
+  if(!response.ok)throw new Error('GitHub API '+response.status);
+  const releases=await response.json();
+  const candidates=(Array.isArray(releases)?releases:[]).map(release=>{
+   const match=(release.tag_name||'').match(/^exploradores-v(\\d+)\\.(\\d+)\\.(\\d+)$/);
+   return match?{release,version:match.slice(1).map(Number),match}:null;
+  }).filter(Boolean).sort((a,b)=>{
+   for(let i=0;i<3;i++){if(a.version[i]!==b.version[i])return b.version[i]-a.version[i]}
+   return 0;
+  });
+  if(!candidates.length)return;
+  const {release,match}=candidates[0];
   const latest=match.slice(1).map(Number),installed=(window.AndroidUpdater.getVersionName()||'0.0.0').split('.').map(Number);
   let newer=false;
   for(let i=0;i<3;i++){if((latest[i]||0)>(installed[i]||0)){newer=true;break}if((latest[i]||0)<(installed[i]||0))break}
   if(!newer)return;
-  const asset=(release.assets||[]).find(a=>/^Exploradores-.*\.apk$/i.test(a.name||''));
+  const asset=(release.assets||[]).find(a=>/^Exploradores-.*\\.apk$/i.test(a.name||''));
   if(!asset||!asset.browser_download_url)return;
   const btn=document.getElementById('updateBtn');
   btn.textContent='⬆ Actualizar '+match.slice(1).join('.');
@@ -840,7 +848,10 @@ async function checkForAppUpdate(){
     btn.disabled=true;btn.textContent='Descargando…';window.AndroidUpdater.installUpdate(asset.browser_download_url);
    }
   };
- }catch(e){}
+ }catch(e){
+  const status=document.getElementById('sayStatus');
+  if(status)status.textContent='No se pudo comprobar la actualización. Revisá la conexión e intentá nuevamente.';
+ }
 }
 window.onNativeUpdateMessage=function(message){
  const btn=document.getElementById('updateBtn');
