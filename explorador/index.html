@@ -105,6 +105,27 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 .flipper-wrap,.flipper-wrap button,.flipper-wrap canvas{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent }
 .flipper-key,.launch-key{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none }
 @media(orientation:portrait){#habla .talk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#habla .talk-grid .tile{min-height:82px}}
+
+/* BÉISBOL 3D: escena local, geometría reutilizable y render limitado al panel activo. */
+#baseballPanel{overflow:hidden;gap:7px}
+.baseball-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 auto}
+.baseball-heading h1{font-size:clamp(18px,2.3vw,25px)}
+.baseball-counts{display:flex;flex-direction:column;gap:4px;text-align:right;font-size:11px;font-weight:1000;color:#173b62}
+.baseball-counts span{background:#fff;padding:4px 7px;border-radius:8px}
+.baseball-stage{position:relative;flex:1;min-height:250px;overflow:hidden;border-radius:17px;background:linear-gradient(#7ec8ed 0%,#b8e5f5 46%,#234d2b 47%,#10281b 100%);box-shadow:inset 0 0 0 2px #fff,0 7px 18px #18304733;isolation:isolate}
+#baseball3d{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.baseball-scoreboard{position:absolute;z-index:2;top:8px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:9px;padding:5px 10px;border:2px solid #d5b56c;border-radius:8px;background:#101a24eF;color:#fff;font-size:10px;font-weight:950;white-space:nowrap;box-shadow:0 3px 9px #0006;pointer-events:none}
+.baseball-scoreboard strong{font-size:15px;color:#ffe17a}
+.baseball-message{position:absolute;z-index:2;top:48px;left:50%;transform:translateX(-50%);max-width:90%;padding:6px 12px;border-radius:99px;background:#071b2cce;color:#fff;font-size:clamp(12px,2vw,17px);font-weight:1000;letter-spacing:.6px;text-align:center;text-shadow:0 2px 3px #000;pointer-events:none;white-space:nowrap}
+.baseball-controls{position:absolute;z-index:3;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:12px;padding:12px 10px max(12px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#081b28dd 28%)}
+#baseballAction{min-width:142px;min-height:54px;padding:10px 18px;border:2px solid #fff2b3;border-radius:16px;background:linear-gradient(160deg,#ffed7b,#e5a72e 65%,#9c5d1b);box-shadow:0 5px 0 #744315,0 8px 18px #0007;color:#38230a;font-size:clamp(15px,2vw,19px);font-weight:1000;touch-action:manipulation}
+#baseballAction:active{transform:translateY(3px);box-shadow:0 2px 0 #744315}
+#baseballHint{max-width:46%;color:#fff;font-size:11px;font-weight:850;text-shadow:0 1px 3px #000}
+.baseball-loading,.baseball-fallback{position:absolute;z-index:4;inset:0;display:grid;place-items:center;padding:20px;background:#0c1b29dd;color:#fff;text-align:center;font-weight:900}
+.baseball-loading[hidden],.baseball-fallback[hidden]{display:none}
+@media(orientation:portrait){#baseballPanel{padding:7px}.baseball-stage{min-height:220px}.baseball-scoreboard{top:6px;gap:6px;padding:4px 7px;font-size:9px}.baseball-message{top:42px;font-size:12px}.baseball-controls{gap:8px;padding:10px 8px max(10px,env(safe-area-inset-bottom))}#baseballAction{min-width:126px;min-height:50px;font-size:15px}#baseballHint{font-size:10px;max-width:43%}}
+@media(prefers-reduced-motion:reduce){#baseballAction{transition:none}}
+
 </style>
 </head>
 <body>
@@ -114,6 +135,7 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 <button data-panel="dinos" aria-selected="true">🦖 Dinosaurios</button>
 <button data-panel="habla" aria-selected="false">🗣️ Hablemos</button>
 <button data-panel="flipper" aria-selected="false">🎱 Flipper</button>
+<button data-panel="baseball" aria-selected="false">⚾ Béisbol</button>
 </nav>
 <main>
 <section class="panel active" id="dinos">
@@ -186,9 +208,20 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 <div class="pin-score" id="pinScore">000000</div>
 </div>
 </section>
+<section class="panel" id="baseballPanel">
+ <div class="baseball-heading"><div><h1>⚾ ¡A batear, Luis!</h1><p class="hint">El pitcher lanza. Luis conecta. ¡Acá nunca se erra!</p></div><div class="baseball-counts"><span id="baseballHits">HITS 0</span><span id="baseballRuns">CARRERAS 0</span></div></div>
+ <div class="baseball-stage" id="baseballStage">
+  <div class="baseball-scoreboard"><span>CHAZÓN</span><strong id="baseballScore">0 — 0</strong><span id="baseballInning">1ª ENTRADA</span></div>
+  <div id="baseballMessage" class="baseball-message">¡PREPARADO PARA BATEAR!</div>
+  <div id="baseballFallback" class="baseball-fallback" hidden>Este teléfono no pudo iniciar los gráficos 3D. Probá cerrar otras aplicaciones y volver a entrar.</div>
+  <div id="baseballLoading" class="baseball-loading">Preparando el estadio…</div>
+  <div class="baseball-controls"><button id="baseballAction" type="button">⚾ LANZAR</button><span id="baseballHint">Tocá LANZAR y después BATEAR. Luis siempre conecta.</span></div>
+ </div>
+</section>
 </main>
 <footer>Un lugar para descubrir, jugar y volver a intentar 💛</footer>
 </div>
+<script src="three.min.js"></script>
 <script>
 const statusEl=document.getElementById('sayStatus');
 // La pronunciación usa nombres españoles acentuados; los nombres científicos quedan para las imágenes.
@@ -197,7 +230,7 @@ const dinosaurPronunciation={
 };
 function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
 function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-US';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
-document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')startFlipper();else stopFlipper()}));
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')startFlipper();else stopFlipper();if(b.dataset.panel==='baseball')startBaseball();else stopBaseball()}));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
 document.getElementById('repeatDone')?.addEventListener('click',()=>{const p=document.getElementById('repeatPraise');if(p)p.textContent='¡Excelente, Luis! ¡Muy bien repetido! ¿Probamos otra palabra?';speak('¡Excelente, Luis! ¡Muy bien repetido!')});
 const flipperTouchArea=document.querySelector('.flipper-wrap');
@@ -414,6 +447,152 @@ window.addEventListener('resize',resizeTable);
 window.addEventListener('orientationchange',()=>setTimeout(resizeTable,180));
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopFlipper();else if(document.getElementById('flipper').classList.contains('active'))startFlipper()});
 window.addEventListener('pagehide',stopFlipper);
+
+
+/* BÉISBOL 3D — escena procedural sin descargas externas. */
+let baseballRenderer=null,baseballScene=null,baseballCamera=null,baseballRAF=0,baseballActive=false,baseballLast=0,baseballLastRender=0;
+let baseballPlayer=null,baseballPitcher=null,baseballBatPivot=null,baseballBall=null,baseballBallShadow=null;
+let baseballPhase='ready',baseballPitchStart=0,baseballFlightStart=0,baseballSwingStarted=false,baseballHits=0,baseballRuns=0,baseballScore=0,baseballContactPoint=null,baseballOutcome='HOME RUN';
+const baseballStage=document.getElementById('baseballStage');
+const baseballAction=document.getElementById('baseballAction');
+const baseballMessage=document.getElementById('baseballMessage');
+const baseballLoading=document.getElementById('baseballLoading');
+const baseballFallback=document.getElementById('baseballFallback');
+const baseballHint=document.getElementById('baseballHint');
+const baseballMat=(color,roughness=.78,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
+function baseballBox(parent,w,h,d,mat,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);parent.add(m);return m}
+function baseballSphere(parent,r,mat,x,y,z,sx=1,sy=1,sz=1){const m=new THREE.Mesh(new THREE.SphereGeometry(r,12,10),mat);m.position.set(x,y,z);m.scale.set(sx,sy,sz);parent.add(m);return m}
+function baseballLimb(parent,a,b,r1,r2,mat){const v1=new THREE.Vector3(...a),v2=new THREE.Vector3(...b),dir=v2.clone().sub(v1);const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r2,r1,dir.length(),9),mat);mesh.position.copy(v1.add(v2).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());parent.add(mesh);return mesh}
+function baseballCreateHuman(x,z,uniform,capColor,rotation=0,isPitcher=false){
+ const root=new THREE.Group();root.position.set(x,0,z);root.rotation.y=rotation;baseballScene.add(root);
+ const skin=baseballMat(0xb77c58),shirt=baseballMat(uniform),pants=baseballMat(0x172331),shoes=baseballMat(0x17191d),cap=baseballMat(capColor),glove=baseballMat(0x8a4b25),white=baseballMat(0xf2eee0);
+ baseballBox(root,.66,.83,.34,shirt,0,1.48,0);
+ baseballSphere(root,.31,skin,0,2.12,0,1,.98,.9);
+ baseballSphere(root,.34,cap,0,2.34,-.015,1,.27,1);
+ baseballBox(root,.48,.055,.36,cap,0,2.27,-.08);
+ baseballLimb(root,[-.19,1.16,0],[-.25,.62,.02],.15,.12,pants);
+ baseballLimb(root,[.19,1.16,0],[.25,.62,.02],.15,.12,pants);
+ baseballLimb(root,[-.25,.62,.02],[-.29,.13,.08],.105,.08,pants);
+ baseballLimb(root,[.25,.62,.02],[.29,.13,.08],.105,.08,pants);
+ baseballBox(root,.25,.13,.42,shoes,-.29,.08,.13);baseballBox(root,.25,.13,.42,shoes,.29,.08,.13);
+ const leftShoulder=new THREE.Vector3(-.36,1.83,0),rightShoulder=new THREE.Vector3(.36,1.83,0);
+ baseballLimb(root,[leftShoulder.x,leftShoulder.y,0],[-.57,1.4,.05],.115,.09,shirt);
+ baseballLimb(root,[-.57,1.4,.05],[-.48,1.08,.18],.09,.075,skin);
+ baseballLimb(root,[rightShoulder.x,rightShoulder.y,0],[.57,1.47,.04],.115,.09,shirt);
+ baseballLimb(root,[.57,1.47,.04],[.42,1.12,.18],.09,.075,skin);
+ baseballSphere(root,.1,glove,-.48,1.06,.2,1.2,.8,.7);
+ baseballSphere(root,.075,skin,.42,1.1,.2,1.2,.8,.7);
+ if(!isPitcher){
+  const pivot=new THREE.Group();pivot.position.set(.32,1.78,.1);root.add(pivot);
+  const batWood=baseballMat(0xb87935,.55),batTip=baseballMat(0xe3bd7c,.48);
+  const bat=new THREE.Mesh(new THREE.CylinderGeometry(.035,.073,1.12,12),batWood);bat.rotation.z=-Math.PI/2;bat.position.set(.53,.05,0);pivot.add(bat);
+  const knob=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.11,10),batTip);knob.rotation.z=-Math.PI/2;knob.position.set(.02,.05,0);pivot.add(knob);
+  baseballBatPivot=pivot;
+ }
+ return root;
+}
+function baseballMakeSeams(){
+ const seamMat=new THREE.MeshBasicMaterial({color:0xb92728});
+ for(let k=0;k<2;k++){const pts=[];for(let i=0;i<=24;i++){const t=i/24*Math.PI*2;const a=(t-Math.PI)*.65;pts.push(new THREE.Vector3(.101*Math.cos(a),.075*Math.sin(t),.055*Math.sin(a)))}const curve=new THREE.CatmullRomCurve3(pts);baseballBall.add(new THREE.Mesh(new THREE.TubeGeometry(curve,28,.0035,4,false),seamMat));}
+}
+function baseballBuildScene(){
+ if(baseballRenderer)return true;
+ if(!window.THREE||!THREE.WebGLRenderer)throw new Error('WebGL no disponible');
+ baseballScene=new THREE.Scene();baseballScene.background=new THREE.Color(0x83c8ec);baseballScene.fog=new THREE.Fog(0x83c8ec,35,90);
+ baseballCamera=new THREE.PerspectiveCamera(48,1,.1,110);baseballCamera.position.set(0,4.2,12.5);baseballCamera.lookAt(0,2.1,-10);
+ baseballRenderer=new THREE.WebGLRenderer({antialias:false,alpha:false,powerPreference:'low-power',stencil:false,depth:true});
+ baseballRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.25));baseballRenderer.setSize(baseballStage.clientWidth,baseballStage.clientHeight,false);
+ if('outputColorSpace' in baseballRenderer&&THREE.SRGBColorSpace)baseballRenderer.outputColorSpace=THREE.SRGBColorSpace;
+ baseballRenderer.domElement.id='baseball3d';baseballRenderer.domElement.setAttribute('aria-label','Estadio de béisbol tridimensional');
+ baseballStage.insertBefore(baseballRenderer.domElement,baseballStage.firstChild);
+ baseballScene.add(new THREE.HemisphereLight(0xe5f5ff,0x52613a,1.7));
+ const sun=new THREE.DirectionalLight(0xfff0d1,2.0);sun.position.set(-8,18,8);baseballScene.add(sun);
+ const fill=new THREE.DirectionalLight(0xb7ddff,.65);fill.position.set(8,10,-18);baseballScene.add(fill);
+ const grass=baseballMat(0x347b3c),stripe1=baseballMat(0x3e8b42),dirt=baseballMat(0xb47a48),white=baseballMat(0xf4eddb),fence=baseballMat(0x183c37),stand=baseballMat(0x344455),rail=baseballMat(0xb6c4ca,.5,.35);
+ const ground=new THREE.Mesh(new THREE.PlaneGeometry(90,90),grass);ground.rotation.x=-Math.PI/2;ground.position.set(0,-.04,-17);baseballScene.add(ground);
+ for(let i=0;i<8;i++){const stripe=new THREE.Mesh(new THREE.PlaneGeometry(72,2.3),stripe1);stripe.rotation.x=-Math.PI/2;stripe.position.set(0,.005,-8-i*5.5);baseballScene.add(stripe)}
+ const infield=new THREE.Mesh(new THREE.CircleGeometry(8.4,4),dirt);infield.rotation.x=-Math.PI/2;infield.rotation.z=Math.PI/4;infield.position.set(0,.02,-2.7);baseballScene.add(infield);
+ const mound=new THREE.Mesh(new THREE.CylinderGeometry(1.6,1.9,.22,32),dirt);mound.position.set(0,.11,-14);baseballScene.add(mound);
+ // Bases and home plate.
+ [[-5,.04,-2.7],[0,.04,-8],[5,.04,-2.7]].forEach(p=>{const b=baseballBox(baseballScene,.42,.08,.42,white,p[0],p[1],p[2]);b.rotation.y=Math.PI/4});
+ const plate=new THREE.Mesh(new THREE.ConeGeometry(.43,.1,4),white);plate.rotation.x=-Math.PI/2;plate.rotation.z=Math.PI/4;plate.position.set(0,.07,2.1);baseballScene.add(plate);
+ const wall=baseballBox(baseballScene,48,2.5,.55,fence,0,1.25,-34);
+ for(let side of [-1,1]){const bleacher=baseballBox(baseballScene,12,5,2,stand,side*18,3,-24);bleacher.rotation.z=side*.05;const railMesh=baseballBox(baseballScene,12,.16,.18,rail,side*18,5.5,-23.0)}
+ // Crowds: 420 tiny instanced seats, one draw call per color.
+ const crowdColors=[0xd94c43,0xe5d6b2,0x2d75a6,0xe2b33c,0x263b50];
+ for(let c=0;c<crowdColors.length;c++){const geo=new THREE.BoxGeometry(.19,.25,.16),mat=baseballMat(crowdColors[c]);const inst=new THREE.InstancedMesh(geo,mat,90);const dummy=new THREE.Object3D();for(let i=0;i<90;i++){const row=Math.floor(i/15),col=i%15;dummy.position.set(-24+col*3.42,1.1+row*.67,-29-row*.2);dummy.rotation.y=(col%3)*.02;dummy.scale.set(1,1+(i%4)*.13,1);dummy.updateMatrix();inst.setMatrixAt(i,dummy.matrix)}baseballScene.add(inst)}
+ // Focos del estadio sin sombras dinámicas.
+ for(let side of [-1,1]){const pole=baseballLimb(baseballScene,[side*24,0,-15],[side*24,17,-15],.18,.12,rail);const bar=baseballBox(baseballScene,3,.25,.5,rail,side*24,17,-15);for(let j=0;j<4;j++){const lamp=new THREE.Mesh(new THREE.BoxGeometry(.38,.24,.18),baseballMat(0xfff0bd,0.2,0));lamp.position.set(side*24-1.1+j*.72,17,-14.7);baseballScene.add(lamp)}}
+ baseballPlayer=baseballCreateHuman(-1.15,1.1,0x173e73,0x102c55,.38,false);
+ baseballPitcher=baseballCreateHuman(.15,-15,0xe7e9eb,0x1d2935,Math.PI,true);
+ baseballBall=new THREE.Group();const ballMesh=baseballSphere(baseballBall,.1,baseballMat(0xf8f7ed,.35),0,0,0);baseballMakeSeams();baseballScene.add(baseballBall);baseballBall.position.set(0,2.4,-15);
+ const shadowMat=new THREE.MeshBasicMaterial({color:0x14231a,transparent:true,opacity:.28});baseballBallShadow=new THREE.Mesh(new THREE.CircleGeometry(.22,16),shadowMat);baseballBallShadow.rotation.x=-Math.PI/2;baseballBallShadow.position.set(0,.025,-15);baseballScene.add(baseballBallShadow);
+ // Cartel de fondo con colores de tribuna.
+ const board=baseballBox(baseballScene,8,2.1,.35,baseballMat(0x11283b),0,8.2,-33.4);
+ const boardLine=baseballBox(baseballScene,7.7,.12,.08,baseballMat(0xf1cf75),0,7.35,-33.15);
+ window.addEventListener('resize',baseballResize,{passive:true});
+ baseballRenderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();stopBaseball();baseballFallback.hidden=false;baseballFallback.textContent='Se interrumpieron los gráficos 3D. Volvé a entrar a Béisbol para intentar de nuevo.'});
+ baseballResize();baseballRenderer.render(baseballScene,baseballCamera);baseballLoading.hidden=true;
+ return true;
+}
+function baseballResize(){
+ if(!baseballRenderer||!baseballStage.clientWidth||!baseballStage.clientHeight)return;
+ const w=baseballStage.clientWidth,h=baseballStage.clientHeight;baseballCamera.aspect=w/h;baseballCamera.updateProjectionMatrix();
+ baseballRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.25));baseballRenderer.setSize(w,h,false);
+}
+function baseballStartPitch(){
+ baseballPhase='pitch';baseballPitchStart=performance.now();baseballSwingStarted=false;baseballBall.position.set(0,2.25,-15);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
+ baseballBallShadow.position.set(0,.03,-15);baseballAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';baseballHint.textContent='Tocá ¡BATEAR! cuando se acerque. ¡Luis no falla!';
+}
+function baseballHit(){
+ if(baseballPhase!=='pitch')return;
+ baseballPhase='flight';baseballFlightStart=performance.now();baseballHits++;
+ const outcomes=['HOME RUN','HOME RUN','DOBLE','TRIPLE','HOME RUN','SENCILLO'];
+ baseballOutcome=outcomes[(baseballHits-1)%outcomes.length];
+ const runValue=baseballOutcome==='HOME RUN'?1:0;baseballRuns+=runValue;baseballScore+=runValue;
+ document.getElementById('baseballHits').textContent='HITS '+baseballHits;
+ document.getElementById('baseballRuns').textContent='CARRERAS '+baseballRuns;
+ document.getElementById('baseballScore').textContent=baseballScore+' — 0';
+ baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡¡¡HOME RUN, LUIS!!!':'¡¡¡BATAZO!!! '+baseballOutcome;
+ baseballHint.textContent='¡La pelota vuela hasta el fondo del estadio!';
+ baseballBall.position.set(-.15,2.1,2.5);baseballBall.scale.setScalar(1.1);
+}
+function baseballUpdate(now){
+ const t=(now-baseballPitchStart)/1000;
+ if(baseballPhase==='pitch'){
+  const p=Math.min(1,t/1.05);
+  baseballPitcher.rotation.x=Math.sin(p*Math.PI)*-.13;
+  if(p>.16){baseballBall.position.set(.08+Math.sin(p*4)*.08,2.35+Math.sin(p*Math.PI)*.2,-15+17*p);baseballBall.scale.setScalar(.72+.5*p);baseballBallShadow.position.x=baseballBall.position.x;baseballBallShadow.position.z=baseballBall.position.z;baseballBallShadow.scale.setScalar(.8+p*.7)}
+  if(p>.70&&!baseballSwingStarted){baseballSwingStarted=true;if(baseballBatPivot)baseballBatPivot.rotation.z=-.9}
+  if(p>.88)baseballHit();
+ }else if(baseballPhase==='flight'){
+  const p=Math.min(1,(now-baseballFlightStart)/2400);
+  const endX=baseballOutcome==='HOME RUN'?4.5:baseballOutcome==='TRIPLE'?3:baseballOutcome==='DOBLE'?2:1;
+  baseballBall.position.set(-.15+endX*p,2.1+Math.sin(p*Math.PI)*11*p,2.5-42*p);
+  baseballBall.scale.setScalar(1.1-.35*p);
+  if(p>=1){baseballPhase='done';baseballAction.textContent='OTRA JUGADA';baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡LA SACÓ DEL ESTADIO!':'¡GRAN CONEXIÓN, LUIS!';baseballBall.visible=false; if(baseballBatPivot)baseballBatPivot.rotation.z=0;}
+ }
+}
+function baseballLoop(now){
+ baseballRAF=0;if(!baseballActive||document.hidden)return;
+ const moving=baseballPhase==='pitch'||baseballPhase==='flight';
+ if(moving)baseballUpdate(now);
+ const interval=moving?0:33;
+ if(now-baseballLastRender>=interval){baseballRenderer.render(baseballScene,baseballCamera);baseballLastRender=now}
+ baseballRAF=requestAnimationFrame(baseballLoop);
+}
+function startBaseball(){
+ baseballActive=true;baseballFallback.hidden=true;
+ if(!baseballRenderer){baseballLoading.hidden=false;try{baseballBuildScene()}catch(e){baseballLoading.hidden=true;baseballFallback.hidden=false;baseballFallback.textContent='No se pudieron iniciar los gráficos 3D en este teléfono. El resto de Exploradores sigue funcionando.';baseballActive=false;return}}
+ baseballResize();if(baseballRAF)cancelAnimationFrame(baseballRAF);baseballLastRender=0;baseballRAF=requestAnimationFrame(baseballLoop);
+}
+function stopBaseball(){baseballActive=false;if(baseballRAF)cancelAnimationFrame(baseballRAF);baseballRAF=0}
+baseballAction.addEventListener('click',()=>{
+ if(!baseballActive)return;
+ if(baseballPhase==='ready'||baseballPhase==='done'){baseballStartPitch();return}
+ if(baseballPhase==='pitch'){baseballHint.textContent='¡Luis prepara el bate!';if(baseballBatPivot)baseballBatPivot.rotation.z=1.15;}
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBaseball();else if(document.getElementById('baseballPanel').classList.contains('active'))startBaseball()});
 
 async function checkForAppUpdate(){
  if(!window.AndroidUpdater||!navigator.onLine)return;
