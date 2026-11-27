@@ -18,8 +18,9 @@ permissions:
   contents: write
 
 concurrency:
-  group: exploradores-apk-${{ github.ref }}
-  cancel-in-progress: true
+  # Cada commit tiene su propio grupo: evita que una ejecución huérfana bloquee la publicación.
+  group: exploradores-apk-${{ github.ref }}-${{ github.sha }}
+  cancel-in-progress: false
 
 jobs:
   build:
