@@ -13,11 +13,6 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 header{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:38px}
 .brand{display:flex;align-items:center;gap:7px;font-weight:1000;font-size:clamp(18px,2.4vw,25px);letter-spacing:-.7px}.mascot{width:34px;height:34px;border-radius:12px;background:#fff;display:grid;place-items:center;font-size:30px;box-shadow:0 4px 0 #8ab9cc}
 #updateBtn{display:none;border:0;border-radius:99px;padding:7px 10px;background:#176b45;color:#fff;font-weight:950;font-size:12px;box-shadow:0 3px 0 #0b472d}#updateBtn.visible{display:block}#sayStatus{font-size:clamp(10px,1.2vw,13px);font-weight:800;background:#ffffffb8;padding:6px 10px;border-radius:99px}
-.voice-picker{background:#eaf7ff;border:2px solid #b9dce9;border-radius:14px;padding:9px;display:flex;flex-direction:column;gap:7px}
-.voice-picker label{font-size:13px;font-weight:950}
-.voice-picker select,.voice-picker button{width:100%;min-height:42px;border:2px solid #a8cbd9;border-radius:11px;padding:8px;background:#fff;color:#17304a;font:800 13px system-ui}
-.voice-picker button{background:#173b62;color:#fff;border:0;box-shadow:0 3px 0 #0a2038}
-#voiceStatus{font-size:11px;font-weight:750;color:#36516a;min-height:1.2em}
 nav{display:flex;gap:6px;justify-content:center}
 nav button,.back{border:0;border-radius:16px;padding:8px 12px;font-size:clamp(12px,1.5vw,16px);font-weight:950;color:#17304a;background:#fff;box-shadow:0 4px 0 #a5c5d3}
 nav button[aria-selected=true]{background:#173b62;color:#fff;box-shadow:0 4px 0 #0a2038}
@@ -72,12 +67,6 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 </section>
 <section class="panel" id="habla">
 <h1>Botones que hablan</h1><p class="hint">Tocá el dibujo. ¡El teléfono lo dice en voz alta!</p>
-<div class="voice-picker">
-<label for="spanishVoiceSelect">🎙 ELEGÍ LA VOZ EN ESPAÑOL</label>
-<select id="spanishVoiceSelect" aria-label="Voces disponibles en español"><option value="">Buscando voces del teléfono…</option></select>
-<button id="testSpanishVoice" type="button">▶ PROBAR ESTA VOZ</button>
-<div id="voiceStatus" aria-live="polite">Podés escuchar las voces y elegir la que más te guste.</div>
-</div>
 <div class="grid">
 <button class="tile" style="--tile:#ffdf70;--shade:#d4aa32" data-say="Hola"><span class="emoji">👋</span>Hola</button>
 <button class="tile" style="--tile:#8de4ff;--shade:#48a8cf" data-say="Quiero agua"><span class="emoji">💧</span>Quiero agua</button>
@@ -103,68 +92,16 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 </div>
 <script>
 const statusEl=document.getElementById('sayStatus');
-let voices=[];let selectedBrowserVoice='';
-function loadVoices(){voices=speechSynthesis?.getVoices?.()||[]}
-if('speechSynthesis'in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
-// Guía fonética: conserva el nombre escrito en pantalla y mejora cómo lo lee el locutor.
+// La pronunciación usa nombres españoles acentuados; los nombres científicos quedan para las imágenes.
 const dinosaurPronunciation={
- 'Triceratops':'Tricerátops',
- 'Diplodocus':'Diplódocus',
- 'Parasaurolophus':'Parasaurolofus',
- 'Archaeopteryx':'Arqueópterix',
- 'Coelophysis':'Selófisis',
- 'Therizinosaurus':'Terizinosaurio',
- 'Deinonychus':'Deinónicus',
- 'Utahraptor':'Yutaraptor',
- 'Baryonyx':'Bariónix',
- 'Suchomimus':'Sukómimus',
- 'Styracosaurus':'Estiracosaurio',
- 'Centrosaurus':'Centrosaurio',
- 'Corythosaurus':'Coritosaurio',
- 'Lambeosaurus':'Lambeosaurio',
- 'Psittacosaurus':'Sitacosaurio',
- 'Euoplocephalus':'Euoplocefalo'
+'Tiranosaurio rex':'Tiranosaurio rex','Tricerátops':'Tricerátops','Estegosaurio':'Estegosaurio','Braquiosaurio':'Braquiosaurio','Velociraptor':'Velociraptor','Anquilosaurio':'Anquilosaurio','Espinosaurio':'Espinosaurio','Diplódocus':'Diplódocus','Parasaurolophus':'Parasaurolofus','Carnotauro':'Carnotauro','Alosaurio':'Alosaurio','Iguanodonte':'Iguanodonte','Paquicefalosaurio':'Paquicefalosaurio','Gallimimo':'Gallimimo','Compsognato':'Compsognato','Dilofosaurio':'Dilofosaurio','Ceratosaurio':'Ceratosaurio','Giganotosaurio':'Giganotosaurio','Argentinosaurio':'Argentinosaurio','Amargasaurio':'Amargasaurio','Mamenquisaurio':'Mamenquisaurio','Apatosaurio':'Apatosaurio','Camarasaurio':'Camarasaurio','Protocerátops':'Protocerátops','Arqueópterix':'Arqueópterix','Herrerasaurio':'Herrerasaurio','Eoraptor':'Eoraptor','Selófisis':'Selófisis','Nigersaurio':'Nigersaurio','Euoplocefalo':'Euoplocefalo','Oviraptor':'Oviraptor','Terizinosaurio':'Terizinosaurio','Deinónicus':'Deinónicus','Yutaraptor':'Yutaraptor','Bariónix':'Bariónix','Sukómimus':'Sukómimus','Majungasaurio':'Majungasaurio','Mapusaurio':'Mapusaurio','Dreadnoughtus':'Drednotus','Patagotitan':'Patagotitan','Saltasaurio':'Saltasaurio','Estiracosaurio':'Estiracosaurio','Centrosaurio':'Centrosaurio','Edmontosaurio':'Edmontosaurio','Shunosaurus':'Shunosaurio','Coritosaurio':'Coritosaurio','Lambeosaurio':'Lambeosaurio','Microraptor':'Microraptor','Sitacosaurio':'Sitacosaurio','Plateosaurus':'Plateosaurio'
 };
 function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
-let voiceLoadAttempts=0;
-function loadSpanishVoiceOptions(){
- const select=document.getElementById('spanishVoiceSelect'),info=document.getElementById('voiceStatus');
- if(!select)return;
- let native=[];
- if(window.AndroidSpeech?.getSpanishVoices){
-  try{native=JSON.parse(window.AndroidSpeech.getSpanishVoices()||'[]')}catch(e){}
- }
- if(native.length){
-  select.innerHTML='';
-  native.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=v.label+(v.network?' · requiere internet':' · disponible sin conexión');if(v.selected)o.selected=true;select.appendChild(o)});
-  info.textContent=native.length+' voces en español encontradas en este teléfono. Elegí una y tocá PROBAR.';
-  select.onchange=()=>{if(select.value)window.AndroidSpeech.selectSpanishVoice(select.value);info.textContent='Voz seleccionada. Tocá PROBAR para escucharla.'};
-  return;
- }
- if(window.AndroidSpeech?.getSpanishVoices&&voiceLoadAttempts<10){voiceLoadAttempts++;info.textContent='Consultando las voces instaladas en Android…';setTimeout(loadSpanishVoiceOptions,650);return}
- const browser=voices.filter(v=>/^es([_-]|$)/i.test(v.lang));
- select.innerHTML='';
- if(browser.length){
-  browser.forEach(v=>{const o=document.createElement('option');o.value=v.name;o.textContent=v.name+' ('+v.lang+')';select.appendChild(o)});
-  info.textContent='Voces disponibles en el navegador: '+browser.length+'.';
-  select.onchange=()=>{selectedBrowserVoice=select.value;info.textContent='Voz seleccionada. Tocá PROBAR para escucharla.'};
- }else{
-  select.innerHTML='<option value="">No se encontraron voces españolas instaladas</option>';
-  info.textContent='Instalá una voz de español desde los ajustes de texto a voz de Android y volvé a abrir esta pantalla.';
- }
-}
-function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);const v=voices.find(x=>x.name===selectedBrowserVoice)||voices.find(x=>/^es-AR$/i.test(x.lang))||voices.find(x=>/^es/i.test(x.lang));if(v)u.voice=v;u.lang=v?.lang||'es-AR';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
+function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-US';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')resizeTable()}));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
-document.getElementById('testSpanishVoice').addEventListener('click',()=>{
- const select=document.getElementById('spanishVoiceSelect');
- if(window.AndroidSpeech?.selectSpanishVoice&&select.value)window.AndroidSpeech.selectSpanishVoice(select.value);
- speak('Hola. Soy la voz de Exploradores. Vamos a descubrir el mundo de los dinosaurios.');
-});
-setTimeout(loadSpanishVoiceOptions,500);
-if('speechSynthesis'in window)speechSynthesis.onvoiceschanged=()=>{loadVoices();if(!window.AndroidSpeech)loadSpanishVoiceOptions()};
 const species=[
-["Tiranosaurio rex","Tyrannosaurus rex"],["Triceratops","Triceratops"],["Estegosaurio","Stegosaurus"],["Braquiosaurio","Brachiosaurus"],["Velociraptor","Velociraptor"],["Anquilosaurio","Ankylosaurus"],["Espinosaurio","Spinosaurus"],["Diplodocus","Diplodocus"],["Parasaurolophus","Parasaurolophus"],["Carnotauro","Carnotaurus"],["Alosaurio","Allosaurus"],["Iguanodonte","Iguanodon"],["Paquicefalosaurio","Pachycephalosaurus"],["Gallimimo","Gallimimus"],["Compsognato","Compsognathus"],["Dilofosaurio","Dilophosaurus"],["Ceratosaurio","Ceratosaurus"],["Giganotosaurio","Giganotosaurus"],["Argentinosaurio","Argentinosaurus"],["Amargasaurio","Amargasaurus"],["Mamenquisaurio","Mamenchisaurus"],["Apatosaurio","Apatosaurus"],["Camarasaurio","Camarasaurus"],["Protoceratops","Protoceratops"],["Archaeopteryx","Archaeopteryx"],["Herrerasaurio","Herrerasaurus"],["Eoraptor","Eoraptor"],["Coelophysis","Coelophysis"],["Nigersaurio","Nigersaurus"],["Euoplocephalus","Euoplocephalus"],["Oviraptor","Oviraptor"],["Therizinosaurus","Therizinosaurus"],["Deinonychus","Deinonychus"],["Utahraptor","Utahraptor"],["Baryonyx","Baryonyx"],["Suchomimus","Suchomimus"],["Majungasaurio","Majungasaurus"],["Mapusaurio","Mapusaurus"],["Dreadnoughtus","Dreadnoughtus"],["Patagotitan","Patagotitan"],["Saltasaurio","Saltasaurus"],["Styracosaurus","Styracosaurus"],["Centrosaurus","Centrosaurus"],["Edmontosaurio","Edmontosaurus"],["Shunosaurus","Shunosaurus"],["Corythosaurus","Corythosaurus"],["Lambeosaurus","Lambeosaurus"],["Microraptor","Microraptor"],["Psittacosaurus","Psittacosaurus"],["Plateosaurus","Plateosaurus"]];
+["Tiranosaurio rex","Tyrannosaurus rex"],["Tricerátops","Triceratops"],["Estegosaurio","Stegosaurus"],["Braquiosaurio","Brachiosaurus"],["Velociraptor","Velociraptor"],["Anquilosaurio","Ankylosaurus"],["Espinosaurio","Spinosaurus"],["Diplódocus","Diplodocus"],["Parasaurolophus","Parasaurolophus"],["Carnotauro","Carnotaurus"],["Alosaurio","Allosaurus"],["Iguanodonte","Iguanodon"],["Paquicefalosaurio","Pachycephalosaurus"],["Gallimimo","Gallimimus"],["Compsognato","Compsognathus"],["Dilofosaurio","Dilophosaurus"],["Ceratosaurio","Ceratosaurus"],["Giganotosaurio","Giganotosaurus"],["Argentinosaurio","Argentinosaurus"],["Amargasaurio","Amargasaurus"],["Mamenquisaurio","Mamenchisaurus"],["Apatosaurio","Apatosaurus"],["Camarasaurio","Camarasaurus"],["Protocerátops","Protoceratops"],["Arqueópterix","Archaeopteryx"],["Herrerasaurio","Herrerasaurus"],["Eoraptor","Eoraptor"],["Selófisis","Coelophysis"],["Nigersaurio","Nigersaurus"],["Euoplocefalo","Euoplocephalus"],["Oviraptor","Oviraptor"],["Terizinosaurio","Therizinosaurus"],["Deinónicus","Deinonychus"],["Yutaraptor","Utahraptor"],["Bariónix","Baryonyx"],["Sukómimus","Suchomimus"],["Majungasaurio","Majungasaurus"],["Mapusaurio","Mapusaurus"],["Dreadnoughtus","Dreadnoughtus"],["Patagotitan","Patagotitan"],["Saltasaurio","Saltasaurus"],["Estiracosaurio","Styracosaurus"],["Centrosaurio","Centrosaurus"],["Edmontosaurio","Edmontosaurus"],["Shunosaurio","Shunosaurus"],["Coritosaurio","Corythosaurus"],["Lambeosaurio","Lambeosaurus"],["Microraptor","Microraptor"],["Sitacosaurio","Psittacosaurus"],["Plateosaurio","Plateosaurus"]];
 const dinoGrid=document.getElementById('dinoGrid'),searchInput=document.getElementById('dinoSearch'),detail=document.getElementById('dinoDetail');
 const imageCache=new Map();let activeSpecies=null;
 const fallbackArt='<div class="loading" aria-hidden="true">🦖</div>';
