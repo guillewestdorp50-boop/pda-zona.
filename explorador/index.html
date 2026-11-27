@@ -126,9 +126,71 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 @media(orientation:portrait){#baseball{padding:7px}.baseball-stage{min-height:220px}.baseball-scoreboard{top:6px;gap:6px;padding:4px 7px;font-size:9px}.baseball-message{top:42px;font-size:12px}.baseball-controls{gap:8px;padding:10px 8px max(10px,env(safe-area-inset-bottom))}#baseballAction{min-width:126px;min-height:50px;font-size:15px}#baseballHint{font-size:10px;max-width:43%}}
 @media(prefers-reduced-motion:reduce){#baseballAction{transition:none}}
 
+ 
+/* Bienvenida interactiva de Guille: teclado propio, sin abrir el teclado Android */
+#guilleWelcome{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:10px;background:radial-gradient(circle at 15% 10%,#fff9c8 0 8%,transparent 32%),linear-gradient(145deg,#75d9ff,#d6f6ff 48%,#ffd4e5);overflow-y:auto}
+.guille-card{width:min(100%,620px);max-height:100%;overflow-y:auto;border:4px solid #fff;border-radius:28px;padding:clamp(12px,3vw,22px);background:linear-gradient(160deg,#ffffffed,#f2fbffed);box-shadow:0 14px 35px #17456b35;display:flex;flex-direction:column;gap:12px}
+.guille-top{display:flex;align-items:center;gap:13px;min-height:148px}
+.guille-robot{position:relative;flex:0 0 142px;height:154px;display:flex;align-items:flex-end;justify-content:center}
+.guille-head{position:absolute;top:22px;width:116px;height:91px;border:5px solid #54718e;border-radius:34px 34px 29px 29px;background:linear-gradient(145deg,#fff,#cceeff);box-shadow:inset -7px -7px 0 #9ecce3,0 5px 0 #34516c;z-index:2}
+.guille-antenna{position:absolute;top:7px;left:68px;width:7px;height:22px;background:#54718e;border-radius:8px}
+.guille-antenna:after{content:"";position:absolute;top:-7px;left:-5px;width:16px;height:16px;border-radius:50%;background:#ffca48;border:3px solid #54718e}
+.guille-ear{position:absolute;top:29px;width:13px;height:30px;border:4px solid #54718e;background:#ffb5d0;border-radius:9px}
+.guille-ear.left{left:-13px}.guille-ear.right{right:-13px}
+.guille-eyes{position:absolute;top:29px;left:24px;right:24px;display:flex;justify-content:space-between}
+.guille-eyes b{width:13px;height:17px;background:#173b60;border-radius:50%;box-shadow:inset 3px 3px 0 #fff}
+.guille-cheeks{position:absolute;top:53px;left:15px;right:15px;display:flex;justify-content:space-between}
+.guille-cheeks i{width:14px;height:8px;border-radius:50%;background:#ff91b6;opacity:.85}
+.guille-smile{position:absolute;left:44px;top:57px;width:25px;height:12px;border-bottom:4px solid #e56c91;border-radius:0 0 20px 20px}
+.guille-neck{position:absolute;bottom:22px;width:24px;height:18px;background:#8db9d2;border:3px solid #54718e}
+.guille-body{position:absolute;bottom:0;width:76px;height:42px;border:4px solid #54718e;border-radius:18px 18px 12px 12px;background:linear-gradient(140deg,#7de1ce,#34b9b0);box-shadow:inset -5px -4px 0 #269c9d}
+.guille-heart{position:absolute;left:27px;top:7px;color:#fff;font-size:17px;font-style:normal}
+.guille-arm{position:absolute;top:5px;width:18px;height:34px;border:4px solid #54718e;border-radius:14px;background:#cceeff}
+.guille-arm.left{left:-14px;transform:rotate(25deg)}.guille-arm.right{right:-14px;transform:rotate(-25deg)}
+.guille-speech{flex:1;min-width:0;padding:12px 14px;border-radius:20px;background:#fff;border:3px solid #bde8f7;box-shadow:0 5px 0 #b4d9e8;position:relative}
+.guille-speech:before{content:"";position:absolute;left:-10px;top:43px;border-width:9px 11px 9px 0;border-style:solid;border-color:transparent #bde8f7 transparent transparent}
+.guille-name-tag{font-size:12px;font-weight:1000;letter-spacing:1px;color:#258b9b}
+#guilleLine{margin:5px 0 0;font-size:clamp(17px,4.2vw,23px);line-height:1.25;font-weight:900;color:#203e5a}
+.guille-name-entry{display:flex;flex-direction:column;gap:5px}
+.guille-name-entry label{font-size:13px;font-weight:950;color:#31516d}
+#guilleName{width:100%;height:48px;border:3px solid #8bcfe5;border-radius:14px;padding:8px 13px;background:#fff;color:#173b60;font-size:21px;font-weight:950;letter-spacing:1px;outline:none;caret-color:transparent}
+.guille-keyboard{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.guille-key{min-width:0;min-height:42px;border:0;border-radius:12px;background:var(--key);color:#17334c;font-size:clamp(15px,4vw,20px);font-weight:1000;box-shadow:0 4px 0 var(--shade);touch-action:manipulation}
+.guille-key:active{transform:translateY(3px);box-shadow:0 1px 0 var(--shade)}
+.guille-key-actions{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:8px}
+.guille-key-actions button,.guille-next,.guille-enter{border:0;border-radius:14px;min-height:46px;padding:8px;background:#e8f4ff;color:#24425d;font-weight:1000;font-size:14px;box-shadow:0 4px 0 #b5d0e3}
+#guilleOk,.guille-enter{background:linear-gradient(135deg,#69e1a8,#27bd91);color:#073f35;box-shadow:0 4px 0 #16866a}
+#guilleOk:disabled{opacity:.4}
+.guille-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.guille-choice{min-height:54px;border:0;border-radius:16px;padding:8px;background:var(--choice);color:#17334c;font-size:clamp(14px,3.5vw,17px);font-weight:950;box-shadow:0 5px 0 var(--choice-shade)}
+.guille-choice:active{transform:translateY(3px);box-shadow:0 2px 0 var(--choice-shade)}
+.guille-next{background:#ffe18a;box-shadow:0 4px 0 #d4a83d}
+#guilleTalkStage[hidden],#guilleEnter[hidden]{display:none}
+@media(max-width:390px){.guille-top{gap:7px;min-height:130px}.guille-robot{flex-basis:112px;transform:scale(.86);transform-origin:center}.guille-card{padding:10px;gap:9px}.guille-key{min-height:38px}.guille-keyboard{gap:5px}}
+@media(orientation:landscape){.guille-card{max-width:760px}.guille-top{min-height:112px}.guille-robot{height:118px;transform:scale(.78);transform-origin:center}.guille-key{min-height:34px}.guille-card{gap:7px}}
 </style>
 </head>
 <body>
+<div id="guilleWelcome" role="dialog" aria-modal="true" aria-label="Bienvenida de Guille">
+ <div class="guille-card">
+  <div class="guille-top">
+   <div class="guille-robot" aria-hidden="true">
+    <div class="guille-antenna"></div><div class="guille-head"><i class="guille-ear left"></i><i class="guille-ear right"></i><div class="guille-eyes"><b></b><b></b></div><div class="guille-cheeks"><i></i><i></i></div><div class="guille-smile"></div></div><div class="guille-neck"></div><div class="guille-body"><i class="guille-heart">♥</i><i class="guille-arm left"></i><i class="guille-arm right"></i></div>
+   </div>
+   <div class="guille-speech"><span class="guille-name-tag">GUILLE 🤖</span><p id="guilleLine">¡Hola! ¿Cómo estás? Mi nombre es Guille. ¿Cuál es tu nombre?</p></div>
+  </div>
+  <div id="guilleNameStage">
+   <div class="guille-name-entry"><label for="guilleName">Tu nombre</label><input id="guilleName" type="text" readonly inputmode="none" autocomplete="off" placeholder="Escribí tu nombre con las teclas de colores"></div>
+   <div id="guilleKeyboard" class="guille-keyboard" aria-label="Teclado de colores"></div>
+   <div class="guille-key-actions"><button id="guilleErase" type="button">⌫ Borrar</button><button id="guilleClear" type="button">Limpiar</button><button id="guilleOk" type="button" disabled>¡LISTO!</button></div>
+  </div>
+  <div id="guilleTalkStage" hidden>
+   <div id="guilleChoices" class="guille-choices"></div>
+   <button id="guilleNext" class="guille-next" type="button">¡SEGUIR CHARLANDO! 💛</button>
+   <button id="guilleEnter" class="guille-enter" type="button" hidden>¡VAMOS A EXPLORAR! 🚀</button>
+  </div>
+ </div>
+</div>
 <div id="app">
 <header><div class="brand"><div class="mascot" aria-hidden="true">🦕</div><span>¡A EXPLORAR!</span></div><div style="display:flex;align-items:center;gap:6px"><button id="updateBtn" type="button">⬆ Actualizar</button><div id="sayStatus" aria-live="polite">Tocá y descubrí</div></div></header>
 <nav aria-label="Juegos">
@@ -230,6 +292,44 @@ const dinosaurPronunciation={
 };
 function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
 function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-US';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
+(function initGuilleWelcome(){
+ const overlay=document.getElementById('guilleWelcome'),line=document.getElementById('guilleLine'),nameInput=document.getElementById('guilleName');
+ const nameStage=document.getElementById('guilleNameStage'),talkStage=document.getElementById('guilleTalkStage'),keyboard=document.getElementById('guilleKeyboard'),choices=document.getElementById('guilleChoices'),ok=document.getElementById('guilleOk'),next=document.getElementById('guilleNext'),enter=document.getElementById('guilleEnter');
+ if(!overlay)return;
+ const colors=[['#ffe18a','#d6ae42'],['#a9e9ff','#64b9d9'],['#ffbfd6','#d985a7'],['#b9f1cf','#78c99b'],['#d6c8ff','#a493dc'],['#ffd1a8','#d99b6b'],['#c8e9ff','#86b9db']];
+ const letters='ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('');
+ letters.forEach((letter,i)=>{const b=document.createElement('button');b.type='button';b.className='guille-key';b.textContent=letter;b.style.setProperty('--key',colors[i%colors.length][0]);b.style.setProperty('--shade',colors[i%colors.length][1]);b.addEventListener('click',()=>{if(nameInput.value.length<14){nameInput.value+=letter;ok.disabled=!nameInput.value.trim()}});keyboard.appendChild(b)});
+ function addSpecial(label,action){const b=document.createElement('button');b.type='button';b.className='guille-key';b.textContent=label;b.style.setProperty('--key','#d9e9f7');b.style.setProperty('--shade','#9db9d0');b.addEventListener('click',action);keyboard.appendChild(b)}
+ addSpecial('␣',()=>{if(nameInput.value.length<14)nameInput.value+=' '});
+ document.getElementById('guilleErase').addEventListener('click',()=>{nameInput.value=nameInput.value.slice(0,-1);ok.disabled=!nameInput.value.trim()});
+ document.getElementById('guilleClear').addEventListener('click',()=>{nameInput.value='';ok.disabled=true});
+ let childName='',questionIndex=0;
+ const questions=[
+  {q:'¿Cómo estás hoy?',a:[['😄 ¡Estoy feliz!','¡Qué alegría, '+ 'me encanta escucharlo. ¡Tu sonrisa ilumina el día!'],['🙂 Estoy bien','¡Qué bueno! Me pone muy contento que estés bien.'],['😴 Tengo un poquito de sueño','Está bien descansar. ¡Vamos despacito y con cariño!']]},
+  {q:'¿Qué te gusta hacer?',a:[['⚽ Jugar','¡Qué divertido! Jugar nos llena de energía.'],['🦕 Aprender sobre animales','¡Qué genial! ¡Vamos a descubrir un montón de cosas!'],['🎨 Dibujar y crear','¡Qué artista! Me encanta usar la imaginación.']]},
+  {q:'¿Cómo está el día por donde estás?',a:[['☀️ Hay sol','¡Qué lindo día soleado! El sol nos acompaña.'],['🌧️ Está lloviendo','¡Qué lindo escuchar la lluvia! Podemos mirar las gotitas.'],['☁️ Está nublado','¡El cielo se puso gris! Igual podemos tener un día hermoso.'],['🥶 Hace frío','¡A abrigarse bien! Te mando un abrazo calentito.']]},
+  {q:'¿Qué te gustaría hacer ahora?',a:[['🦖 Ver dinosaurios','¡Buena elección! ¡Los dinosaurios nos esperan!'],['🎱 Jugar al flipper','¡A jugar! ¡Vamos por muchos puntos!'],['⚾ Jugar al béisbol','¡A preparar ese bate! ¡Vamos, campeón!'],['🗣️ Charlar conmigo','¡Me encanta conversar con vos!']]},
+  {q:'Una última pregunta: ¿querés que sigamos aprendiendo juntos?',a:[['💛 ¡Sí, Guille!','¡Qué lindo! Estoy muy feliz de acompañarte.'],['🚀 ¡Vamos a explorar!','¡Entonces comienza nuestra aventura! ¡Vamos juntos!']]}
+ ];
+ function showQuestion(){
+  const item=questions[questionIndex];line.textContent=childName+', '+item.q.toLowerCase();
+  choices.innerHTML='';item.a.forEach((entry,i)=>{const b=document.createElement('button');b.type='button';b.className='guille-choice';b.textContent=entry[0];b.style.setProperty('--choice',colors[(i+questionIndex)%colors.length][0]);b.style.setProperty('--choice-shade',colors[(i+questionIndex)%colors.length][1]);b.addEventListener('click',()=>{Array.from(choices.children).forEach(x=>x.disabled=true);line.textContent=entry[1].replace('Tu sonrisa',childName+' ¡tu sonrisa');speak(childName+'. '+entry[1]);next.hidden=false;enter.hidden=true});choices.appendChild(b)});
+  next.hidden=true;enter.hidden=true;
+ }
+ function beginTalk(){
+  nameStage.hidden=true;talkStage.hidden=false;questionIndex=0;
+  line.textContent='¡Hola, '+childName+'! ¡Qué alegría conocerte! Soy Guille y vamos a jugar, aprender y divertirnos juntos.';
+  speak('¡Hola, '+childName+'! ¡Qué alegría conocerte! Soy Guille y vamos a jugar, aprender y divertirnos juntos.');
+  showQuestion();
+ }
+ ok.addEventListener('click',()=>{const clean=nameInput.value.trim().replace(/\s+/g,' ');if(!clean)return;childName=clean;try{localStorage.setItem('exploradores-child-name',childName)}catch(e){}beginTalk()});
+ next.addEventListener('click',()=>{questionIndex++;if(questionIndex<questions.length)showQuestion();else{line.textContent='¡Qué lindo charlar con vos, '+childName+'! ¡Sos genial!';choices.innerHTML='';next.hidden=true;enter.hidden=false;speak('¡Qué lindo charlar con vos, '+childName+'! ¡Sos genial! ¡Vamos a explorar!')}});
+ enter.addEventListener('click',()=>{speak('¡Vamos, '+childName+'! ¡Que comience la aventura!');overlay.style.display='none';});
+ let saved='';try{saved=(localStorage.getItem('exploradores-child-name')||'').trim()}catch(e){}
+ if(saved){childName=saved;nameStage.hidden=true;talkStage.hidden=false;line.textContent='¡Hola de nuevo, '+childName+'! ¡Qué alegría verte! ¿Charlamos un ratito?';speak('¡Hola de nuevo, '+childName+'! ¡Qué alegría verte!');showQuestion()}
+ else{speak('¡Hola! ¿Cómo estás? Mi nombre es Guille. ¿Cuál es tu nombre?')}
+})();
+
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')startFlipper();else stopFlipper();if(b.dataset.panel==='baseball')startBaseball();else stopBaseball()}));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
 document.getElementById('repeatDone')?.addEventListener('click',()=>{const p=document.getElementById('repeatPraise');if(p)p.textContent='¡Excelente, Luis! ¡Muy bien repetido! ¿Probamos otra palabra?';speak('¡Excelente, Luis! ¡Muy bien repetido!')});
