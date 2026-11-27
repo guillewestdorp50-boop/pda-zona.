@@ -298,6 +298,28 @@ body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixe
 <script src="three.min.js"></script>
 <script>
 const statusEl=document.getElementById('sayStatus');
+/* Efectos ligeros compartidos: se inicializan únicamente después del primer toque. */
+let explorerAudio=null;
+function playGameSound(kind='tap'){
+ try{
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  if(!explorerAudio)explorerAudio=new AC();
+  const a=explorerAudio;if(a.state==='suspended')a.resume().catch(()=>{});
+  const patterns={
+   tap:[[620,.045,'square',.018,0]],dino:[[660,.09,'sine',.035,0],[880,.12,'sine',.035,.075]],
+   flip:[[520,.065,'triangle',.035,0]],match:[[660,.11,'sine',.045,0],[880,.14,'sine',.05,.10]],
+   mismatch:[[230,.16,'triangle',.035,0]],win:[[523,.13,'sine',.045,0],[659,.13,'sine',.05,.12],[784,.22,'sine',.055,.24]],
+   launch:[[300,.08,'triangle',.035,0],[520,.12,'triangle',.035,.07]],bumper:[[760,.09,'triangle',.045,0]],
+   spiral:[[300,.10,'sine',.035,0],[620,.14,'sine',.04,.08]],flipper:[[170,.055,'square',.025,0]],
+   lost:[[260,.12,'sawtooth',.025,0],[170,.18,'triangle',.03,.10]],draw:[[740,.035,'sine',.012,0]]
+  };
+  (patterns[kind]||patterns.tap).forEach(([hz,duration,wave,volume,delay])=>{
+   const t=a.currentTime+delay,o=a.createOscillator(),g=a.createGain();o.type=wave;o.frequency.setValueAtTime(hz,t);
+   g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(volume,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+duration);
+   o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+duration+.015);
+  });
+ }catch(e){}
+}
 // La pronunciación usa nombres españoles acentuados; los nombres científicos quedan para las imágenes.
 const dinosaurPronunciation={
 'Tiranosaurio rex':'Tiranosaurio rex','Tricerátops':'Tricerátops','Estegosaurio':'Estegosaurio','Braquiosaurio':'Braquiosaurio','Velociraptor':'Velociraptor','Anquilosaurio':'Anquilosaurio','Espinosaurio':'Espinosaurio','Diplódocus':'Diplódocus','Parasaurolophus':'Parasaurolofus','Carnotauro':'Carnotauro','Alosaurio':'Alosaurio','Iguanodonte':'Iguanodonte','Paquicefalosaurio':'Paquicefalosaurio','Gallimimo':'Gallimimo','Compsognato':'Compsognato','Dilofosaurio':'Dilofosaurio','Ceratosaurio':'Ceratosaurio','Giganotosaurio':'Giganotosaurio','Argentinosaurio':'Argentinosaurio','Amargasaurio':'Amargasaurio','Mamenquisaurio':'Mamenquisaurio','Apatosaurio':'Apatosaurio','Camarasaurio':'Camarasaurio','Protocerátops':'Protocerátops','Arqueópterix':'Arqueópterix','Herrerasaurio':'Herrerasaurio','Eoraptor':'Eoraptor','Selófisis':'Selófisis','Nigersaurio':'Nigersaurio','Euoplocefalo':'Euoplocefalo','Oviraptor':'Oviraptor','Terizinosaurio':'Terizinosaurio','Deinónicus':'Deinónicus','Yutaraptor':'Yutaraptor','Bariónix':'Bariónix','Sukómimus':'Sukómimus','Majungasaurio':'Majungasaurio','Mapusaurio':'Mapusaurio','Dreadnoughtus':'Drednotus','Patagotitan':'Patagotitan','Saltasaurio':'Saltasaurio','Estiracosaurio':'Estiracosaurio','Centrosaurio':'Centrosaurio','Edmontosaurio':'Edmontosaurio','Shunosaurus':'Shunosaurio','Coritosaurio':'Coritosaurio','Lambeosaurio':'Lambeosaurio','Microraptor':'Microraptor','Sitacosaurio':'Sitacosaurio','Plateosaurus':'Plateosaurio'
@@ -343,7 +365,7 @@ async function commonsImage(english){
 }
 const cards=[];
 species.forEach(([name,english])=>{const b=document.createElement('button');b.className='dino';b.dataset.name=name.toLocaleLowerCase('es');b.dataset.english=english;b.innerHTML=fallbackArt+'<span class="dino-name">'+name+'</span>';b.addEventListener('click',()=>openDetail(name,english));dinoGrid.appendChild(b);cards.push(b)});
-function openDetail(name,english){activeSpecies={name,english};document.getElementById('detailName').textContent=name;document.getElementById('detailHint').textContent='Buscando una reconstrucción paleontológica…';document.getElementById('detailImage').src='';document.getElementById('detailImage').alt=name;document.getElementById('detailCredit').textContent='Cargando imagen…';detail.classList.add('open');speak(spokenDinosaurName(name));loadSpeciesImage(name,english,true)}
+function openDetail(name,english){playGameSound('dino');activeSpecies={name,english};document.getElementById('detailName').textContent=name;document.getElementById('detailHint').textContent='Buscando una reconstrucción paleontológica…';document.getElementById('detailImage').src='';document.getElementById('detailImage').alt=name;document.getElementById('detailCredit').textContent='Cargando imagen…';detail.classList.add('open');speak(spokenDinosaurName(name));loadSpeciesImage(name,english,true)}
 async function loadSpeciesImage(name,english,large=false){const data=await commonsImage(english);const targets=large?[document.getElementById('detailImage')]:cards.filter(c=>c.dataset.english===english).map(c=>c.querySelector('.loading'));if(!data){if(large){document.getElementById('detailHint').textContent='No se encontró una imagen ahora. Podés volver a intentarlo con conexión.';document.getElementById('detailCredit').textContent='';}return}
  targets.forEach(node=>{if(!node)return;let img=node;if(!large){img=document.createElement('img');img.loading='lazy';img.decoding='async';img.className='dino-image';node.replaceWith(img)}img.src=data.url;img.alt=name;img.onerror=()=>{img.replaceWith(Object.assign(document.createElement('div'),{className:'loading',textContent:'🦖'}))}});
  if(large){document.getElementById('detailHint').textContent=data.title;document.getElementById('detailCredit').textContent='Imagen: '+data.artist+' · '+data.license+' · ';const a=document.createElement('a');a.href=data.source;a.target='_blank';a.rel='noopener';a.textContent='Ver fuente y licencia';document.getElementById('detailCredit').appendChild(a);}
@@ -367,10 +389,8 @@ const scoreLabel=document.getElementById('pinScore');
 const bumpers=[{x:195,y:165,r:23,value:250},{x:115,y:235,r:20,value:150},{x:265,y:245,r:21,value:200},{x:185,y:310,r:24,value:250},{x:85,y:365,r:19,value:150},{x:270,y:390,r:21,value:200},{x:165,y:435,r:22,value:250},{x:95,y:505,r:19,value:150},{x:250,y:500,r:20,value:200}];
 const spirals=[{x:58,y:285,r:25,inside:false,flash:0},{x:286,y:315,r:25,inside:false,flash:0},{x:64,y:455,r:25,inside:false,flash:0}];
 let sparkles=[];
-let soundContext=null;
-function audio(){if(!soundContext){const AC=window.AudioContext||window.webkitAudioContext;if(AC)soundContext=new AC()}if(soundContext?.state==='suspended')soundContext.resume();return soundContext}
-function playBumperSound(){const a=audio();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='triangle';o.frequency.setValueAtTime(720,a.currentTime);o.frequency.exponentialRampToValueAtTime(260,a.currentTime+.11);g.gain.setValueAtTime(.055,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.13);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.14)}
-function playSpiralSound(){const a=audio();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='sine';o.frequency.setValueAtTime(260,a.currentTime);o.frequency.exponentialRampToValueAtTime(780,a.currentTime+.12);o.frequency.exponentialRampToValueAtTime(390,a.currentTime+.24);g.gain.setValueAtTime(.0001,a.currentTime);g.gain.linearRampToValueAtTime(.025,a.currentTime+.025);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.26);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.27)}
+function playBumperSound(){playGameSound('bumper')}
+function playSpiralSound(){playGameSound('spiral')}
 const flippers={
  left:{x:96,y:588,len:82,angle:-.12,rest:-.12,active:-.68},
  right:{x:304,y:588,len:82,angle:Math.PI+.12,rest:Math.PI+.12,active:Math.PI+.68}
@@ -419,7 +439,7 @@ function resizeTable(){
 }
 function scheduleLoop(){if(flipperActive&&!rafId)rafId=requestAnimationFrame(loop)}
 function parkBallInLane(){
- ball={x:342,y:565,vx:0,vy:0,r:8};laneWaiting=true;launchTravel=false;
+ playGameSound('lost');ball={x:342,y:565,vx:0,vy:0,r:8};laneWaiting=true;launchTravel=false;
  leftPressed=false;rightPressed=false;drawTable();sayLanePrompt();
 }
 function addScore(points){
@@ -440,7 +460,7 @@ function hitFlipper(f,active){
  ball.x=q.x+nx*min;ball.y=q.y+ny*min;
  const dot=ball.vx*nx+ball.vy*ny;
  if(dot<0){ball.vx-=2*dot*nx;ball.vy-=2*dot*ny}
- if(active){ball.vy=-Math.max(8,Math.abs(ball.vy)+4);ball.vx+=(f===flippers.left?2:-2);addScore(10)}
+ if(active){playGameSound('flipper');ball.vy=-Math.max(8,Math.abs(ball.vy)+4);ball.vx+=(f===flippers.left?2:-2);addScore(10)}
 }
 function updatePhysics(){
  for(const [name,f] of Object.entries(flippers)){
@@ -539,7 +559,7 @@ function stopFlipper(){
 }
 function bindFlipper(id,side){
  const el=document.getElementById(id);
- const set=value=>{if(side==='left')leftPressed=value;else rightPressed=value;el.classList.toggle('pressed',value);if(flipperActive)scheduleLoop()};
+ const set=value=>{if(side==='left')leftPressed=value;else rightPressed=value;el.classList.toggle('pressed',value);if(value)playGameSound('flipper');if(flipperActive)scheduleLoop()};
  el.addEventListener('pointerdown',e=>{e.preventDefault();set(true);el.setPointerCapture?.(e.pointerId)});
  ['pointerup','pointercancel','pointerleave','lostpointercapture'].forEach(ev=>el.addEventListener(ev,()=>set(false)));
  el.addEventListener('contextmenu',e=>e.preventDefault());
@@ -548,7 +568,7 @@ bindFlipper('leftKey','left');bindFlipper('rightKey','right');
 playerInput.value=localStorage.getItem('explorer-player-name')||'';
 playerInput.addEventListener('input',()=>{localStorage.setItem('explorer-player-name',playerInput.value.trim().slice(0,18));updatePinScore()});
 const launchButton=document.getElementById('launchKey');
-function launchBall(e){if(e)e.preventDefault();if(!laneWaiting||launchTravel)return;laneWaiting=false;launchTravel=true;ball={x:342,y:620,vx:0,vy:0,r:8};lastFrame=0;scheduleLoop();}
+function launchBall(e){if(e)e.preventDefault();if(!laneWaiting||launchTravel)return;playGameSound('launch');laneWaiting=false;launchTravel=true;ball={x:342,y:620,vx:0,vy:0,r:8};lastFrame=0;scheduleLoop();}
 launchButton.addEventListener('pointerdown',launchBall);
 launchButton.addEventListener('click',launchBall);
 updatePinScore();resizeTable();
@@ -586,10 +606,13 @@ function baseballNoise(ctx,duration,volume,low,high){
 function baseballPlaySound(kind){
  const ctx=baseballGetAudio();if(!ctx)return;
  if(kind==='pitch'){baseballNoise(ctx,.32,.045,240,1250);return}
+ if(kind==='miss'){const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.setValueAtTime(330,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(120,ctx.currentTime+.28);g.gain.setValueAtTime(.055,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.31);return}
+ if(kind==='crowd'){baseballNoise(ctx,.9,.045,360,1700);baseballNoise(ctx,.55,.025,700,2300);return}
  if(kind==='hit'){
   baseballNoise(ctx,.16,.14,180,2400);
   const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='triangle';osc.frequency.setValueAtTime(175,ctx.currentTime);osc.frequency.exponentialRampToValueAtTime(72,ctx.currentTime+.18);gain.gain.setValueAtTime(.12,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.2);osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.21);
   baseballNoise(ctx,.75,.055,420,1050);
+  baseballPlaySound('crowd');
  }
 }
 const baseballMat=(color,roughness=.78,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
@@ -685,7 +708,7 @@ function baseballStartPitch(){
  baseballPhase='pitch';baseballPlaySound('pitch');baseballPitchStart=performance.now();baseballSwingStarted=false;baseballSwingRequested=false;baseballBall.position.set(0,2.25,-15);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
  baseballBallShadow.position.set(0,.03,-15);baseballAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';baseballHint.textContent='Tocá ¡BATEAR! mientras la pelota viene. Si no lo tocás, es fallo.';
 }
-function baseballMiss(){if(baseballPhase!=='pitch')return;baseballPhase='miss';baseballFlightStart=performance.now();baseballMisses++;baseballSwingStarted=false;baseballMessage.textContent='¡FALLASTE!';baseballHint.textContent='Tenés que apretar BATEAR cuando llega la pelota. Probá otra vez.';baseballAction.textContent='OTRA PELOTA';}
+function baseballMiss(){if(baseballPhase!=='pitch')return;baseballPlaySound('miss');baseballPhase='miss';baseballFlightStart=performance.now();baseballMisses++;baseballSwingStarted=false;baseballMessage.textContent='¡FALLASTE!';baseballHint.textContent='Tenés que apretar BATEAR cuando llega la pelota. Probá otra vez.';baseballAction.textContent='OTRA PELOTA';}
 function baseballHit(){
  if(baseballPhase!=='pitch'||!baseballSwingRequested)return;
  baseballPhase='flight';baseballPlaySound('hit');baseballFlightStart=performance.now();baseballHits++;
@@ -746,7 +769,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBasebal
  const c=canvas.getContext('2d');const colors=['#172b40','#ef4444','#f59e0b','#facc15','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#8b5a2b','#ff9f43','#ffffff'];
  let color=colors[1],page=0,blank=false,drawing=false,last=null,brushSize=12;
  const palette=document.getElementById('drawPalette');const brush=document.getElementById('drawBrushSize'),brushValue=document.getElementById('drawBrushValue');brush.addEventListener('input',()=>{brushSize=Number(brush.value);brushValue.textContent=brushSize+' px'});
- colors.forEach((col,i)=>{const b=document.createElement('button');b.type='button';b.className='draw-color';b.style.background=col;b.setAttribute('aria-label','Color '+(i+1));b.setAttribute('aria-pressed',String(i===1));b.addEventListener('click',()=>{color=col;palette.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))});palette.appendChild(b)});
+ colors.forEach((col,i)=>{const b=document.createElement('button');b.type='button';b.className='draw-color';b.style.background=col;b.setAttribute('aria-label','Color '+(i+1));b.setAttribute('aria-pressed',String(i===1));b.addEventListener('click',()=>{playGameSound('tap');color=col;palette.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))});palette.appendChild(b)});
  function line(points,width=9){c.beginPath();points.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.strokeStyle='#24394d';c.stroke()}
  function circle(x,y,r){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.stroke()}
  function template(n){
@@ -766,13 +789,13 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBasebal
  }
  window.drawRenderPage=function(){if(blank){c.fillStyle='#fff';c.fillRect(0,0,900,560)}else template(page);document.getElementById('drawPageCount').textContent=blank?'Hoja libre':'Libro · '+(page+1)+' / 4';document.getElementById('drawHint').textContent=blank?'¡Esta hoja es toda tuya! Dibujá lo que quieras.':'Elegí un color y pintá dentro del dibujo. También podés trazar por arriba de las líneas.'};
  function point(e){const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)*900/r.width,(e.clientY-r.top)*560/r.height]}
- canvas.addEventListener('pointerdown',e=>{e.preventDefault();drawing=true;last=point(e);canvas.setPointerCapture(e.pointerId);c.beginPath();c.arc(last[0],last[1],brushSize/2,0,Math.PI*2);c.fillStyle=color;c.fill()});
+ canvas.addEventListener('pointerdown',e=>{e.preventDefault();playGameSound('draw');drawing=true;last=point(e);canvas.setPointerCapture(e.pointerId);c.beginPath();c.arc(last[0],last[1],brushSize/2,0,Math.PI*2);c.fillStyle=color;c.fill()});
  canvas.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const p=point(e);c.beginPath();c.moveTo(last[0],last[1]);c.lineTo(p[0],p[1]);c.strokeStyle=color;c.lineWidth=brushSize;c.lineCap='round';c.lineJoin='round';c.stroke();last=p});
  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>canvas.addEventListener(ev,()=>{drawing=false;last=null}));
- document.getElementById('drawPrev').addEventListener('click',()=>{blank=false;page=(page+3)%4;drawRenderPage()});
- document.getElementById('drawNext').addEventListener('click',()=>{blank=false;page=(page+1)%4;drawRenderPage()});
- document.getElementById('drawBlank').addEventListener('click',()=>{blank=true;drawRenderPage()});
- document.getElementById('drawClear').addEventListener('click',drawRenderPage);
+ document.getElementById('drawPrev').addEventListener('click',()=>{playGameSound('tap');blank=false;page=(page+3)%4;drawRenderPage()});
+ document.getElementById('drawNext').addEventListener('click',()=>{playGameSound('tap');blank=false;page=(page+1)%4;drawRenderPage()});
+ document.getElementById('drawBlank').addEventListener('click',()=>{playGameSound('tap');blank=true;drawRenderPage()});
+ document.getElementById('drawClear').addEventListener('click',()=>{playGameSound('tap');drawRenderPage()});
  drawRenderPage();
 })();
 
@@ -780,8 +803,8 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBasebal
 const memorySpecies=[['🦖','Tiranosaurio'],['🦕','Braquiosaurio'],['🦴','Tricerátops'],['🐊','Espinosaurio'],['🥚','Anquilosaurio'],['🪽','Pterodáctilo']];
 let memoryCards=[],memoryOpen=[],memoryFound=0,memoryMoves=0,memoryLock=false,memoryTimer=null;
 function memoryStart(){if(memoryTimer){clearTimeout(memoryTimer);memoryTimer=null}memoryCards=memorySpecies.flatMap((x,i)=>[{id:i,face:x[0],name:x[1]},{id:i,face:x[0],name:x[1]}]).sort(()=>Math.random()-.5);memoryOpen=[];memoryFound=0;memoryMoves=0;memoryLock=false;document.getElementById('memoryMoves').textContent='Movimientos: 0';document.getElementById('memoryPairs').textContent='Parejas: 0 / 6';document.getElementById('memoryMessage').textContent='Tocá dos cartas para encontrar una pareja.';const grid=document.getElementById('memoryGrid');grid.innerHTML='';memoryCards.forEach((card,index)=>{const b=document.createElement('button');b.type='button';b.className='memory-card';b.innerHTML='<span class="memory-back">?</span><span class="memory-front"><strong>'+card.face+'</strong><small>'+card.name+'</small></span>';b.addEventListener('click',()=>memoryFlip(index,b));grid.appendChild(b)})}
-function memoryFlip(index,button){if(memoryLock||button.classList.contains('revealed')||button.classList.contains('matched'))return;button.classList.add('revealed');memoryOpen.push({index,button,card:memoryCards[index]});if(memoryOpen.length<2)return;memoryMoves++;document.getElementById('memoryMoves').textContent='Movimientos: '+memoryMoves;const [a,b]=memoryOpen;if(a.card.id===b.card.id){a.button.classList.add('matched');b.button.classList.add('matched');memoryFound++;document.getElementById('memoryPairs').textContent='Parejas: '+memoryFound+' / 6';document.getElementById('memoryMessage').textContent=memoryFound===6?'¡Ganaste! Encontraste todos los dinosaurios.':'¡Muy bien! Encontraste una pareja.';memoryOpen=[]}else{memoryLock=true;document.getElementById('memoryMessage').textContent='No son iguales. ¡Probá de nuevo!';memoryTimer=setTimeout(()=>{a.button.classList.remove('revealed');b.button.classList.remove('revealed');memoryOpen=[];memoryLock=false;memoryTimer=null},850)}}
-document.getElementById('memoryRestart').addEventListener('click',memoryStart);
+function memoryFlip(index,button){if(memoryLock||button.classList.contains('revealed')||button.classList.contains('matched'))return;playGameSound('flip');button.classList.add('revealed');memoryOpen.push({index,button,card:memoryCards[index]});if(memoryOpen.length<2)return;memoryMoves++;document.getElementById('memoryMoves').textContent='Movimientos: '+memoryMoves;const [a,b]=memoryOpen;if(a.card.id===b.card.id){playGameSound('match');a.button.classList.add('matched');b.button.classList.add('matched');memoryFound++;if(memoryFound===6)playGameSound('win');document.getElementById('memoryPairs').textContent='Parejas: '+memoryFound+' / 6';document.getElementById('memoryMessage').textContent=memoryFound===6?'¡Ganaste! Encontraste todos los dinosaurios.':'¡Muy bien! Encontraste una pareja.';memoryOpen=[]}else{playGameSound('mismatch');memoryLock=true;document.getElementById('memoryMessage').textContent='No son iguales. ¡Probá de nuevo!';memoryTimer=setTimeout(()=>{a.button.classList.remove('revealed');b.button.classList.remove('revealed');memoryOpen=[];memoryLock=false;memoryTimer=null},850)}}
+document.getElementById('memoryRestart').addEventListener('click',()=>{playGameSound('tap');memoryStart()});
 
 async function checkForAppUpdate(manual=false){
  const btn=document.getElementById('updateBtn');
