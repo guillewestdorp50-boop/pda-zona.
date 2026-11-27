@@ -185,26 +185,6 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 </style>
 </head>
 <body>
-<div id="guilleWelcome" role="dialog" aria-modal="true" aria-label="Bienvenida de Guille">
- <div class="guille-card">
-  <div class="guille-top">
-   <div class="guille-robot" aria-hidden="true">
-    <div class="guille-antenna"></div><div class="guille-head"><i class="guille-ear left"></i><i class="guille-ear right"></i><div class="guille-eyes"><b></b><b></b></div><div class="guille-cheeks"><i></i><i></i></div><div class="guille-smile"></div></div><div class="guille-neck"></div><div class="guille-body"><i class="guille-heart">♥</i><i class="guille-arm left"></i><i class="guille-arm right"></i></div>
-   </div>
-   <div class="guille-speech"><span class="guille-name-tag">GUILLE 🤖</span><p id="guilleLine">¡Hola! ¿Cómo estás? Mi nombre es Guille. ¿Cuál es tu nombre?</p></div>
-  </div>
-  <div id="guilleNameStage">
-   <div class="guille-name-entry"><label for="guilleName">Tu nombre</label><input id="guilleName" type="text" readonly inputmode="none" autocomplete="off" placeholder="Escribí tu nombre con las teclas de colores"></div>
-   <div id="guilleKeyboard" class="guille-keyboard" aria-label="Teclado de colores"></div>
-   <div class="guille-key-actions"><button id="guilleErase" type="button">⌫ Borrar</button><button id="guilleClear" type="button">Limpiar</button><button id="guilleOk" type="button" disabled>¡LISTO!</button></div>
-  </div>
-  <div id="guilleTalkStage" hidden>
-   <div id="guilleChoices" class="guille-choices"></div>
-   <button id="guilleNext" class="guille-next" type="button">¡SEGUIR CHARLANDO! 💛</button>
-   <button id="guilleEnter" class="guille-enter" type="button" hidden>¡VAMOS A EXPLORAR! 🚀</button>
-  </div>
- </div>
-</div>
 <div id="app">
 <header><div class="brand"><div class="mascot" aria-hidden="true">🦕</div><span>¡A EXPLORAR!</span></div><div style="display:flex;align-items:center;gap:6px"><button id="updateBtn" type="button">⬆ Actualizar</button><div id="sayStatus" aria-live="polite">Tocá y descubrí</div></div></header>
 <nav aria-label="Juegos">
@@ -319,45 +299,6 @@ const dinosaurPronunciation={
 };
 function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
 function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-US';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
-(function initGuilleWelcome(){
- const overlay=document.getElementById('guilleWelcome'),line=document.getElementById('guilleLine'),nameInput=document.getElementById('guilleName');
- const nameStage=document.getElementById('guilleNameStage'),talkStage=document.getElementById('guilleTalkStage'),keyboard=document.getElementById('guilleKeyboard'),choices=document.getElementById('guilleChoices'),ok=document.getElementById('guilleOk'),next=document.getElementById('guilleNext'),enter=document.getElementById('guilleEnter');
- if(!overlay)return;
- const colors=[['#ffe18a','#d6ae42'],['#a9e9ff','#64b9d9'],['#ffbfd6','#d985a7'],['#b9f1cf','#78c99b'],['#d6c8ff','#a493dc'],['#ffd1a8','#d99b6b'],['#c8e9ff','#86b9db']];
- const letters='ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('');
- letters.forEach((letter,i)=>{const b=document.createElement('button');b.type='button';b.className='guille-key';b.textContent=letter;b.style.setProperty('--key',colors[i%colors.length][0]);b.style.setProperty('--shade',colors[i%colors.length][1]);b.addEventListener('click',()=>{if(nameInput.value.length<14){nameInput.value+=letter;ok.disabled=!nameInput.value.trim()}});keyboard.appendChild(b)});
- function addSpecial(label,action){const b=document.createElement('button');b.type='button';b.className='guille-key';b.textContent=label;b.style.setProperty('--key','#d9e9f7');b.style.setProperty('--shade','#9db9d0');b.addEventListener('click',action);keyboard.appendChild(b)}
- addSpecial('␣',()=>{if(nameInput.value.length<14)nameInput.value+=' '});
- document.getElementById('guilleErase').addEventListener('click',()=>{nameInput.value=nameInput.value.slice(0,-1);ok.disabled=!nameInput.value.trim()});
- document.getElementById('guilleClear').addEventListener('click',()=>{nameInput.value='';ok.disabled=true});
- let childName='',questionIndex=0,questionSpeechTimer=0;
- const questions=[
-  {q:'¿Cómo estás hoy?',a:[['😄 ¡Estoy feliz!','¡Qué alegría, '+ 'me encanta escucharlo. ¡Tu sonrisa ilumina el día!'],['🙂 Estoy bien','¡Qué bueno! Me pone muy contento que estés bien.'],['😴 Tengo un poquito de sueño','Está bien descansar. ¡Vamos despacito y con cariño!']]},
-  {q:'¿Qué te gusta hacer?',a:[['⚽ Jugar','¡Qué divertido! Jugar nos llena de energía.'],['🦕 Aprender sobre animales','¡Qué genial! ¡Vamos a descubrir un montón de cosas!'],['🎨 Dibujar y crear','¡Qué artista! Me encanta usar la imaginación.']]},
-  {q:'¿Cómo está el día por donde estás?',a:[['☀️ Hay sol','¡Qué lindo día soleado! El sol nos acompaña.'],['🌧️ Está lloviendo','¡Qué lindo escuchar la lluvia! Podemos mirar las gotitas.'],['☁️ Está nublado','¡El cielo se puso gris! Igual podemos tener un día hermoso.'],['🥶 Hace frío','¡A abrigarse bien! Te mando un abrazo calentito.']]},
-  {q:'¿Qué te gustaría hacer ahora?',a:[['🦖 Ver dinosaurios','¡Buena elección! ¡Los dinosaurios nos esperan!'],['🎱 Jugar al flipper','¡A jugar! ¡Vamos por muchos puntos!'],['⚾ Jugar al béisbol','¡A preparar ese bate! ¡Vamos, campeón!'],['🗣️ Charlar conmigo','¡Me encanta conversar con vos!']]},
-  {q:'Una última pregunta: ¿querés que sigamos aprendiendo juntos?',a:[['💛 ¡Sí, Guille!','¡Qué lindo! Estoy muy feliz de acompañarte.'],['🚀 ¡Vamos a explorar!','¡Entonces comienza nuestra aventura! ¡Vamos juntos!']]}
- ];
- function showQuestion(){
-  const item=questions[questionIndex];line.textContent=item.q;
-  clearTimeout(questionSpeechTimer);questionSpeechTimer=setTimeout(()=>speak(item.q),2400);
-  choices.innerHTML='';item.a.forEach((entry,i)=>{const b=document.createElement('button');b.type='button';b.className='guille-choice';b.textContent=entry[0];b.style.setProperty('--choice',colors[(i+questionIndex)%colors.length][0]);b.style.setProperty('--choice-shade',colors[(i+questionIndex)%colors.length][1]);b.addEventListener('click',()=>{clearTimeout(questionSpeechTimer);Array.from(choices.children).forEach(x=>x.disabled=true);line.textContent=entry[1];speak(entry[1]);const target=entry[0].includes('Ver dinosaurios')?'dinos':entry[0].includes('flipper')?'flipper':entry[0].includes('béisbol')?'baseball':entry[0].includes('Dibujar y crear')?'draw':null;if(target){overlay.style.display='none';openExplorerPanel(target);return}next.hidden=false;enter.hidden=true});choices.appendChild(b)});
-  next.hidden=true;enter.hidden=true;
- }
- function beginTalk(){
-  nameStage.hidden=true;talkStage.hidden=false;questionIndex=0;
-  line.textContent='¡Hola, '+childName+'! ¡Qué alegría conocerte! Soy Guille y vamos a jugar, aprender y divertirnos juntos.';
-  speak('¡Hola, '+childName+'! ¡Qué alegría conocerte! Soy Guille y vamos a jugar, aprender y divertirnos juntos.');
-  showQuestion();
- }
- ok.addEventListener('click',()=>{const clean=nameInput.value.trim().replace(/\s+/g,' ');if(!clean)return;childName=clean;try{localStorage.setItem('exploradores-child-name',childName)}catch(e){}beginTalk()});
- next.addEventListener('click',()=>{questionIndex++;if(questionIndex<questions.length)showQuestion();else{line.textContent='¡Qué lindo charlar con vos! ¡Sos genial!';choices.innerHTML='';next.hidden=true;enter.hidden=false;speak('¡Qué lindo charlar con vos! ¡Sos genial! ¡Vamos a explorar!')}});
- enter.addEventListener('click',()=>{speak('¡Vamos a explorar! ¡Que comience la aventura!');overlay.style.display='none';});
- let saved='';try{saved=(localStorage.getItem('exploradores-child-name')||'').trim()}catch(e){}
- if(saved){childName=saved;nameStage.hidden=true;talkStage.hidden=false;line.textContent='¡Hola de nuevo, '+childName+'! ¡Qué alegría verte! ¿Charlamos un ratito?';speak('¡Hola de nuevo, '+childName+'! ¡Qué alegría verte!');showQuestion()}
- else{speak('¡Hola! ¿Cómo estás? Mi nombre es Guille. ¿Cuál es tu nombre?')}
-})();
-
 function openExplorerPanel(id){document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.panel===id)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));if(id==='flipper')startFlipper();else stopFlipper();if(id==='baseball')startBaseball();else stopBaseball();if(id==='draw')drawRenderPage();}
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>openExplorerPanel(b.dataset.panel)));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
