@@ -13,9 +13,10 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 header{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:38px}
 .brand{display:flex;align-items:center;gap:7px;font-weight:1000;font-size:clamp(18px,2.4vw,25px);letter-spacing:-.7px}.mascot{width:34px;height:34px;border-radius:12px;background:#fff;display:grid;place-items:center;font-size:30px;box-shadow:0 4px 0 #8ab9cc}
 #updateBtn{display:none;border:0;border-radius:99px;padding:7px 10px;background:#176b45;color:#fff;font-weight:950;font-size:12px;box-shadow:0 3px 0 #0b472d}#updateBtn.visible{display:block}#sayStatus{font-size:clamp(10px,1.2vw,13px);font-weight:800;background:#ffffffb8;padding:6px 10px;border-radius:99px}
-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%;min-width:0}
-nav button,.back{min-width:0;white-space:normal;line-height:1.1;border:0;border-radius:13px;padding:7px 5px;font-size:clamp(10px,1.35vw,15px);font-weight:950;color:#17304a;background:#fff;box-shadow:0 4px 0 #a5c5d3}
-@media(min-width:650px){nav{display:flex;justify-content:center;flex-wrap:wrap}nav button{white-space:nowrap;padding:8px 12px;font-size:clamp(12px,1.5vw,16px)}}
+nav{display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;gap:7px;width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;padding:2px 3px 7px;scrollbar-width:thin;scrollbar-color:#5b91b4 #ffffff80;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x}
+nav button,.back{flex:0 0 auto;white-space:nowrap;line-height:1.1;border:0;border-radius:13px;padding:8px 12px;font-size:clamp(12px,1.5vw,16px);font-weight:950;color:#17304a;background:#fff;box-shadow:0 4px 0 #a5c5d3;scroll-snap-align:start}
+nav{scroll-snap-type:x proximity}
+nav button{min-height:36px}
 nav button[aria-selected=true]{background:#173b62;color:#fff;box-shadow:0 4px 0 #0a2038}
 main{flex:1;min-height:0;position:relative}
 .panel{display:none;height:100%;min-height:0;background:#ffffffb8;border:3px solid #fff;border-radius:18px;padding:8px;box-shadow:0 8px 24px #41617a22;overflow:auto}
@@ -35,7 +36,7 @@ h1{margin:0;font-size:clamp(19px,2.5vw,27px);line-height:1.05} .hint{margin:0;fo
 #table{width:100%;height:100%;min-height:180px;border-radius:18px;background:linear-gradient(145deg,#6b492b,#1a2432 24%,#123c49 65%,#6b492b);border:9px ridge #d7a84f;display:block;touch-action:none;box-shadow:0 0 0 3px #251a17,0 8px 16px #0009}
 .flipper-caption{display:flex;align-items:center;justify-content:space-between;gap:8px}
 footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
-@media(orientation:portrait){#app{padding:6px;gap:5px}header{min-height:38px}.brand{font-size:18px}.mascot{width:34px;height:34px}nav button{padding:7px 8px;font-size:12px;border-radius:12px}.grid,.dino-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.flipper-wrap{grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;gap:7px}.flipper-wrap #table{grid-column:1/3;grid-row:1}.flipper-key{min-height:54px;border-radius:16px}.panel{padding:8px;border-radius:18px}.dino svg{height:clamp(44px,7vh,70px)}}
+@media(orientation:portrait){#app{padding:6px;gap:5px}header{min-height:38px}.brand{font-size:18px}.mascot{width:34px;height:34px}.grid,.dino-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.flipper-wrap{grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;gap:7px}.flipper-wrap #table{grid-column:1/3;grid-row:1}.flipper-key{min-height:54px;border-radius:16px}.panel{padding:8px;border-radius:18px}.dino svg{height:clamp(44px,7vh,70px)}}
 
 /* Galería de dinosaurios: cuadros uniformes y buscador siempre accesible */
 #dinos{gap:7px}
