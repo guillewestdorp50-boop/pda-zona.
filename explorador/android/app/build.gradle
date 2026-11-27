@@ -34,10 +34,9 @@ android {
 }
 
 tasks.register('copyExplorerAssets', Copy) {
-    from("$rootDir/../index.html")
+    from("$rootDir/../index.html") { rename { "index.html" } }
     from("$rootDir/../three.min.js")
     into("$projectDir/src/main/assets")
-    rename { 'index.html' }
 }
 preBuild.dependsOn(copyExplorerAssets)
 
