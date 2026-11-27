@@ -49,6 +49,16 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 #dinos .detail-card{width:min(100%,560px);max-height:94dvh;padding:12px;gap:8px}
 #dinos .detail-card img{width:100%;height:auto;aspect-ratio:1/1;max-height:52vh;object-fit:contain;background:#edf5e9;border:1px solid #e1ebdf;border-radius:14px}
 #dinos .detail-card h2{text-align:center}
+
+/* Cabina arcade con perspectiva y profundidad física por capas */
+.flipper-wrap{perspective:1250px;perspective-origin:50% 42%;position:relative;isolation:isolate;background:linear-gradient(90deg,#24150f 0%,#80532e 7%,#2a1a13 13%,#1a1417 50%,#2a1a13 87%,#80532e 93%,#24150f 100%);box-shadow:inset 0 0 0 4px #e8c77e,inset 0 0 0 9px #402719,0 14px 24px #101a2b88}
+.flipper-wrap:before{content:"";position:absolute;inset:4px 9px 10px;border:3px solid #f1d18a;border-radius:22px;transform:translateZ(-24px);box-shadow:0 16px 0 #28170f,0 22px 0 #130d0b;pointer-events:none;z-index:-1}
+#table{transform:rotateX(7deg) translateZ(18px);transform-origin:50% 42%;backface-visibility:hidden;border:10px ridge #d7a84f;box-shadow:inset 0 0 0 3px #fff0b8,0 8px 0 #68401e,0 15px 22px #000b,0 0 25px #6be8e477}
+.flipper-controls{display:flex;flex-direction:column;justify-content:center;gap:12px;transform:translateZ(28px)}
+.flipper-key{border:2px solid #ffe8a4;box-shadow:0 7px 0 #8b4e1d,0 12px 18px #0008,inset 0 2px 5px #fff9}
+.flipper-key.right{box-shadow:0 7px 0 #145a91,0 12px 18px #0008,inset 0 2px 5px #fff9}
+@media(orientation:portrait){.flipper-wrap{perspective:1000px;perspective-origin:50% 40%;padding:7px 7px 12px}#table{transform:rotateX(5deg) translateZ(10px);transform-origin:50% 45%;box-shadow:inset 0 0 0 3px #fff0b8,0 7px 0 #68401e,0 12px 17px #000b,0 0 18px #6be8e466}.flipper-controls{flex-direction:row;transform:translateZ(18px)}}
+
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
