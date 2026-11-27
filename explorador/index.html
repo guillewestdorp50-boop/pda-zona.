@@ -303,7 +303,7 @@ function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.
  addSpecial('␣',()=>{if(nameInput.value.length<14)nameInput.value+=' '});
  document.getElementById('guilleErase').addEventListener('click',()=>{nameInput.value=nameInput.value.slice(0,-1);ok.disabled=!nameInput.value.trim()});
  document.getElementById('guilleClear').addEventListener('click',()=>{nameInput.value='';ok.disabled=true});
- let childName='',questionIndex=0;
+ let childName='',questionIndex=0,questionSpeechTimer=0;
  const questions=[
   {q:'¿Cómo estás hoy?',a:[['😄 ¡Estoy feliz!','¡Qué alegría, '+ 'me encanta escucharlo. ¡Tu sonrisa ilumina el día!'],['🙂 Estoy bien','¡Qué bueno! Me pone muy contento que estés bien.'],['😴 Tengo un poquito de sueño','Está bien descansar. ¡Vamos despacito y con cariño!']]},
   {q:'¿Qué te gusta hacer?',a:[['⚽ Jugar','¡Qué divertido! Jugar nos llena de energía.'],['🦕 Aprender sobre animales','¡Qué genial! ¡Vamos a descubrir un montón de cosas!'],['🎨 Dibujar y crear','¡Qué artista! Me encanta usar la imaginación.']]},
@@ -313,7 +313,8 @@ function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.
  ];
  function showQuestion(){
   const item=questions[questionIndex];line.textContent=childName+', '+item.q.toLowerCase();
-  choices.innerHTML='';item.a.forEach((entry,i)=>{const b=document.createElement('button');b.type='button';b.className='guille-choice';b.textContent=entry[0];b.style.setProperty('--choice',colors[(i+questionIndex)%colors.length][0]);b.style.setProperty('--choice-shade',colors[(i+questionIndex)%colors.length][1]);b.addEventListener('click',()=>{Array.from(choices.children).forEach(x=>x.disabled=true);line.textContent=entry[1].replace('Tu sonrisa',childName+' ¡tu sonrisa');speak(childName+'. '+entry[1]);next.hidden=false;enter.hidden=true});choices.appendChild(b)});
+  clearTimeout(questionSpeechTimer);questionSpeechTimer=setTimeout(()=>speak(childName+'. '+item.q),2400);
+  choices.innerHTML='';item.a.forEach((entry,i)=>{const b=document.createElement('button');b.type='button';b.className='guille-choice';b.textContent=entry[0];b.style.setProperty('--choice',colors[(i+questionIndex)%colors.length][0]);b.style.setProperty('--choice-shade',colors[(i+questionIndex)%colors.length][1]);b.addEventListener('click',()=>{clearTimeout(questionSpeechTimer);Array.from(choices.children).forEach(x=>x.disabled=true);line.textContent=entry[1].replace('Tu sonrisa',childName+' ¡tu sonrisa');speak(childName+'. '+entry[1]);next.hidden=false;enter.hidden=true});choices.appendChild(b)});
   next.hidden=true;enter.hidden=true;
  }
  function beginTalk(){
