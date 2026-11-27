@@ -34,6 +34,8 @@ import java.util.Locale;
 public class MainActivity extends Activity {
     private WebView webView;
     private TextToSpeech tts;
+    private boolean ttsReady = false;
+    private String pendingSpeech = null;
     private DownloadManager downloadManager;
     private long activeDownloadId = -1;
     private BroadcastReceiver downloadReceiver;
@@ -57,6 +59,11 @@ public class MainActivity extends Activity {
                 }
                 tts.setSpeechRate(0.88f);
                 tts.setPitch(1.0f);
+                ttsReady = true;
+                if (pendingSpeech != null && !pendingSpeech.trim().isEmpty()) {
+                    tts.speak(pendingSpeech, TextToSpeech.QUEUE_FLUSH, null, "exploradores-voice");
+                    pendingSpeech = null;
+                }
                 // Voz elegida por el usuario: Google español de Estados Unidos, familia ESD.
                 if (tts.getVoices() != null) {
                     for (Voice voice : tts.getVoices()) {
@@ -198,8 +205,9 @@ public class MainActivity extends Activity {
     private final class SpeechBridge {
         @JavascriptInterface public void speak(String phrase) {
             runOnUiThread(() -> {
-                if (tts != null && phrase != null && !phrase.trim().isEmpty())
-                    tts.speak(phrase, TextToSpeech.QUEUE_FLUSH, null, "exploradores-voice");
+                if (tts == null || phrase == null || phrase.trim().isEmpty()) return;
+                if (!ttsReady) { pendingSpeech = phrase; return; }
+                tts.speak(phrase, TextToSpeech.QUEUE_FLUSH, null, "exploradores-voice");
             });
         }
         @JavascriptInterface public void stop() {
