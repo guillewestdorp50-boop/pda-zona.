@@ -28,10 +28,10 @@ h1{margin:0;font-size:clamp(19px,2.5vw,27px);line-height:1.05} .hint{margin:0;fo
 .dino{background:#fff;border:3px solid #fff;box-shadow:0 5px 0 #b4d4dc;border-radius:15px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;padding:5px;font-weight:950;font-size:clamp(11px,1.35vw,15px);min-height:0}
 .dino img{width:100%;height:clamp(64px,10vh,104px);object-fit:contain;border-radius:10px;background:linear-gradient(145deg,#edf8e9,#d8e9f4)}.dino .loading{width:100%;height:clamp(64px,10vh,104px);display:grid;place-items:center;font-size:35px;background:#eaf2df;border-radius:10px}.dino .dino-name{font-size:clamp(10px,1.25vw,14px);line-height:1.1;text-align:center}.search-row{display:flex;gap:7px}.search-row input{width:100%;min-width:0;border:2px solid #b7d7e4;border-radius:13px;padding:9px 12px;font:700 14px system-ui;background:#fff;color:#17304a}.dino-detail{position:fixed;inset:0;z-index:20;background:#0c2035cc;display:none;align-items:center;justify-content:center;padding:18px}.dino-detail.open{display:flex}.detail-card{width:min(100%,560px);max-height:90%;overflow:auto;background:#fff;border-radius:22px;padding:14px;box-shadow:0 12px 40px #0005;display:flex;flex-direction:column;gap:9px}.detail-card img{width:100%;height:min(42vh,320px);object-fit:contain;background:#edf5e9;border-radius:15px}.detail-card h2{margin:0;font-size:24px}.detail-actions{display:flex;gap:8px}.detail-actions button{flex:1;border:0;border-radius:13px;padding:11px;font-weight:900;background:#dff5ff;color:#17304a}.credit{font-size:11px;color:#526779;overflow-wrap:anywhere}.credit a{color:#17699b;font-weight:800}
 .dino:active{transform:scale(.98)}
-.flipper-wrap{display:grid;grid-template-columns:1fr minmax(0,2.3fr) 1fr;gap:10px;flex:1;min-height:0;align-items:stretch}
+.flipper-wrap{display:grid;grid-template-columns:1fr minmax(0,2.3fr) 1fr;gap:10px;flex:1;min-height:0;align-items:stretch;padding:8px;border-radius:24px;background:linear-gradient(145deg,#55351f,#1d1720 48%,#70482a);box-shadow:inset 0 0 0 3px #d7ad62,0 8px 18px #18283a55}
 .flipper-key{border:0;border-radius:24px;background:linear-gradient(160deg,#ffdf57,#ff9f42);box-shadow:0 7px 0 #d27b32;font-size:clamp(18px,2.6vw,28px);font-weight:1000;color:#63360b;touch-action:none}
 .flipper-key.right{background:linear-gradient(160deg,#8ee8ff,#4cafff);box-shadow:0 7px 0 #277bc2;color:#07385d}
-#table{width:100%;height:100%;min-height:180px;border-radius:22px;background:radial-gradient(ellipse at 50% 15%,#385b91,#132747 75%);border:6px solid #f4ca59;display:block;touch-action:none}
+#table{width:100%;height:100%;min-height:180px;border-radius:18px;background:linear-gradient(145deg,#6b492b,#1a2432 24%,#123c49 65%,#6b492b);border:9px ridge #d7a84f;display:block;touch-action:none;box-shadow:0 0 0 3px #251a17,0 8px 16px #0009}
 .flipper-caption{display:flex;align-items:center;justify-content:space-between;gap:8px}
 footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 @media(orientation:portrait){#app{padding:6px;gap:5px}header{min-height:38px}.brand{font-size:18px}.mascot{width:34px;height:34px}nav button{padding:7px 8px;font-size:12px;border-radius:12px}.grid,.dino-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.flipper-wrap{grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;gap:7px}.flipper-wrap #table{grid-column:1/3;grid-row:1}.flipper-key{min-height:54px;border-radius:16px}.panel{padding:8px;border-radius:18px}.dino svg{height:clamp(44px,7vh,70px)}}
@@ -100,7 +100,7 @@ const dinosaurPronunciation={
 };
 function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
 function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-US';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
-document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')resizeTable()}));
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')startFlipper();else stopFlipper()}));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
 const species=[
 ["Tiranosaurio rex","Tyrannosaurus rex"],["Tricerátops","Triceratops"],["Estegosaurio","Stegosaurus"],["Braquiosaurio","Brachiosaurus"],["Velociraptor","Velociraptor"],["Anquilosaurio","Ankylosaurus"],["Espinosaurio","Spinosaurus"],["Diplódocus","Diplodocus"],["Parasaurolophus","Parasaurolophus"],["Carnotauro","Carnotaurus"],["Alosaurio","Allosaurus"],["Iguanodonte","Iguanodon"],["Paquicefalosaurio","Pachycephalosaurus"],["Gallimimo","Gallimimus"],["Compsognato","Compsognathus"],["Dilofosaurio","Dilophosaurus"],["Ceratosaurio","Ceratosaurus"],["Giganotosaurio","Giganotosaurus"],["Argentinosaurio","Argentinosaurus"],["Amargasaurio","Amargasaurus"],["Mamenquisaurio","Mamenchisaurus"],["Apatosaurio","Apatosaurus"],["Camarasaurio","Camarasaurus"],["Protocerátops","Protoceratops"],["Arqueópterix","Archaeopteryx"],["Herrerasaurio","Herrerasaurus"],["Eoraptor","Eoraptor"],["Selófisis","Coelophysis"],["Nigersaurio","Nigersaurus"],["Euoplocefalo","Euoplocephalus"],["Oviraptor","Oviraptor"],["Terizinosaurio","Therizinosaurus"],["Deinónicus","Deinonychus"],["Yutaraptor","Utahraptor"],["Bariónix","Baryonyx"],["Sukómimus","Suchomimus"],["Majungasaurio","Majungasaurus"],["Mapusaurio","Mapusaurus"],["Dreadnoughtus","Dreadnoughtus"],["Patagotitan","Patagotitan"],["Saltasaurio","Saltasaurus"],["Estiracosaurio","Styracosaurus"],["Centrosaurio","Centrosaurus"],["Edmontosaurio","Edmontosaurus"],["Shunosaurio","Shunosaurus"],["Coritosaurio","Corythosaurus"],["Lambeosaurio","Lambeosaurus"],["Microraptor","Microraptor"],["Sitacosaurio","Psittacosaurus"],["Plateosaurio","Plateosaurus"]];
@@ -140,7 +140,7 @@ cards.forEach(c=>observer.observe(c));
 // Pinball arcade: física continua, paletas articuladas, bumpers, slingshots y carril lanzador.
 const canvas=document.getElementById('table'),ctx=canvas.getContext('2d');
 const VW=600,VH=1000;
-let scale=1,ox=0,oy=0,dpr=1,frame=0,score=0,hits=0,audioCtx=null;
+let scale=1,ox=0,oy=0,dpr=1,frame=0,score=0,hits=0,audioCtx=null,flipperActive=false,rafId=0,lastFrame=0;
 let left=false,right=false,ball={x:510,y:830,vx:0,vy:0,r:12};
 const bumpers=[{x:300,y:300,r:37,lit:0,value:100},{x:170,y:455,r:31,lit:0,value:150},{x:430,y:455,r:31,lit:0,value:150},{x:300,y:575,r:34,lit:0,value:200}];
 const targets=[{x:125,y:250,w:22,h:58,lit:0},{x:475,y:250,w:22,h:58,lit:0},{x:115,y:555,w:22,h:55,lit:0},{x:485,y:555,w:22,h:55,lit:0}];
@@ -154,7 +154,7 @@ function resetBall(){ball={x:510,y:830,vx:0,vy:0,r:12};}
 function sound(freq=420,duration=.055,type='sine',volume=.035){
  try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(Math.max(60,freq*.62),audioCtx.currentTime+duration);g.gain.setValueAtTime(volume,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}
 }
-function scoreAdd(n){score+=n;hits++;document.getElementById('sayStatus').textContent='⭐ '+score.toLocaleString('es-AR')+' puntos';}
+function scoreAdd(n){score+=n;hits++;}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function closest(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay,t=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy),0,1);return{x:ax+t*dx,y:ay+t*dy,t}}
 function collideSegment(ax,ay,bx,by,boost=1.08){
@@ -187,6 +187,17 @@ function update(){
 function rounded(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=3;ctx.stroke()}}
 function drawBumper(b){const glow=ctx.createRadialGradient(b.x,b.y,5,b.x,b.y,b.r*1.5);glow.addColorStop(0,b.lit?'#fff':'#fff9c8');glow.addColorStop(.35,b.lit?'#fff37c':'#ffb52e');glow.addColorStop(1,'#ff7a1600');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(b.x,b.y,b.r*1.5,0,Math.PI*2);ctx.fill();const g=ctx.createRadialGradient(b.x-b.r*.35,b.y-b.r*.4,2,b.x,b.y,b.r);g.addColorStop(0,'#fff');g.addColorStop(.2,b.lit?'#fff4a0':'#ffd86b');g.addColorStop(.6,'#e98a25');g.addColorStop(1,'#672e1a');ctx.fillStyle=g;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#ffe6a0';ctx.lineWidth=5;ctx.stroke();ctx.fillStyle='#4b2617';ctx.font='900 17px system-ui';ctx.textAlign='center';ctx.fillText('HIT',b.x,b.y+6)}
 function drawFlipper(f){const p=flipperPoints(f);ctx.lineCap='round';ctx.lineWidth=27;ctx.strokeStyle='#261b23';ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(p.x,p.y);ctx.stroke();const grad=ctx.createLinearGradient(f.x,f.y,p.x,p.y);grad.addColorStop(0,'#fff1a1');grad.addColorStop(.35,f===flippers.left?'#ffb72e':'#51d8ff');grad.addColorStop(1,f===flippers.left?'#b64d13':'#145c9b');ctx.strokeStyle=grad;ctx.lineWidth=20;ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.fillStyle='#f8df9a';ctx.beginPath();ctx.arc(f.x,f.y,16,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#65451e';ctx.lineWidth=4;ctx.stroke()}
+function drawBackglass(){
+ // Cabezal elevado de máquina noventera con marquesina y pantalla animada de dinosaurio.
+ rounded(34,28,532,190,22,'#090f19','#d9ad58');rounded(48,42,504,150,13,'#17232b','#9b7a45');
+ const glass=ctx.createLinearGradient(0,42,0,192);glass.addColorStop(0,'#09101d');glass.addColorStop(.5,'#102e43');glass.addColorStop(1,'#07121c');rounded(58,52,484,130,9,glass,'#55d4d3');
+ ctx.save();ctx.globalAlpha=.16;ctx.fillStyle='#8effd4';for(let y=58;y<178;y+=5)for(let x=64;x<536;x+=5)ctx.fillRect(x,y,1.5,1.5);ctx.restore();
+ ctx.fillStyle='#ffd66b';ctx.font='1000 22px system-ui';ctx.textAlign='center';ctx.shadowColor='#ff9e35';ctx.shadowBlur=12;ctx.fillText('DINO  •  PINBALL',300,76);ctx.shadowBlur=0;
+ const bob=Math.sin(frame*.07)*2,px=300,py=130+bob;ctx.save();ctx.translate(px,py);ctx.shadowColor='#5affb4';ctx.shadowBlur=16;ctx.fillStyle=frame%90<45?'#71ffb1':'#4de3c5';
+ const blocks=[[-74,4,22,12],[-57,-8,20,18],[-39,-17,26,24],[-15,-22,38,28],[20,-19,24,25],[38,-31,24,19],[57,-36,22,15],[73,-32,14,10],[50,-12,18,17],[28,4,22,17],[0,5,24,18],[-24,6,25,17],[-47,13,18,13],[-66,19,18,9],[-36,22,13,19],[5,20,13,22],[28,19,13,23],[-84,2,16,7]];blocks.forEach(([x,y,w,h])=>ctx.fillRect(x,y,w,h));ctx.fillStyle='#fff5a8';ctx.fillRect(72,-31,5,5);ctx.fillStyle='#14202b';ctx.fillRect(75,-30,2,2);ctx.fillStyle='#ffb84a';ctx.fillRect(84,-20,8,4);ctx.restore();
+ ctx.fillStyle='#a8f7dd';ctx.font='bold 11px monospace';ctx.textAlign='left';ctx.fillText('SCORE '+String(score).padStart(7,'0'),76,169);ctx.textAlign='right';ctx.fillText(frame%70<35?'¡CUIDADO!':'BOLA EN JUEGO',524,169);
+ for(const [x,y] of [[45,39],[555,39],[45,207],[555,207]]){const g=ctx.createRadialGradient(x-2,y-2,1,x,y,6);g.addColorStop(0,'#fff');g.addColorStop(.4,'#b9c4cb');g.addColorStop(1,'#36414a');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,6,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#202832';ctx.lineWidth=1;ctx.stroke();}
+}
 function draw(){
  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.setTransform(scale,0,0,scale,ox,oy);
  // Fondo de tablero de madera y campo esmaltado
@@ -196,11 +207,14 @@ function draw(){
  rounded(500,80,62,735,24,'#13253b','#e6bd61');rounded(512,100,38,690,18,'#28516a','#83e7e9');
  // Carril y marcas de luz
  for(let i=0;i<9;i++){ctx.fillStyle=frame%30<15?'#ffe36d':'#ff9c3d';ctx.globalAlpha=.65;ctx.beginPath();ctx.arc(531,135+i*72,5,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
- // Objetivos superiores
- ctx.fillStyle='#f8d77d';ctx.font='900 24px system-ui';ctx.textAlign='center';ctx.fillText('DINO PINBALL',300,92);
+ // Marquesina elevada y pantalla frontal con dinosaurio animado.
+ drawBackglass();
+ ctx.strokeStyle='#c5dce0';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(53,235);ctx.lineTo(53,820);ctx.moveTo(547,235);ctx.lineTo(547,820);ctx.stroke();ctx.strokeStyle='#fff1bd';ctx.lineWidth=2;ctx.stroke();
+ ctx.fillStyle='#f8d77d';ctx.font='900 15px system-ui';ctx.textAlign='center';ctx.fillText('ZONA DE JUEGO',300,238);
  for(let i=0;i<targets.length;i++){const t=targets[i];rounded(t.x-t.w/2,t.y-t.h/2,t.w,t.h,8,t.lit?'#fff5a0':'#e75e4d','#ffe6a3');ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(t.x,t.y,5,0,Math.PI*2);ctx.fill()}
- // Rampa superior curva
- ctx.strokeStyle='#f5c85d';ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(95,190);ctx.bezierCurveTo(145,125,455,125,505,190);ctx.stroke();ctx.strokeStyle='#fff1b4';ctx.lineWidth=3;ctx.stroke();
+ // Rampa elevada transparente, con doble carril de metal y reflejo.
+ ctx.lineCap='round';ctx.strokeStyle='#091a24';ctx.lineWidth=24;ctx.beginPath();ctx.moveTo(92,270);ctx.bezierCurveTo(142,205,458,205,508,270);ctx.stroke();ctx.strokeStyle='#9eeaff';ctx.globalAlpha=.7;ctx.lineWidth=13;ctx.stroke();ctx.globalAlpha=1;ctx.strokeStyle='#fff3c2';ctx.lineWidth=3;ctx.stroke();
+ for(let i=0;i<7;i++){const x=150+i*50,y=355+(i%2)*34;const g=ctx.createRadialGradient(x-3,y-3,1,x,y,12);g.addColorStop(0,'#fff');g.addColorStop(.25,i%2?'#ffeb80':'#8bfff0');g.addColorStop(1,'#176a70');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,11,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#d9c58c';ctx.lineWidth=3;ctx.stroke();}
  // Slingshots triangulares
  for(const s of [1,-1]){ctx.beginPath();if(s===1){ctx.moveTo(90,650);ctx.lineTo(205,750);ctx.lineTo(205,650)}else{ctx.moveTo(510,650);ctx.lineTo(395,750);ctx.lineTo(395,650)}ctx.closePath();ctx.fillStyle='#b72e46';ctx.fill();ctx.strokeStyle='#ffd27a';ctx.lineWidth=5;ctx.stroke()}
  bumpers.forEach(drawBumper);
@@ -209,15 +223,19 @@ function draw(){
  drawFlipper(flippers.left);drawFlipper(flippers.right);
  // Bola cromada
  const shine=ctx.createRadialGradient(ball.x-5,ball.y-7,1,ball.x,ball.y,ball.r*1.4);shine.addColorStop(0,'#fff');shine.addColorStop(.28,'#eaf7ff');shine.addColorStop(.65,'#91a8b9');shine.addColorStop(1,'#263b50');ctx.shadowColor='#9ceaff';ctx.shadowBlur=18;ctx.fillStyle=shine;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
- // Panel score
- rounded(175,870,250,56,16,'#071a2b','#d9b85c');ctx.fillStyle='#ffe58b';ctx.font='900 25px system-ui';ctx.textAlign='center';ctx.fillText('PUNTOS  '+score.toLocaleString('es-AR'),300,906);
- ctx.restore();requestAnimationFrame(loop);
+ // Marcador físico tipo display de siete segmentos en la base de la máquina.
+ rounded(155,858,290,72,12,'#090d13','#d6b05d');rounded(170,869,260,49,6,'#182c2b','#5c8b70');ctx.fillStyle='#a8ff9e';ctx.font='900 27px monospace';ctx.textAlign='center';ctx.shadowColor='#69ff75';ctx.shadowBlur=9;ctx.fillText(String(score).padStart(8,'0'),300,902);ctx.shadowBlur=0;
+ for(let i=0;i<3;i++){const x=240+i*60;const g=ctx.createRadialGradient(x-3,950,1,x,950,12);g.addColorStop(0,'#fff');g.addColorStop(.3,['#ffdf69','#6ce7ef','#ff7198'][i]);g.addColorStop(1,'#202b3a');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,950,12,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#e8d39a';ctx.lineWidth=3;ctx.stroke();}
 }
-function loop(){update();draw()}
+function loop(ts){if(!flipperActive||document.hidden)return;const dt=lastFrame?Math.min(2,(ts-lastFrame)/16.67):1;lastFrame=ts;for(let i=0;i<dt;i++)update();draw();rafId=requestAnimationFrame(loop)}
+function startFlipper(){if(flipperActive)return;flipperActive=true;lastFrame=0;resizeTable();rafId=requestAnimationFrame(loop)}
+function stopFlipper(){flipperActive=false;if(rafId)cancelAnimationFrame(rafId);rafId=0;lastFrame=0;left=false;right=false;if(audioCtx&&audioCtx.state==='running')audioCtx.suspend().catch(()=>{})}
 function bindFlipper(id,side){const el=document.getElementById(id);const set=v=>{if(side==='left')left=v;else right=v;el.classList.toggle('pressed',v)};el.addEventListener('pointerdown',e=>{e.preventDefault();set(true);sound(150,.035,'square',.018);el.setPointerCapture?.(e.pointerId)});['pointerup','pointercancel','pointerleave','lostpointercapture'].forEach(ev=>el.addEventListener(ev,()=>set(false)));el.addEventListener('contextmenu',e=>e.preventDefault())}
 bindFlipper('leftKey','left');bindFlipper('rightKey','right');document.getElementById('newBall').addEventListener('click',()=>{resetBall();sound(420,.08,'triangle')});
 window.addEventListener('resize',resizeTable);window.addEventListener('orientationchange',()=>setTimeout(resizeTable,180));
-resizeTable();loop();
+resizeTable();
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopFlipper();else if(document.getElementById('flipper').classList.contains('active'))startFlipper()});
+window.addEventListener('pagehide',stopFlipper);
 
 async function checkForAppUpdate(){
  if(!window.AndroidUpdater||!navigator.onLine)return;
