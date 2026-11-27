@@ -102,8 +102,8 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 #habla .repeat-done{width:100%;min-height:54px;margin-top:9px;border:0;border-radius:15px;background:#176b45;color:#fff;font-size:18px;font-weight:950;box-shadow:0 5px 0 #0b472d}
 #habla #repeatPraise{text-align:center;margin:7px 0 0}
 /* Evita el menú de selección/copiar al mantener pulsadas las palancas del Flipper. */
-.flipper-wrap,.flipper-wrap button,.flipper-wrap canvas{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent }
-.flipper-key,.launch-key{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none }
+.flipper-wrap,.flipper-wrap button,.flipper-wrap canvas,.game-panel,.game-panel button,.game-panel canvas{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent }
+.flipper-key,.launch-key,#baseballAction{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none }
 @media(orientation:portrait){#habla .talk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#habla .talk-grid .tile{min-height:82px}}
 
 /* BÉISBOL 3D: escena local, geometría reutilizable y render limitado al panel activo. */
@@ -392,8 +392,10 @@ let sparkles=[];
 function playBumperSound(){playGameSound('bumper')}
 function playSpiralSound(){playGameSound('spiral')}
 const flippers={
- left:{x:96,y:588,len:82,angle:-.12,rest:-.12,active:-.68},
- right:{x:304,y:588,len:82,angle:Math.PI+.12,rest:Math.PI+.12,active:Math.PI+.68}
+ left:{x:96,y:588,len:82,angle:-.12,rest:-.12,active:-.68,side:'left'},
+ right:{x:304,y:588,len:82,angle:Math.PI+.12,rest:Math.PI+.12,active:Math.PI+.68,side:'right'},
+ leftMid:{x:96,y:385,len:48,angle:-.16,rest:-.16,active:-.82,side:'left',short:true},
+ rightMid:{x:304,y:385,len:48,angle:Math.PI+.16,rest:Math.PI+.16,active:Math.PI+.82,side:'right',short:true}
 };
 function playerName(){return (playerInput.value||localStorage.getItem('explorer-player-name')||'amigo').trim()||'amigo'}
 function sayPlayer(message){
@@ -460,11 +462,11 @@ function hitFlipper(f,active){
  ball.x=q.x+nx*min;ball.y=q.y+ny*min;
  const dot=ball.vx*nx+ball.vy*ny;
  if(dot<0){ball.vx-=2*dot*nx;ball.vy-=2*dot*ny}
- if(active){playGameSound('flipper');ball.vy=-Math.max(8,Math.abs(ball.vy)+4);ball.vx+=(f===flippers.left?2:-2);addScore(10)}
+ if(active){playGameSound('flipper');ball.vy=-Math.max(8,Math.abs(ball.vy)+4);ball.vx+=(f.side==='left'?2:-2);addScore(10)}
 }
 function updatePhysics(){
  for(const [name,f] of Object.entries(flippers)){
-  const target=(name==='left'?leftPressed:rightPressed)?f.active:f.rest;
+  const target=(f.side==='left'?leftPressed:rightPressed)?f.active:f.rest;
   let delta=target-f.angle;while(delta>Math.PI)delta-=Math.PI*2;while(delta< -Math.PI)delta+=Math.PI*2;
   f.angle+=delta*.34;
  }
@@ -481,10 +483,9 @@ function updatePhysics(){
  for(const coil of spirals){const dx=ball.x-coil.x,dy=ball.y-coil.y,d=Math.hypot(dx,dy),limit=coil.r+ball.r;if(d<limit&&!coil.inside){coil.inside=true;coil.flash=1;const nx=dx/(d||1),ny=dy/(d||1);ball.x=coil.x+nx*limit;ball.y=coil.y+ny*limit;const vx=ball.vx,vy=ball.vy;ball.vx=-vy*.9+nx*2.5;ball.vy=vx*.9+ny*2.5;for(let k=0;k<7;k++){const a=(Math.PI*2*k/7)+(Math.random()-.5)*.18;sparkles.push({x:coil.x+nx*coil.r*.7,y:coil.y+ny*coil.r*.7,vx:Math.cos(a)*(1.4+Math.random()*1.4),vy:Math.sin(a)*(1.4+Math.random()*1.4),life:10+Math.floor(Math.random()*6),size:1.2+Math.random()*1.4})}playSpiralSound();addScore(500)}else if(d>limit+14)coil.inside=false;}
  hitFlipper(flippers.left,leftPressed);hitFlipper(flippers.right,rightPressed);
  ball.vx*=.998;ball.vy=Math.max(-13,Math.min(13,ball.vy));
- if(ball.y>620&&ball.x<174){ball.y=620;ball.vy=-Math.max(4,Math.abs(ball.vy)*.78);ball.vx=Math.max(1.8,ball.vx+1.15)}
- if(ball.y>620&&ball.x>226&&ball.x<307){ball.y=620;ball.vy=-Math.max(4,Math.abs(ball.vy)*.78);ball.vx=Math.min(-1.8,ball.vx-1.15)}
- // Única salida: el hueco central entre las paletas. Los laterales siguen rebotando.
- if(ball.y>620&&ball.x>=174&&ball.x<=226)parkBallInLane();
+ // Si la bola cruza la línea inferior de las paletas sin ser devuelta, sale de la mesa.
+ // El drenaje cubre todo el ancho inferior: no puede quedar atrapada rebotando debajo.
+ if(ball.y>620)parkBallInLane();
  for(let i=sparkles.length-1;i>=0;i--){const p=sparkles[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.vy=p.vy*.985+.035;p.life--;if(p.life<=0)sparkles.splice(i,1)}
  for(const coil of spirals)coil.flash=Math.max(0,coil.flash-.035);
 }
@@ -530,9 +531,9 @@ function drawTable(){
  }
  // Paletas independientes.
  for(const [name,f] of Object.entries(flippers)){
-  const p=endpoint(f);ctx.lineCap='round';ctx.strokeStyle='#251b1b';ctx.lineWidth=22;ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(p.x,p.y);ctx.stroke();
-  const grad=ctx.createLinearGradient(f.x,f.y,p.x,p.y);grad.addColorStop(0,name==='left'?'#ffe27a':'#b4f3ff');grad.addColorStop(1,name==='left'?'#c66b24':'#237db4');
-  ctx.strokeStyle=grad;ctx.lineWidth=15;ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(p.x,p.y);ctx.stroke();
+  const p=endpoint(f),left=f.side==='left',thick=f.short?14:22;ctx.lineCap='round';ctx.strokeStyle='#251b1b';ctx.lineWidth=thick+7;ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(p.x,p.y);ctx.stroke();
+  const grad=ctx.createLinearGradient(f.x,f.y,p.x,p.y);grad.addColorStop(0,left?'#ffe27a':'#b4f3ff');grad.addColorStop(1,left?'#c66b24':'#237db4');
+  ctx.strokeStyle=grad;ctx.lineWidth=thick;ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(p.x,p.y);ctx.stroke();
   ctx.fillStyle='#f8df9a';ctx.beginPath();ctx.arc(f.x,f.y,10,0,Math.PI*2);ctx.fill();
  }
  // Bola cromada.
@@ -762,6 +763,10 @@ baseballAction.addEventListener('click',()=>{
  if(baseballPhase==='pitch'){const p=(performance.now()-baseballPitchStart)/1050;if(p<.12){baseballHint.textContent='¡Esperá que el pitcher lance la pelota!';return}if(p>.88){baseballHint.textContent='¡Llegó tarde! Esta pelota ya pasó.';return}baseballSwingRequested=true;baseballHint.textContent='¡BATEÓ! ¡Buen reflejo!';baseballMessage.textContent='¡CONTACTO!';}
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBaseball();else if(document.getElementById('baseball').classList.contains('active'))startBaseball()});
+
+// Evitar menús nativos de selección/copiar/pegar durante las partidas, sin bloquear inputs editables.
+document.addEventListener('contextmenu',e=>{if(e.target.closest('.game-panel button,.game-panel canvas,.flipper-wrap'))e.preventDefault()},true);
+document.addEventListener('selectstart',e=>{if(e.target.closest('.game-panel')&&!e.target.closest('input,textarea,[contenteditable="true"]'))e.preventDefault()},true);
 
 /* LIBRO PARA DIBUJAR Y PINTAR */
 (function initDrawingBook(){
