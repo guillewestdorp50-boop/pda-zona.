@@ -566,9 +566,19 @@ function updatePhysics(){
  for(const coil of spirals){const dx=ball.x-coil.x,dy=ball.y-coil.y,d=Math.hypot(dx,dy),limit=coil.r+ball.r;if(d<limit&&!coil.inside){coil.inside=true;coil.flash=1;const nx=dx/(d||1),ny=dy/(d||1);ball.x=coil.x+nx*limit;ball.y=coil.y+ny*limit;const vx=ball.vx,vy=ball.vy;ball.vx=-vy*.9+nx*2.5;ball.vy=vx*.9+ny*2.5;for(let k=0;k<7;k++){const a=(Math.PI*2*k/7)+(Math.random()-.5)*.18;sparkles.push({x:coil.x+nx*coil.r*.7,y:coil.y+ny*coil.r*.7,vx:Math.cos(a)*(1.4+Math.random()*1.4),vy:Math.sin(a)*(1.4+Math.random()*1.4),life:10+Math.floor(Math.random()*6),size:1.2+Math.random()*1.4})}playSpiralSound();addScore(500)}else if(d>limit+14)coil.inside=false;}
  for(const f of Object.values(flippers))hitFlipper(f,f.side==='left'?leftPressed:rightPressed);
  ball.vx*=.998;ball.vy=Math.max(-13,Math.min(13,ball.vy));
- // Si la bola cruza la línea inferior de las paletas sin ser devuelta, sale de la mesa.
- // El drenaje cubre todo el ancho inferior: no puede quedar atrapada rebotando debajo.
- if(ball.y>620)parkBallInLane();
+ // La única salida de la mesa es el hueco central entre las dos paletas inferiores.
+ // Los laterales inferiores funcionan como guías: devuelven la bola hacia el centro.
+ if(ball.y>620){
+  const leftGate=endpoint(flippers.left).x;
+  const rightGate=endpoint(flippers.right).x;
+  if(ball.x>leftGate+ball.r*.35&&ball.x<rightGate-ball.r*.35){
+   parkBallInLane();
+  }else{
+   ball.y=620-ball.r;
+   ball.vy=-Math.max(5,Math.abs(ball.vy)*.72);
+   ball.vx+=(ball.x<=leftGate?2.2:-2.2);
+  }
+ }
  for(let i=sparkles.length-1;i>=0;i--){const p=sparkles[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.vy=p.vy*.985+.035;p.life--;if(p.life<=0)sparkles.splice(i,1)}
  for(const coil of spirals)coil.flash=Math.max(0,coil.flash-.035);
 }
