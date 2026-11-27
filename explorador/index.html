@@ -486,6 +486,30 @@ const baseballMessage=document.getElementById('baseballMessage');
 const baseballLoading=document.getElementById('baseballLoading');
 const baseballFallback=document.getElementById('baseballFallback');
 const baseballHint=document.getElementById('baseballHint');
+let baseballAudioContext=null;
+function baseballGetAudio(){
+ const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+ if(!baseballAudioContext)baseballAudioContext=new AC();
+ if(baseballAudioContext.state==='suspended')baseballAudioContext.resume().catch(()=>{});
+ return baseballAudioContext;
+}
+function baseballNoise(ctx,duration,volume,low,high){
+ const length=Math.max(1,Math.floor(ctx.sampleRate*duration)),buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);
+ for(let i=0;i<length;i++)data[i]=Math.random()*2-1;
+ const src=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();
+ src.buffer=buffer;filter.type='bandpass';filter.frequency.setValueAtTime(high,ctx.currentTime);filter.frequency.exponentialRampToValueAtTime(Math.max(80,low),ctx.currentTime+duration);
+ gain.gain.setValueAtTime(volume,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+ src.connect(filter);filter.connect(gain);gain.connect(ctx.destination);src.start();src.stop(ctx.currentTime+duration);
+}
+function baseballPlaySound(kind){
+ const ctx=baseballGetAudio();if(!ctx)return;
+ if(kind==='pitch'){baseballNoise(ctx,.32,.045,240,1250);return}
+ if(kind==='hit'){
+  baseballNoise(ctx,.16,.14,180,2400);
+  const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='triangle';osc.frequency.setValueAtTime(175,ctx.currentTime);osc.frequency.exponentialRampToValueAtTime(72,ctx.currentTime+.18);gain.gain.setValueAtTime(.12,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.2);osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+.21);
+  baseballNoise(ctx,.75,.055,420,1050);
+ }
+}
 const baseballMat=(color,roughness=.78,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
 function baseballBox(parent,w,h,d,mat,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);parent.add(m);return m}
 function baseballSphere(parent,r,mat,x,y,z,sx=1,sy=1,sz=1){const m=new THREE.Mesh(new THREE.SphereGeometry(r,12,10),mat);m.position.set(x,y,z);m.scale.set(sx,sy,sz);parent.add(m);return m}
@@ -503,17 +527,25 @@ function baseballCreateHuman(x,z,uniform,capColor,rotation=0,isPitcher=false){
  baseballLimb(root,[.25,.62,.02],[.29,.13,.08],.105,.08,pants);
  baseballBox(root,.25,.13,.42,shoes,-.29,.08,.13);baseballBox(root,.25,.13,.42,shoes,.29,.08,.13);
  const leftShoulder=new THREE.Vector3(-.36,1.83,0),rightShoulder=new THREE.Vector3(.36,1.83,0);
- baseballLimb(root,[leftShoulder.x,leftShoulder.y,0],[-.57,1.4,.05],.115,.09,shirt);
- baseballLimb(root,[-.57,1.4,.05],[-.48,1.08,.18],.09,.075,skin);
- baseballLimb(root,[rightShoulder.x,rightShoulder.y,0],[.57,1.47,.04],.115,.09,shirt);
- baseballLimb(root,[.57,1.47,.04],[.42,1.12,.18],.09,.075,skin);
- baseballSphere(root,.1,glove,-.48,1.06,.2,1.2,.8,.7);
- baseballSphere(root,.075,skin,.42,1.1,.2,1.2,.8,.7);
- if(!isPitcher){
-  const pivot=new THREE.Group();pivot.position.set(.32,1.78,.1);root.add(pivot);
+ if(isPitcher){
+  baseballLimb(root,[leftShoulder.x,leftShoulder.y,0],[-.57,1.4,.05],.115,.09,shirt);
+  baseballLimb(root,[-.57,1.4,.05],[-.48,1.08,.18],.09,.075,skin);
+  baseballLimb(root,[rightShoulder.x,rightShoulder.y,0],[.57,1.47,.04],.115,.09,shirt);
+  baseballLimb(root,[.57,1.47,.04],[.42,1.12,.18],.09,.075,skin);
+  baseballSphere(root,.1,glove,-.48,1.06,.2,1.2,.8,.7);
+  baseballSphere(root,.075,skin,.42,1.1,.2,1.2,.8,.7);
+ }else{
+  // Los dos brazos se flexionan hacia el mismo agarre: el bate queda entre las manos.
+  baseballLimb(root,[-.36,1.83,0],[-.18,1.58,.12],.115,.09,shirt);
+  baseballLimb(root,[-.18,1.58,.12],[.30,1.48,.27],.09,.075,skin);
+  baseballLimb(root,[.36,1.83,0],[.52,1.63,.10],.115,.09,shirt);
+  baseballLimb(root,[.52,1.63,.10],[.40,1.49,.27],.09,.075,skin);
+  const pivot=new THREE.Group();pivot.position.set(.39,1.45,.29);pivot.rotation.z=-.45;root.add(pivot);
   const batWood=baseballMat(0xb87935,.55),batTip=baseballMat(0xe3bd7c,.48);
-  const bat=new THREE.Mesh(new THREE.CylinderGeometry(.035,.073,1.12,12),batWood);bat.rotation.z=-Math.PI/2;bat.position.set(.53,.05,0);pivot.add(bat);
-  const knob=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.11,10),batTip);knob.rotation.z=-Math.PI/2;knob.position.set(.02,.05,0);pivot.add(knob);
+  const bat=new THREE.Mesh(new THREE.CylinderGeometry(.035,.073,1.2,12),batWood);bat.position.set(0,.63,0);pivot.add(bat);
+  const knob=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,.11,10),batTip);knob.position.set(0,.09,0);pivot.add(knob);
+  baseballSphere(pivot,.105,skin,0,.15,.075,1,1,.78);
+  baseballSphere(pivot,.105,skin,0,.28,.075,1,1,.78);
   baseballBatPivot=pivot;
  }
  return root;
@@ -568,12 +600,12 @@ function baseballResize(){
  baseballRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.25));baseballRenderer.setSize(w,h,false);
 }
 function baseballStartPitch(){
- baseballPhase='pitch';baseballPitchStart=performance.now();baseballSwingStarted=false;baseballSwingRequested=false;baseballBall.position.set(0,2.25,-15);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
+ baseballPhase='pitch';baseballPlaySound('pitch');baseballPitchStart=performance.now();baseballSwingStarted=false;baseballSwingRequested=false;baseballBall.position.set(0,2.25,-15);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
  baseballBallShadow.position.set(0,.03,-15);baseballAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';baseballHint.textContent='Tocá ¡BATEAR! cuando se acerque. ¡Luis no falla!';
 }
 function baseballHit(){
  if(baseballPhase!=='pitch')return;
- baseballPhase='flight';baseballFlightStart=performance.now();baseballHits++;
+ baseballPhase='flight';baseballPlaySound('hit');baseballFlightStart=performance.now();baseballHits++;
  const outcomes=['HOME RUN','HOME RUN','DOBLE','TRIPLE','HOME RUN','SENCILLO'];
  baseballOutcome=outcomes[(baseballHits-1)%outcomes.length];
  const runValue=baseballOutcome==='HOME RUN'?1:0;baseballRuns+=runValue;baseballScore+=runValue;
@@ -590,14 +622,14 @@ function baseballUpdate(now){
   const p=Math.min(1,t/1.05);
   baseballPitcher.rotation.x=Math.sin(p*Math.PI)*-.13;
   if(p>.16){baseballBall.position.set(.08+Math.sin(p*4)*.08,2.35+Math.sin(p*Math.PI)*.2,-15+17*p);baseballBall.scale.setScalar(.72+.5*p);baseballBallShadow.position.x=baseballBall.position.x;baseballBallShadow.position.z=baseballBall.position.z;baseballBallShadow.scale.setScalar(.8+p*.7)}
-  if((baseballSwingRequested||p>.70)&&!baseballSwingStarted){baseballSwingStarted=true}if(baseballSwingStarted&&baseballBatPivot){const swing=Math.max(0,Math.min(1,(p-.64)/.24));baseballBatPivot.rotation.z=-.85+2.05*swing;}
+  if((baseballSwingRequested||p>.70)&&!baseballSwingStarted){baseballSwingStarted=true}if(baseballSwingStarted&&baseballBatPivot){const swing=Math.max(0,Math.min(1,(p-.64)/.24));baseballBatPivot.rotation.z=-.45+1.65*swing;}
   if(p>.88)baseballHit();
  }else if(baseballPhase==='flight'){
   const p=Math.min(1,(now-baseballFlightStart)/2400);
   const endX=baseballOutcome==='HOME RUN'?4.5:baseballOutcome==='TRIPLE'?3:baseballOutcome==='DOBLE'?2:1;
   baseballBall.position.set(-.15+endX*p,2.1+Math.sin(p*Math.PI)*11*p,2.5-42*p);
   baseballBall.scale.setScalar(1.1-.35*p);
-  if(p>=1){baseballPhase='done';baseballAction.textContent='OTRA JUGADA';baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡LA SACÓ DEL ESTADIO!':'¡GRAN CONEXIÓN, LUIS!';baseballBall.visible=false; if(baseballBatPivot)baseballBatPivot.rotation.z=0;}
+  if(p>=1){baseballPhase='done';baseballAction.textContent='OTRA JUGADA';baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡LA SACÓ DEL ESTADIO!':'¡GRAN CONEXIÓN, LUIS!';baseballBall.visible=false; if(baseballBatPivot)baseballBatPivot.rotation.z=-.45;}
  }
 }
 function baseballLoop(now){
