@@ -351,7 +351,7 @@ const dinosaurPronunciation={
 'Tiranosaurio rex':'Tiranosaurio rex','Tricerátops':'Tricerátops','Estegosaurio':'Estegosaurio','Braquiosaurio':'Braquiosaurio','Velociraptor':'Velociraptor','Anquilosaurio':'Anquilosaurio','Espinosaurio':'Espinosaurio','Diplódocus':'Diplódocus','Parasaurolophus':'Parasaurolofus','Carnotauro':'Carnotauro','Alosaurio':'Alosaurio','Iguanodonte':'Iguanodonte','Paquicefalosaurio':'Paquicefalosaurio','Gallimimo':'Gallimimo','Compsognato':'Compsognato','Dilofosaurio':'Dilofosaurio','Ceratosaurio':'Ceratosaurio','Giganotosaurio':'Giganotosaurio','Argentinosaurio':'Argentinosaurio','Amargasaurio':'Amargasaurio','Mamenquisaurio':'Mamenquisaurio','Apatosaurio':'Apatosaurio','Camarasaurio':'Camarasaurio','Protocerátops':'Protocerátops','Arqueópterix':'Arqueópterix','Herrerasaurio':'Herrerasaurio','Eoraptor':'Eoraptor','Selófisis':'Selófisis','Nigersaurio':'Nigersaurio','Euoplocefalo':'Euoplocefalo','Oviraptor':'Oviraptor','Terizinosaurio':'Terizinosaurio','Deinónicus':'Deinónicus','Yutaraptor':'Yutaraptor','Bariónix':'Bariónix','Sukómimus':'Sukómimus','Majungasaurio':'Majungasaurio','Mapusaurio':'Mapusaurio','Dreadnoughtus':'Drednotus','Patagotitan':'Patagotitan','Saltasaurio':'Saltasaurio','Estiracosaurio':'Estiracosaurio','Centrosaurio':'Centrosaurio','Edmontosaurio':'Edmontosaurio','Shunosaurus':'Shunosaurio','Coritosaurio':'Coritosaurio','Lambeosaurio':'Lambeosaurio','Microraptor':'Microraptor','Sitacosaurio':'Sitacosaurio','Plateosaurus':'Plateosaurio'
 };
 function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
-function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-US';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
+function speak(text,showStatus=true){if(showStatus)statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);if(showStatus)setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){if(showStatus)statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-US';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>{if(showStatus)statusEl.textContent='Tocá y descubrí'};speechSynthesis.speak(u)}
 
 // Abecedario completo en español: letra, palabra y significado.
 const alphabetItems=[
@@ -406,7 +406,7 @@ function showAlphabetItem(index,announce=true){
   b.innerHTML='<strong>'+item[0]+'</strong><small>'+item[1]+'</small>';b.setAttribute('aria-pressed',String(index===0));b.addEventListener('click',()=>{playGameSound('tap');showAlphabetItem(index)});grid.appendChild(b);
  });
  document.getElementById('alphabetListen').addEventListener('click',()=>{const [l,w,,m]=alphabetItems[alphabetSelected];speak(alphabetSpeech(alphabetItems[alphabetSelected]))});
- document.getElementById('alphabetAll').addEventListener('click',()=>speak(alphabetItems.map(alphabetSpeech).join('. ')));
+ document.getElementById('alphabetAll').addEventListener('click',()=>speak(alphabetItems.map(alphabetSpeech).join('. '),false));
 })();
 
 function openExplorerPanel(id){
