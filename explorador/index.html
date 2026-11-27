@@ -177,12 +177,12 @@ const canvas=document.getElementById('table');
 const ctx=canvas.getContext('2d',{alpha:false});
 const VW=400,VH=700;
 let scale=1,ox=0,oy=0,dpr=1,flipperActive=false,rafId=0,lastFrame=0;
-let score=0,leftPressed=false,rightPressed=false,laneWaiting=true,playerGreeted=false;
+let score=0,leftPressed=false,rightPressed=false,laneWaiting=true,launchTravel=false,playerGreeted=false;
 let ball={x:342,y:565,vx:0,vy:0,r:8};
 const playerInput=document.getElementById('playerName');
 const playerTitle=document.getElementById('playerGreeting');
 const scoreLabel=document.getElementById('pinScore');
-const bumpers=[{x:200,y:245,r:25,value:100},{x:115,y:365,r:21,value:150},{x:285,y:365,r:21,value:150}];
+const bumpers=[{x:195,y:165,r:23,value:250},{x:115,y:235,r:20,value:150},{x:265,y:245,r:21,value:200},{x:185,y:310,r:24,value:250},{x:85,y:365,r:19,value:150},{x:270,y:390,r:21,value:200},{x:165,y:435,r:22,value:250},{x:95,y:505,r:19,value:150},{x:250,y:500,r:20,value:200}];
 const flippers={
  left:{x:145,y:585,len:91,angle:.22,rest:.22,active:-.52},
  right:{x:255,y:585,len:91,angle:Math.PI-.22,rest:Math.PI-.22,active:Math.PI+.52}
@@ -204,7 +204,7 @@ function resizeTable(){
 }
 function scheduleLoop(){if(flipperActive&&!rafId)rafId=requestAnimationFrame(loop)}
 function parkBallInLane(){
- ball={x:342,y:565,vx:0,vy:0,r:8};laneWaiting=true;
+ ball={x:342,y:565,vx:0,vy:0,r:8};laneWaiting=true;launchTravel=false;
  leftPressed=false;rightPressed=false;drawTable();sayLanePrompt();
 }
 function addScore(points){
@@ -234,10 +234,11 @@ function updatePhysics(){
   f.angle+=delta*.34;
  }
  if(laneWaiting)return;
+ if(launchTravel){ball.x=342;ball.y-=10.5;if(ball.y<=145){launchTravel=false;ball.x=300;ball.y=148;ball.vx=-3.2;ball.vy=1.8;}return;}
  ball.vy=Math.min(13,ball.vy+.22);ball.x+=ball.vx;ball.y+=ball.vy;
  if(ball.x<28+ball.r){ball.x=28+ball.r;ball.vx=Math.abs(ball.vx)*.82}
- if(ball.x>372-ball.r){ball.x=372-ball.r;ball.vx=-Math.abs(ball.vx)*.82}
- if(ball.y<34+ball.r){ball.y=34+ball.r;ball.vy=Math.abs(ball.vy)*.82}
+ if(ball.x>307-ball.r){ball.x=307-ball.r;ball.vx=-Math.abs(ball.vx)*.82}
+ if(ball.y<134+ball.r){ball.y=134+ball.r;ball.vy=Math.abs(ball.vy)*.82}
  for(const b of bumpers){
   const dx=ball.x-b.x,dy=ball.y-b.y,d=Math.hypot(dx,dy),min=ball.r+b.r;
   if(d<min){const nx=dx/(d||1),ny=dy/(d||1);ball.x=b.x+nx*min;ball.y=b.y+ny*min;ball.vx=nx*7;ball.vy=ny*7;addScore(b.value)}
@@ -261,10 +262,13 @@ function drawTable(){
  ctx.strokeStyle='#e8c477';ctx.lineWidth=3;ctx.stroke();
  ctx.fillStyle='#ffd66e';ctx.font='900 18px system-ui';ctx.textAlign='center';ctx.fillText('DINO PINBALL',200,58);
  ctx.fillStyle='#b4f4e0';ctx.font='bold 11px system-ui';ctx.fillText('EXPLORADORES · ¡A JUGAR!',200,79);
- // Carril de lanzamiento.
- ctx.fillStyle='#102d3c';ctx.beginPath();ctx.roundRect(319,135,43,500,17);ctx.fill();
- ctx.strokeStyle='#d4b66f';ctx.lineWidth=4;ctx.stroke();
- for(let y=165;y<600;y+=48){ctx.fillStyle='#f6d66b';ctx.beginPath();ctx.arc(340,y,3,0,Math.PI*2);ctx.fill()}
+ // Carril cerrado tipo tubo, con paredes continuas y salida solo por arriba hacia la mesa.
+ ctx.fillStyle='#071b2a';ctx.beginPath();ctx.roundRect(316,132,49,510,18);ctx.fill();
+ const tube=ctx.createLinearGradient(316,0,365,0);tube.addColorStop(0,'#6b8290');tube.addColorStop(.18,'#d5e5e9');tube.addColorStop(.42,'#355363');tube.addColorStop(.75,'#152d3b');tube.addColorStop(1,'#9fb4bd');
+ ctx.fillStyle=tube;ctx.fillRect(316,132,7,510);ctx.fillRect(358,132,7,510);ctx.fillStyle='#071b2a';ctx.fillRect(323,137,35,498);
+ ctx.strokeStyle='#e3c77f';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(316,638);ctx.lineTo(316,150);ctx.quadraticCurveTo(316,132,334,132);ctx.lineTo(365,132);ctx.stroke();
+ for(let y=165;y<620;y+=48){ctx.fillStyle='#f6d66b';ctx.beginPath();ctx.arc(342,y,2.5,0,Math.PI*2);ctx.fill()}
+ ctx.strokeStyle='#d7e7eb';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(316,145);ctx.lineTo(300,145);ctx.stroke();
  // Guías sencillas del tablero.
  ctx.strokeStyle='#b4e5d8';ctx.globalAlpha=.55;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(45,145);ctx.lineTo(45,540);ctx.quadraticCurveTo(45,570,78,590);ctx.moveTo(300,145);ctx.lineTo(300,540);ctx.quadraticCurveTo(300,570,270,590);ctx.stroke();ctx.globalAlpha=1;
  // Obstáculos/bumpers.
@@ -283,8 +287,8 @@ function drawTable(){
  // Bola cromada.
  const shine=ctx.createRadialGradient(ball.x-3,ball.y-4,1,ball.x,ball.y,ball.r*1.5);shine.addColorStop(0,'#fff');shine.addColorStop(.35,'#eaf6ff');shine.addColorStop(1,'#647d91');
  ctx.fillStyle=shine;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.stroke();
- // Luz fija en la zona de lanzamiento.
- ctx.fillStyle='#ff4a38';ctx.beginPath();ctx.arc(340,640,7,0,Math.PI*2);ctx.fill();
+ if(laneWaiting||launchTravel){const shine=ctx.createRadialGradient(ball.x-3,ball.y-4,1,ball.x,ball.y,ball.r*1.5);shine.addColorStop(0,'#fff');shine.addColorStop(.35,'#eaf6ff');shine.addColorStop(1,'#647d91');ctx.fillStyle=shine;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.stroke()}
+ ctx.shadowColor='#ff2424';ctx.shadowBlur=18;ctx.fillStyle='#ff3028';ctx.beginPath();ctx.arc(342,650,8,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
 }
 function loop(ts){
  rafId=0;if(!flipperActive||document.hidden)return;
@@ -312,9 +316,10 @@ function bindFlipper(id,side){
 bindFlipper('leftKey','left');bindFlipper('rightKey','right');
 playerInput.value=localStorage.getItem('explorer-player-name')||'';
 playerInput.addEventListener('input',()=>{localStorage.setItem('explorer-player-name',playerInput.value.trim().slice(0,18));updatePinScore()});
-document.getElementById('launchKey').addEventListener('click',()=>{
- if(!laneWaiting)return;laneWaiting=false;ball={x:342,y:565,vx:-1.8,vy:-10.5,r:8};scheduleLoop();
-});
+const launchButton=document.getElementById('launchKey');
+function launchBall(e){if(e)e.preventDefault();if(!laneWaiting||launchTravel)return;laneWaiting=false;launchTravel=true;ball={x:342,y:620,vx:0,vy:0,r:8};lastFrame=0;scheduleLoop();}
+launchButton.addEventListener('pointerdown',launchBall);
+launchButton.addEventListener('click',launchBall);
 updatePinScore();resizeTable();
 window.addEventListener('resize',resizeTable);
 window.addEventListener('orientationchange',()=>setTimeout(resizeTable,180));
