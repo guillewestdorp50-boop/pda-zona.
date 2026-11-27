@@ -80,22 +80,33 @@ public class MainActivity extends Activity {
         });
 
         downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+        activeDownloadId = getPreferences(MODE_PRIVATE).getLong("active_download_id", -1);
         downloadReceiver = new BroadcastReceiver() {
             @Override public void onReceive(Context context, Intent intent) {
                 if (!DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(intent.getAction())) return;
                 long id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
-                if (id != activeDownloadId) return;
+                long savedId = getPreferences(MODE_PRIVATE).getLong("active_download_id", -1);
+                if (id != activeDownloadId && id != savedId) return;
                 DownloadManager.Query query = new DownloadManager.Query().setFilterById(id);
                 try (android.database.Cursor cursor = downloadManager.query(query)) {
-                    if (cursor != null && cursor.moveToFirst()
-                        && cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
-                        File apk = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "Exploradores-update.apk");
-                        getPreferences(MODE_PRIVATE).edit().putString("pending_update_apk", apk.getAbsolutePath()).apply();
-                        Toast.makeText(MainActivity.this, "Actualización descargada. Preparando instalación…", Toast.LENGTH_LONG).show();
-                        installPendingUpdate();
-                    } else {
-                        Toast.makeText(MainActivity.this, "No se pudo descargar la actualización. Probá de nuevo con conexión.", Toast.LENGTH_LONG).show();
-                        notifyPage("No se pudo descargar. Revisá la conexión e intentá otra vez.");
+                    if (cursor != null && cursor.moveToFirst()) {
+                        int status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS));
+                        if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                            File apk = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "Exploradores-update.apk");
+                            getPreferences(MODE_PRIVATE).edit()
+                                .remove("active_download_id")
+                                .putString("pending_update_apk", apk.getAbsolutePath()).apply();
+                            activeDownloadId = -1;
+                            notifyPage("Descarga completa. Abriendo el instalador…");
+                            Toast.makeText(MainActivity.this, "Actualización descargada. Preparando instalación…", Toast.LENGTH_LONG).show();
+                            installPendingUpdate();
+                        } else if (status == DownloadManager.STATUS_FAILED) {
+                            int reason = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON));
+                            getPreferences(MODE_PRIVATE).edit().remove("active_download_id").apply();
+                            activeDownloadId = -1;
+                            notifyPage("La descarga falló (código " + reason + "). Tocá Actualizar para reintentar.");
+                            Toast.makeText(MainActivity.this, "No se pudo descargar la actualización. Probá de nuevo.", Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
             }
@@ -153,6 +164,7 @@ public class MainActivity extends Activity {
                 .setAllowedOverRoaming(false)
                 .setDestinationInExternalFilesDir(this, Environment.DIRECTORY_DOWNLOADS, "Exploradores-update.apk");
             activeDownloadId = downloadManager.enqueue(request);
+            getPreferences(MODE_PRIVATE).edit().putLong("active_download_id", activeDownloadId).apply();
             notifyPage("Descargando la actualización. Te avisaremos cuando esté lista.");
             Toast.makeText(this, "Descargando actualización de Exploradores…", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
