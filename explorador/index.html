@@ -264,13 +264,34 @@ function initScene(){
  }
  // Cabezal vertical con marco de madera, aluminio, cristal y marquesina gráfica.
  box(5.95,.46,2.48,wood,[0,5.25,2.02]);box(5.65,.16,2.22,gold,[0,4.98,2.03]);box(5.38,.08,1.94,darkMetal,[0,4.88,2.03]);
- const marquee=canvasTexture3D((x,w,h)=>{const g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,'#071521');g.addColorStop(.5,'#14506a');g.addColorStop(1,'#080f1b');x.fillStyle=g;x.fillRect(0,0,w,h);x.strokeStyle='#e9bd62';x.lineWidth=15;x.strokeRect(12,12,w-24,h-24);x.fillStyle='#ffe2a0';x.font='1000 76px system-ui';x.textAlign='center';x.fillText('DINO',w/2,118);x.font='900 40px system-ui';x.fillText('PINBALL',w/2,180);x.fillStyle='#55edcf';x.font='28px system-ui';x.fillText('EXPLORADORES',w/2,224)},1024,256);
- const sign=add(new THREE.PlaneGeometry(5.15,1.30),new THREE.MeshPhysicalMaterial({map:marquee,roughness:.22,metalness:.18,emissive:0x19303c,emissiveIntensity:.25}),scene3D,[0,4.82,2.05],false,false);sign.rotation.x=Math.PI/2;
+ // Imagen fija del televisor: dinosaurio iluminado, sin animación ni trabajo por fotograma.
+ const marquee=canvasTexture3D((x,w,h)=>{
+  const g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,'#06101a');g.addColorStop(.48,'#103b4b');g.addColorStop(1,'#050b13');x.fillStyle=g;x.fillRect(0,0,w,h);
+  x.strokeStyle='#e9bd62';x.lineWidth=13;x.strokeRect(12,12,w-24,h-24);
+  x.save();x.translate(220,145);x.scale(1.15,1.15);x.shadowColor='#48ffd2';x.shadowBlur=24;x.fillStyle='#64f5d1';
+  x.beginPath();x.moveTo(-150,24);x.lineTo(-105,8);x.lineTo(-78,-25);x.lineTo(-40,-48);x.lineTo(5,-53);x.lineTo(36,-37);x.lineTo(55,-58);x.lineTo(82,-65);x.lineTo(104,-51);x.lineTo(94,-29);x.lineTo(72,-22);x.lineTo(61,-4);x.lineTo(89,12);x.lineTo(125,28);x.lineTo(145,44);x.lineTo(105,43);x.lineTo(68,30);x.lineTo(45,15);x.lineTo(26,39);x.lineTo(15,82);x.lineTo(-3,82);x.lineTo(-6,38);x.lineTo(-44,39);x.lineTo(-61,82);x.lineTo(-80,82);x.lineTo(-76,28);x.lineTo(-112,37);x.lineTo(-150,24);x.closePath();x.fill();
+  x.fillStyle='#07131b';x.shadowBlur=0;x.beginPath();x.arc(83,-47,5,0,Math.PI*2);x.fill();x.restore();
+  x.fillStyle='#ffe2a0';x.textAlign='center';x.shadowColor='#ffb94d';x.shadowBlur=18;x.font='1000 76px system-ui';x.fillText('DINO',720,112);x.font='900 42px system-ui';x.fillText('PINBALL',720,166);x.fillStyle='#55edcf';x.shadowColor='#55edcf';x.font='28px system-ui';x.fillText('EXPLORADORES',720,216);x.shadowBlur=0;
+ },1024,256);
+ const signMaterial=new THREE.MeshPhysicalMaterial({map:marquee,emissiveMap:marquee,emissive:0xffffff,emissiveIntensity:1.05,roughness:.2,metalness:.12});
+ const sign=add(new THREE.PlaneGeometry(5.15,1.30),signMaterial,scene3D,[0,4.82,2.05],false,false);sign.rotation.x=Math.PI/2;
+ const screenGlow=new THREE.PointLight(0x48dfff,2.2,4.8,2);screenGlow.position.set(0,4.45,2.55);scene3D.add(screenGlow);
  const glass=add(new THREE.PlaneGeometry(5.25,1.78),new THREE.MeshPhysicalMaterial({color:0x8fdcff,metalness:.35,roughness:.08,transparent:true,opacity:.10,transmission:.25,thickness:.08,envMapIntensity:1.5}),scene3D,[0,4.80,2.04],false,false);glass.rotation.x=Math.PI/2;
  // Bola cromada pulida con reflejo de entorno y flippers dinámicos.
  const ballMat=mat3D(0xdfeaf2,.075,1,{envMapIntensity:2.1,clearcoat:1,clearcoatRoughness:.04});
  ball3D=add(new THREE.SphereGeometry(.125,40,32),ballMat,scene3D,[2.1,-3.3,1.12]);
- const floor=add(new THREE.PlaneGeometry(200,200),mat3D(0x0c131b,.92,.05),scene3D,[0,0,-1.5],false,true);
+ const floorMat=mat3D(0x62452d,.94,.02);
+ const floor=add(new THREE.PlaneGeometry(200,200),floorMat,scene3D,[0,0,-1.5],false,true);
+ // Fotografía real de madera debajo del gabinete: solo textura visual, sin física ni animación.
+ // CC0: Kurtkaiser, Wikimedia Commons — Pine wood Table Top.
+ const woodPhoto=new THREE.TextureLoader();
+ woodPhoto.setCrossOrigin('anonymous');
+ woodPhoto.load('https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Pine_wood_Table_Top.jpg/1280px-Pine_wood_Table_Top.jpg',texture=>{
+  texture.colorSpace=THREE.SRGBColorSpace;
+  texture.wrapS=THREE.RepeatWrapping;texture.wrapT=THREE.RepeatWrapping;
+  texture.repeat.set(32,32);texture.anisotropy=4;
+  floorMat.map=texture;floorMat.needsUpdate=true;
+ },undefined,()=>console.warn('Textura fotográfica de madera no disponible; se mantiene el fondo oscuro'));
  // Fondo y focos ambientales fuera del tablero.
  const rimLight=new THREE.PointLight(0x2c9dff,26,24);rimLight.position.set(-5,5,8);scene3D.add(rimLight);
  resizeScene3D();
