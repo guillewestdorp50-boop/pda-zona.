@@ -107,7 +107,7 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 @media(orientation:portrait){#habla .talk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#habla .talk-grid .tile{min-height:82px}}
 
 /* BÉISBOL 3D: escena local, geometría reutilizable y render limitado al panel activo. */
-#baseballPanel{overflow:hidden;gap:7px}
+#baseball{overflow:hidden;gap:7px}
 .baseball-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 auto}
 .baseball-heading h1{font-size:clamp(18px,2.3vw,25px)}
 .baseball-counts{display:flex;flex-direction:column;gap:4px;text-align:right;font-size:11px;font-weight:1000;color:#173b62}
@@ -123,7 +123,7 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 #baseballHint{max-width:46%;color:#fff;font-size:11px;font-weight:850;text-shadow:0 1px 3px #000}
 .baseball-loading,.baseball-fallback{position:absolute;z-index:4;inset:0;display:grid;place-items:center;padding:20px;background:#0c1b29dd;color:#fff;text-align:center;font-weight:900}
 .baseball-loading[hidden],.baseball-fallback[hidden]{display:none}
-@media(orientation:portrait){#baseballPanel{padding:7px}.baseball-stage{min-height:220px}.baseball-scoreboard{top:6px;gap:6px;padding:4px 7px;font-size:9px}.baseball-message{top:42px;font-size:12px}.baseball-controls{gap:8px;padding:10px 8px max(10px,env(safe-area-inset-bottom))}#baseballAction{min-width:126px;min-height:50px;font-size:15px}#baseballHint{font-size:10px;max-width:43%}}
+@media(orientation:portrait){#baseball{padding:7px}.baseball-stage{min-height:220px}.baseball-scoreboard{top:6px;gap:6px;padding:4px 7px;font-size:9px}.baseball-message{top:42px;font-size:12px}.baseball-controls{gap:8px;padding:10px 8px max(10px,env(safe-area-inset-bottom))}#baseballAction{min-width:126px;min-height:50px;font-size:15px}#baseballHint{font-size:10px;max-width:43%}}
 @media(prefers-reduced-motion:reduce){#baseballAction{transition:none}}
 
 </style>
@@ -208,7 +208,7 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 <div class="pin-score" id="pinScore">000000</div>
 </div>
 </section>
-<section class="panel" id="baseballPanel">
+<section class="panel" id="baseball">
  <div class="baseball-heading"><div><h1>⚾ ¡A batear, Luis!</h1><p class="hint">El pitcher lanza. Luis conecta. ¡Acá nunca se erra!</p></div><div class="baseball-counts"><span id="baseballHits">HITS 0</span><span id="baseballRuns">CARRERAS 0</span></div></div>
  <div class="baseball-stage" id="baseballStage">
   <div class="baseball-scoreboard"><span>CHAZÓN</span><strong id="baseballScore">0 — 0</strong><span id="baseballInning">1ª ENTRADA</span></div>
@@ -452,7 +452,7 @@ window.addEventListener('pagehide',stopFlipper);
 /* BÉISBOL 3D — escena procedural sin descargas externas. */
 let baseballRenderer=null,baseballScene=null,baseballCamera=null,baseballRAF=0,baseballActive=false,baseballLast=0,baseballLastRender=0;
 let baseballPlayer=null,baseballPitcher=null,baseballBatPivot=null,baseballBall=null,baseballBallShadow=null;
-let baseballPhase='ready',baseballPitchStart=0,baseballFlightStart=0,baseballSwingStarted=false,baseballHits=0,baseballRuns=0,baseballScore=0,baseballContactPoint=null,baseballOutcome='HOME RUN';
+let baseballPhase='ready',baseballPitchStart=0,baseballFlightStart=0,baseballSwingStarted=false,baseballSwingRequested=false,baseballHits=0,baseballRuns=0,baseballScore=0,baseballContactPoint=null,baseballOutcome='HOME RUN';
 const baseballStage=document.getElementById('baseballStage');
 const baseballAction=document.getElementById('baseballAction');
 const baseballMessage=document.getElementById('baseballMessage');
@@ -541,7 +541,7 @@ function baseballResize(){
  baseballRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.25));baseballRenderer.setSize(w,h,false);
 }
 function baseballStartPitch(){
- baseballPhase='pitch';baseballPitchStart=performance.now();baseballSwingStarted=false;baseballBall.position.set(0,2.25,-15);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
+ baseballPhase='pitch';baseballPitchStart=performance.now();baseballSwingStarted=false;baseballSwingRequested=false;baseballBall.position.set(0,2.25,-15);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
  baseballBallShadow.position.set(0,.03,-15);baseballAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';baseballHint.textContent='Tocá ¡BATEAR! cuando se acerque. ¡Luis no falla!';
 }
 function baseballHit(){
@@ -563,7 +563,7 @@ function baseballUpdate(now){
   const p=Math.min(1,t/1.05);
   baseballPitcher.rotation.x=Math.sin(p*Math.PI)*-.13;
   if(p>.16){baseballBall.position.set(.08+Math.sin(p*4)*.08,2.35+Math.sin(p*Math.PI)*.2,-15+17*p);baseballBall.scale.setScalar(.72+.5*p);baseballBallShadow.position.x=baseballBall.position.x;baseballBallShadow.position.z=baseballBall.position.z;baseballBallShadow.scale.setScalar(.8+p*.7)}
-  if(p>.70&&!baseballSwingStarted){baseballSwingStarted=true;if(baseballBatPivot)baseballBatPivot.rotation.z=-.9}
+  if((baseballSwingRequested||p>.70)&&!baseballSwingStarted){baseballSwingStarted=true}if(baseballSwingStarted&&baseballBatPivot){const swing=Math.max(0,Math.min(1,(p-.64)/.24));baseballBatPivot.rotation.z=-.85+2.05*swing;}
   if(p>.88)baseballHit();
  }else if(baseballPhase==='flight'){
   const p=Math.min(1,(now-baseballFlightStart)/2400);
@@ -590,9 +590,9 @@ function stopBaseball(){baseballActive=false;if(baseballRAF)cancelAnimationFrame
 baseballAction.addEventListener('click',()=>{
  if(!baseballActive)return;
  if(baseballPhase==='ready'||baseballPhase==='done'){baseballStartPitch();return}
- if(baseballPhase==='pitch'){baseballHint.textContent='¡Luis prepara el bate!';if(baseballBatPivot)baseballBatPivot.rotation.z=1.15;}
+ if(baseballPhase==='pitch'){baseballSwingRequested=true;baseballHint.textContent='¡Luis prepara el bate!';}
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBaseball();else if(document.getElementById('baseballPanel').classList.contains('active'))startBaseball()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBaseball();else if(document.getElementById('baseball').classList.contains('active'))startBaseball()});
 
 async function checkForAppUpdate(){
  if(!window.AndroidUpdater||!navigator.onLine)return;
