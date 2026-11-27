@@ -300,7 +300,34 @@ function sayPlayer(message){
  if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(message);u.lang='es-US';u.rate=.88;speechSynthesis.speak(u)}
 }
 function updatePinScore(){scoreLabel.textContent=String(score).padStart(6,'0');playerTitle.textContent='¡Vamos, '+playerName()+'!'}
-function sayLanePrompt(){sayPlayer('Luis, tocá el botón rojo para seguir jugando.')}
+const flipperRetryPhrases=[
+ 'Luis, ¡esa pelota se escapó! Tocá el botón rojo y seguimos.',
+ '¡Vamos, Luis! La máquina te espera: apretá el botón rojo.',
+ '¡No pasa nada! Una nueva pelota, Luis. Tocá el botón rojo.',
+ '¡Dale campeón! El botón rojo te trae otra pelota.',
+ '¡Arriba ese ánimo, Luis! Tocá el botón rojo para otra vuelta.',
+ '¡La próxima la salvás! Apretá el botón rojo, Luis.',
+ '¡Seguimos jugando! Luis, buscá el botón rojo y dale.',
+ '¡Esa fue una de práctica! Tocá el botón rojo y vamos otra vez.',
+ '¡No te rindas ahora! El botón rojo y otra oportunidad.',
+ '¡Vamos por más puntos, Luis! Tocá el botón rojo.'
+];
+let lastRetryPhrase=-1;
+const flipperAchievementPhrases=[
+ '¡INCREÍBLE, Luis! Ya llegaste a {score} puntos. ¡Sos un campeón!',
+ '¡Qué grande! {score} puntos. La máquina no puede con vos, Luis.',
+ '¡APLAUSOS PARA LUIS! Alcanzaste los {score} puntos. ¡Seguí así!',
+ '¡Una locura de partida! {score} puntos. ¡Felicitaciones, genio!',
+ '¡Lo estás rompiendo! Ya sumaste {score} puntos. ¡Qué jugador!',
+ '¡Récord de talento! {score} puntos para Luis. ¡Bravo!',
+ '¡Eso merece festejo! Llegaste a {score} puntos. ¡Excelente, Luis!',
+ '¡Fenomenal! {score} puntos. ¡Cada vez jugás mejor!'
+];
+function sayLanePrompt(){
+ let pick=Math.floor(Math.random()*flipperRetryPhrases.length);
+ if(flipperRetryPhrases.length>1&&pick===lastRetryPhrase)pick=(pick+1+Math.floor(Math.random()*(flipperRetryPhrases.length-1)))%flipperRetryPhrases.length;
+ lastRetryPhrase=pick;sayPlayer(flipperRetryPhrases[pick]);
+}
 function resizeTable(){
  const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;
  dpr=Math.min(window.devicePixelRatio||1,1.5);
@@ -315,9 +342,9 @@ function parkBallInLane(){
 }
 function addScore(points){
  score+=points;updatePinScore();
- while(score>=nextMilestone){sayPlayer('¡Felicidades, '+playerName()+'! ¡Llegaste a '+nextMilestone.toLocaleString('es-AR')+' puntos!');nextMilestone+=50000}
+ while(score>=nextMilestone){const phrase=flipperAchievementPhrases[Math.floor(Math.random()*flipperAchievementPhrases.length)].replace('{score}',nextMilestone.toLocaleString('es-AR'));sayPlayer(phrase);nextMilestone+=10000}
 }
-let nextMilestone=50000;
+let nextMilestone=10000;
 function endpoint(f){return{x:f.x+Math.cos(f.angle)*f.len,y:f.y+Math.sin(f.angle)*f.len}}
 function nearestOnSegment(px,py,ax,ay,bx,by){
  const dx=bx-ax,dy=by-ay,t=Math.max(0,Math.min(1,((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy)));
