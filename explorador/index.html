@@ -187,13 +187,31 @@ body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixe
 .game-exit{position:absolute;z-index:20;top:max(7px,env(safe-area-inset-top));right:8px;border:1px solid #ffffffaa;border-radius:999px;padding:3px 8px;background:#11283bdc;color:#fff;font-size:10px;line-height:1.2;font-weight:800;box-shadow:0 2px 7px #0004;min-height:0}body.game-fullscreen #baseball .baseball-controls{padding-bottom:max(14px,env(safe-area-inset-bottom))}
 .brush-size{display:flex;align-items:center;justify-content:center;gap:10px;padding:5px 10px;background:#ffffffc9;border-radius:12px;font-size:13px;font-weight:900;color:#173b62}.brush-size input{width:min(48vw,240px);accent-color:#176b9b}.brush-size strong{min-width:48px;text-align:right}
 .memory-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-right:104px}.memory-heading h1{font-size:clamp(19px,3vw,27px)}.memory-heading button{border:0;border-radius:12px;padding:9px 12px;background:#173b62;color:white;font-weight:900}.memory-stats{display:flex;justify-content:space-around;gap:8px;font-weight:950;color:#173b62}.memory-stats span{background:#fff;padding:7px 12px;border-radius:12px}
-.memory-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:8px}.memory-card{position:relative;min-width:0;min-height:0;border:3px solid #fff;border-radius:16px;background:linear-gradient(145deg,#2c78a7,#173b62);box-shadow:0 5px 0 #0e2944;color:#fff;font-weight:950;display:grid;place-items:center;overflow:hidden}.memory-card .memory-back{font-size:clamp(30px,9vw,58px);text-shadow:0 3px 5px #001a}.memory-card .memory-front{display:none;flex-direction:column;align-items:center;gap:3px;color:#18344e}.memory-card .memory-front strong{font-size:clamp(32px,9vw,60px)}.memory-card .memory-front small{font-size:clamp(9px,2.6vw,13px);text-align:center}.memory-card.revealed,.memory-card.matched{background:linear-gradient(145deg,#fff,#dff5ff);box-shadow:0 4px 0 #a6cbdc}.memory-card.revealed .memory-back,.memory-card.matched .memory-back{display:none}.memory-card.revealed .memory-front,.memory-card.matched .memory-front{display:flex}.memory-card.matched{border-color:#68d79d;opacity:.85}#memoryMessage{text-align:center;background:#ffffffc9;border-radius:12px;padding:7px}@media(orientation:landscape){.memory-grid{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}}@media(max-height:520px){body.game-fullscreen #flipper .flipper-controls{bottom:4px}body.game-fullscreen #flipper .flipper-key{min-height:42px}body.game-fullscreen #baseballAction{min-height:42px}}</style>
+.memory-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:8px}.memory-card{position:relative;min-width:0;min-height:0;border:3px solid #fff;border-radius:16px;background:linear-gradient(145deg,#2c78a7,#173b62);box-shadow:0 5px 0 #0e2944;color:#fff;font-weight:950;display:grid;place-items:center;overflow:hidden}.memory-card .memory-back{font-size:clamp(30px,9vw,58px);text-shadow:0 3px 5px #001a}.memory-card .memory-front{display:none;flex-direction:column;align-items:center;gap:3px;color:#18344e}.memory-card .memory-front strong{font-size:clamp(32px,9vw,60px)}.memory-card .memory-front small{font-size:clamp(9px,2.6vw,13px);text-align:center}.memory-card.revealed,.memory-card.matched{background:linear-gradient(145deg,#fff,#dff5ff);box-shadow:0 4px 0 #a6cbdc}.memory-card.revealed .memory-back,.memory-card.matched .memory-back{display:none}.memory-card.revealed .memory-front,.memory-card.matched .memory-front{display:flex}.memory-card.matched{border-color:#68d79d;opacity:.85}#memoryMessage{text-align:center;background:#ffffffc9;border-radius:12px;padding:7px}@media(orientation:landscape){.memory-grid{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}}@media(max-height:520px){body.game-fullscreen #flipper .flipper-controls{bottom:4px}body.game-fullscreen #flipper .flipper-key{min-height:42px}body.game-fullscreen #baseballAction{min-height:42px}}
+/* Abecedario interactivo */
+#alphabet{gap:8px}
+.alphabet-feature{display:flex;align-items:center;gap:14px;min-height:116px;padding:12px;border-radius:18px;background:linear-gradient(135deg,#fff3b5,#dff5ff);box-shadow:0 4px 0 #b7d5df}
+.alphabet-big{font-size:clamp(54px,15vw,86px);font-weight:1000;line-height:1;color:#173b62;min-width:82px;text-align:center}
+.alphabet-feature-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.alphabet-word{font-size:clamp(22px,5vw,30px);font-weight:1000;color:#173b62}
+.alphabet-meaning{font-size:13px;font-weight:750;color:#36516a}
+.alphabet-tools{display:flex;gap:8px}
+.alphabet-tools button{flex:1;border:0;border-radius:13px;padding:9px;background:#173b62;color:white;font-weight:900}
+.alphabet-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;align-content:start}
+.alphabet-tile{min-width:0;min-height:68px;border:2px solid white;border-radius:14px;background:var(--tile,#fff);box-shadow:0 4px 0 var(--shade,#b7cbd4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#17304a;font-weight:950}
+.alphabet-tile strong{font-size:clamp(24px,6vw,34px);line-height:1}
+.alphabet-tile small{font-size:clamp(9px,2.5vw,12px);text-align:center;overflow-wrap:anywhere}
+.alphabet-tile[aria-pressed=true]{outline:3px solid #176b9b;outline-offset:1px;background:#fff4b8}
+@media(orientation:landscape){.alphabet-grid{grid-template-columns:repeat(7,minmax(0,1fr))}.alphabet-tile{min-height:58px}}
+@media(max-width:390px){.alphabet-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.alphabet-tile{min-height:62px}}
+</style>
 </head>
 <body>
 <div id="app">
 <header><div class="brand"><div class="mascot" aria-hidden="true">🦕</div><span>¡A EXPLORAR!</span></div><div style="display:flex;align-items:center;gap:6px"><button id="updateBtn" type="button">⬆ Actualizar</button><div id="sayStatus" aria-live="polite">Tocá y descubrí</div></div></header>
 <nav aria-label="Juegos">
 <button data-panel="dinos" aria-selected="true">🦖 Dinosaurios</button>
+<button data-panel="alphabet" aria-selected="false">🔤 Abecedario</button>
 <button data-panel="habla" aria-selected="false">🗣️ Hablemos</button>
 <button data-panel="flipper" aria-selected="false">🎱 Flipper</button>
 <button data-panel="baseball" aria-selected="false">⚾ Béisbol</button>
@@ -203,6 +221,12 @@ body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixe
 <section class="panel active" id="dinos">
 <h1>¡Conocé a los dinosaurios!</h1><p class="hint">Elegí uno y escuchá cómo se llama.</p>
 <div class="search-row"><input id="dinoSearch" type="search" placeholder="Buscar un dinosaurio..." aria-label="Buscar dinosaurio"></div><div class="grid dino-grid" id="dinoGrid"></div><div class="dino-detail" id="dinoDetail" role="dialog" aria-modal="true" aria-labelledby="detailName"><div class="detail-card"><img id="detailImage" alt=""><h2 id="detailName"></h2><p class="hint" id="detailHint">Reconstrucción paleontológica</p><div class="credit" id="detailCredit"></div><div class="detail-actions"><button id="detailSpeak">🔊 Escuchar nombre</button><button id="detailClose">Volver</button></div></div></div>
+</section>
+<section class="panel" id="alphabet">
+<h1>🔤 ¡Aprendamos el abecedario!</h1><p class="hint">Tocá una letra para descubrir cómo se llama, una palabra y qué significa. También podés escucharla.</p>
+<div class="alphabet-feature" aria-live="polite"><div class="alphabet-big" id="alphabetBig">A</div><div class="alphabet-feature-copy"><div class="alphabet-word" id="alphabetWord">Auto 🚗</div><div class="alphabet-meaning" id="alphabetMeaning">Vehículo que nos lleva de un lugar a otro.</div></div></div>
+<div class="alphabet-tools"><button id="alphabetListen" type="button">🔊 Escuchar esta letra</button><button id="alphabetAll" type="button">🎵 Escuchar abecedario</button></div>
+<div class="alphabet-grid" id="alphabetGrid" aria-label="Letras del abecedario"></div>
 </section>
 <section class="panel" id="habla">
 <h1>Hablemos juntos</h1><p class="hint">Elegí un botón: el teléfono dice la palabra o la frase en voz alta.</p>
@@ -326,6 +350,57 @@ const dinosaurPronunciation={
 };
 function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
 function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-US';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
+
+// Abecedario completo en español: letra, palabra y significado.
+const alphabetItems=[
+['A','Auto','🚗','Vehículo que nos lleva de un lugar a otro.'],
+['B','Barco','🚢','Vehículo que navega por el agua.'],
+['C','Casa','🏠','Lugar donde vivimos y nos protegemos.'],
+['D','Dado','🎲','Cubo con puntos que se usa en algunos juegos.'],
+['E','Elefante','🐘','Animal grande con trompa y orejas grandes.'],
+['F','Flor','🌸','Parte de una planta que puede tener pétalos de colores.'],
+['G','Gato','🐱','Animal doméstico que maúlla.'],
+['H','Helado','🍦','Postre frío y dulce.'],
+['I','Iglesia','⛪','Edificio donde se reúnen los fieles.'],
+['J','Jirafa','🦒','Animal de cuello muy largo.'],
+['K','Koala','🐨','Animal australiano que vive en los árboles.'],
+['L','Luna','🌙','Satélite natural que acompaña a la Tierra.'],
+['M','Manzana','🍎','Fruta redonda que puede ser roja o verde.'],
+['N','Nube','☁️','Masa de gotitas de agua que vemos en el cielo.'],
+['Ñ','Ñandú','🪶','Ave grande de Sudamérica que no vuela.'],
+['O','Oso','🐻','Animal grande y peludo.'],
+['P','Pelota','⚽','Objeto redondo que usamos para jugar.'],
+['Q','Queso','🧀','Alimento que se hace con leche.'],
+['R','Rana','🐸','Animal que salta y vive cerca del agua.'],
+['S','Sol','☀️','Estrella que nos da luz y calor.'],
+['T','Tren','🚂','Vehículo que viaja por vías.'],
+['U','Uva','🍇','Fruta pequeña que crece en racimos.'],
+['V','Vaca','🐄','Animal de granja que nos da leche.'],
+['W','Wafle','🧇','Masa dulce cocida en una plancha cuadriculada.'],
+['X','Xilófono','🎶','Instrumento musical que se toca con palitos.'],
+['Y','Yacaré','🐊','Reptil parecido al cocodrilo que vive en Sudamérica.'],
+['Z','Zapato','👞','Prenda que protege el pie al caminar.']
+];
+let alphabetSelected=0;
+function showAlphabetItem(index,announce=true){
+ alphabetSelected=(index+alphabetItems.length)%alphabetItems.length;
+ const [letter,word,emoji,meaning]=alphabetItems[alphabetSelected];
+ document.getElementById('alphabetBig').textContent=letter;
+ document.getElementById('alphabetWord').textContent=word+' '+emoji;
+ document.getElementById('alphabetMeaning').textContent=meaning;
+ document.querySelectorAll('.alphabet-tile').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===alphabetSelected)));
+ if(announce)speak(letter+' de '+word+'. '+meaning);
+}
+(function initAlphabet(){
+ const grid=document.getElementById('alphabetGrid');if(!grid)return;
+ alphabetItems.forEach((item,index)=>{
+  const b=document.createElement('button');b.type='button';b.className='alphabet-tile';b.style.setProperty('--tile',index%4===0?'#fff0a8':index%4===1?'#dff5ff':index%4===2?'#e5f7d7':'#ffe0eb');b.style.setProperty('--shade','#b7cbd4');
+  b.innerHTML='<strong>'+item[0]+'</strong><small>'+item[1]+'</small>';b.setAttribute('aria-pressed',String(index===0));b.addEventListener('click',()=>{playGameSound('tap');showAlphabetItem(index)});grid.appendChild(b);
+ });
+ document.getElementById('alphabetListen').addEventListener('click',()=>{const [l,w,,m]=alphabetItems[alphabetSelected];speak(l+' de '+w+'. '+m)});
+ document.getElementById('alphabetAll').addEventListener('click',()=>speak(alphabetItems.map(x=>x[0]+' de '+x[1]).join('. ')));
+})();
+
 function openExplorerPanel(id){
  document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.panel===id)));
  const panels=[...document.querySelectorAll('main > .panel')];if(!panels.some(x=>x.id===id))return;panels.forEach(panel=>{const selected=panel.id===id;panel.hidden=!selected;panel.classList.toggle('active',selected);});
