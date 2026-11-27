@@ -72,6 +72,17 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 .flipper-wrap{position:relative;overflow:hidden;display:block;min-height:0}
 @media(orientation:portrait){.flipper-wrap{display:block;min-height:0}.flipper-controls{grid-template-columns:1fr 1fr 1fr;left:3%;right:3%;bottom:9px;gap:7px}.flipper-key,.launch-key{min-height:55px}.launch-key{width:min(100%,70px)}.pin-score{top:8px;font-size:15px}.player-name-wrap input{width:92px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Flipper simple y liviano: reemplaza únicamente la presentación del minijuego. */
+#table3d{display:none!important}
+#table{display:block!important;position:absolute;inset:5px;width:calc(100% - 10px);height:calc(100% - 10px);min-height:0;border:0;border-radius:17px;touch-action:none;box-shadow:inset 0 0 0 2px #f5d58a,0 8px 16px #0008}
+.flipper-wrap{position:relative;display:block;min-height:0;height:100%;overflow:hidden;padding:0;background:linear-gradient(145deg,#57351f,#1c1513 55%,#70482a)}
+.flipper-controls{position:absolute;z-index:4;left:4%;right:4%;bottom:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;transform:none}
+.flipper-key,.flipper-key.right{min-height:58px;border-radius:15px;font-size:clamp(11px,2vw,16px);touch-action:none}
+.launch-key{min-height:58px;width:min(100%,76px);aspect-ratio:1/1;justify-self:center;align-self:center;border:3px solid #ffd5d5;border-radius:50%;color:#fff;font-weight:1000;font-size:11px;background:radial-gradient(circle at 35% 28%,#ffb0a9,#ff3939 42%,#a80012 80%);box-shadow:0 0 8px #ff2424,0 0 22px #ff1515,inset 0 3px 8px #fff9;animation:redPulse 1.4s ease-in-out infinite;touch-action:manipulation}
+.pin-score{top:10px;font-size:16px}
+@media(orientation:portrait){.flipper-wrap{display:block;min-height:0;height:100%;padding:0}.flipper-controls{grid-template-columns:1fr 1fr 1fr;left:3%;right:3%;bottom:8px;gap:6px}.flipper-key,.launch-key{min-height:52px}.launch-key{width:min(100%,66px)}.pin-score{top:7px;font-size:14px}}
+
 </style>
 </head>
 <body>
@@ -104,8 +115,7 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 <section class="panel" id="flipper">
 <div class="flipper-caption"><div><h1 id="playerGreeting">¡Flipper infinito!</h1><p class="hint">Tu máquina, tus puntos y tus desafíos.</p></div><label class="player-name-wrap">Tu nombre <input id="playerName" maxlength="18" autocomplete="given-name" placeholder="Escribí tu nombre"></label></div>
 <div class="flipper-wrap">
-<canvas id="table3d" aria-label="Máquina de pinball tridimensional con rampas, luces y dinosaurio"></canvas>
-<canvas id="table" aria-hidden="true"></canvas>
+<canvas id="table" aria-label="Mesa de pinball simple"></canvas>
 <div class="flipper-controls">
 <button class="flipper-key" id="leftKey" aria-label="Palanca izquierda">◀ IZQUIERDA</button>
 <button class="launch-key" id="launchKey" aria-label="Botón rojo para lanzar la pelota">● LANZAR</button>
@@ -117,7 +127,6 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 </main>
 <footer>Un lugar para descubrir, jugar y volver a intentar 💛</footer>
 </div>
-<script src="three.min.js"></script>
 <script>
 const statusEl=document.getElementById('sayStatus');
 // La pronunciación usa nombres españoles acentuados; los nombres científicos quedan para las imágenes.
@@ -163,268 +172,152 @@ detail.addEventListener('click',e=>{if(e.target===detail)detail.classList.remove
 searchInput.addEventListener('input',()=>{const q=searchInput.value.toLocaleLowerCase('es').trim();cards.forEach(c=>c.hidden=!c.dataset.name.includes(q)&&!c.dataset.english.toLowerCase().includes(q))});
 const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){const c=entry.target;observer.unobserve(c);loadSpeciesImage(c.querySelector('.dino-name').textContent,c.dataset.english,false)}})},{root:dinoGrid,rootMargin:'160px'});
 cards.forEach(c=>observer.observe(c));
-// Motor WebGL 3D local: geometría real con profundidad, materiales e iluminación.
-
-// Render 3D PBR con Three.js local (sin CDN; funciona sin conexión).
-const sceneCanvas=document.getElementById('table3d');
-let renderer3D=null,scene3D=null,camera3D=null,board3D=null,ball3D=null;
-let flipperMeshes3D={},staticMeshes3D=[];
-const mat3D=(color,roughness=.45,metalness=0,extra={})=>new THREE.MeshPhysicalMaterial({color,roughness,metalness,...extra});
-function canvasTexture3D(painter,w=1024,h=1024){
- const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');painter(x,w,h);
- const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=8;return t;
+// FLIPPER SIMPLE: motor 2D liviano, aislado del resto de Exploradores.
+const canvas=document.getElementById('table');
+const ctx=canvas.getContext('2d',{alpha:false});
+const VW=400,VH=700;
+let scale=1,ox=0,oy=0,dpr=1,flipperActive=false,rafId=0,lastFrame=0;
+let score=0,leftPressed=false,rightPressed=false,laneWaiting=true,playerGreeted=false;
+let ball={x:342,y:565,vx:0,vy:0,r:8};
+const playerInput=document.getElementById('playerName');
+const playerTitle=document.getElementById('playerGreeting');
+const scoreLabel=document.getElementById('pinScore');
+const bumpers=[{x:200,y:245,r:25,value:100},{x:115,y:365,r:21,value:150},{x:285,y:365,r:21,value:150}];
+const flippers={
+ left:{x:145,y:585,len:91,angle:.22,rest:.22,active:-.52},
+ right:{x:255,y:585,len:91,angle:Math.PI-.22,rest:Math.PI-.22,active:Math.PI+.52}
+};
+function playerName(){return (playerInput.value||localStorage.getItem('explorer-player-name')||'amigo').trim()||'amigo'}
+function sayPlayer(message){
+ statusEl.textContent='🔊 '+message;
+ if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(message);return}
+ if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(message);u.lang='es-US';u.rate=.88;speechSynthesis.speak(u)}
 }
-function makeEnv3D(){
- const faces=[];
- for(let f=0;f<6;f++){const c=document.createElement('canvas');c.width=256;c.height=256;const x=c.getContext('2d');
-  const g=x.createLinearGradient(0,0,0,256);g.addColorStop(0,'#8ca2b5');g.addColorStop(.45,'#354657');g.addColorStop(1,'#101820');x.fillStyle=g;x.fillRect(0,0,256,256);
-  x.fillStyle='rgba(255,244,210,.92)';x.fillRect(24,34,208,9);x.fillRect(40,80,176,5);
-  x.fillStyle='rgba(80,190,255,.65)';x.fillRect(15,150,226,3);
-  x.fillStyle='rgba(255,255,255,.28)';for(let i=0;i<5;i++)x.fillRect(20+i*48,0,2,256);
-  faces.push(c);
- }
- const cube=new THREE.CubeTexture(faces);cube.colorSpace=THREE.SRGBColorSpace;cube.needsUpdate=true;return cube;
-}
-function initScene(){
- if(!window.THREE)return;
- renderer3D=new THREE.WebGLRenderer({canvas:sceneCanvas,antialias:true,alpha:false,powerPreference:'high-performance'});
- renderer3D.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));
- renderer3D.outputColorSpace=THREE.SRGBColorSpace;
- renderer3D.toneMapping=THREE.ACESFilmicToneMapping;renderer3D.toneMappingExposure=1.22;
- renderer3D.shadowMap.enabled=true;renderer3D.shadowMap.type=THREE.PCFSoftShadowMap;
- scene3D=new THREE.Scene();scene3D.background=new THREE.Color(0x101820);scene3D.environment=makeEnv3D();
- camera3D=new THREE.PerspectiveCamera(39,1,.1,100);
- scene3D.add(new THREE.HemisphereLight(0xc9e5ff,0x342018,2.0));
- const key=new THREE.DirectionalLight(0xffe3b0,3.6);key.position.set(-5,-7,13);key.castShadow=true;key.shadow.mapSize.set(1536,1536);key.shadow.camera.left=-8;key.shadow.camera.right=8;key.shadow.camera.top=9;key.shadow.camera.bottom=-9;key.shadow.bias=-.00035;scene3D.add(key);
- const fill=new THREE.PointLight(0x49cfff,38,18,2);fill.position.set(3,2,7);scene3D.add(fill);
- const warm=new THREE.PointLight(0xff8b32,24,14,2);warm.position.set(-4,-3,5);scene3D.add(warm);
- const woodTex=canvasTexture3D((x,w,h)=>{x.fillStyle='#55321e';x.fillRect(0,0,w,h);for(let i=0;i<220;i++){const y=Math.random()*h;x.strokeStyle=i%4?'rgba(225,158,91,.10)':'rgba(22,10,5,.20)';x.lineWidth=1+Math.random()*5;x.beginPath();x.moveTo(0,y);for(let xx=0;xx<w;xx+=80)x.lineTo(xx,y+Math.sin(xx*.012+i)*5);x.stroke()}});
- const playTex=canvasTexture3D((x,w,h)=>{
-  const g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,'#123d4a');g.addColorStop(.45,'#0c2937');g.addColorStop(1,'#061722');x.fillStyle=g;x.fillRect(0,0,w,h);
-  x.strokeStyle='rgba(73,214,226,.32)';x.lineWidth=5;for(let i=0;i<14;i++){x.beginPath();x.arc(w/2,h*.46,70+i*30,0,Math.PI*2);x.stroke()}
-  x.strokeStyle='rgba(255,205,104,.48)';x.lineWidth=9;x.strokeRect(28,28,w-56,h-56);
-  x.fillStyle='rgba(255,211,117,.9)';x.font='900 52px system-ui';x.textAlign='center';x.fillText('DINO PINBALL',w/2,95);
-  x.fillStyle='rgba(94,226,194,.22)';for(let i=0;i<70;i++){x.beginPath();x.arc(Math.random()*w,Math.random()*h,2+Math.random()*4,0,Math.PI*2);x.fill()}
- });
- const wood=mat3D(0xffffff,.32,.05,{map:woodTex}),gold=mat3D(0xb9823d,.24,.82),chrome=mat3D(0xc7d6e0,.16,.94,{envMapIntensity:1.65}),darkMetal=mat3D(0x17232b,.27,.8),rubber=mat3D(0x171b20,.82,.02),red=mat3D(0xc51e28,.22,.25),blue=mat3D(0x1687b8,.2,.35),ivory=mat3D(0xffe6ac,.22,.12),play=mat3D(0xffffff,.37,.12,{map:playTex});
- const add=(geo,mat,parent=scene3D,pos=[0,0,0],cast=true,receive=true)=>{const m=new THREE.Mesh(geo,mat);m.position.set(...pos);m.castShadow=cast;m.receiveShadow=receive;parent.add(m);staticMeshes3D.push(m);return m};
- const box=(w,h,d,mat,pos)=>add(new THREE.BoxGeometry(w,h,d),mat,scene3D,pos);
- const cyl=(r1,r2,h,mat,pos,segments=32)=>add(new THREE.CylinderGeometry(r1,r2,h,segments),mat,scene3D,pos);
- const torus=(r,t,mat,pos)=>add(new THREE.TorusGeometry(r,t,12,48),mat,scene3D,pos);
- // Gabinete macizo, cantos biselados y patas metálicas.
- board3D=box(6.75,11.15,.72,wood,[0,0,0]);
- box(6.35,10.72,.16,play,[0,0,.43]);
- for(const x of [-3.18,3.18]){
-  box(.30,10.9,.62,gold,[x,0,.63]);box(.16,10.55,.14,chrome,[x,0,.98]);
-  for(const y of [-4.65,4.65]){cyl(.22,.25,.62,darkMetal,[x,y,-.53]);cyl(.13,.13,.1,gold,[x,y,-.84])}
- }
- for(const y of [-5.36,5.36])box(6.45,.22,.58,gold,[0,y,.63]);
- // Carril de lanzamiento y canaletas con guías de acero.
- box(.68,9.15,.12,darkMetal,[2.63,-.2,.57]);
- for(const x of [2.27,2.98]){box(.075,9.1,.30,chrome,[x,-.2,.79]);box(.10,9.1,.08,gold,[x,-.2,.98])}
- box(.62,.16,.35,red,[2.63,-4.53,.86]);
- // Rampa elevada tubular, curva y sostenida por postes reales.
- const rampPts=[[-2.12,2.0,1.13],[-1.8,2.85,1.58],[-.85,3.55,1.92],[.35,3.62,1.94],[1.42,3.08,1.62],[2.04,2.08,1.2]].map(p=>new THREE.Vector3(...p));
- const rampCurve=new THREE.CatmullRomCurve3(rampPts);
- add(new THREE.TubeGeometry(rampCurve,96,.105,16,false),chrome);
- const innerCurve=new THREE.CatmullRomCurve3(rampPts.map(p=>new THREE.Vector3(p.x,p.y,p.z-.13)));
- add(new THREE.TubeGeometry(innerCurve,96,.035,10,false),gold);
- for(const p of [rampPts[1],rampPts[3],rampPts[4]]){const post=cyl(.065,.065,p.z-.88,chrome,[p.x,p.y,(p.z+.88)/2]);}
- // Cuatro bumpers con núcleo translúcido, aros cromados y corona luminosa.
- for(const [x,y,r] of [[0,1.55,.43],[-1.35,-.1,.35],[1.35,-.1,.35],[0,-1.35,.39]]){
-  cyl(r,r,.18,chrome,[x,y,.63]);cyl(r*.84,r*.84,.13,red,[x,y,.79]);
-  torus(r*.78,.055,gold,[x,y,.88]);cyl(r*.43,r*.48,.20,ivory,[x,y,.91]);
-  const glow=add(new THREE.TorusGeometry(r*.9,.025,8,48),new THREE.MeshBasicMaterial({color:0xffc75a}),scene3D,[x,y,1.0],false,false);
-  const lamp=new THREE.PointLight(0xffb747,1.5,2.2);lamp.position.set(x,y,1.2);scene3D.add(lamp);
- }
- // Blancos abatibles, slingshots, guías y gomas.
- for(const x of [-2.35,2.35])for(const y of [2,-1.6]){
-  box(.17,.66,.22,red,[x,y,.78]);box(.10,.45,.08,ivory,[x,y, .93]);
-  cyl(.12,.12,.12,gold,[x,y,.97]);
- }
- for(const side of [-1,1]){
-  const sling=box(1.1,.19,.20,red,[side*1.83,-2.25,.76]);sling.rotation.z=side*.20;
-  const band=box(1.0,.055,.06,ivory,[side*1.83,-2.25,.89]);band.rotation.z=side*.20;
-  const guide=box(.10,1.7,.14,chrome,[side*2.75,-3.2,.73]);
- }
- // Tornillería, insertos y lámparas repartidas por el campo.
- for(let y=-4.8;y<=4.8;y+=1.2)for(const x of [-2.9,2.9]){
-  cyl(.055,.055,.035,chrome,[x,y,.96],16);box(.07,.012,.012,darkMetal,[x,y,.982]);
- }
- for(const [x,y] of [[-2.3,3.6],[2.3,3.6],[-2.5,-.9],[2.5,-.9],[-1.9,-3.8],[1.9,-3.8]]){
-  cyl(.11,.11,.06,gold,[x,y,.56]);const l=new THREE.PointLight(0x43eaff,1.0,1.3);l.position.set(x,y,1.1);scene3D.add(l);
- }
- // Flippers: ejes metálicos, cuerpo esmaltado y gomas superiores.
- for(const [key,x,color] of [['left',-.75,0xffa52f],['right',.75,0x42c9ff]]){
-  cyl(.22,.22,.17,chrome,[x,-3.55,.78]);
-  const hinge=torus(.16,.035,gold,[x,-3.55,.89]);
-  const mesh=add(new THREE.CylinderGeometry(.14,.19,2.1,32,1,false),mat3D(color,.22,.48,{clearcoat:.9,clearcoatRoughness:.18}),scene3D,[x,-3.55,1.02]);
-  mesh.rotation.z=Math.PI/2;flipperMeshes3D[key]=mesh;
-  const cap=add(new THREE.SphereGeometry(.19,24,16),ivory,scene3D,[x,-3.55,1.02]);flipperMeshes3D[key+'Cap']=cap;
- }
- // Cabezal vertical con marco de madera, aluminio, cristal y marquesina gráfica.
- box(5.95,.46,2.48,wood,[0,5.25,2.02]);box(5.65,.16,2.22,gold,[0,4.98,2.03]);box(5.38,.08,1.94,darkMetal,[0,4.88,2.03]);
- // Imagen fija del televisor: dinosaurio iluminado, sin animación ni trabajo por fotograma.
- const marquee=canvasTexture3D((x,w,h)=>{
-  const g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,'#06101a');g.addColorStop(.48,'#103b4b');g.addColorStop(1,'#050b13');x.fillStyle=g;x.fillRect(0,0,w,h);
-  x.strokeStyle='#e9bd62';x.lineWidth=13;x.strokeRect(12,12,w-24,h-24);
-  x.save();x.translate(220,145);x.scale(1.15,1.15);x.shadowColor='#48ffd2';x.shadowBlur=24;x.fillStyle='#64f5d1';
-  x.beginPath();x.moveTo(-150,24);x.lineTo(-105,8);x.lineTo(-78,-25);x.lineTo(-40,-48);x.lineTo(5,-53);x.lineTo(36,-37);x.lineTo(55,-58);x.lineTo(82,-65);x.lineTo(104,-51);x.lineTo(94,-29);x.lineTo(72,-22);x.lineTo(61,-4);x.lineTo(89,12);x.lineTo(125,28);x.lineTo(145,44);x.lineTo(105,43);x.lineTo(68,30);x.lineTo(45,15);x.lineTo(26,39);x.lineTo(15,82);x.lineTo(-3,82);x.lineTo(-6,38);x.lineTo(-44,39);x.lineTo(-61,82);x.lineTo(-80,82);x.lineTo(-76,28);x.lineTo(-112,37);x.lineTo(-150,24);x.closePath();x.fill();
-  x.fillStyle='#07131b';x.shadowBlur=0;x.beginPath();x.arc(83,-47,5,0,Math.PI*2);x.fill();x.restore();
-  x.fillStyle='#ffe2a0';x.textAlign='center';x.shadowColor='#ffb94d';x.shadowBlur=18;x.font='1000 76px system-ui';x.fillText('DINO',720,112);x.font='900 42px system-ui';x.fillText('PINBALL',720,166);x.fillStyle='#55edcf';x.shadowColor='#55edcf';x.font='28px system-ui';x.fillText('EXPLORADORES',720,216);x.shadowBlur=0;
- },1024,256);
- const signMaterial=new THREE.MeshPhysicalMaterial({map:marquee,emissiveMap:marquee,emissive:0xffffff,emissiveIntensity:1.05,roughness:.2,metalness:.12});
- const sign=add(new THREE.PlaneGeometry(5.15,1.30),signMaterial,scene3D,[0,4.82,2.05],false,false);sign.rotation.x=Math.PI/2;
- const screenGlow=new THREE.PointLight(0x48dfff,2.2,4.8,2);screenGlow.position.set(0,4.45,2.55);scene3D.add(screenGlow);
- const glass=add(new THREE.PlaneGeometry(5.25,1.78),new THREE.MeshPhysicalMaterial({color:0x8fdcff,metalness:.35,roughness:.08,transparent:true,opacity:.10,transmission:.25,thickness:.08,envMapIntensity:1.5}),scene3D,[0,4.80,2.04],false,false);glass.rotation.x=Math.PI/2;
- // Bola cromada pulida con reflejo de entorno y flippers dinámicos.
- const ballMat=mat3D(0xdfeaf2,.075,1,{envMapIntensity:2.1,clearcoat:1,clearcoatRoughness:.04});
- ball3D=add(new THREE.SphereGeometry(.125,40,32),ballMat,scene3D,[2.1,-3.3,1.12]);
- const floorMat=mat3D(0x62452d,.94,.02);
- const floor=add(new THREE.PlaneGeometry(200,200),floorMat,scene3D,[0,0,-1.5],false,true);
- // Fotografía real de madera debajo del gabinete: solo textura visual, sin física ni animación.
- // CC0: Kurtkaiser, Wikimedia Commons — Pine wood Table Top.
- const woodPhoto=new THREE.TextureLoader();
- woodPhoto.setCrossOrigin('anonymous');
- woodPhoto.load('https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Pine_wood_Table_Top.jpg/1280px-Pine_wood_Table_Top.jpg',texture=>{
-  texture.colorSpace=THREE.SRGBColorSpace;
-  texture.wrapS=THREE.RepeatWrapping;texture.wrapT=THREE.RepeatWrapping;
-  texture.repeat.set(32,32);texture.anisotropy=4;
-  floorMat.map=texture;floorMat.needsUpdate=true;
- },undefined,()=>console.warn('Textura fotográfica de madera no disponible; se mantiene el fondo oscuro'));
- // Fondo y focos ambientales fuera del tablero.
- const rimLight=new THREE.PointLight(0x2c9dff,26,24);rimLight.position.set(-5,5,8);scene3D.add(rimLight);
- resizeScene3D();
-}
-function resizeScene3D(){
- if(!renderer3D||!sceneCanvas)return;const w=sceneCanvas.clientWidth,h=sceneCanvas.clientHeight;if(!w||!h)return;
- renderer3D.setSize(w,h,false);camera3D.aspect=w/h;
- const portrait=w/h<.82;camera3D.position.set(0,portrait?-13.7:-12.0,portrait?17.8:15.8);
- camera3D.lookAt(0,0,.55);camera3D.updateProjectionMatrix();
-}
-function render3D(){
- if(!renderer3D||!flipperActive||document.hidden)return;
- const x=(ball.x-300)/100,y=(500-ball.y)/100;
- ball3D.position.set(x,y,1.12);ball3D.rotation.x+=ball.vy*.006;ball3D.rotation.y+=ball.vx*.006;
- for(const key of ['left','right']){
-  const f=flippers[key],p=flipperPoints(f),ax=(f.x-300)/100,ay=(500-f.y)/100,bx=(p.x-300)/100,by=(500-p.y)/100;
-  const mesh=flipperMeshes3D[key],cap=flipperMeshes3D[key+'Cap'];
-  const a=new THREE.Vector3(ax,ay,1.02),b=new THREE.Vector3(bx,by,1.02),d=b.clone().sub(a);
-  mesh.position.copy(a.clone().add(b).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.clone().normalize());mesh.scale.set(1,d.length()/2.1,1);
-  cap.position.copy(b);
- }
- renderer3D.render(scene3D,camera3D);
-}
-try{initScene();}catch(e){console.warn('Three.js 3D no disponible',e);renderer3D=null}
-
-// Pinball arcade: física continua, paletas articuladas, bumpers, slingshots y carril lanzador.
-const canvas=document.getElementById('table'),ctx=canvas.getContext('2d');
-const VW=600,VH=1000;
-let scale=1,ox=0,oy=0,dpr=1,frame=0,score=0,hits=0,audioCtx=null,flipperActive=false,rafId=0,lastFrame=0;
-let left=false,right=false,laneWaiting=true,playerGreeted=false,nextMilestone=50000,ball={x:510,y:830,vx:0,vy:0,r:12};
-const bumpers=[{x:300,y:300,r:37,lit:0,value:100},{x:170,y:455,r:31,lit:0,value:150},{x:430,y:455,r:31,lit:0,value:150},{x:300,y:575,r:34,lit:0,value:200}];
-const targets=[{x:125,y:250,w:22,h:58,lit:0},{x:475,y:250,w:22,h:58,lit:0},{x:115,y:555,w:22,h:55,lit:0},{x:485,y:555,w:22,h:55,lit:0}];
-const flippers={left:{x:225,y:830,len:125,angle:.28,rest:.28,active:-.48,side:1},right:{x:375,y:830,len:125,angle:Math.PI-.28,rest:Math.PI-.28,active:Math.PI+.48,side:-1}};
+function updatePinScore(){scoreLabel.textContent=String(score).padStart(6,'0');playerTitle.textContent='¡Vamos, '+playerName()+'!'}
+function sayLanePrompt(){sayPlayer('¡Hey, '+playerName()+', tocá el botón rojo para seguir jugando!')}
 function resizeTable(){
  const r=canvas.getBoundingClientRect();if(!r.width||!r.height)return;
- dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);
+ dpr=Math.min(window.devicePixelRatio||1,1.5);
+ canvas.width=Math.round(r.width*dpr);canvas.height=Math.round(r.height*dpr);
  scale=Math.min(canvas.width/VW,canvas.height/VH);ox=(canvas.width-VW*scale)/2;oy=(canvas.height-VH*scale)/2;
+ drawTable();
 }
-function resetBall(){ball={x:510,y:830,vx:0,vy:0,r:12};laneWaiting=true;updatePinScore();}
-function sound(freq=420,duration=.055,type='sine',volume=.035){
- try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(Math.max(60,freq*.62),audioCtx.currentTime+duration);g.gain.setValueAtTime(volume,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}
+function scheduleLoop(){if(flipperActive&&!rafId)rafId=requestAnimationFrame(loop)}
+function parkBallInLane(){
+ ball={x:342,y:565,vx:0,vy:0,r:8};laneWaiting=true;
+ leftPressed=false;rightPressed=false;drawTable();sayLanePrompt();
 }
-function scoreAdd(n){score+=n;hits++;updatePinScore();while(score>=nextMilestone){sayPlayer('¡Felicidades, '+playerName()+'! ¡Llegaste a '+nextMilestone.toLocaleString('es-AR')+' puntos!');nextMilestone+=50000;}}
-function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
-function closest(px,py,ax,ay,bx,by){const dx=bx-ax,dy=by-ay,t=clamp(((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy),0,1);return{x:ax+t*dx,y:ay+t*dy,t}}
-function collideSegment(ax,ay,bx,by,boost=1.08){
- const q=closest(ball.x,ball.y,ax,ay,bx,by),dx=ball.x-q.x,dy=ball.y-q.y,dist=Math.hypot(dx,dy),min=ball.r+8;
- if(dist<min){const nx=dist?dx/dist:0,ny=dist?dy/dist:-1;ball.x=q.x+nx*min;ball.y=q.y+ny*min;const dot=ball.vx*nx+ball.vy*ny;if(dot<0){ball.vx-=2*dot*nx;ball.vy-=2*dot*ny}ball.vx*=boost;ball.vy*=boost;return true}return false;
+function addScore(points){
+ score+=points;updatePinScore();
+ while(score>=nextMilestone){sayPlayer('¡Felicidades, '+playerName()+'! ¡Llegaste a '+nextMilestone.toLocaleString('es-AR')+' puntos!');nextMilestone+=50000}
 }
-function flipperPoints(f){return{x:f.x+Math.cos(f.angle)*f.len,y:f.y+Math.sin(f.angle)*f.len}}
-function update(){
+let nextMilestone=50000;
+function endpoint(f){return{x:f.x+Math.cos(f.angle)*f.len,y:f.y+Math.sin(f.angle)*f.len}}
+function nearestOnSegment(px,py,ax,ay,bx,by){
+ const dx=bx-ax,dy=by-ay,t=Math.max(0,Math.min(1,((px-ax)*dx+(py-ay)*dy)/(dx*dx+dy*dy)));
+ return{x:ax+t*dx,y:ay+t*dy}
+}
+function hitFlipper(f,active){
+ const p=endpoint(f),q=nearestOnSegment(ball.x,ball.y,f.x,f.y,p.x,p.y);
+ const dx=ball.x-q.x,dy=ball.y-q.y,d=Math.hypot(dx,dy),min=ball.r+7;
+ if(d>=min)return;
+ const nx=dx/(d||1),ny=dy/(d||1);
+ ball.x=q.x+nx*min;ball.y=q.y+ny*min;
+ const dot=ball.vx*nx+ball.vy*ny;
+ if(dot<0){ball.vx-=2*dot*nx;ball.vy-=2*dot*ny}
+ if(active){ball.vy=-Math.max(8,Math.abs(ball.vy)+4);ball.vx+=(f===flippers.left?2:-2);addScore(10)}
+}
+function updatePhysics(){
+ for(const [name,f] of Object.entries(flippers)){
+  const target=(name==='left'?leftPressed:rightPressed)?f.active:f.rest;
+  let delta=target-f.angle;while(delta>Math.PI)delta-=Math.PI*2;while(delta< -Math.PI)delta+=Math.PI*2;
+  f.angle+=delta*.34;
+ }
  if(laneWaiting)return;
- frame++;
- for(const f of [flippers.left,flippers.right]){const target=(f===flippers.left?left:right)?f.active:f.rest;let d=target-f.angle;while(d>Math.PI)d-=Math.PI*2;while(d<-Math.PI)d+=Math.PI*2;f.angle+=d*.32}
- ball.vy+=.19;ball.x+=ball.vx;ball.y+=ball.vy;
- // Paredes laterales y techo curvo
- if(ball.x<42+ball.r){ball.x=42+ball.r;ball.vx=Math.abs(ball.vx)*.88;sound(180,.035)}
- if(ball.x>558-ball.r){ball.x=558-ball.r;ball.vx=-Math.abs(ball.vx)*.88;sound(180,.035)}
- if(ball.y<54+ball.r){ball.y=54+ball.r;ball.vy=Math.abs(ball.vy)*.86;sound(220,.04)}
- // Carril derecho: la bola queda retenida al llegar a su base, esperando el botón rojo.
- if(ball.x>492&&ball.y>=780&&ball.y<940&&ball.vy>0){parkBallInLane();return}
- if(ball.x>492&&ball.y>95&&ball.y<780){ball.vx=clamp(ball.vx,-3,3);if(ball.y<160&&ball.vy<0)ball.vy=.5}
- // Bumpers con impulso radial
- for(const b of bumpers){const dx=ball.x-b.x,dy=ball.y-b.y,d=Math.hypot(dx,dy),min=ball.r+b.r;if(d<min){const nx=dx/(d||1),ny=dy/(d||1);ball.x=b.x+nx*min;ball.y=b.y+ny*min;const speed=Math.hypot(ball.vx,ball.vy),kick=Math.max(6.8,speed*1.28);ball.vx=nx*kick;ball.vy=ny*kick;b.lit=1;scoreAdd(b.value);sound(540+b.value, .11,'triangle',.055)}b.lit*=.91}
- // Slingshot rubber bands
- if(collideSegment(105,660,205,745,1.12)||collideSegment(495,660,395,745,1.12)){scoreAdd(25);sound(300,.06,'square',.025)}
- // Paletas articuladas: segmento con giro animado
- for(const f of [flippers.left,flippers.right]){const p=flipperPoints(f);if(collideSegment(f.x,f.y,p.x,p.y,1.025)){const active=f===flippers.left?left:right;ball.vy=Math.min(ball.vy,-(active?10.8:6.4));ball.vx+=f===flippers.left?1.25:-1.25;if(active){scoreAdd(10);sound(760,.055,'triangle',.04)}}}
- // Targets
- for(const t of targets){if(t.lit>0)t.lit*=.92;const q=closest(ball.x,ball.y,t.x-t.w/2,t.y-t.h/2,t.x+t.w/2,t.y+t.h/2);if(Math.hypot(ball.x-q.x,ball.y-q.y)<ball.r+8){t.lit=1;ball.vy=-Math.abs(ball.vy)-3;ball.vx+=(ball.x<t.x?-2:2);scoreAdd(75);sound(880,.07,'sine',.04)}}
- // Al llegar a la base, la bola vuelve al carril de espera; el jugador la libera con el botón rojo.
- if(ball.y>940){parkBallInLane();return}
- ball.vx*=.999;ball.vy=clamp(ball.vy,-15,15);ball.vx=clamp(ball.vx,-11,11);
+ ball.vy=Math.min(13,ball.vy+.22);ball.x+=ball.vx;ball.y+=ball.vy;
+ if(ball.x<28+ball.r){ball.x=28+ball.r;ball.vx=Math.abs(ball.vx)*.82}
+ if(ball.x>372-ball.r){ball.x=372-ball.r;ball.vx=-Math.abs(ball.vx)*.82}
+ if(ball.y<34+ball.r){ball.y=34+ball.r;ball.vy=Math.abs(ball.vy)*.82}
+ for(const b of bumpers){
+  const dx=ball.x-b.x,dy=ball.y-b.y,d=Math.hypot(dx,dy),min=ball.r+b.r;
+  if(d<min){const nx=dx/(d||1),ny=dy/(d||1);ball.x=b.x+nx*min;ball.y=b.y+ny*min;ball.vx=nx*7;ball.vy=ny*7;addScore(b.value)}
+ }
+ hitFlipper(flippers.left,leftPressed);hitFlipper(flippers.right,rightPressed);
+ ball.vx*=.998;ball.vy=Math.max(-13,Math.min(13,ball.vy));
+ if(ball.y>675)parkBallInLane();
 }
-function rounded(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=3;ctx.stroke()}}
-function drawBumper(b){const glow=ctx.createRadialGradient(b.x,b.y,5,b.x,b.y,b.r*1.5);glow.addColorStop(0,b.lit?'#fff':'#fff9c8');glow.addColorStop(.35,b.lit?'#fff37c':'#ffb52e');glow.addColorStop(1,'#ff7a1600');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(b.x,b.y,b.r*1.5,0,Math.PI*2);ctx.fill();const g=ctx.createRadialGradient(b.x-b.r*.35,b.y-b.r*.4,2,b.x,b.y,b.r);g.addColorStop(0,'#fff');g.addColorStop(.2,b.lit?'#fff4a0':'#ffd86b');g.addColorStop(.6,'#e98a25');g.addColorStop(1,'#672e1a');ctx.fillStyle=g;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#ffe6a0';ctx.lineWidth=5;ctx.stroke();ctx.fillStyle='#4b2617';ctx.font='900 17px system-ui';ctx.textAlign='center';ctx.fillText('HIT',b.x,b.y+6)}
-function drawFlipper(f){const p=flipperPoints(f);ctx.lineCap='round';ctx.lineWidth=27;ctx.strokeStyle='#261b23';ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(p.x,p.y);ctx.stroke();const grad=ctx.createLinearGradient(f.x,f.y,p.x,p.y);grad.addColorStop(0,'#fff1a1');grad.addColorStop(.35,f===flippers.left?'#ffb72e':'#51d8ff');grad.addColorStop(1,f===flippers.left?'#b64d13':'#145c9b');ctx.strokeStyle=grad;ctx.lineWidth=20;ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.fillStyle='#f8df9a';ctx.beginPath();ctx.arc(f.x,f.y,16,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#65451e';ctx.lineWidth=4;ctx.stroke()}
-function drawBackglass(){
- // Cabezal elevado de máquina noventera con marquesina y pantalla animada de dinosaurio.
- rounded(34,28,532,190,22,'#090f19','#d9ad58');rounded(48,42,504,150,13,'#17232b','#9b7a45');
- const glass=ctx.createLinearGradient(0,42,0,192);glass.addColorStop(0,'#09101d');glass.addColorStop(.5,'#102e43');glass.addColorStop(1,'#07121c');rounded(58,52,484,130,9,glass,'#55d4d3');
- ctx.save();ctx.globalAlpha=.16;ctx.fillStyle='#8effd4';for(let y=58;y<178;y+=5)for(let x=64;x<536;x+=5)ctx.fillRect(x,y,1.5,1.5);ctx.restore();
- ctx.fillStyle='#ffd66b';ctx.font='1000 22px system-ui';ctx.textAlign='center';ctx.shadowColor='#ff9e35';ctx.shadowBlur=12;ctx.fillText('DINO  •  PINBALL',300,76);ctx.shadowBlur=0;
- const bob=Math.sin(frame*.07)*2,px=300,py=130+bob;ctx.save();ctx.translate(px,py);ctx.shadowColor='#5affb4';ctx.shadowBlur=16;ctx.fillStyle=frame%90<45?'#71ffb1':'#4de3c5';
- const blocks=[[-74,4,22,12],[-57,-8,20,18],[-39,-17,26,24],[-15,-22,38,28],[20,-19,24,25],[38,-31,24,19],[57,-36,22,15],[73,-32,14,10],[50,-12,18,17],[28,4,22,17],[0,5,24,18],[-24,6,25,17],[-47,13,18,13],[-66,19,18,9],[-36,22,13,19],[5,20,13,22],[28,19,13,23],[-84,2,16,7]];blocks.forEach(([x,y,w,h])=>ctx.fillRect(x,y,w,h));ctx.fillStyle='#fff5a8';ctx.fillRect(72,-31,5,5);ctx.fillStyle='#14202b';ctx.fillRect(75,-30,2,2);ctx.fillStyle='#ffb84a';ctx.fillRect(84,-20,8,4);ctx.restore();
- ctx.fillStyle='#a8f7dd';ctx.font='bold 11px monospace';ctx.textAlign='left';ctx.fillText('SCORE '+String(score).padStart(7,'0'),76,169);ctx.textAlign='right';ctx.fillText(frame%70<35?'¡CUIDADO!':'BOLA EN JUEGO',524,169);
- for(const [x,y] of [[45,39],[555,39],[45,207],[555,207]]){const g=ctx.createRadialGradient(x-2,y-2,1,x,y,6);g.addColorStop(0,'#fff');g.addColorStop(.4,'#b9c4cb');g.addColorStop(1,'#36414a');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,6,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#202832';ctx.lineWidth=1;ctx.stroke();}
+function drawTable(){
+ if(!ctx||!canvas.width||!canvas.height)return;
+ ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#17131a';ctx.fillRect(0,0,canvas.width,canvas.height);
+ ctx.setTransform(scale,0,0,scale,ox,oy);
+ // Gabinete de madera y campo verde clásico.
+ const wood=ctx.createLinearGradient(0,0,400,700);wood.addColorStop(0,'#e4bd73');wood.addColorStop(.5,'#75421f');wood.addColorStop(1,'#321c14');
+ ctx.fillStyle=wood;ctx.beginPath();ctx.roundRect(5,5,390,690,25);ctx.fill();
+ const felt=ctx.createLinearGradient(0,25,0,680);felt.addColorStop(0,'#1e6970');felt.addColorStop(.55,'#15545a');felt.addColorStop(1,'#0b343e');
+ ctx.fillStyle=felt;ctx.beginPath();ctx.roundRect(19,18,362,664,18);ctx.fill();
+ ctx.strokeStyle='#f5d58a';ctx.lineWidth=4;ctx.stroke();
+ // Cabecera arcade estática.
+ ctx.fillStyle='#101923';ctx.beginPath();ctx.roundRect(34,30,332,92,12);ctx.fill();
+ ctx.strokeStyle='#e8c477';ctx.lineWidth=3;ctx.stroke();
+ ctx.fillStyle='#ffd66e';ctx.font='900 18px system-ui';ctx.textAlign='center';ctx.fillText('DINO PINBALL',200,58);
+ ctx.fillStyle='#b4f4e0';ctx.font='bold 11px system-ui';ctx.fillText('EXPLORADORES · ¡A JUGAR!',200,79);
+ // Carril de lanzamiento.
+ ctx.fillStyle='#102d3c';ctx.beginPath();ctx.roundRect(319,135,43,500,17);ctx.fill();
+ ctx.strokeStyle='#d4b66f';ctx.lineWidth=4;ctx.stroke();
+ for(let y=165;y<600;y+=48){ctx.fillStyle='#f6d66b';ctx.beginPath();ctx.arc(340,y,3,0,Math.PI*2);ctx.fill()}
+ // Guías sencillas del tablero.
+ ctx.strokeStyle='#b4e5d8';ctx.globalAlpha=.55;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(45,145);ctx.lineTo(45,540);ctx.quadraticCurveTo(45,570,78,590);ctx.moveTo(300,145);ctx.lineTo(300,540);ctx.quadraticCurveTo(300,570,270,590);ctx.stroke();ctx.globalAlpha=1;
+ // Obstáculos/bumpers.
+ for(const b of bumpers){
+  const g=ctx.createRadialGradient(b.x-7,b.y-8,2,b.x,b.y,b.r);g.addColorStop(0,'#fff6c8');g.addColorStop(.35,'#ffc94e');g.addColorStop(1,'#9a421c');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#ffe7a1';ctx.lineWidth=4;ctx.stroke();
+  ctx.fillStyle='#593018';ctx.font='900 10px system-ui';ctx.fillText('DINO',b.x,b.y+3);
+ }
+ // Paletas independientes.
+ for(const [name,f] of Object.entries(flippers)){
+  const p=endpoint(f);ctx.lineCap='round';ctx.strokeStyle='#251b1b';ctx.lineWidth=22;ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(p.x,p.y);ctx.stroke();
+  const grad=ctx.createLinearGradient(f.x,f.y,p.x,p.y);grad.addColorStop(0,name==='left'?'#ffe27a':'#b4f3ff');grad.addColorStop(1,name==='left'?'#c66b24':'#237db4');
+  ctx.strokeStyle=grad;ctx.lineWidth=15;ctx.beginPath();ctx.moveTo(f.x,f.y);ctx.lineTo(p.x,p.y);ctx.stroke();
+  ctx.fillStyle='#f8df9a';ctx.beginPath();ctx.arc(f.x,f.y,10,0,Math.PI*2);ctx.fill();
+ }
+ // Bola cromada.
+ const shine=ctx.createRadialGradient(ball.x-3,ball.y-4,1,ball.x,ball.y,ball.r*1.5);shine.addColorStop(0,'#fff');shine.addColorStop(.35,'#eaf6ff');shine.addColorStop(1,'#647d91');
+ ctx.fillStyle=shine;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.stroke();
+ // Luz fija en la zona de lanzamiento.
+ ctx.fillStyle='#ff4a38';ctx.beginPath();ctx.arc(340,640,7,0,Math.PI*2);ctx.fill();
 }
-function draw(){
- ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);ctx.setTransform(scale,0,0,scale,ox,oy);
- // Fondo de tablero de madera y campo esmaltado
- const bg=ctx.createLinearGradient(0,0,600,1000);bg.addColorStop(0,'#193e58');bg.addColorStop(.45,'#0c6a70');bg.addColorStop(1,'#092c43');rounded(12,12,576,976,30,'#b88742','#f5d987');rounded(25,25,550,950,25,bg,'#f7df9c');
- // Circuitos decorativos, guías y carril de lanzamiento
- ctx.strokeStyle='#54d8d0';ctx.globalAlpha=.35;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(75,180);ctx.bezierCurveTo(35,340,60,570,100,620);ctx.moveTo(525,180);ctx.bezierCurveTo(565,340,540,570,500,620);ctx.stroke();ctx.globalAlpha=1;
- rounded(500,80,62,735,24,'#13253b','#e6bd61');rounded(512,100,38,690,18,'#28516a','#83e7e9');
- // Carril y marcas de luz
- for(let i=0;i<9;i++){ctx.fillStyle=frame%30<15?'#ffe36d':'#ff9c3d';ctx.globalAlpha=.65;ctx.beginPath();ctx.arc(531,135+i*72,5,0,Math.PI*2);ctx.fill()}ctx.globalAlpha=1;
- // Marquesina elevada y pantalla frontal con dinosaurio animado.
- drawBackglass();
- ctx.strokeStyle='#c5dce0';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(53,235);ctx.lineTo(53,820);ctx.moveTo(547,235);ctx.lineTo(547,820);ctx.stroke();ctx.strokeStyle='#fff1bd';ctx.lineWidth=2;ctx.stroke();
- ctx.fillStyle='#f8d77d';ctx.font='900 15px system-ui';ctx.textAlign='center';ctx.fillText('ZONA DE JUEGO',300,238);
- for(let i=0;i<targets.length;i++){const t=targets[i];rounded(t.x-t.w/2,t.y-t.h/2,t.w,t.h,8,t.lit?'#fff5a0':'#e75e4d','#ffe6a3');ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(t.x,t.y,5,0,Math.PI*2);ctx.fill()}
- // Rampa elevada transparente, con doble carril de metal y reflejo.
- ctx.lineCap='round';ctx.strokeStyle='#091a24';ctx.lineWidth=24;ctx.beginPath();ctx.moveTo(92,270);ctx.bezierCurveTo(142,205,458,205,508,270);ctx.stroke();ctx.strokeStyle='#9eeaff';ctx.globalAlpha=.7;ctx.lineWidth=13;ctx.stroke();ctx.globalAlpha=1;ctx.strokeStyle='#fff3c2';ctx.lineWidth=3;ctx.stroke();
- for(let i=0;i<7;i++){const x=150+i*50,y=355+(i%2)*34;const g=ctx.createRadialGradient(x-3,y-3,1,x,y,12);g.addColorStop(0,'#fff');g.addColorStop(.25,i%2?'#ffeb80':'#8bfff0');g.addColorStop(1,'#176a70');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,11,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#d9c58c';ctx.lineWidth=3;ctx.stroke();}
- // Slingshots triangulares
- for(const s of [1,-1]){ctx.beginPath();if(s===1){ctx.moveTo(90,650);ctx.lineTo(205,750);ctx.lineTo(205,650)}else{ctx.moveTo(510,650);ctx.lineTo(395,750);ctx.lineTo(395,650)}ctx.closePath();ctx.fillStyle='#b72e46';ctx.fill();ctx.strokeStyle='#ffd27a';ctx.lineWidth=5;ctx.stroke()}
- bumpers.forEach(drawBumper);
- // Campo de luces inferiores
- for(let i=0;i<11;i++){ctx.fillStyle=(frame+i*4)%24<12?'#ffe37b':'#44e2e7';ctx.beginPath();ctx.arc(105+i*39,790,4,0,Math.PI*2);ctx.fill()}
- drawFlipper(flippers.left);drawFlipper(flippers.right);
- // Bola cromada
- const shine=ctx.createRadialGradient(ball.x-5,ball.y-7,1,ball.x,ball.y,ball.r*1.4);shine.addColorStop(0,'#fff');shine.addColorStop(.28,'#eaf7ff');shine.addColorStop(.65,'#91a8b9');shine.addColorStop(1,'#263b50');ctx.shadowColor='#9ceaff';ctx.shadowBlur=18;ctx.fillStyle=shine;ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
- // Marcador físico tipo display de siete segmentos en la base de la máquina.
- rounded(155,858,290,72,12,'#090d13','#d6b05d');rounded(170,869,260,49,6,'#182c2b','#5c8b70');ctx.fillStyle='#a8ff9e';ctx.font='900 27px monospace';ctx.textAlign='center';ctx.shadowColor='#69ff75';ctx.shadowBlur=9;ctx.fillText(String(score).padStart(8,'0'),300,902);ctx.shadowBlur=0;
- for(let i=0;i<3;i++){const x=240+i*60;const g=ctx.createRadialGradient(x-3,950,1,x,950,12);g.addColorStop(0,'#fff');g.addColorStop(.3,['#ffdf69','#6ce7ef','#ff7198'][i]);g.addColorStop(1,'#202b3a');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,950,12,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#e8d39a';ctx.lineWidth=3;ctx.stroke();}
+function loop(ts){
+ rafId=0;if(!flipperActive||document.hidden)return;
+ const dt=lastFrame?Math.min(2,(ts-lastFrame)/16.67):1;lastFrame=ts;
+ for(let i=0;i<dt;i++)updatePhysics();
+ drawTable();
+ if(!laneWaiting||leftPressed||rightPressed)rafId=requestAnimationFrame(loop);
+ else lastFrame=0;
 }
-function loop(ts){if(!flipperActive||document.hidden)return;const dt=lastFrame?Math.min(2,(ts-lastFrame)/16.67):1;lastFrame=ts;for(let i=0;i<dt;i++)update();render3D();updatePinScore();rafId=requestAnimationFrame(loop)}
-function startFlipper(){if(flipperActive)return;flipperActive=true;lastFrame=0;resizeTable();requestAnimationFrame(()=>{resizeScene3D();render3D()});if(!playerGreeted){playerGreeted=true;setTimeout(()=>sayPlayer('Hola '+playerName()+', ¿qué haremos hoy?'),250)}if(laneWaiting)setTimeout(()=>{if(flipperActive&&laneWaiting)sayLanePrompt()},1300);rafId=requestAnimationFrame(loop)}
-function stopFlipper(){flipperActive=false;if(rafId)cancelAnimationFrame(rafId);rafId=0;lastFrame=0;left=false;right=false;if(audioCtx&&audioCtx.state==='running')audioCtx.suspend().catch(()=>{})}
-function bindFlipper(id,side){const el=document.getElementById(id);const set=v=>{if(side==='left')left=v;else right=v;el.classList.toggle('pressed',v)};el.addEventListener('pointerdown',e=>{e.preventDefault();set(true);sound(150,.035,'square',.018);el.setPointerCapture?.(e.pointerId)});['pointerup','pointercancel','pointerleave','lostpointercapture'].forEach(ev=>el.addEventListener(ev,()=>set(false)));el.addEventListener('contextmenu',e=>e.preventDefault())}
-bindFlipper('leftKey','left');bindFlipper('rightKey','right');const playerInput=document.getElementById('playerName'),playerTitle=document.getElementById('playerGreeting'),scoreLabel=document.getElementById('pinScore');
-function playerName(){return (playerInput.value||localStorage.getItem('explorer-player-name')||'amigo').trim()||'amigo'}
-function sayPlayer(message){statusEl.textContent='🔊 '+message;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(message);return}if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(message);u.lang='es-US';u.rate=.88;speechSynthesis.speak(u)}}
-function updatePinScore(){if(scoreLabel)scoreLabel.textContent=String(score).padStart(6,'0');if(playerTitle)playerTitle.textContent='¡Vamos, '+playerName()+'!'}
-function sayLanePrompt(){sayPlayer('¡Hey, '+playerName()+', tocá el botón rojo para seguir jugando!')}
-function parkBallInLane(){ball={x:510,y:830,vx:0,vy:0,r:12};laneWaiting=true;left=false;right=false;updatePinScore();sound(330,.1,'triangle');sayLanePrompt()}
+function startFlipper(){
+ if(flipperActive)return;flipperActive=true;lastFrame=0;resizeTable();drawTable();
+ if(!playerGreeted){playerGreeted=true;setTimeout(()=>{if(flipperActive)sayPlayer('Hola '+playerName()+', ¿qué haremos hoy?')},250)}
+ if(laneWaiting)setTimeout(()=>{if(flipperActive&&laneWaiting)sayLanePrompt()},1200);
+}
+function stopFlipper(){
+ flipperActive=false;if(rafId)cancelAnimationFrame(rafId);rafId=0;lastFrame=0;leftPressed=false;rightPressed=false;
+}
+function bindFlipper(id,side){
+ const el=document.getElementById(id);
+ const set=value=>{if(side==='left')leftPressed=value;else rightPressed=value;el.classList.toggle('pressed',value);if(flipperActive)scheduleLoop()};
+ el.addEventListener('pointerdown',e=>{e.preventDefault();set(true);el.setPointerCapture?.(e.pointerId)});
+ ['pointerup','pointercancel','pointerleave','lostpointercapture'].forEach(ev=>el.addEventListener(ev,()=>set(false)));
+ el.addEventListener('contextmenu',e=>e.preventDefault());
+}
+bindFlipper('leftKey','left');bindFlipper('rightKey','right');
 playerInput.value=localStorage.getItem('explorer-player-name')||'';
 playerInput.addEventListener('input',()=>{localStorage.setItem('explorer-player-name',playerInput.value.trim().slice(0,18));updatePinScore()});
-document.getElementById('launchKey').addEventListener('click',()=>{if(!laneWaiting)return;laneWaiting=false;ball={x:510,y:830,vx:-1.4,vy:-12.5,r:12};sound(620,.13,'sawtooth',.05);if(audioCtx?.state==='suspended')audioCtx.resume().catch(()=>{});});
-updatePinScore();
-window.addEventListener('resize',resizeTable);window.addEventListener('orientationchange',()=>setTimeout(resizeTable,180));
-resizeTable();
+document.getElementById('launchKey').addEventListener('click',()=>{
+ if(!laneWaiting)return;laneWaiting=false;ball={x:342,y:565,vx:-1.8,vy:-10.5,r:8};scheduleLoop();
+});
+updatePinScore();resizeTable();
+window.addEventListener('resize',resizeTable);
+window.addEventListener('orientationchange',()=>setTimeout(resizeTable,180));
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopFlipper();else if(document.getElementById('flipper').classList.contains('active'))startFlipper()});
 window.addEventListener('pagehide',stopFlipper);
 
