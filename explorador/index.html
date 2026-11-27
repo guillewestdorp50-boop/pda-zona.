@@ -257,7 +257,7 @@ body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixe
 <button class="tile" style="--tile:#b9f0a2;--shade:#7eb86a" data-say="Hasta luego. ¡Nos vemos pronto!"><span class="emoji">👋</span>Hasta luego</button>
 </div></section>
 <section class="talk-section">
-<h2>🗣️ Luis, repetí conmigo</h2><p class="hint">Primero escuchá. Después repetí la palabra en voz alta y tocá “Ya la repetí”. Sin apuro.</p>
+<h2>🗣️ ¡Repetí conmigo!</h2><p class="hint">Primero escuchá. Después repetí la palabra en voz alta y tocá “Ya la repetí”. Sin apuro.</p>
 <div class="talk-grid repeat-grid">
 <button class="tile" style="--tile:#8de4ff;--shade:#48a8cf" data-say="Agua"><span class="emoji">💧</span>AGUA</button>
 <button class="tile" style="--tile:#ffe27a;--shade:#d4aa32" data-say="Sol"><span class="emoji">☀️</span>SOL</button>
@@ -297,13 +297,13 @@ body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixe
 </div>
 </section>
 <section class="panel game-panel" id="baseball"><button class="game-exit" type="button" onclick="openExplorerPanel('dinos')">✕ Salir del juego</button>
- <div class="baseball-heading"><div><h1>⚾ ¡A batear, Luis!</h1><p class="hint">El pitcher lanza. Luis conecta. ¡Acá nunca se erra!</p></div><div class="baseball-counts"><span id="baseballHits">HITS 0</span><span id="baseballRuns">CARRERAS 0</span></div></div>
+ <div class="baseball-heading"><div><h1>⚾ ¡A batear!</h1><p class="hint">El pitcher lanza. ¡Vos conectás! Siempre hay otra oportunidad.</p></div><div class="baseball-counts"><span id="baseballHits">HITS 0</span><span id="baseballRuns">CARRERAS 0</span></div></div>
  <div class="baseball-stage" id="baseballStage">
   <div class="baseball-scoreboard"><span>CHAZÓN</span><strong id="baseballScore">0 — 0</strong><span id="baseballInning">1ª ENTRADA</span></div>
   <div id="baseballMessage" class="baseball-message">¡PREPARADO PARA BATEAR!</div>
   <div id="baseballFallback" class="baseball-fallback" hidden>Este teléfono no pudo iniciar los gráficos 3D. Probá cerrar otras aplicaciones y volver a entrar.</div>
   <div id="baseballLoading" class="baseball-loading">Preparando el estadio…</div>
-  <div class="baseball-controls"><button id="baseballAction" type="button">⚾ LANZAR</button><span id="baseballHint">Tocá LANZAR y después BATEAR. Luis siempre conecta.</span></div>
+  <div class="baseball-controls"><button id="baseballAction" type="button">⚾ LANZAR</button><span id="baseballHint">Tocá LANZAR y después BATEAR. ¡Vamos con ese batazo!</span></div>
  </div>
 </section>
 <section class="panel game-panel" id="memory"><div class="memory-heading"><div><h1>🧠 Memoria de dinosaurios</h1><p class="hint">Encontrá las seis parejas. ¡Acordate dónde está cada dinosaurio!</p></div><button id="memoryRestart" type="button">↻ Reiniciar</button></div><div class="memory-stats"><span id="memoryMoves">Movimientos: 0</span><span id="memoryPairs">Parejas: 0 / 6</span></div><div class="memory-grid" id="memoryGrid" aria-label="Cartas de memoria"></div><p class="hint" id="memoryMessage">Tocá dos cartas para encontrar una pareja.</p><button class="game-exit" type="button" onclick="openExplorerPanel('dinos')">✕ Salir del juego</button></section><section class="panel" id="draw">
@@ -419,7 +419,7 @@ function openExplorerPanel(id){
 }
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>openExplorerPanel(b.dataset.panel)));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
-document.getElementById('repeatDone')?.addEventListener('click',()=>{const p=document.getElementById('repeatPraise');if(p)p.textContent='¡Excelente, Luis! ¡Muy bien repetido! ¿Probamos otra palabra?';speak('¡Excelente, Luis! ¡Muy bien repetido!')});
+document.getElementById('repeatDone')?.addEventListener('click',()=>{const p=document.getElementById('repeatPraise');if(p)p.textContent='¡Excelente! ¡Muy bien repetido! ¿Probamos otra palabra?';speak('¡Excelente! ¡Muy bien repetido!')});
 const flipperTouchArea=document.querySelector('.flipper-wrap');
 flipperTouchArea?.addEventListener('contextmenu',e=>e.preventDefault());
 flipperTouchArea?.addEventListener('selectstart',e=>e.preventDefault());
@@ -488,26 +488,26 @@ function sayPlayer(message){
 }
 function updatePinScore(){scoreLabel.textContent=String(score).padStart(6,'0');playerTitle.textContent='¡Vamos, '+playerName()+'!'}
 const flipperRetryPhrases=[
- 'Luis, ¡esa pelota se escapó! Tocá el botón rojo y seguimos.',
- '¡Vamos, Luis! La máquina te espera: apretá el botón rojo.',
- '¡No pasa nada! Una nueva pelota, Luis. Tocá el botón rojo.',
+ '¡Esa pelota se escapó! Tocá el botón rojo y seguimos.',
+ '¡Vamos! La máquina te espera: apretá el botón rojo.',
+ '¡No pasa nada! Hay una nueva pelota. Tocá el botón rojo.',
  '¡Dale campeón! El botón rojo te trae otra pelota.',
- '¡Arriba ese ánimo, Luis! Tocá el botón rojo para otra vuelta.',
- '¡La próxima la salvás! Apretá el botón rojo, Luis.',
- '¡Seguimos jugando! Luis, buscá el botón rojo y dale.',
+ '¡Arriba ese ánimo! Tocá el botón rojo para otra vuelta.',
+ '¡La próxima la salvás! Apretá el botón rojo.',
+ '¡Seguimos jugando! Buscá el botón rojo y dale.',
  '¡Esa fue una de práctica! Tocá el botón rojo y vamos otra vez.',
  '¡No te rindas ahora! El botón rojo y otra oportunidad.',
- '¡Vamos por más puntos, Luis! Tocá el botón rojo.'
+ '¡Vamos por más puntos! Tocá el botón rojo.'
 ];
 let lastRetryPhrase=-1;
 const flipperAchievementPhrases=[
- '¡INCREÍBLE, Luis! Ya llegaste a {score} puntos. ¡Sos un campeón!',
- '¡Qué grande! {score} puntos. La máquina no puede con vos, Luis.',
- '¡APLAUSOS PARA LUIS! Alcanzaste los {score} puntos. ¡Seguí así!',
+ '¡INCREÍBLE! Ya llegaste a {score} puntos. ¡Sos un campeón!',
+ '¡Qué grande! {score} puntos. La máquina no puede con vos.',
+ '¡APLAUSOS! Alcanzaste los {score} puntos. ¡Seguí así!',
  '¡Una locura de partida! {score} puntos. ¡Felicitaciones, genio!',
  '¡Lo estás rompiendo! Ya sumaste {score} puntos. ¡Qué jugador!',
- '¡Récord de talento! {score} puntos para Luis. ¡Bravo!',
- '¡Eso merece festejo! Llegaste a {score} puntos. ¡Excelente, Luis!',
+ '¡Récord de talento! {score} puntos. ¡Bravo!',
+ '¡Eso merece festejo! Llegaste a {score} puntos. ¡Excelente!',
  '¡Fenomenal! {score} puntos. ¡Cada vez jugás mejor!'
 ];
 function sayLanePrompt(){
@@ -812,7 +812,7 @@ function baseballHit(){
  document.getElementById('baseballHits').textContent='HITS '+baseballHits;
  document.getElementById('baseballRuns').textContent='CARRERAS '+baseballRuns;
  document.getElementById('baseballScore').textContent=baseballScore+' — 0';
- baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡¡¡HOME RUN, LUIS!!!':'¡¡¡BATAZO!!! '+baseballOutcome;
+ baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡¡¡HOME RUN!!!':'¡¡¡BATAZO!!! '+baseballOutcome;
  baseballHint.textContent='¡La pelota vuela hasta el fondo del estadio!';
  baseballBall.position.set(-.15,2.1,2.5);baseballBall.scale.setScalar(1.1);
 }
@@ -833,7 +833,7 @@ function baseballUpdate(now){
   const endX=baseballOutcome==='HOME RUN'?4.5:baseballOutcome==='TRIPLE'?3:baseballOutcome==='DOBLE'?2:1;
   baseballBall.position.set(-.15+endX*p,2.1+Math.sin(p*Math.PI)*11*p,2.5-42*p);
   baseballBall.scale.setScalar(1.1-.35*p);
-  if(p>=1){baseballPhase='done';baseballAction.textContent='OTRA JUGADA';baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡LA SACÓ DEL ESTADIO!':'¡GRAN CONEXIÓN, LUIS!';baseballBall.visible=false; if(baseballBatPivot)baseballBatPivot.rotation.z=-.45;}
+  if(p>=1){baseballPhase='done';baseballAction.textContent='OTRA JUGADA';baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡LA SACÓ DEL ESTADIO!':'¡GRAN CONEXIÓN!';baseballBall.visible=false; if(baseballBatPivot)baseballBatPivot.rotation.z=-.45;}
  }
 }
 function baseballLoop(now){
