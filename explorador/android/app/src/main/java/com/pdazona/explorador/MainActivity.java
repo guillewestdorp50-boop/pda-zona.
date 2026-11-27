@@ -244,35 +244,62 @@ public class MainActivity extends Activity {
                 HttpURLConnection connection = null;
                 JSONObject result = new JSONObject();
                 try {
-                    URL url = new URL("https://api.github.com/repos/guillewestdorp50-boop/pda-zona./releases?per_page=100");
+                    URL url = new URL("https://api.github.com/repos/guillewestdorp50-boop/pda-zona./releases?per_page=30");
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(12000);
-                    connection.setReadTimeout(15000);
+                    connection.setConnectTimeout(15000);
+                    connection.setReadTimeout(20000);
                     connection.setUseCaches(false);
                     connection.setRequestProperty("Accept", "application/vnd.github+json");
                     connection.setRequestProperty("User-Agent", "Exploradores-Android-Updater");
                     int code = connection.getResponseCode();
                     if (code != HttpURLConnection.HTTP_OK) {
-                        throw new Exception("GitHub respondió HTTP " + code + ".");
+                        String detail = "GitHub respondió HTTP " + code;
+                        try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(
+                                connection.getErrorStream(), StandardCharsets.UTF_8))) {
+                            String errorLine;
+                            StringBuilder errorBody = new StringBuilder();
+                            while ((errorLine = errorReader.readLine()) != null && errorBody.length() < 1200) errorBody.append(errorLine);
+                            if (errorBody.length() > 0) detail += ": " + errorBody;
+                        } catch (Exception ignored) {}
+                        throw new Exception(detail);
                     }
                     StringBuilder body = new StringBuilder();
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
                         String line;
                         while ((line = reader.readLine()) != null) body.append(line);
                     }
-                    JSONArray releases = new JSONArray(body.toString());
+                    JSONArray source = new JSONArray(body.toString());
+                    JSONArray releases = new JSONArray();
+                    for (int i = 0; i < source.length(); i++) {
+                        JSONObject item = source.getJSONObject(i);
+                        if (item.optBoolean("draft", false) || item.optBoolean("prerelease", false)) continue;
+                        JSONObject compact = new JSONObject();
+                        compact.put("tag_name", item.optString("tag_name", ""));
+                        JSONArray sourceAssets = item.optJSONArray("assets");
+                        JSONArray assets = new JSONArray();
+                        if (sourceAssets != null) {
+                            for (int a = 0; a < sourceAssets.length(); a++) {
+                                JSONObject sourceAsset = sourceAssets.getJSONObject(a);
+                                JSONObject asset = new JSONObject();
+                                asset.put("name", sourceAsset.optString("name", ""));
+                                asset.put("browser_download_url", sourceAsset.optString("browser_download_url", ""));
+                                assets.put(asset);
+                            }
+                        }
+                        compact.put("assets", assets);
+                        releases.put(compact);
+                    }
                     result.put("ok", true);
                     result.put("releases", releases);
                 } catch (Exception e) {
                     try {
                         result.put("ok", false);
-                        result.put("error", e.getMessage() == null ? "No se pudo conectar con GitHub." : e.getMessage());
+                        result.put("error", e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
                     } catch (Exception ignored) {}
                 } finally {
                     if (connection != null) connection.disconnect();
                 }
-                // El contenido se serializa como JSON válido antes de invocar el callback.
                 final String script = "window." + callbackName + "(" + result.toString() + ")";
                 runOnUiThread(() -> {
                     if (webView != null) webView.evaluateJavascript(script, null);
