@@ -30,6 +30,11 @@ import android.widget.Toast;
 import androidx.core.content.FileProvider;
 import java.io.File;
 import java.util.Locale;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends Activity {
     private WebView webView;
@@ -232,6 +237,49 @@ public class MainActivity extends Activity {
         @JavascriptInterface public String getVersionName() { return appVersionName(); }
         @JavascriptInterface public void installUpdate(String url) {
             runOnUiThread(() -> startUpdateDownload(url));
+        }
+        @JavascriptInterface public void fetchReleases(String callbackName) {
+            if (callbackName == null || !callbackName.matches("[A-Za-z_$][A-Za-z0-9_$]{0,80}")) return;
+            new Thread(() -> {
+                HttpURLConnection connection = null;
+                JSONObject result = new JSONObject();
+                try {
+                    URL url = new URL("https://api.github.com/repos/guillewestdorp50-boop/pda-zona./releases?per_page=100");
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
+                    connection.setConnectTimeout(12000);
+                    connection.setReadTimeout(15000);
+                    connection.setUseCaches(false);
+                    connection.setRequestProperty("Accept", "application/vnd.github+json");
+                    connection.setRequestProperty("User-Agent", "Exploradores-Android-Updater");
+                    int code = connection.getResponseCode();
+                    if (code != HttpURLConnection.HTTP_OK) {
+                        throw new Exception("GitHub respondió HTTP " + code + ".");
+                    }
+                    StringBuilder body = new StringBuilder();
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) body.append(line);
+                    }
+                    JSONArray releases = new JSONArray(body.toString());
+                    result.put("ok", true);
+                    result.put("releases", releases);
+                } catch (Exception e) {
+                    try {
+                        result.put("ok", false);
+                        result.put("error", e.getMessage() == null ? "No se pudo conectar con GitHub." : e.getMessage());
+                    } catch (Exception ignored) {}
+                } finally {
+                    if (connection != null) connection.disconnect();
+                }
+                String payload = result.toString();
+                String script = "window." + callbackName + "(" + JSONObject.quote(payload) + ")";
+                // Parsear el JSON en JavaScript para entregar un objeto, no una cadena.
+                script = "window." + callbackName + "(" + payload + ")";
+                runOnUiThread(() -> {
+                    if (webView != null) webView.evaluateJavascript(script, null);
+                });
+            }, "exploradores-release-check").start();
         }
     }
 
