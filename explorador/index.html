@@ -182,7 +182,12 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 #guilleTalkStage[hidden],#guilleEnter[hidden]{display:none}
 @media(max-width:390px){.guille-top{gap:7px;min-height:130px}.guille-robot{flex-basis:112px;transform:scale(.86);transform-origin:center}.guille-card{padding:10px;gap:9px}.guille-key{min-height:38px}.guille-keyboard{gap:5px}}
 @media(orientation:landscape){.guille-card{max-width:760px}.guille-top{min-height:112px}.guille-robot{height:118px;transform:scale(.78);transform-origin:center}.guille-key{min-height:34px}.guille-card{gap:7px}}
-</style>
+/* 1.0.31: juegos a pantalla completa y pinceles ajustables */
+body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;margin:0;padding:0;gap:0}body.game-fullscreen header,body.game-fullscreen nav,body.game-fullscreen footer{display:none!important}body.game-fullscreen main{position:fixed;inset:0;width:100vw;height:100dvh;margin:0;padding:0}body.game-fullscreen .panel.game-panel,body.game-fullscreen #memory{position:absolute;inset:0;width:100%;height:100%;min-height:0;max-height:none;border:0;border-radius:0;padding:8px;overflow:hidden}body.game-fullscreen #flipper .flipper-caption{display:none}body.game-fullscreen #flipper .flipper-wrap{height:100%;width:100%;border-radius:0}body.game-fullscreen #flipper #table{inset:0;width:100%;height:100%;border-radius:0}body.game-fullscreen #baseball{gap:0;padding:0}body.game-fullscreen #baseball .baseball-heading{display:none}body.game-fullscreen #baseball .baseball-stage{position:absolute;inset:0;width:100%;height:100%;min-height:0;border-radius:0}body.game-fullscreen #memory{display:flex;flex-direction:column;gap:10px}
+.game-exit{position:absolute;z-index:20;top:max(8px,env(safe-area-inset-top));right:10px;border:1px solid #fff;border-radius:999px;padding:8px 12px;background:#11283bdc;color:#fff;font-size:12px;font-weight:950;box-shadow:0 3px 12px #0005}body.game-fullscreen #baseball .baseball-controls{padding-bottom:max(14px,env(safe-area-inset-bottom))}
+.brush-size{display:flex;align-items:center;justify-content:center;gap:10px;padding:5px 10px;background:#ffffffc9;border-radius:12px;font-size:13px;font-weight:900;color:#173b62}.brush-size input{width:min(48vw,240px);accent-color:#176b9b}.brush-size strong{min-width:48px;text-align:right}
+.memory-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-right:104px}.memory-heading h1{font-size:clamp(19px,3vw,27px)}.memory-heading button{border:0;border-radius:12px;padding:9px 12px;background:#173b62;color:white;font-weight:900}.memory-stats{display:flex;justify-content:space-around;gap:8px;font-weight:950;color:#173b62}.memory-stats span{background:#fff;padding:7px 12px;border-radius:12px}
+.memory-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:8px}.memory-card{position:relative;min-width:0;min-height:0;border:3px solid #fff;border-radius:16px;background:linear-gradient(145deg,#2c78a7,#173b62);box-shadow:0 5px 0 #0e2944;color:#fff;font-weight:950;display:grid;place-items:center;overflow:hidden}.memory-card .memory-back{font-size:clamp(30px,9vw,58px);text-shadow:0 3px 5px #001a}.memory-card .memory-front{display:none;flex-direction:column;align-items:center;gap:3px;color:#18344e}.memory-card .memory-front strong{font-size:clamp(32px,9vw,60px)}.memory-card .memory-front small{font-size:clamp(9px,2.6vw,13px);text-align:center}.memory-card.revealed,.memory-card.matched{background:linear-gradient(145deg,#fff,#dff5ff);box-shadow:0 4px 0 #a6cbdc}.memory-card.revealed .memory-back,.memory-card.matched .memory-back{display:none}.memory-card.revealed .memory-front,.memory-card.matched .memory-front{display:flex}.memory-card.matched{border-color:#68d79d;opacity:.85}#memoryMessage{text-align:center;background:#ffffffc9;border-radius:12px;padding:7px}@media(orientation:landscape){.memory-grid{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}}@media(max-height:520px){body.game-fullscreen #flipper .flipper-controls{bottom:4px}body.game-fullscreen #flipper .flipper-key{min-height:42px}body.game-fullscreen #baseballAction{min-height:42px}}</style>
 </head>
 <body>
 <div id="app">
@@ -192,7 +197,7 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 <button data-panel="habla" aria-selected="false">🗣️ Hablemos</button>
 <button data-panel="flipper" aria-selected="false">🎱 Flipper</button>
 <button data-panel="baseball" aria-selected="false">⚾ Béisbol</button>
-<button data-panel="draw" aria-selected="false">🎨 Dibujar</button>
+<button data-panel="draw" aria-selected="false">🎨 Dibujar</button><button data-panel="memory" aria-selected="false">🧠 Memoria</button>
 </nav>
 <main>
 <section class="panel active" id="dinos">
@@ -253,7 +258,7 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 <button class="tile" style="--tile:#a8e6ff;--shade:#8eb6c8" data-say="Cero"><span class="emoji">0️⃣</span>Cero</button><button class="tile" style="--tile:#b9f0a2;--shade:#8eb6c8" data-say="Uno"><span class="emoji">1️⃣</span>Uno</button><button class="tile" style="--tile:#ffb6a8;--shade:#8eb6c8" data-say="Dos"><span class="emoji">2️⃣</span>Dos</button><button class="tile" style="--tile:#c7b8ff;--shade:#8eb6c8" data-say="Tres"><span class="emoji">3️⃣</span>Tres</button><button class="tile" style="--tile:#ffe27a;--shade:#8eb6c8" data-say="Cuatro"><span class="emoji">4️⃣</span>Cuatro</button><button class="tile" style="--tile:#a8e6ff;--shade:#8eb6c8" data-say="Cinco"><span class="emoji">5️⃣</span>Cinco</button><button class="tile" style="--tile:#b9f0a2;--shade:#8eb6c8" data-say="Seis"><span class="emoji">6️⃣</span>Seis</button><button class="tile" style="--tile:#ffb6a8;--shade:#8eb6c8" data-say="Siete"><span class="emoji">7️⃣</span>Siete</button><button class="tile" style="--tile:#c7b8ff;--shade:#8eb6c8" data-say="Ocho"><span class="emoji">8️⃣</span>Ocho</button><button class="tile" style="--tile:#ffe27a;--shade:#8eb6c8" data-say="Nueve"><span class="emoji">9️⃣</span>Nueve</button>
 </div></section>
 </section>
-<section class="panel" id="flipper">
+<section class="panel game-panel" id="flipper"><button class="game-exit" type="button" onclick="openExplorerPanel('dinos')">✕ Salir del juego</button>
 <div class="flipper-caption"><div><h1 id="playerGreeting">¡Flipper infinito!</h1><p class="hint">Tu máquina, tus puntos y tus desafíos.</p></div><label class="player-name-wrap">Tu nombre <input id="playerName" maxlength="18" autocomplete="given-name" placeholder="Escribí tu nombre"></label></div>
 <div class="flipper-wrap">
 <canvas id="table" aria-label="Mesa de pinball simple"></canvas>
@@ -265,7 +270,7 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 <div class="pin-score" id="pinScore">000000</div>
 </div>
 </section>
-<section class="panel" id="baseball">
+<section class="panel game-panel" id="baseball"><button class="game-exit" type="button" onclick="openExplorerPanel('dinos')">✕ Salir del juego</button>
  <div class="baseball-heading"><div><h1>⚾ ¡A batear, Luis!</h1><p class="hint">El pitcher lanza. Luis conecta. ¡Acá nunca se erra!</p></div><div class="baseball-counts"><span id="baseballHits">HITS 0</span><span id="baseballRuns">CARRERAS 0</span></div></div>
  <div class="baseball-stage" id="baseballStage">
   <div class="baseball-scoreboard"><span>CHAZÓN</span><strong id="baseballScore">0 — 0</strong><span id="baseballInning">1ª ENTRADA</span></div>
@@ -275,13 +280,13 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
   <div class="baseball-controls"><button id="baseballAction" type="button">⚾ LANZAR</button><span id="baseballHint">Tocá LANZAR y después BATEAR. Luis siempre conecta.</span></div>
  </div>
 </section>
-<section class="panel" id="draw">
+<section class="panel" id="memory"><div class="memory-heading"><div><h1>🧠 Memoria de dinosaurios</h1><p class="hint">Encontrá las seis parejas. ¡Acordate dónde está cada dinosaurio!</p></div><button id="memoryRestart" type="button">↻ Reiniciar</button></div><div class="memory-stats"><span id="memoryMoves">Movimientos: 0</span><span id="memoryPairs">Parejas: 0 / 6</span></div><div class="memory-grid" id="memoryGrid" aria-label="Cartas de memoria"></div><p class="hint" id="memoryMessage">Tocá dos cartas para encontrar una pareja.</p><button class="game-exit" type="button" onclick="openExplorerPanel('dinos')">✕ Salir del juego</button></section><section class="panel" id="draw">
  <div class="draw-heading"><div><h1>🎨 Dibujar y pintar</h1><p class="hint">Pasá el dedo por las líneas o creá tu propio dibujo.</p></div><div class="draw-page-count" id="drawPageCount">Libro · 1 / 4</div></div>
  <div class="draw-book">
   <div class="draw-book-spine"></div>
   <canvas id="drawCanvas" width="900" height="560" aria-label="Hoja para dibujar y colorear"></canvas>
  </div>
- <div class="draw-palette" id="drawPalette" aria-label="Colores"></div>
+ <div class="draw-palette" id="drawPalette" aria-label="Colores"></div><div class="brush-size"><label for="drawBrushSize">Tamaño del pincel</label><input id="drawBrushSize" type="range" min="3" max="42" step="1" value="12"><strong id="drawBrushValue">12 px</strong></div>
  <div class="draw-tools">
   <button id="drawPrev" type="button">◀ Anterior</button><button id="drawNext" type="button">Siguiente ▶</button><button id="drawBlank" type="button">✏️ Hoja libre</button><button id="drawClear" type="button">🧽 Borrar hoja</button>
  </div>
@@ -299,7 +304,14 @@ const dinosaurPronunciation={
 };
 function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
 function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-US';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
-function openExplorerPanel(id){document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.panel===id)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));if(id==='flipper')startFlipper();else stopFlipper();if(id==='baseball')startBaseball();else stopBaseball();if(id==='draw')drawRenderPage();}
+function openExplorerPanel(id){
+ document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.panel===id)));
+ document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));
+ const game=['flipper','baseball','memory'].includes(id);document.body.classList.toggle('game-fullscreen',game);
+ if(id==='flipper')startFlipper();else stopFlipper();if(id==='baseball')startBaseball();else stopBaseball();
+ if(id==='draw')drawRenderPage();if(id==='memory')memoryStart();
+ if(game)setTimeout(()=>{window.dispatchEvent(new Event('resize'));if(id==='flipper')resizeTable();if(id==='baseball')baseballResize()},80);
+}
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>openExplorerPanel(b.dataset.panel)));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
 document.getElementById('repeatDone')?.addEventListener('click',()=>{const p=document.getElementById('repeatPraise');if(p)p.textContent='¡Excelente, Luis! ¡Muy bien repetido! ¿Probamos otra palabra?';speak('¡Excelente, Luis! ¡Muy bien repetido!')});
@@ -549,7 +561,7 @@ window.addEventListener('pagehide',stopFlipper);
 /* BÉISBOL 3D — escena procedural sin descargas externas. */
 let baseballRenderer=null,baseballScene=null,baseballCamera=null,baseballRAF=0,baseballActive=false,baseballLast=0,baseballLastRender=0;
 let baseballPlayer=null,baseballPitcher=null,baseballBatPivot=null,baseballBall=null,baseballBallShadow=null;
-let baseballPhase='ready',baseballPitchStart=0,baseballFlightStart=0,baseballSwingStarted=false,baseballSwingRequested=false,baseballHits=0,baseballRuns=0,baseballScore=0,baseballContactPoint=null,baseballOutcome='HOME RUN';
+let baseballPhase='ready',baseballPitchStart=0,baseballFlightStart=0,baseballSwingStarted=false,baseballSwingRequested=false,baseballHits=0,baseballRuns=0,baseballScore=0,baseballContactPoint=null,baseballOutcome='HOME RUN',baseballMisses=0;
 const baseballStage=document.getElementById('baseballStage');
 const baseballAction=document.getElementById('baseballAction');
 const baseballMessage=document.getElementById('baseballMessage');
@@ -671,10 +683,11 @@ function baseballResize(){
 }
 function baseballStartPitch(){
  baseballPhase='pitch';baseballPlaySound('pitch');baseballPitchStart=performance.now();baseballSwingStarted=false;baseballSwingRequested=false;baseballBall.position.set(0,2.25,-15);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
- baseballBallShadow.position.set(0,.03,-15);baseballAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';baseballHint.textContent='Tocá ¡BATEAR! cuando se acerque. ¡Luis no falla!';
+ baseballBallShadow.position.set(0,.03,-15);baseballAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';baseballHint.textContent='Tocá ¡BATEAR! mientras la pelota viene. Si no lo tocás, es fallo.';
 }
+function baseballMiss(){if(baseballPhase!=='pitch')return;baseballPhase='miss';baseballFlightStart=performance.now();baseballMisses++;baseballSwingStarted=false;baseballMessage.textContent='¡FALLASTE!';baseballHint.textContent='Tenés que apretar BATEAR cuando llega la pelota. Probá otra vez.';baseballAction.textContent='OTRA PELOTA';}
 function baseballHit(){
- if(baseballPhase!=='pitch')return;
+ if(baseballPhase!=='pitch'||!baseballSwingRequested)return;
  baseballPhase='flight';baseballPlaySound('hit');baseballFlightStart=performance.now();baseballHits++;
  const outcomes=['HOME RUN','HOME RUN','DOBLE','TRIPLE','HOME RUN','SENCILLO'];
  baseballOutcome=outcomes[(baseballHits-1)%outcomes.length];
@@ -691,9 +704,13 @@ function baseballUpdate(now){
  if(baseballPhase==='pitch'){
   const p=Math.min(1,t/1.05);
   baseballPitcher.rotation.x=Math.sin(p*Math.PI)*-.13;
-  if(p>.16){baseballBall.position.set(.08+Math.sin(p*4)*.08,2.35+Math.sin(p*Math.PI)*.2,-15+17*p);baseballBall.scale.setScalar(.72+.5*p);baseballBallShadow.position.x=baseballBall.position.x;baseballBallShadow.position.z=baseballBall.position.z;baseballBallShadow.scale.setScalar(.8+p*.7)}
-  if((baseballSwingRequested||p>.70)&&!baseballSwingStarted){baseballSwingStarted=true}if(baseballSwingStarted&&baseballBatPivot){const swing=Math.max(0,Math.min(1,(p-.64)/.24));baseballBatPivot.rotation.z=-.45+1.65*swing;}
-  if(p>.88)baseballHit();
+  if(p>.12){baseballBall.position.set(.08+Math.sin(p*4)*.08,2.35+Math.sin(p*Math.PI)*.2,-15+17*p);baseballBall.scale.setScalar(.72+.5*p);baseballBallShadow.position.x=baseballBall.position.x;baseballBallShadow.position.z=baseballBall.position.z;baseballBallShadow.scale.setScalar(.8+p*.7)}
+  if(baseballSwingRequested&&!baseballSwingStarted)baseballSwingStarted=true;
+  if(baseballSwingStarted&&baseballBatPivot){const swing=Math.max(0,Math.min(1,(p-.30)/.48));baseballBatPivot.rotation.z=-.45+1.65*swing;}
+  if(p>.88){if(baseballSwingRequested)baseballHit();else baseballMiss();}
+ }else if(baseballPhase==='miss'){
+  const p=Math.min(1,(now-baseballFlightStart)/850);baseballBall.position.set(.08,2.35+Math.sin(p*Math.PI)*.35,2+7*p);baseballBall.scale.setScalar(1.22-.25*p);
+  if(p>=1){baseballPhase='done';baseballBall.visible=false;baseballAction.textContent='OTRA PELOTA';if(baseballBatPivot)baseballBatPivot.rotation.z=-.45;}
  }else if(baseballPhase==='flight'){
   const p=Math.min(1,(now-baseballFlightStart)/2400);
   const endX=baseballOutcome==='HOME RUN'?4.5:baseballOutcome==='TRIPLE'?3:baseballOutcome==='DOBLE'?2:1;
@@ -704,7 +721,7 @@ function baseballUpdate(now){
 }
 function baseballLoop(now){
  baseballRAF=0;if(!baseballActive||document.hidden)return;
- const moving=baseballPhase==='pitch'||baseballPhase==='flight';
+ const moving=baseballPhase==='pitch'||baseballPhase==='flight'||baseballPhase==='miss';
  if(moving)baseballUpdate(now);
  const interval=moving?0:33;
  if(now-baseballLastRender>=interval){baseballRenderer.render(baseballScene,baseballCamera);baseballLastRender=now}
@@ -719,7 +736,7 @@ function stopBaseball(){baseballActive=false;if(baseballRAF)cancelAnimationFrame
 baseballAction.addEventListener('click',()=>{
  if(!baseballActive)return;
  if(baseballPhase==='ready'||baseballPhase==='done'){baseballStartPitch();return}
- if(baseballPhase==='pitch'){baseballSwingRequested=true;baseballHint.textContent='¡Luis prepara el bate!';}
+ if(baseballPhase==='pitch'){const p=(performance.now()-baseballPitchStart)/1050;if(p<.12){baseballHint.textContent='¡Esperá que el pitcher lance la pelota!';return}if(p>.88){baseballHint.textContent='¡Llegó tarde! Esta pelota ya pasó.';return}baseballSwingRequested=true;baseballHint.textContent='¡BATEÓ! ¡Buen reflejo!';baseballMessage.textContent='¡CONTACTO!';}
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBaseball();else if(document.getElementById('baseball').classList.contains('active'))startBaseball()});
 
@@ -727,8 +744,8 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBasebal
 (function initDrawingBook(){
  const canvas=document.getElementById('drawCanvas');if(!canvas)return;
  const c=canvas.getContext('2d');const colors=['#172b40','#ef4444','#f59e0b','#facc15','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#8b5a2b','#ff9f43','#ffffff'];
- let color=colors[1],page=0,blank=false,drawing=false,last=null;
- const palette=document.getElementById('drawPalette');
+ let color=colors[1],page=0,blank=false,drawing=false,last=null,brushSize=12;
+ const palette=document.getElementById('drawPalette');const brush=document.getElementById('drawBrushSize'),brushValue=document.getElementById('drawBrushValue');brush.addEventListener('input',()=>{brushSize=Number(brush.value);brushValue.textContent=brushSize+' px'});
  colors.forEach((col,i)=>{const b=document.createElement('button');b.type='button';b.className='draw-color';b.style.background=col;b.setAttribute('aria-label','Color '+(i+1));b.setAttribute('aria-pressed',String(i===1));b.addEventListener('click',()=>{color=col;palette.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))});palette.appendChild(b)});
  function line(points,width=9){c.beginPath();points.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.strokeStyle='#24394d';c.stroke()}
  function circle(x,y,r){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.stroke()}
@@ -749,8 +766,8 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBasebal
  }
  window.drawRenderPage=function(){if(blank){c.fillStyle='#fff';c.fillRect(0,0,900,560)}else template(page);document.getElementById('drawPageCount').textContent=blank?'Hoja libre':'Libro · '+(page+1)+' / 4';document.getElementById('drawHint').textContent=blank?'¡Esta hoja es toda tuya! Dibujá lo que quieras.':'Elegí un color y pintá dentro del dibujo. También podés trazar por arriba de las líneas.'};
  function point(e){const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)*900/r.width,(e.clientY-r.top)*560/r.height]}
- canvas.addEventListener('pointerdown',e=>{e.preventDefault();drawing=true;last=point(e);canvas.setPointerCapture(e.pointerId);c.beginPath();c.arc(last[0],last[1],5,0,Math.PI*2);c.fillStyle=color;c.fill()});
- canvas.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const p=point(e);c.beginPath();c.moveTo(last[0],last[1]);c.lineTo(p[0],p[1]);c.strokeStyle=color;c.lineWidth=blank?13:17;c.lineCap='round';c.lineJoin='round';c.stroke();last=p});
+ canvas.addEventListener('pointerdown',e=>{e.preventDefault();drawing=true;last=point(e);canvas.setPointerCapture(e.pointerId);c.beginPath();c.arc(last[0],last[1],brushSize/2,0,Math.PI*2);c.fillStyle=color;c.fill()});
+ canvas.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const p=point(e);c.beginPath();c.moveTo(last[0],last[1]);c.lineTo(p[0],p[1]);c.strokeStyle=color;c.lineWidth=brushSize;c.lineCap='round';c.lineJoin='round';c.stroke();last=p});
  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>canvas.addEventListener(ev,()=>{drawing=false;last=null}));
  document.getElementById('drawPrev').addEventListener('click',()=>{blank=false;page=(page+3)%4;drawRenderPage()});
  document.getElementById('drawNext').addEventListener('click',()=>{blank=false;page=(page+1)%4;drawRenderPage()});
@@ -758,6 +775,13 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBasebal
  document.getElementById('drawClear').addEventListener('click',drawRenderPage);
  drawRenderPage();
 })();
+
+/* Juego de memoria: seis parejas de dinosaurios */
+const memorySpecies=[['🦖','Tiranosaurio'],['🦕','Braquiosaurio'],['🦴','Tricerátops'],['🐊','Espinosaurio'],['🥚','Anquilosaurio'],['🪽','Pterodáctilo']];
+let memoryCards=[],memoryOpen=[],memoryFound=0,memoryMoves=0,memoryLock=false,memoryTimer=null;
+function memoryStart(){if(memoryTimer){clearTimeout(memoryTimer);memoryTimer=null}memoryCards=memorySpecies.flatMap((x,i)=>[{id:i,face:x[0],name:x[1]},{id:i,face:x[0],name:x[1]}]).sort(()=>Math.random()-.5);memoryOpen=[];memoryFound=0;memoryMoves=0;memoryLock=false;document.getElementById('memoryMoves').textContent='Movimientos: 0';document.getElementById('memoryPairs').textContent='Parejas: 0 / 6';document.getElementById('memoryMessage').textContent='Tocá dos cartas para encontrar una pareja.';const grid=document.getElementById('memoryGrid');grid.innerHTML='';memoryCards.forEach((card,index)=>{const b=document.createElement('button');b.type='button';b.className='memory-card';b.innerHTML='<span class="memory-back">?</span><span class="memory-front"><strong>'+card.face+'</strong><small>'+card.name+'</small></span>';b.addEventListener('click',()=>memoryFlip(index,b));grid.appendChild(b)})}
+function memoryFlip(index,button){if(memoryLock||button.classList.contains('revealed')||button.classList.contains('matched'))return;button.classList.add('revealed');memoryOpen.push({index,button,card:memoryCards[index]});if(memoryOpen.length<2)return;memoryMoves++;document.getElementById('memoryMoves').textContent='Movimientos: '+memoryMoves;const [a,b]=memoryOpen;if(a.card.id===b.card.id){a.button.classList.add('matched');b.button.classList.add('matched');memoryFound++;document.getElementById('memoryPairs').textContent='Parejas: '+memoryFound+' / 6';document.getElementById('memoryMessage').textContent=memoryFound===6?'¡Ganaste! Encontraste todos los dinosaurios.':'¡Muy bien! Encontraste una pareja.';memoryOpen=[]}else{memoryLock=true;document.getElementById('memoryMessage').textContent='No son iguales. ¡Probá de nuevo!';memoryTimer=setTimeout(()=>{a.button.classList.remove('revealed');b.button.classList.remove('revealed');memoryOpen=[];memoryLock=false;memoryTimer=null},850)}}
+document.getElementById('memoryRestart').addEventListener('click',memoryStart);
 
 async function checkForAppUpdate(){
  if(!window.AndroidUpdater||!navigator.onLine)return;
