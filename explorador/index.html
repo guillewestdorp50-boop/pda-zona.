@@ -127,6 +127,20 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 @media(prefers-reduced-motion:reduce){#baseballAction{transition:none}}
 
  
+/* Cuaderno de dibujo: hoja táctil, páginas prediseñadas y hoja libre. */
+#draw{gap:8px;overflow:auto}
+.draw-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.draw-page-count{padding:6px 9px;border-radius:10px;background:#fff;font-size:12px;font-weight:950;color:#24425d;white-space:nowrap}
+.draw-book{position:relative;flex:1;min-height:190px;max-height:52vh;background:#fff;border:5px solid #e5d4ad;border-radius:12px 18px 18px 12px;box-shadow:inset 9px 0 0 #f4e9d1,0 7px 0 #bda77e,0 12px 20px #253c5030;padding:8px 8px 8px 17px;overflow:hidden}
+.draw-book:before{content:"";position:absolute;left:11px;top:0;bottom:0;width:3px;background:#e8d8b8;z-index:2;pointer-events:none}
+#drawCanvas{display:block;width:100%;height:100%;min-height:170px;touch-action:none;border-radius:5px;background:#fff}
+.draw-palette{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:4px}
+.draw-color{width:34px;height:34px;border:3px solid #fff;border-radius:50%;box-shadow:0 2px 0 #8da6b4,0 0 0 1px #b8cad3}
+.draw-color[aria-pressed=true]{outline:3px solid #173b62;outline-offset:2px;transform:scale(1.08)}
+.draw-tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.draw-tools button{border:0;border-radius:12px;padding:9px 4px;min-height:42px;background:#fff;color:#173b62;font-size:clamp(10px,2.8vw,14px);font-weight:950;box-shadow:0 4px 0 #b5cbd5}
+.draw-tools button:active{transform:translateY(2px);box-shadow:0 2px 0 #b5cbd5}
+@media(orientation:landscape){.draw-book{max-height:43vh}.draw-tools button{min-height:36px;padding:6px}}
 /* Bienvenida interactiva de Guille: teclado propio, sin abrir el teclado Android */
 #guilleWelcome{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:10px;background:radial-gradient(circle at 15% 10%,#fff9c8 0 8%,transparent 32%),linear-gradient(145deg,#75d9ff,#d6f6ff 48%,#ffd4e5);overflow-y:auto}
 .guille-card{width:min(100%,620px);max-height:100%;overflow-y:auto;border:4px solid #fff;border-radius:28px;padding:clamp(12px,3vw,22px);background:linear-gradient(160deg,#ffffffed,#f2fbffed);box-shadow:0 14px 35px #17456b35;display:flex;flex-direction:column;gap:12px}
@@ -198,6 +212,7 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 <button data-panel="habla" aria-selected="false">🗣️ Hablemos</button>
 <button data-panel="flipper" aria-selected="false">🎱 Flipper</button>
 <button data-panel="baseball" aria-selected="false">⚾ Béisbol</button>
+<button data-panel="draw" aria-selected="false">🎨 Dibujar</button>
 </nav>
 <main>
 <section class="panel active" id="dinos">
@@ -280,6 +295,18 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
   <div class="baseball-controls"><button id="baseballAction" type="button">⚾ LANZAR</button><span id="baseballHint">Tocá LANZAR y después BATEAR. Luis siempre conecta.</span></div>
  </div>
 </section>
+<section class="panel" id="draw">
+ <div class="draw-heading"><div><h1>🎨 Dibujar y pintar</h1><p class="hint">Pasá el dedo por las líneas o creá tu propio dibujo.</p></div><div class="draw-page-count" id="drawPageCount">Libro · 1 / 4</div></div>
+ <div class="draw-book">
+  <div class="draw-book-spine"></div>
+  <canvas id="drawCanvas" width="900" height="560" aria-label="Hoja para dibujar y colorear"></canvas>
+ </div>
+ <div class="draw-palette" id="drawPalette" aria-label="Colores"></div>
+ <div class="draw-tools">
+  <button id="drawPrev" type="button">◀ Anterior</button><button id="drawNext" type="button">Siguiente ▶</button><button id="drawBlank" type="button">✏️ Hoja libre</button><button id="drawClear" type="button">🧽 Borrar hoja</button>
+ </div>
+ <p class="hint" id="drawHint">Elegí un color y pintá dentro del dibujo. El libro tiene varias páginas.</p>
+</section>
 </main>
 <footer>Un lugar para descubrir, jugar y volver a intentar 💛</footer>
 </div>
@@ -312,9 +339,9 @@ function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.
   {q:'Una última pregunta: ¿querés que sigamos aprendiendo juntos?',a:[['💛 ¡Sí, Guille!','¡Qué lindo! Estoy muy feliz de acompañarte.'],['🚀 ¡Vamos a explorar!','¡Entonces comienza nuestra aventura! ¡Vamos juntos!']]}
  ];
  function showQuestion(){
-  const item=questions[questionIndex];line.textContent=childName+', '+item.q.toLowerCase();
-  clearTimeout(questionSpeechTimer);questionSpeechTimer=setTimeout(()=>speak(childName+'. '+item.q),2400);
-  choices.innerHTML='';item.a.forEach((entry,i)=>{const b=document.createElement('button');b.type='button';b.className='guille-choice';b.textContent=entry[0];b.style.setProperty('--choice',colors[(i+questionIndex)%colors.length][0]);b.style.setProperty('--choice-shade',colors[(i+questionIndex)%colors.length][1]);b.addEventListener('click',()=>{clearTimeout(questionSpeechTimer);Array.from(choices.children).forEach(x=>x.disabled=true);line.textContent=entry[1].replace('Tu sonrisa',childName+' ¡tu sonrisa');speak(childName+'. '+entry[1]);next.hidden=false;enter.hidden=true});choices.appendChild(b)});
+  const item=questions[questionIndex];line.textContent=item.q;
+  clearTimeout(questionSpeechTimer);questionSpeechTimer=setTimeout(()=>speak(item.q),2400);
+  choices.innerHTML='';item.a.forEach((entry,i)=>{const b=document.createElement('button');b.type='button';b.className='guille-choice';b.textContent=entry[0];b.style.setProperty('--choice',colors[(i+questionIndex)%colors.length][0]);b.style.setProperty('--choice-shade',colors[(i+questionIndex)%colors.length][1]);b.addEventListener('click',()=>{clearTimeout(questionSpeechTimer);Array.from(choices.children).forEach(x=>x.disabled=true);line.textContent=entry[1];speak(entry[1]);const target=entry[0].includes('Ver dinosaurios')?'dinos':entry[0].includes('flipper')?'flipper':entry[0].includes('béisbol')?'baseball':entry[0].includes('Dibujar y crear')?'draw':null;if(target){overlay.style.display='none';openExplorerPanel(target);return}next.hidden=false;enter.hidden=true});choices.appendChild(b)});
   next.hidden=true;enter.hidden=true;
  }
  function beginTalk(){
@@ -324,14 +351,15 @@ function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.
   showQuestion();
  }
  ok.addEventListener('click',()=>{const clean=nameInput.value.trim().replace(/\s+/g,' ');if(!clean)return;childName=clean;try{localStorage.setItem('exploradores-child-name',childName)}catch(e){}beginTalk()});
- next.addEventListener('click',()=>{questionIndex++;if(questionIndex<questions.length)showQuestion();else{line.textContent='¡Qué lindo charlar con vos, '+childName+'! ¡Sos genial!';choices.innerHTML='';next.hidden=true;enter.hidden=false;speak('¡Qué lindo charlar con vos, '+childName+'! ¡Sos genial! ¡Vamos a explorar!')}});
- enter.addEventListener('click',()=>{speak('¡Vamos, '+childName+'! ¡Que comience la aventura!');overlay.style.display='none';});
+ next.addEventListener('click',()=>{questionIndex++;if(questionIndex<questions.length)showQuestion();else{line.textContent='¡Qué lindo charlar con vos! ¡Sos genial!';choices.innerHTML='';next.hidden=true;enter.hidden=false;speak('¡Qué lindo charlar con vos! ¡Sos genial! ¡Vamos a explorar!')}});
+ enter.addEventListener('click',()=>{speak('¡Vamos a explorar! ¡Que comience la aventura!');overlay.style.display='none';});
  let saved='';try{saved=(localStorage.getItem('exploradores-child-name')||'').trim()}catch(e){}
  if(saved){childName=saved;nameStage.hidden=true;talkStage.hidden=false;line.textContent='¡Hola de nuevo, '+childName+'! ¡Qué alegría verte! ¿Charlamos un ratito?';speak('¡Hola de nuevo, '+childName+'! ¡Qué alegría verte!');showQuestion()}
  else{speak('¡Hola! ¿Cómo estás? Mi nombre es Guille. ¿Cuál es tu nombre?')}
 })();
 
-document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')startFlipper();else stopFlipper();if(b.dataset.panel==='baseball')startBaseball();else stopBaseball()}));
+function openExplorerPanel(id){document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.panel===id)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));if(id==='flipper')startFlipper();else stopFlipper();if(id==='baseball')startBaseball();else stopBaseball();if(id==='draw')drawRenderPage();}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>openExplorerPanel(b.dataset.panel)));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
 document.getElementById('repeatDone')?.addEventListener('click',()=>{const p=document.getElementById('repeatPraise');if(p)p.textContent='¡Excelente, Luis! ¡Muy bien repetido! ¿Probamos otra palabra?';speak('¡Excelente, Luis! ¡Muy bien repetido!')});
 const flipperTouchArea=document.querySelector('.flipper-wrap');
@@ -753,6 +781,42 @@ baseballAction.addEventListener('click',()=>{
  if(baseballPhase==='pitch'){baseballSwingRequested=true;baseballHint.textContent='¡Luis prepara el bate!';}
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBaseball();else if(document.getElementById('baseball').classList.contains('active'))startBaseball()});
+
+/* LIBRO PARA DIBUJAR Y PINTAR */
+(function initDrawingBook(){
+ const canvas=document.getElementById('drawCanvas');if(!canvas)return;
+ const c=canvas.getContext('2d');const colors=['#172b40','#ef4444','#f59e0b','#facc15','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#8b5a2b','#ff9f43','#ffffff'];
+ let color=colors[1],page=0,blank=false,drawing=false,last=null;
+ const palette=document.getElementById('drawPalette');
+ colors.forEach((col,i)=>{const b=document.createElement('button');b.type='button';b.className='draw-color';b.style.background=col;b.setAttribute('aria-label','Color '+(i+1));b.setAttribute('aria-pressed',String(i===1));b.addEventListener('click',()=>{color=col;palette.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))});palette.appendChild(b)});
+ function line(points,width=9){c.beginPath();points.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.strokeStyle='#24394d';c.stroke()}
+ function circle(x,y,r){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.stroke()}
+ function template(n){
+  c.fillStyle='#fff';c.fillRect(0,0,900,560);c.strokeStyle='#24394d';c.lineWidth=10;c.lineCap='round';c.lineJoin='round';
+  if(n===0){ // dinosaurio simpático
+   c.beginPath();c.ellipse(430,330,205,125,0,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(570,300);c.quadraticCurveTo(680,150,755,220);c.quadraticCurveTo(790,275,710,305);c.lineTo(615,350);c.stroke();circle(735,245,8);
+   c.beginPath();c.moveTo(275,405);c.lineTo(260,485);c.lineTo(330,485);c.moveTo(480,430);c.lineTo(485,485);c.lineTo(555,485);c.moveTo(250,300);c.lineTo(155,260);c.lineTo(210,350);c.stroke();
+   for(let i=0;i<5;i++){c.beginPath();c.moveTo(310+i*58,215-i%2*15);c.lineTo(335+i*58,165-i%2*15);c.lineTo(360+i*58,220-i%2*15);c.stroke()}
+  }else if(n===1){ // casa y sol
+   c.beginPath();c.moveTo(210,285);c.lineTo(450,95);c.lineTo(690,285);c.lineTo(650,285);c.lineTo(650,475);c.lineTo(250,475);c.lineTo(250,285);c.closePath();c.stroke();c.strokeRect(390,345,120,130);c.strokeRect(285,315,80,75);c.strokeRect(535,315,80,75);circle(740,120,55);
+   for(let i=0;i<8;i++){let a=i*Math.PI/4;c.beginPath();c.moveTo(740+Math.cos(a)*72,120+Math.sin(a)*72);c.lineTo(740+Math.cos(a)*105,120+Math.sin(a)*105);c.stroke()}
+  }else if(n===2){ // pelota y bate
+   circle(360,285,145);c.beginPath();c.moveTo(280,170);c.quadraticCurveTo(420,285,280,400);c.moveTo(440,170);c.quadraticCurveTo(300,285,440,400);c.stroke();c.save();c.translate(620,300);c.rotate(-.65);c.lineWidth=45;c.beginPath();c.moveTo(0,-175);c.lineTo(0,175);c.stroke();c.restore();
+  }else{ // mariposa
+   c.beginPath();c.ellipse(450,290,30,150,0,0,Math.PI*2);c.stroke();c.beginPath();c.ellipse(340,220,105,125,-.5,0,Math.PI*2);c.ellipse(560,220,105,125,.5,0,Math.PI*2);c.ellipse(350,390,90,85,.5,0,Math.PI*2);c.ellipse(550,390,90,85,-.5,0,Math.PI*2);c.stroke();c.beginPath();c.moveTo(440,145);c.quadraticCurveTo(350,35,320,90);c.moveTo(460,145);c.quadraticCurveTo(550,35,580,90);c.stroke();circle(320,90,12);circle(580,90,12);
+  }
+ }
+ window.drawRenderPage=function(){if(blank){c.fillStyle='#fff';c.fillRect(0,0,900,560)}else template(page);document.getElementById('drawPageCount').textContent=blank?'Hoja libre':'Libro · '+(page+1)+' / 4';document.getElementById('drawHint').textContent=blank?'¡Esta hoja es toda tuya! Dibujá lo que quieras.':'Elegí un color y pintá dentro del dibujo. También podés trazar por arriba de las líneas.'};
+ function point(e){const r=canvas.getBoundingClientRect();return [(e.clientX-r.left)*900/r.width,(e.clientY-r.top)*560/r.height]}
+ canvas.addEventListener('pointerdown',e=>{e.preventDefault();drawing=true;last=point(e);canvas.setPointerCapture(e.pointerId);c.beginPath();c.arc(last[0],last[1],5,0,Math.PI*2);c.fillStyle=color;c.fill()});
+ canvas.addEventListener('pointermove',e=>{if(!drawing)return;e.preventDefault();const p=point(e);c.beginPath();c.moveTo(last[0],last[1]);c.lineTo(p[0],p[1]);c.strokeStyle=color;c.lineWidth=blank?13:17;c.lineCap='round';c.lineJoin='round';c.stroke();last=p});
+ ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>canvas.addEventListener(ev,()=>{drawing=false;last=null}));
+ document.getElementById('drawPrev').addEventListener('click',()=>{blank=false;page=(page+3)%4;drawRenderPage()});
+ document.getElementById('drawNext').addEventListener('click',()=>{blank=false;page=(page+1)%4;drawRenderPage()});
+ document.getElementById('drawBlank').addEventListener('click',()=>{blank=true;drawRenderPage()});
+ document.getElementById('drawClear').addEventListener('click',drawRenderPage);
+ drawRenderPage();
+})();
 
 async function checkForAppUpdate(){
  if(!window.AndroidUpdater||!navigator.onLine)return;
