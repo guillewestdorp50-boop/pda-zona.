@@ -91,6 +91,20 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 .launch-key{position:absolute;z-index:6;right:5%;bottom:9px;display:grid;place-items:center;width:62px;min-height:62px;aspect-ratio:1/1;padding:0;border:3px solid #ffd5d5;border-radius:50%;color:#fff;font-weight:1000;font-size:10px;background:radial-gradient(circle at 35% 28%,#ffb0a9,#ff3939 42%,#a80012 80%);box-shadow:0 0 8px #ff2424,0 0 22px #ff1515,inset 0 3px 8px #fff9;animation:redPulse 1.4s ease-in-out infinite;touch-action:manipulation}
 @media(orientation:portrait){.flipper-controls{left:3%;right:25%;bottom:8px;gap:6px}.flipper-key,.flipper-key.right{min-height:52px}.launch-key{right:4%;bottom:7px;width:58px;min-height:58px}}
 
+
+/* Hablemos ampliado: secciones claras y botones grandes para practicar */
+#habla{gap:10px;overscroll-behavior:contain}
+#habla .talk-section{flex:0 0 auto;background:#ffffffb8;border:2px solid #fff;border-radius:16px;padding:9px;box-shadow:0 4px 12px #41617a18}
+#habla .talk-section h2{margin:0 0 3px;font-size:clamp(17px,2vw,21px);color:#173b62}
+#habla .talk-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:7px}
+#habla .talk-grid .tile{min-height:86px;white-space:normal;line-height:1.15;text-align:center}
+#habla .repeat-grid .tile{min-height:94px;font-size:clamp(15px,2vw,20px);letter-spacing:.4px}
+#habla .repeat-done{width:100%;min-height:54px;margin-top:9px;border:0;border-radius:15px;background:#176b45;color:#fff;font-size:18px;font-weight:950;box-shadow:0 5px 0 #0b472d}
+#habla #repeatPraise{text-align:center;margin:7px 0 0}
+/* Evita el menú de selección/copiar al mantener pulsadas las palancas del Flipper. */
+.flipper-wrap,.flipper-wrap button,.flipper-wrap canvas{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent }
+.flipper-key,.launch-key{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none }
+@media(orientation:portrait){#habla .talk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#habla .talk-grid .tile{min-height:82px}}
 </style>
 </head>
 <body>
@@ -107,18 +121,58 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 <div class="search-row"><input id="dinoSearch" type="search" placeholder="Buscar un dinosaurio..." aria-label="Buscar dinosaurio"></div><div class="grid dino-grid" id="dinoGrid"></div><div class="dino-detail" id="dinoDetail" role="dialog" aria-modal="true" aria-labelledby="detailName"><div class="detail-card"><img id="detailImage" alt=""><h2 id="detailName"></h2><p class="hint" id="detailHint">Reconstrucción paleontológica</p><div class="credit" id="detailCredit"></div><div class="detail-actions"><button id="detailSpeak">🔊 Escuchar nombre</button><button id="detailClose">Volver</button></div></div></div>
 </section>
 <section class="panel" id="habla">
-<h1>Botones que hablan</h1><p class="hint">Tocá el dibujo. ¡El teléfono lo dice en voz alta!</p>
-<div class="grid">
-<button class="tile" style="--tile:#ffdf70;--shade:#d4aa32" data-say="Hola"><span class="emoji">👋</span>Hola</button>
+<h1>Hablemos juntos</h1><p class="hint">Elegí un botón: el teléfono dice la palabra o la frase en voz alta.</p>
+<section class="talk-section">
+<h2>☀️ El clima de hoy</h2><p class="hint">¿Cómo está el día?</p>
+<div class="talk-grid">
+<button class="tile" style="--tile:#ffe27a;--shade:#d4aa32" data-say="El día está soleado. Brilla el sol."><span class="emoji">☀️</span>Está soleado</button>
+<button class="tile" style="--tile:#a9dcff;--shade:#6eafcf" data-say="Está lloviendo. Hoy hay lluvia."><span class="emoji">🌧️</span>Está lloviendo</button>
+<button class="tile" style="--tile:#dce5ef;--shade:#aab8c8" data-say="Está nublado. Hay muchas nubes."><span class="emoji">☁️</span>Está nublado</button>
+<button class="tile" style="--tile:#c7b8ff;--shade:#8d79d3" data-say="Hay tormenta. Escucho truenos."><span class="emoji">⛈️</span>Hay tormenta</button>
+<button class="tile" style="--tile:#bcecff;--shade:#76b7d3" data-say="Hay mucho viento."><span class="emoji">🌬️</span>Hay viento</button>
+<button class="tile" style="--tile:#d9f1ff;--shade:#9dc9df" data-say="Hace frío."><span class="emoji">❄️</span>Hace frío</button>
+<button class="tile" style="--tile:#ffd2a3;--shade:#d99b68" data-say="Hace calor."><span class="emoji">🥵</span>Hace calor</button>
+<button class="tile" style="--tile:#d7f4bd;--shade:#8cbd72" data-say="Hay un arcoíris. ¡Qué lindo!"><span class="emoji">🌈</span>Hay un arcoíris</button>
+</div></section>
+<section class="talk-section">
+<h2>💬 Conversaciones</h2><p class="hint">Tocá cada frase para escuchar cómo se dice.</p>
+<div class="talk-grid">
+<button class="tile" style="--tile:#ffdf70;--shade:#d4aa32" data-say="¡Hola! ¿Cómo estás?"><span class="emoji">👋</span>Hola, ¿cómo estás?</button>
+<button class="tile" style="--tile:#a9f2c5;--shade:#64bf89" data-say="Estoy muy bien, gracias."><span class="emoji">😊</span>Estoy muy bien</button>
+<button class="tile" style="--tile:#8de4ff;--shade:#48a8cf" data-say="¿Qué tiempo hace hoy?"><span class="emoji">🌤️</span>¿Qué tiempo hace?</button>
+<button class="tile" style="--tile:#ffe27a;--shade:#d4aa32" data-say="Hoy está soleado."><span class="emoji">☀️</span>Hoy está soleado</button>
+<button class="tile" style="--tile:#ffb3d0;--shade:#d8759b" data-say="¿Querés salir a jugar?"><span class="emoji">🛝</span>¿Vamos a jugar?</button>
+<button class="tile" style="--tile:#c7b8ff;--shade:#8d79d3" data-say="Sí, vamos a jugar."><span class="emoji">🙌</span>¡Sí, vamos!</button>
+<button class="tile" style="--tile:#ffd0a6;--shade:#d99b68" data-say="Está lloviendo. Mejor nos quedamos adentro."><span class="emoji">🏠</span>Mejor nos quedamos adentro</button>
+<button class="tile" style="--tile:#b9f0a2;--shade:#7eb86a" data-say="Hasta luego. ¡Nos vemos pronto!"><span class="emoji">👋</span>Hasta luego</button>
+</div></section>
+<section class="talk-section">
+<h2>🗣️ Luis, repetí conmigo</h2><p class="hint">Primero escuchá. Después repetí la palabra en voz alta y tocá “Ya la repetí”. Sin apuro.</p>
+<div class="talk-grid repeat-grid">
+<button class="tile" style="--tile:#8de4ff;--shade:#48a8cf" data-say="Agua"><span class="emoji">💧</span>AGUA</button>
+<button class="tile" style="--tile:#ffe27a;--shade:#d4aa32" data-say="Sol"><span class="emoji">☀️</span>SOL</button>
+<button class="tile" style="--tile:#a9f2c5;--shade:#64bf89" data-say="Lluvia"><span class="emoji">🌧️</span>LLUVIA</button>
+<button class="tile" style="--tile:#ffb3d0;--shade:#d8759b" data-say="Casa"><span class="emoji">🏠</span>CASA</button>
+<button class="tile" style="--tile:#c7b8ff;--shade:#8d79d3" data-say="Mamá"><span class="emoji">❤️</span>MAMÁ</button>
+<button class="tile" style="--tile:#ffd0a6;--shade:#d99b68" data-say="Pelota"><span class="emoji">⚽</span>PELOTA</button>
+</div>
+<button class="repeat-done" id="repeatDone" type="button">⭐ ¡Ya la repetí!</button><p class="hint" id="repeatPraise" aria-live="polite">¡Muy bien! Cada intento cuenta.</p>
+</section>
+<section class="talk-section">
+<h2>❤️ Lo que necesito</h2><div class="talk-grid">
 <button class="tile" style="--tile:#8de4ff;--shade:#48a8cf" data-say="Quiero agua"><span class="emoji">💧</span>Quiero agua</button>
-<button class="tile" style="--tile:#a9f2c5;--shade:#64bf89" data-say="Estoy contento"><span class="emoji">😊</span>Estoy contento</button>
+<button class="tile" style="--tile:#a9f2c5;--shade:#64bf89" data-say="Tengo hambre"><span class="emoji">🍎</span>Tengo hambre</button>
 <button class="tile" style="--tile:#ffb3d0;--shade:#d8759b" data-say="Quiero jugar"><span class="emoji">🧸</span>Quiero jugar</button>
 <button class="tile" style="--tile:#c7b8ff;--shade:#8d79d3" data-say="Necesito ayuda"><span class="emoji">🙋</span>Necesito ayuda</button>
 <button class="tile" style="--tile:#ffd0a6;--shade:#d99b68" data-say="Estoy cansado"><span class="emoji">😴</span>Estoy cansado</button>
-<button class="tile" style="--tile:#a8e6ff;--shade:#6eafcf" data-say="Uno"><span class="emoji">1️⃣</span>Uno</button>
-<button class="tile" style="--tile:#b9f0a2;--shade:#7eb86a" data-say="Dos"><span class="emoji">2️⃣</span>Dos</button>
-<button class="tile" style="--tile:#ffb6a8;--shade:#d67e70" data-say="Tres"><span class="emoji">3️⃣</span>Tres</button>
-</div>
+<button class="tile" style="--tile:#ffdf70;--shade:#d4aa32" data-say="Me duele"><span class="emoji">🤕</span>Me duele</button>
+<button class="tile" style="--tile:#b9f0a2;--shade:#7eb86a" data-say="Quiero descansar"><span class="emoji">🛏️</span>Quiero descansar</button>
+<button class="tile" style="--tile:#a8e6ff;--shade:#6eafcf" data-say="No quiero"><span class="emoji">✋</span>No quiero</button>
+</div></section>
+<section class="talk-section">
+<h2>🔢 Números y palabras</h2><div class="talk-grid">
+<button class="tile" style="--tile:#a8e6ff;--shade:#8eb6c8" data-say="Cero"><span class="emoji">0️⃣</span>Cero</button><button class="tile" style="--tile:#b9f0a2;--shade:#8eb6c8" data-say="Uno"><span class="emoji">1️⃣</span>Uno</button><button class="tile" style="--tile:#ffb6a8;--shade:#8eb6c8" data-say="Dos"><span class="emoji">2️⃣</span>Dos</button><button class="tile" style="--tile:#c7b8ff;--shade:#8eb6c8" data-say="Tres"><span class="emoji">3️⃣</span>Tres</button><button class="tile" style="--tile:#ffe27a;--shade:#8eb6c8" data-say="Cuatro"><span class="emoji">4️⃣</span>Cuatro</button><button class="tile" style="--tile:#a8e6ff;--shade:#8eb6c8" data-say="Cinco"><span class="emoji">5️⃣</span>Cinco</button><button class="tile" style="--tile:#b9f0a2;--shade:#8eb6c8" data-say="Seis"><span class="emoji">6️⃣</span>Seis</button><button class="tile" style="--tile:#ffb6a8;--shade:#8eb6c8" data-say="Siete"><span class="emoji">7️⃣</span>Siete</button><button class="tile" style="--tile:#c7b8ff;--shade:#8eb6c8" data-say="Ocho"><span class="emoji">8️⃣</span>Ocho</button><button class="tile" style="--tile:#ffe27a;--shade:#8eb6c8" data-say="Nueve"><span class="emoji">9️⃣</span>Nueve</button>
+</div></section>
 </section>
 <section class="panel" id="flipper">
 <div class="flipper-caption"><div><h1 id="playerGreeting">¡Flipper infinito!</h1><p class="hint">Tu máquina, tus puntos y tus desafíos.</p></div><label class="player-name-wrap">Tu nombre <input id="playerName" maxlength="18" autocomplete="given-name" placeholder="Escribí tu nombre"></label></div>
@@ -145,6 +199,11 @@ function spokenDinosaurName(name){return dinosaurPronunciation[name]||name}
 function speak(text){statusEl.textContent='🔊 '+text;if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(text);setTimeout(()=>{statusEl.textContent='Tocá y descubrí'},1800);return}if(!('speechSynthesis'in window)){statusEl.textContent='La voz no está disponible en este teléfono';return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='es-US';u.rate=.88;u.pitch=1;u.volume=1;u.onend=()=>statusEl.textContent='Tocá y descubrí';speechSynthesis.speak(u)}
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.panel));if(b.dataset.panel==='flipper')startFlipper();else stopFlipper()}));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
+document.getElementById('repeatDone')?.addEventListener('click',()=>{const p=document.getElementById('repeatPraise');if(p)p.textContent='¡Excelente, Luis! ¡Muy bien repetido! ¿Probamos otra palabra?';speak('¡Excelente, Luis! ¡Muy bien repetido!')});
+const flipperTouchArea=document.querySelector('.flipper-wrap');
+flipperTouchArea?.addEventListener('contextmenu',e=>e.preventDefault());
+flipperTouchArea?.addEventListener('selectstart',e=>e.preventDefault());
+flipperTouchArea?.addEventListener('dragstart',e=>e.preventDefault());
 const species=[
 ["Tiranosaurio rex","Tyrannosaurus rex"],["Tricerátops","Triceratops"],["Estegosaurio","Stegosaurus"],["Braquiosaurio","Brachiosaurus"],["Velociraptor","Velociraptor"],["Anquilosaurio","Ankylosaurus"],["Espinosaurio","Spinosaurus"],["Diplódocus","Diplodocus"],["Parasaurolophus","Parasaurolophus"],["Carnotauro","Carnotaurus"],["Alosaurio","Allosaurus"],["Iguanodonte","Iguanodon"],["Paquicefalosaurio","Pachycephalosaurus"],["Gallimimo","Gallimimus"],["Compsognato","Compsognathus"],["Dilofosaurio","Dilophosaurus"],["Ceratosaurio","Ceratosaurus"],["Giganotosaurio","Giganotosaurus"],["Argentinosaurio","Argentinosaurus"],["Amargasaurio","Amargasaurus"],["Mamenquisaurio","Mamenchisaurus"],["Apatosaurio","Apatosaurus"],["Camarasaurio","Camarasaurus"],["Protocerátops","Protoceratops"],["Arqueópterix","Archaeopteryx"],["Herrerasaurio","Herrerasaurus"],["Eoraptor","Eoraptor"],["Selófisis","Coelophysis"],["Nigersaurio","Nigersaurus"],["Euoplocefalo","Euoplocephalus"],["Oviraptor","Oviraptor"],["Terizinosaurio","Therizinosaurus"],["Deinónicus","Deinonychus"],["Yutaraptor","Utahraptor"],["Bariónix","Baryonyx"],["Sukómimus","Suchomimus"],["Majungasaurio","Majungasaurus"],["Mapusaurio","Mapusaurus"],["Dreadnoughtus","Dreadnoughtus"],["Patagotitan","Patagotitan"],["Saltasaurio","Saltasaurus"],["Estiracosaurio","Styracosaurus"],["Centrosaurio","Centrosaurus"],["Edmontosaurio","Edmontosaurus"],["Shunosaurio","Shunosaurus"],["Coritosaurio","Corythosaurus"],["Lambeosaurio","Lambeosaurus"],["Microraptor","Microraptor"],["Sitacosaurio","Psittacosaurus"],["Plateosaurio","Plateosaurus"]];
 const dinoGrid=document.getElementById('dinoGrid'),searchInput=document.getElementById('dinoSearch'),detail=document.getElementById('dinoDetail');
