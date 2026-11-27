@@ -57,10 +57,13 @@ public class MainActivity extends Activity {
                 }
                 tts.setSpeechRate(0.88f);
                 tts.setPitch(1.0f);
-                String savedVoice = getPreferences(MODE_PRIVATE).getString("spanish_tts_voice", null);
-                if (savedVoice != null && tts.getVoices() != null) {
+                // Voz elegida por el usuario: Google español de Estados Unidos, familia ESD.
+                if (tts.getVoices() != null) {
                     for (Voice voice : tts.getVoices()) {
-                        if (savedVoice.equals(voice.getName()) && "es".equalsIgnoreCase(voice.getLocale().getLanguage())) {
+                        if (voice.getLocale() != null
+                            && "es".equalsIgnoreCase(voice.getLocale().getLanguage())
+                            && voice.getName() != null
+                            && voice.getName().toLowerCase(Locale.ROOT).startsWith("es-us-x-esd")) {
                             tts.setVoice(voice);
                             break;
                         }
@@ -202,45 +205,7 @@ public class MainActivity extends Activity {
         @JavascriptInterface public void stop() {
             runOnUiThread(() -> { if (tts != null) tts.stop(); });
         }
-        @JavascriptInterface public String getSpanishVoices() {
-            JSONArray result = new JSONArray();
-            if (tts == null || tts.getVoices() == null) return result.toString();
-            List<Voice> available = new ArrayList<>();
-            for (Voice voice : tts.getVoices()) {
-                if (voice.getLocale() != null && "es".equalsIgnoreCase(voice.getLocale().getLanguage())) available.add(voice);
-            }
-            Collections.sort(available, Comparator.comparing(v -> v.getLocale().toLanguageTag() + " " + v.getName()));
-            String selected = getPreferences(MODE_PRIVATE).getString("spanish_tts_voice", "");
-            for (Voice voice : available) {
-                try {
-                    JSONObject item = new JSONObject();
-                    item.put("name", voice.getName());
-                    item.put("locale", voice.getLocale().toLanguageTag());
-                    item.put("label", voice.getLocale().getDisplayName(new Locale("es")) + " — " + voice.getName());
-                    item.put("quality", voice.getQuality());
-                    item.put("network", voice.isNetworkConnectionRequired());
-                    item.put("selected", voice.getName().equals(selected));
-                    result.put(item);
-                } catch (Exception ignored) {}
-            }
-            return result.toString();
-        }
-        @JavascriptInterface public void selectSpanishVoice(String voiceName) {
-            if (voiceName == null || voiceName.trim().isEmpty()) return;
-            runOnUiThread(() -> {
-                if (tts == null || tts.getVoices() == null) return;
-                for (Voice voice : tts.getVoices()) {
-                    if (voiceName.equals(voice.getName()) && voice.getLocale() != null
-                        && "es".equalsIgnoreCase(voice.getLocale().getLanguage())) {
-                        tts.setVoice(voice);
-                        getPreferences(MODE_PRIVATE).edit().putString("spanish_tts_voice", voiceName).apply();
-                        tts.setSpeechRate(0.88f);
-                        tts.setPitch(1.0f);
-                        break;
-                    }
-                }
-            });
-        }
+
     }
 
     private final class UpdateBridge {
