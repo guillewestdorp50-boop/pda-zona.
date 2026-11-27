@@ -381,6 +381,12 @@ const alphabetItems=[
 ['Y','Yacaré','🐊','Reptil parecido al cocodrilo que vive en Sudamérica.'],
 ['Z','Zapato','👞','Prenda que protege el pie al caminar.']
 ];
+function alphabetSpeech(item){
+ const [letter,word,,meaning]=item;
+ const letterName=letter==='Y'?'i griega':letter==='V'?'ve':letter==='W'?'doble ve':letter;
+ const yNote=letter==='Y'?', con sonido de ye en la palabra yacaré':'';
+ return letterName+' de '+word+yNote+'. '+meaning;
+}
 let alphabetSelected=0;
 function showAlphabetItem(index,announce=true){
  alphabetSelected=(index+alphabetItems.length)%alphabetItems.length;
@@ -389,7 +395,7 @@ function showAlphabetItem(index,announce=true){
  document.getElementById('alphabetWord').textContent=word+' '+emoji;
  document.getElementById('alphabetMeaning').textContent=meaning;
  document.querySelectorAll('.alphabet-tile').forEach((b,i)=>b.setAttribute('aria-pressed',String(i===alphabetSelected)));
- if(announce)speak(letter+' de '+word+'. '+meaning);
+ if(announce)speak(alphabetSpeech(alphabetItems[alphabetSelected]));
 }
 (function initAlphabet(){
  const grid=document.getElementById('alphabetGrid');if(!grid)return;
@@ -397,8 +403,8 @@ function showAlphabetItem(index,announce=true){
   const b=document.createElement('button');b.type='button';b.className='alphabet-tile';b.style.setProperty('--tile',index%4===0?'#fff0a8':index%4===1?'#dff5ff':index%4===2?'#e5f7d7':'#ffe0eb');b.style.setProperty('--shade','#b7cbd4');
   b.innerHTML='<strong>'+item[0]+'</strong><small>'+item[1]+'</small>';b.setAttribute('aria-pressed',String(index===0));b.addEventListener('click',()=>{playGameSound('tap');showAlphabetItem(index)});grid.appendChild(b);
  });
- document.getElementById('alphabetListen').addEventListener('click',()=>{const [l,w,,m]=alphabetItems[alphabetSelected];speak(l+' de '+w+'. '+m)});
- document.getElementById('alphabetAll').addEventListener('click',()=>speak(alphabetItems.map(x=>x[0]+' de '+x[1]).join('. ')));
+ document.getElementById('alphabetListen').addEventListener('click',()=>{const [l,w,,m]=alphabetItems[alphabetSelected];speak(alphabetSpeech(alphabetItems[alphabetSelected]))});
+ document.getElementById('alphabetAll').addEventListener('click',()=>speak(alphabetItems.map(alphabetSpeech).join('. ')));
 })();
 
 function openExplorerPanel(id){
