@@ -939,7 +939,8 @@ async function checkForAppUpdate(manual=false){
   if(status)status.textContent='Hay una actualización disponible.';
  }catch(e){
   if(btn){btn.disabled=false;btn.textContent='↻ Buscar actualización'}
-  if(status)status.textContent='No se pudo comprobar. Revisá la conexión y volvé a intentar.';
+  const detail=(e&&e.message)?e.message:String(e||'Error desconocido');
+  if(status)status.textContent='Error al buscar actualización: '+detail;
  }
 }
 const updateButton=document.getElementById('updateBtn');
