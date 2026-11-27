@@ -183,7 +183,8 @@ const playerInput=document.getElementById('playerName');
 const playerTitle=document.getElementById('playerGreeting');
 const scoreLabel=document.getElementById('pinScore');
 const bumpers=[{x:195,y:165,r:23,value:250},{x:115,y:235,r:20,value:150},{x:265,y:245,r:21,value:200},{x:185,y:310,r:24,value:250},{x:85,y:365,r:19,value:150},{x:270,y:390,r:21,value:200},{x:165,y:435,r:22,value:250},{x:95,y:505,r:19,value:150},{x:250,y:500,r:20,value:200}];
-const spirals=[{x:58,y:285,r:25,inside:false},{x:286,y:315,r:25,inside:false},{x:64,y:455,r:25,inside:false}];
+const spirals=[{x:58,y:285,r:25,inside:false,flash:0},{x:286,y:315,r:25,inside:false,flash:0},{x:64,y:455,r:25,inside:false,flash:0}];
+let sparkles=[];
 let soundContext=null;
 function audio(){if(!soundContext){const AC=window.AudioContext||window.webkitAudioContext;if(AC)soundContext=new AC()}if(soundContext?.state==='suspended')soundContext.resume();return soundContext}
 function playBumperSound(){const a=audio();if(!a)return;const o=a.createOscillator(),g=a.createGain();o.type='triangle';o.frequency.setValueAtTime(720,a.currentTime);o.frequency.exponentialRampToValueAtTime(260,a.currentTime+.11);g.gain.setValueAtTime(.055,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.13);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.14)}
@@ -248,10 +249,14 @@ function updatePhysics(){
   const dx=ball.x-b.x,dy=ball.y-b.y,d=Math.hypot(dx,dy),min=ball.r+b.r;
   if(d<min){const nx=dx/(d||1),ny=dy/(d||1);ball.x=b.x+nx*min;ball.y=b.y+ny*min;ball.vx=nx*7;ball.vy=ny*7;playBumperSound();addScore(b.value)}
  }
- for(const coil of spirals){const dx=ball.x-coil.x,dy=ball.y-coil.y,d=Math.hypot(dx,dy),limit=coil.r+ball.r;if(d<limit&&!coil.inside){coil.inside=true;const nx=dx/(d||1),ny=dy/(d||1);ball.x=coil.x+nx*limit;ball.y=coil.y+ny*limit;const vx=ball.vx,vy=ball.vy;ball.vx=-vy*.9+nx*2.5;ball.vy=vx*.9+ny*2.5;playSpiralSound();addScore(500)}else if(d>limit+14)coil.inside=false;}
+ for(const coil of spirals){const dx=ball.x-coil.x,dy=ball.y-coil.y,d=Math.hypot(dx,dy),limit=coil.r+ball.r;if(d<limit&&!coil.inside){coil.inside=true;coil.flash=1;const nx=dx/(d||1),ny=dy/(d||1);ball.x=coil.x+nx*limit;ball.y=coil.y+ny*limit;const vx=ball.vx,vy=ball.vy;ball.vx=-vy*.9+nx*2.5;ball.vy=vx*.9+ny*2.5;for(let k=0;k<18;k++){const a=(Math.PI*2*k/18)+(Math.random()-.5)*.22,speed=1.2+Math.random()*3.2;sparkles.push({x:coil.x+nx*coil.r*.7,y:coil.y+ny*coil.r*.7,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,life:18+Math.floor(Math.random()*16),size:1.5+Math.random()*2.5})}playSpiralSound();addScore(500)}else if(d>limit+14)coil.inside=false;}
  hitFlipper(flippers.left,leftPressed);hitFlipper(flippers.right,rightPressed);
  ball.vx*=.998;ball.vy=Math.max(-13,Math.min(13,ball.vy));
- if(ball.y>675)parkBallInLane();
+ if(ball.y>620&&ball.x<174){ball.y=620;ball.vy=-Math.max(4,Math.abs(ball.vy)*.78);ball.vx=Math.max(1.8,ball.vx+1.15)}
+ if(ball.y>620&&ball.x>226&&ball.x<307){ball.y=620;ball.vy=-Math.max(4,Math.abs(ball.vy)*.78);ball.vx=Math.min(-1.8,ball.vx-1.15)}
+ if(ball.y>675&&ball.x>=174&&ball.x<=226)parkBallInLane();
+ for(let i=sparkles.length-1;i>=0;i--){const p=sparkles[i];p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.vy=p.vy*.985+.035;p.life--;if(p.life<=0)sparkles.splice(i,1)}
+ for(const coil of spirals)coil.flash=Math.max(0,coil.flash-.035);
 }
 function drawTable(){
  if(!ctx||!canvas.width||!canvas.height)return;
@@ -260,8 +265,9 @@ function drawTable(){
  // Gabinete de madera y campo verde clásico.
  const wood=ctx.createLinearGradient(0,0,400,700);wood.addColorStop(0,'#e4bd73');wood.addColorStop(.5,'#75421f');wood.addColorStop(1,'#321c14');
  ctx.fillStyle=wood;ctx.beginPath();ctx.roundRect(5,5,390,690,25);ctx.fill();
- const felt=ctx.createLinearGradient(0,25,0,680);felt.addColorStop(0,'#1e6970');felt.addColorStop(.55,'#15545a');felt.addColorStop(1,'#0b343e');
+ const felt=ctx.createLinearGradient(0,25,0,680);felt.addColorStop(0,'#318b91');felt.addColorStop(.48,'#1d6c72');felt.addColorStop(1,'#10444d');
  ctx.fillStyle=felt;ctx.beginPath();ctx.roundRect(19,18,362,664,18);ctx.fill();
+ const ambient=ctx.createRadialGradient(185,300,25,190,340,390);ambient.addColorStop(0,'#8effdf20');ambient.addColorStop(.55,'#64f4e20b');ambient.addColorStop(1,'#00000000');ctx.fillStyle=ambient;ctx.fill();
  ctx.strokeStyle='#f5d58a';ctx.lineWidth=4;ctx.stroke();
  // Cabecera arcade estática.
  ctx.fillStyle='#101923';ctx.beginPath();ctx.roundRect(34,30,332,92,12);ctx.fill();
@@ -276,14 +282,16 @@ function drawTable(){
  for(let y=165;y<620;y+=48){ctx.fillStyle='#f6d66b';ctx.beginPath();ctx.arc(342,y,2.5,0,Math.PI*2);ctx.fill()}
  ctx.strokeStyle='#d7e7eb';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(316,145);ctx.lineTo(300,145);ctx.stroke();
  // Guías sencillas del tablero.
- ctx.strokeStyle='#b4e5d8';ctx.globalAlpha=.55;ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(45,145);ctx.lineTo(45,540);ctx.quadraticCurveTo(45,570,78,590);ctx.moveTo(300,145);ctx.lineTo(300,540);ctx.quadraticCurveTo(300,570,270,590);ctx.stroke();ctx.globalAlpha=1;
+ ctx.strokeStyle='#c5fff0';ctx.globalAlpha=.82;ctx.lineWidth=7;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(45,145);ctx.lineTo(45,535);ctx.quadraticCurveTo(45,590,105,615);ctx.lineTo(174,640);ctx.moveTo(300,145);ctx.lineTo(300,535);ctx.quadraticCurveTo(300,590,255,615);ctx.lineTo(226,640);ctx.stroke();ctx.globalAlpha=1;
  // Espirales metálicas: rulitos tipo rosca que hacen girar la bola.
  for(const coil of spirals){
-  ctx.save();ctx.translate(coil.x,coil.y);ctx.strokeStyle='#17232b';ctx.lineWidth=10;ctx.beginPath();ctx.arc(0,0,coil.r+4,0,Math.PI*2);ctx.stroke();
+  ctx.save();ctx.translate(coil.x,coil.y);if(coil.flash>0){ctx.globalCompositeOperation='lighter';const glow=ctx.createRadialGradient(0,0,3,0,0,coil.r*2.5);glow.addColorStop(0,'rgba(255,255,220,'+(coil.flash*.8)+')');glow.addColorStop(.35,'rgba(93,255,225,'+(coil.flash*.42)+')');glow.addColorStop(1,'rgba(70,190,255,0)');ctx.fillStyle=glow;ctx.beginPath();ctx.arc(0,0,coil.r*2.5,0,Math.PI*2);ctx.fill();ctx.globalCompositeOperation='source-over'}ctx.strokeStyle='#17232b';ctx.lineWidth=10;ctx.beginPath();ctx.arc(0,0,coil.r+4,0,Math.PI*2);ctx.stroke();
   ctx.strokeStyle='#f2c56c';ctx.lineWidth=5;ctx.beginPath();
   for(let t=0;t<=Math.PI*5.5;t+=.09){const rr=2+(coil.r-3)*t/(Math.PI*5.5),x=Math.cos(t)*rr,y=Math.sin(t)*rr;if(t===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.stroke();
   ctx.strokeStyle='#fff0b1';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(0,0,coil.r+7,0,Math.PI*2);ctx.stroke();ctx.restore();
  }
+ // Destellos y chispas breves al activar cada espiral.
+ ctx.save();ctx.globalCompositeOperation='lighter';for(const p of sparkles){const alpha=Math.max(0,p.life/34);ctx.globalAlpha=alpha;ctx.fillStyle=p.life%3===0?'#fff8c9':'#7fffe9';ctx.shadowColor='#8ffff0';ctx.shadowBlur=8;ctx.beginPath();ctx.arc(p.x,p.y,p.size*alpha,0,Math.PI*2);ctx.fill()}ctx.restore();ctx.globalAlpha=1;ctx.shadowBlur=0;
  // Obstáculos/bumpers.
  for(const b of bumpers){
   const g=ctx.createRadialGradient(b.x-7,b.y-8,2,b.x,b.y,b.r);g.addColorStop(0,'#fff6c8');g.addColorStop(.35,'#ffc94e');g.addColorStop(1,'#9a421c');
