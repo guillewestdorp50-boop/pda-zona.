@@ -272,10 +272,8 @@ public class MainActivity extends Activity {
                 } finally {
                     if (connection != null) connection.disconnect();
                 }
-                String payload = result.toString();
-                String script = "window." + callbackName + "(" + JSONObject.quote(payload) + ")";
-                // Parsear el JSON en JavaScript para entregar un objeto, no una cadena.
-                script = "window." + callbackName + "(" + payload + ")";
+                // El contenido se serializa como JSON válido antes de invocar el callback.
+                final String script = "window." + callbackName + "(" + result.toString() + ")";
                 runOnUiThread(() -> {
                     if (webView != null) webView.evaluateJavascript(script, null);
                 });
