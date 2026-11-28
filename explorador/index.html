@@ -834,6 +834,7 @@ function baseballStartPitch(){
  baseballPhase='pitch';
  if(baseballBatPivot)baseballBatPivot.rotation.z=-.45;baseballPlaySound('pitch');baseballPitchStart=performance.now();baseballSwingStarted=false;baseballSwingRequested=false;
  baseballSetPitchArm(0);const hand=baseballWorldHand(0);baseballPitchReleasePoint=baseballWorldHand(.58);
+ if(baseballBatPivot){baseballBatPivot.rotation.z=.65;baseballBatPivot.updateWorldMatrix(true,true);baseballContactPoint=baseballBatPivot.localToWorld(new THREE.Vector3(0,1.2,0)).clone();baseballBatPivot.rotation.z=-.45;baseballBatPivot.updateWorldMatrix(true,true);}
  baseballBall.position.copy(hand);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
  baseballBallShadow.position.set(hand.x,.03,hand.z);baseballAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';baseballHint.textContent='Tocá ¡BATEAR! mientras la pelota viene. Si no lo tocás, es fallo.';
 }
@@ -849,18 +850,18 @@ function baseballHit(){
  document.getElementById('baseballScore').textContent=baseballScore+' — 0';
  baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡¡¡HOME RUN!!!':'¡¡¡BATAZO!!! '+baseballOutcome;
  baseballHint.textContent='¡La pelota vuela hasta el fondo del estadio!';
- baseballBall.position.set(-.15,2.1,2.5);baseballBall.scale.setScalar(1.1);
+ if(baseballContactPoint)baseballBall.position.copy(baseballContactPoint);baseballBall.scale.setScalar(1.1);
 }
 function baseballUpdate(now){
  const t=(now-baseballPitchStart)/1000;
  if(baseballPhase==='pitch'){
   const p=Math.min(1,t/1.55);baseballSetPitchArm(p);
   if(p<.58){const hand=baseballWorldHand(p);baseballBall.position.copy(hand);baseballBall.scale.setScalar(.72);}
-  else{const q=Math.min(1,(p-.58)/.42);baseballBall.position.set(baseballPitchReleasePoint.x+(-.07-baseballPitchReleasePoint.x)*q,baseballPitchReleasePoint.y+(2.35-baseballPitchReleasePoint.y)*q+Math.sin(q*Math.PI)*.22,baseballPitchReleasePoint.z+16*q);baseballBall.scale.setScalar(.72+.5*q);}
+  else{const q=Math.max(0,Math.min(1,(p-.58)/.36));baseballBall.position.copy(baseballPitchReleasePoint).lerp(baseballContactPoint||new THREE.Vector3(-.15,2.1,1.5),q);baseballBall.scale.setScalar(.72+.5*q);}
   baseballBallShadow.position.x=baseballBall.position.x;baseballBallShadow.position.z=baseballBall.position.z;baseballBallShadow.scale.setScalar(.8+Math.min(1,p)*.7);
-  if(baseballSwingRequested&&baseballBatPivot){baseballSwingStarted=true;const swing=Math.max(0,Math.min(1,(p-.68)/.29));const eased=swing*swing*(3-2*swing);baseballBatPivot.rotation.z=-.45+1.65*eased;}
+  if(baseballSwingRequested&&baseballBatPivot){baseballSwingStarted=true;const swing=Math.max(0,Math.min(1,(p-.68)/.26));const eased=swing*swing*(3-2*swing);baseballBatPivot.rotation.z=-.45+1.1*eased;}
   // El impacto se decide cuando la pelota llega a la zona del bate, no al terminar el gesto.
-  if(p>.975){if(baseballSwingRequested&&baseballSwingStarted)baseballHit();else baseballMiss();}
+  if(p>.94){if(baseballSwingRequested&&baseballSwingStarted)baseballHit();else baseballMiss();}
  }else if(baseballPhase==='miss'){
   const p=Math.min(1,(now-baseballFlightStart)/850);baseballBall.position.set(.08,2.35+Math.sin(p*Math.PI)*.35,2+7*p);baseballBall.scale.setScalar(1.22-.25*p);
   if(p>=1){baseballPhase='done';baseballBall.visible=false;baseballAction.textContent='OTRA PELOTA';if(baseballBatPivot)baseballBatPivot.rotation.z=-.45;}
@@ -889,7 +890,7 @@ function stopBaseball(){baseballActive=false;if(baseballRAF)cancelAnimationFrame
 baseballAction.addEventListener('click',()=>{
  if(!baseballActive)return;
  if(baseballPhase==='ready'||baseballPhase==='done'){baseballStartPitch();return}
- if(baseballPhase==='pitch'){const p=(performance.now()-baseballPitchStart)/1550;if(p<.12){baseballHint.textContent='¡Esperá que el pitcher lance la pelota!';return}if(p>.95){baseballHint.textContent='¡Llegó tarde! Esta pelota ya pasó.';return}baseballSwingRequested=true;baseballHint.textContent='¡BATEÓ! ¡Buen reflejo!';baseballMessage.textContent='¡CONTACTO!';}
+ if(baseballPhase==='pitch'){const p=(performance.now()-baseballPitchStart)/1550;if(p<.12){baseballHint.textContent='¡Esperá que el pitcher lance la pelota!';return}if(p>.92){baseballHint.textContent='¡Llegó tarde! Esta pelota ya pasó.';return}baseballSwingRequested=true;baseballHint.textContent='¡BATEÓ! ¡Buen reflejo!';baseballMessage.textContent='¡CONTACTO!';}
 });
 baseballNameConfirm.addEventListener('click',()=>{const name=(baseballNameInput.value||'').trim().slice(0,18);if(!name){baseballHint.textContent='Escribí tu nombre antes de confirmar.';baseballNameInput.focus();return;}localStorage.setItem('explorer-player-name',name);if(playerInput)playerInput.value=name;baseballNameInput.value=name;greetPlayerName();});
 baseballNameInput.value=localStorage.getItem('explorer-player-name')||'';
