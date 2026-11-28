@@ -185,6 +185,10 @@ body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixe
 .alphabet-tile[aria-pressed=true]{outline:3px solid #176b9b;outline-offset:1px;background:#fff4b8}
 @media(orientation:landscape){.alphabet-grid{grid-template-columns:repeat(7,minmax(0,1fr))}.alphabet-tile{min-height:58px}}
 @media(max-width:390px){.alphabet-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.alphabet-tile{min-height:62px}}
+
+/* 1.0.53: subir las dos palancas para alejarlas del borde inferior del teléfono. */
+body.game-fullscreen #flipper .flipper-controls{bottom:64px!important}
+@media(max-height:520px){body.game-fullscreen #flipper .flipper-controls{bottom:52px!important}}
 </style>
 </head>
 <body>
