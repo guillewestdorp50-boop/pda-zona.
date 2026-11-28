@@ -464,7 +464,8 @@ const canvas=document.getElementById('table');
 const ctx=canvas.getContext('2d',{alpha:false});
 const VW=400,VH=700;
 let scale=1,ox=0,oy=0,dpr=1,flipperActive=false,rafId=0,lastFrame=0;
-let score=0,leftPressed=false,rightPressed=false,laneWaiting=true,launchTravel=false,playerGreeted=false;
+let score=0,leftPressed=false,rightPressed=false,laneWaiting=true,launchTravel=false;
+let greetedPlayerNameThisSession='';
 let ball={x:342,y:565,vx:0,vy:0,r:8};
 const playerInput=document.getElementById('playerName');
 const playerTitle=document.getElementById('playerGreeting');
@@ -486,7 +487,8 @@ function sayPlayer(message){
  if(window.AndroidSpeech?.speak){window.AndroidSpeech.speak(message);return}
  if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(message);u.lang='es-US';u.rate=.88;speechSynthesis.speak(u)}
 }
-function updatePinScore(){scoreLabel.textContent=String(score).padStart(6,'0');playerTitle.textContent='¡Vamos, '+playerName()+'!'}
+function updatePinScore(){scoreLabel.textContent=String(score).padStart(6,'0');playerTitle.textContent='¡Flipper infinito!'}
+function greetPlayerName(){const name=playerName();if(!name||name==='amigo'||name===greetedPlayerNameThisSession)return;greetedPlayerNameThisSession=name;sayPlayer('¡Hola, '+name+'! ¡Qué bueno que estés acá! Vamos a jugar.');}
 const flipperRetryPhrases=[
  '¡Esa pelota se escapó! Tocá el botón rojo y seguimos.',
  '¡Vamos! La máquina te espera: apretá el botón rojo.',
@@ -645,7 +647,6 @@ function loop(ts){
 }
 function startFlipper(){
  if(flipperActive)return;flipperActive=true;lastFrame=0;resizeTable();drawTable();
- if(!playerGreeted){playerGreeted=true}
  if(laneWaiting)setTimeout(()=>{if(flipperActive&&laneWaiting)sayLanePrompt()},1200);
 }
 function stopFlipper(){
@@ -661,6 +662,8 @@ function bindFlipper(id,side){
 bindFlipper('leftKey','left');bindFlipper('rightKey','right');
 playerInput.value=localStorage.getItem('explorer-player-name')||'';
 playerInput.addEventListener('input',()=>{localStorage.setItem('explorer-player-name',playerInput.value.trim().slice(0,18));updatePinScore()});
+playerInput.addEventListener('change',greetPlayerName);
+playerInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();playerInput.blur();greetPlayerName()}});
 const launchButton=document.getElementById('launchKey');
 function launchBall(e){if(e)e.preventDefault();if(!laneWaiting||launchTravel)return;playGameSound('launch');laneWaiting=false;launchTravel=true;ball={x:342,y:620,vx:0,vy:0,r:8};lastFrame=0;scheduleLoop();}
 launchButton.addEventListener('pointerdown',launchBall);
@@ -675,6 +678,8 @@ window.addEventListener('pagehide',stopFlipper);
 /* BÉISBOL 3D — escena procedural sin descargas externas. */
 let baseballRenderer=null,baseballScene=null,baseballCamera=null,baseballRAF=0,baseballActive=false,baseballLast=0,baseballLastRender=0;
 let baseballPlayer=null,baseballPitcher=null,baseballBatPivot=null,baseballBall=null,baseballBallShadow=null;
+let baseballPitchUpperArm=null,baseballPitchForearm=null,baseballPitchHand=null;
+let baseballPitchReleasePoint=null;
 let baseballPhase='ready',baseballPitchStart=0,baseballFlightStart=0,baseballSwingStarted=false,baseballSwingRequested=false,baseballHits=0,baseballRuns=0,baseballScore=0,baseballContactPoint=null,baseballOutcome='HOME RUN',baseballMisses=0;
 const baseballStage=document.getElementById('baseballStage');
 const baseballAction=document.getElementById('baseballAction');
@@ -712,7 +717,8 @@ function baseballPlaySound(kind){
 const baseballMat=(color,roughness=.78,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
 function baseballBox(parent,w,h,d,mat,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);parent.add(m);return m}
 function baseballSphere(parent,r,mat,x,y,z,sx=1,sy=1,sz=1){const m=new THREE.Mesh(new THREE.SphereGeometry(r,12,10),mat);m.position.set(x,y,z);m.scale.set(sx,sy,sz);parent.add(m);return m}
-function baseballLimb(parent,a,b,r1,r2,mat){const v1=new THREE.Vector3(...a),v2=new THREE.Vector3(...b),dir=v2.clone().sub(v1);const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r2,r1,dir.length(),9),mat);mesh.position.copy(v1.add(v2).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());parent.add(mesh);return mesh}
+function baseballLimb(parent,a,b,r1,r2,mat){const v1=new THREE.Vector3(...a),v2=new THREE.Vector3(...b),dir=v2.clone().sub(v1);const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r2,r1,dir.length(),9),mat);mesh.position.copy(v1.add(v2).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.normalize());mesh.userData.baseLength=dir.length();parent.add(mesh);return mesh}
+function baseballMoveLimb(mesh,a,b){const start=new THREE.Vector3(...a),end=new THREE.Vector3(...b),dir=end.clone().sub(start);mesh.position.copy(start.add(end).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());mesh.scale.y=dir.length()/(mesh.userData.baseLength||dir.length())}
 function baseballCreateHuman(x,z,uniform,capColor,rotation=0,isPitcher=false){
  const root=new THREE.Group();root.position.set(x,0,z);root.rotation.y=rotation;baseballScene.add(root);
  const skin=baseballMat(0xb77c58),shirt=baseballMat(uniform),pants=baseballMat(0x172331),shoes=baseballMat(0x17191d),cap=baseballMat(capColor),glove=baseballMat(0x8a4b25),white=baseballMat(0xf2eee0);
@@ -729,10 +735,10 @@ function baseballCreateHuman(x,z,uniform,capColor,rotation=0,isPitcher=false){
  if(isPitcher){
   baseballLimb(root,[leftShoulder.x,leftShoulder.y,0],[-.57,1.4,.05],.115,.09,shirt);
   baseballLimb(root,[-.57,1.4,.05],[-.48,1.08,.18],.09,.075,skin);
-  baseballLimb(root,[rightShoulder.x,rightShoulder.y,0],[.57,1.47,.04],.115,.09,shirt);
-  baseballLimb(root,[.57,1.47,.04],[.42,1.12,.18],.09,.075,skin);
   baseballSphere(root,.1,glove,-.48,1.06,.2,1.2,.8,.7);
-  baseballSphere(root,.075,skin,.42,1.1,.2,1.2,.8,.7);
+  baseballPitchUpperArm=baseballLimb(root,[rightShoulder.x,rightShoulder.y,0],[.55,1.68,-.02],.115,.09,shirt);
+  baseballPitchForearm=baseballLimb(root,[.55,1.68,-.02],[.67,2.05,-.05],.09,.075,skin);
+  baseballPitchHand=baseballSphere(root,.09,skin,.67,2.05,-.05,1.05,.9,.9);
  }else{
   // Los dos brazos se flexionan hacia el mismo agarre: el bate queda entre las manos.
   baseballLimb(root,[-.36,1.83,0],[-.18,1.58,.12],.115,.09,shirt);
@@ -782,8 +788,8 @@ function baseballBuildScene(){
  // Focos del estadio sin sombras dinámicas.
  for(let side of [-1,1]){const pole=baseballLimb(baseballScene,[side*24,0,-15],[side*24,17,-15],.18,.12,rail);const bar=baseballBox(baseballScene,3,.25,.5,rail,side*24,17,-15);for(let j=0;j<4;j++){const lamp=new THREE.Mesh(new THREE.BoxGeometry(.38,.24,.18),baseballMat(0xfff0bd,0.2,0));lamp.position.set(side*24-1.1+j*.72,17,-14.7);baseballScene.add(lamp)}}
  baseballPlayer=baseballCreateHuman(-1.15,1.1,0x173e73,0x102c55,.38,false);
- baseballPitcher=baseballCreateHuman(.15,-15,0xe7e9eb,0x1d2935,Math.PI,true);
- baseballBall=new THREE.Group();const ballMesh=baseballSphere(baseballBall,.1,baseballMat(0xf8f7ed,.35),0,0,0);baseballMakeSeams();baseballScene.add(baseballBall);baseballBall.position.set(0,2.4,-15);
+ baseballPitcher=baseballCreateHuman(.15,-15,0xe7e9eb,0x1d2935,0,true);
+ baseballBall=new THREE.Group();const ballMesh=baseballSphere(baseballBall,.1,baseballMat(0xf8f7ed,.35),0,0,0);baseballMakeSeams();baseballScene.add(baseballBall);baseballBall.position.set(.82,2.05,-15.05);
  const shadowMat=new THREE.MeshBasicMaterial({color:0x14231a,transparent:true,opacity:.28});baseballBallShadow=new THREE.Mesh(new THREE.CircleGeometry(.22,16),shadowMat);baseballBallShadow.rotation.x=-Math.PI/2;baseballBallShadow.position.set(0,.025,-15);baseballScene.add(baseballBallShadow);
  // Cartel de fondo con colores de tribuna.
  const board=baseballBox(baseballScene,8,2.1,.35,baseballMat(0x11283b),0,8.2,-33.4);
@@ -798,9 +804,31 @@ function baseballResize(){
  const w=baseballStage.clientWidth,h=baseballStage.clientHeight;baseballCamera.aspect=w/h;baseballCamera.updateProjectionMatrix();
  baseballRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.25));baseballRenderer.setSize(w,h,false);
 }
+function baseballPitchWrist(p){
+ const keys=[
+  {p:0,elbow:[.55,1.68,-.02],wrist:[.67,2.05,-.05]},
+  {p:.28,elbow:[.68,1.68,-.12],wrist:[.82,1.53,-.28]},
+  {p:.58,elbow:[.60,1.48,.18],wrist:[.48,1.23,.48]},
+  {p:1,elbow:[.48,1.25,.36],wrist:[.25,1.05,.65]}
+ ];
+ let a=keys[0],b=keys[1];for(let i=1;i<keys.length;i++){if(p<=keys[i].p){a=keys[i-1];b=keys[i];break}a=keys[i-1];b=keys[i]}
+ const t=Math.max(0,Math.min(1,(p-a.p)/(b.p-a.p))),smooth=t*t*(3-2*t);
+ const mix=(u,v)=>u+(v-u)*smooth;
+ return {elbow:a.elbow.map((v,i)=>mix(v,b.elbow[i])),wrist:a.wrist.map((v,i)=>mix(v,b.wrist[i]))};
+}
+function baseballSetPitchArm(p){
+ if(!baseballPitcher||!baseballPitchUpperArm||!baseballPitchForearm||!baseballPitchHand)return;
+ const pose=baseballPitchWrist(p),shoulder=[.36,1.83,0];
+ baseballMoveLimb(baseballPitchUpperArm,shoulder,pose.elbow);
+ baseballMoveLimb(baseballPitchForearm,pose.elbow,pose.wrist);
+ baseballPitchHand.position.set(...pose.wrist);
+}
+function baseballWorldHand(p){const pose=baseballPitchWrist(p);baseballPitcher.updateMatrixWorld(true);return baseballPitcher.localToWorld(new THREE.Vector3(...pose.wrist));}
 function baseballStartPitch(){
- baseballPhase='pitch';baseballPlaySound('pitch');baseballPitchStart=performance.now();baseballSwingStarted=false;baseballSwingRequested=false;baseballBall.position.set(0,2.25,-15);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
- baseballBallShadow.position.set(0,.03,-15);baseballAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';baseballHint.textContent='Tocá ¡BATEAR! mientras la pelota viene. Si no lo tocás, es fallo.';
+ baseballPhase='pitch';baseballPlaySound('pitch');baseballPitchStart=performance.now();baseballSwingStarted=false;baseballSwingRequested=false;
+ baseballSetPitchArm(0);const hand=baseballWorldHand(0);baseballPitchReleasePoint=baseballWorldHand(.58);
+ baseballBall.position.copy(hand);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
+ baseballBallShadow.position.set(hand.x,.03,hand.z);baseballAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';baseballHint.textContent='Tocá ¡BATEAR! mientras la pelota viene. Si no lo tocás, es fallo.';
 }
 function baseballMiss(){if(baseballPhase!=='pitch')return;baseballPlaySound('miss');baseballPhase='miss';baseballFlightStart=performance.now();baseballMisses++;baseballSwingStarted=false;baseballMessage.textContent='¡FALLASTE!';baseballHint.textContent='Tenés que apretar BATEAR cuando llega la pelota. Probá otra vez.';baseballAction.textContent='OTRA PELOTA';}
 function baseballHit(){
@@ -819,9 +847,10 @@ function baseballHit(){
 function baseballUpdate(now){
  const t=(now-baseballPitchStart)/1000;
  if(baseballPhase==='pitch'){
-  const p=Math.min(1,t/1.05);
-  baseballPitcher.rotation.x=Math.sin(p*Math.PI)*-.13;
-  if(p>.12){baseballBall.position.set(.08+Math.sin(p*4)*.08,2.35+Math.sin(p*Math.PI)*.2,-15+17*p);baseballBall.scale.setScalar(.72+.5*p);baseballBallShadow.position.x=baseballBall.position.x;baseballBallShadow.position.z=baseballBall.position.z;baseballBallShadow.scale.setScalar(.8+p*.7)}
+  const p=Math.min(1,t/1.25);baseballSetPitchArm(p);
+  if(p<.58){const hand=baseballWorldHand(p);baseballBall.position.copy(hand);baseballBall.scale.setScalar(.72);}
+  else{const q=Math.min(1,(p-.58)/.42);baseballBall.position.set(baseballPitchReleasePoint.x+(-.07-baseballPitchReleasePoint.x)*q,baseballPitchReleasePoint.y+(2.35-baseballPitchReleasePoint.y)*q+Math.sin(q*Math.PI)*.22,baseballPitchReleasePoint.z+17*q);baseballBall.scale.setScalar(.72+.5*q);}
+  baseballBallShadow.position.x=baseballBall.position.x;baseballBallShadow.position.z=baseballBall.position.z;baseballBallShadow.scale.setScalar(.8+Math.min(1,p)*.7);
   if(baseballSwingRequested&&!baseballSwingStarted)baseballSwingStarted=true;
   if(baseballSwingStarted&&baseballBatPivot){const swing=Math.max(0,Math.min(1,(p-.30)/.48));baseballBatPivot.rotation.z=-.45+1.65*swing;}
   if(p>.88){if(baseballSwingRequested)baseballHit();else baseballMiss();}
