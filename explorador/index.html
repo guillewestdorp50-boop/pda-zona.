@@ -1076,17 +1076,17 @@ function baseballHit(){
 function baseballUpdate(now){
  const elapsed=(now-baseballPitchStart)/1000;
  if(baseballPhase==='pitch'){
-  const p=Math.min(1,elapsed/2.15);
+  const p=Math.min(1,elapsed/2.4);
   const armP=Math.min(1,p/.43);baseballSetPitchArm(armP);
   // The ball stays hidden until it has travelled close to the batter.
   const q=Math.max(0,Math.min(1,(p-.43)/.52));
   if(q>.66){baseballBall.visible=true;baseballBallShadow.visible=true;baseballNewAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE!';}
   if(q>0){const start=baseballPitchReleasePoint||new THREE.Vector3(.2,1.5,-14.7);const target=baseballContactPoint||new THREE.Vector3(-.03,1.47,-.4);const eased=q*q*(3-2*q);baseballBall.position.copy(start).lerp(target,eased);baseballBall.scale.setScalar(.65+q*.7);baseballBallShadow.position.set(baseballBall.position.x,.035,baseballBall.position.z);baseballBallShadow.scale.setScalar(.7+q*.5);}
   if(baseballSwingRequested&&baseballBatPivot){
-   const swingT=Math.max(0,Math.min(1,(elapsed-baseballSwingStartTime)/.48));baseballSetBatterSwing(swingT);
+   const swingT=Math.max(0,Math.min(1,(elapsed-baseballSwingStartTime)/.42));baseballSetBatterSwing(swingT);
   }
   // Contact timing: the ball is in the strike zone at the end of its approach.
-  if(q>=.96){const swingT=baseballSwingStartTime?Math.max(0,(now-baseballSwingStartTime)/480):0;if(baseballSwingRequested&&swingT>.78)baseballHit();else baseballMiss();}
+  if(q>=.96){const swingT=baseballSwingStartTime?Math.max(0,(now-baseballSwingStartTime)/420):0;if(baseballSwingRequested&&swingT>.5)baseballHit();else baseballMiss();}
  }else if(baseballPhase==='miss'){
   const m=Math.min(1,(now-baseballFlightStart)/850);baseballBall.visible=true;baseballBall.position.set(-.1,1.5+Math.sin(m*Math.PI)*.2, -.75+5*m);baseballBall.scale.setScalar(1.1-.3*m);
   if(m>=1){baseballPhase='done';baseballBall.visible=false;baseballBallShadow.visible=false;baseballNewAction.textContent='OTRA PELOTA';baseballSetBatterReady();}
@@ -1117,8 +1117,8 @@ baseballNewAction.addEventListener('click',()=>{
  if(baseballPhase==='ready'||baseballPhase==='done'){baseballSwingStartTime=0;baseballStartPitch();return;}
  if(baseballPhase==='pitch'){
   const elapsed=(performance.now()-baseballPitchStart)/1000;
-  if(elapsed<1.58){baseballHint.textContent='Esperá a que la pelota aparezca cerca tuyo.';return;}
-  if(elapsed>1.88){baseballHint.textContent='¡Llegó tarde! La pelota ya pasó.';return;}
+  if(elapsed<1.82){baseballHint.textContent='Esperá a que la pelota aparezca cerca tuyo.';return;}
+  if(elapsed>2.12){baseballHint.textContent='¡Llegó tarde! La pelota ya pasó.';return;}
   baseballSwingRequested=true;baseballSwingStarted=true;baseballSwingStartTime=performance.now();baseballPlaySound('tap');
   baseballHint.textContent='¡SWING!';baseballMessage.textContent='¡A BATEAR!';
  }
