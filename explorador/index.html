@@ -921,11 +921,11 @@ function baseballOrganicLimb(parent,a,b,radius,material){
   const t=i/rings;
   const endCap=Math.min(1,Math.sin(Math.PI*(.08+t*.84))/.82);
   const r=radius*(.83+.17*Math.sin(Math.PI*t))*endCap;
-  for(let j=0;j<=sides;j++){const ang=j/sides*Math.PI*2;const v=new THREE.Vector3(Math.cos(ang)*r,(t-.5)*len,Math.sin(ang)*r).applyQuaternion(q).add(A.clone().add(B).multiplyScalar(.5));verts.push(v.x,v.y,v.z);}
+  for(let j=0;j<=sides;j++){const ang=j/sides*Math.PI*2;const v=new THREE.Vector3(Math.cos(ang)*r,(t-.5)*len,Math.sin(ang)*r);verts.push(v.x,v.y,v.z);}
  }
  for(let i=0;i<rings;i++)for(let j=0;j<sides;j++){const a=i*(sides+1)+j,b=a+sides+1;indices.push(a,b,a+1,b,b+1,a+1);}
  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));geo.setIndex(indices);geo.computeVertexNormals();
- const mesh=new THREE.Mesh(geo,material);parent.add(mesh);return mesh;
+ const mesh=new THREE.Mesh(geo,material);mesh.position.copy(A.clone().add(B).multiplyScalar(.5));mesh.quaternion.copy(q);mesh.userData.baseLength=len;parent.add(mesh);return mesh;
 }
 function baseballJoint(parent,p,r,material){const m=new THREE.Mesh(new THREE.SphereGeometry(r,18,14),material);m.position.set(...p);parent.add(m);return m}
 function baseballBuildHuman(x,z,uniformColor,capColor,rotation=0,isPitcher=false){
@@ -1012,7 +1012,7 @@ function baseballBuildScene(){
  }
  // Far crowd: low-poly seating silhouettes, not the two main players.
  const crowdMats=[0xd94c43,0xe5d6b2,0x2d75a6,0xe2b33c,0x263b50].map(c=>baseballMat(c));
- for(let c=0;c<crowdMats.length;c++){const geo=new THREE.CapsuleGeometry(.07,.13,3,6);const inst=new THREE.InstancedMesh(geo,crowdMats[c],100);const d=new THREE.Object3D();for(let i=0;i<100;i++){const row=Math.floor(i/20),col=i%20;d.position.set(-27+col*2.85,1.35+row*.72,-30-row*.18);d.rotation.z=((i%3)-1)*.12;d.updateMatrix();inst.setMatrixAt(i,d.matrix)}baseballScene.add(inst);}
+ for(let c=0;c<crowdMats.length;c++){const geo=new THREE.SphereGeometry(.09,8,6);const inst=new THREE.InstancedMesh(geo,crowdMats[c],100);const d=new THREE.Object3D();for(let i=0;i<100;i++){const row=Math.floor(i/20),col=i%20;d.position.set(-27+col*2.85,1.35+row*.72,-30-row*.18);d.rotation.z=((i%3)-1)*.12;d.scale.set(.85,1.45,.85);d.updateMatrix();inst.setMatrixAt(i,d.matrix)}baseballScene.add(inst);}
  for(let side of [-1,1]){baseballOrganicLimb(baseballScene,[side*26,0,-16],[side*26,18,-16],.13,rail);baseballBox(baseballScene,3,.22,.45,rail,side*26,18,-16);for(let j=0;j<5;j++){const lamp=new THREE.Mesh(new THREE.SphereGeometry(.17,10,8),baseballMat(0xfff4d2,.2));lamp.position.set(side*26-1.3+j*.65,17.9,-15.7);baseballScene.add(lamp);}}
  baseballPlayer=baseballBuildHuman(-1.15,1.15,0x245783,0x163653,.05,false);
  baseballPitcher=baseballBuildHuman(.15,-15,0xe8ecef,0x1e2a35,Math.PI,true);
@@ -1040,11 +1040,11 @@ function baseballStartPitch(){
  baseballBatPivot.rotation.set(.15,0,-.68);baseballSetPitchArm(0);
  baseballPitchReleasePoint=baseballWorldHand(.58);
  baseballBall.visible=false;baseballBallShadow.visible=false;
- baseballAction.textContent='¡ESPERÁ!';baseballMessage.textContent='EL PITCHER SE PREPARA';baseballHint.textContent='Mirá el lanzamiento. La pelota aparecerá al acercarse.';
+ baseballNewAction.textContent='¡ESPERÁ!';baseballMessage.textContent='EL PITCHER SE PREPARA';baseballHint.textContent='Mirá el lanzamiento. La pelota aparecerá al acercarse.';
 }
 function baseballMiss(){
  if(baseballPhase!=='pitch')return;baseballPlaySound('miss');baseballPhase='miss';baseballFlightStart=performance.now();baseballMisses++;baseballSwingStarted=false;
- baseballMessage.textContent='¡NO HUBO CONTACTO!';baseballHint.textContent='La pelota pasó. Preparáte para el próximo lanzamiento.';baseballAction.textContent='OTRA PELOTA';
+ baseballMessage.textContent='¡NO HUBO CONTACTO!';baseballHint.textContent='La pelota pasó. Preparáte para el próximo lanzamiento.';baseballNewAction.textContent='OTRA PELOTA';
 }
 function baseballHit(){
  if(baseballPhase!=='pitch'||!baseballSwingRequested)return;
@@ -1062,7 +1062,7 @@ function baseballUpdate(now){
   const armP=Math.min(1,p/.43);baseballSetPitchArm(armP);
   // The ball stays hidden until it has travelled close to the batter.
   const q=Math.max(0,Math.min(1,(p-.43)/.52));
-  if(q>.66){baseballBall.visible=true;baseballBallShadow.visible=true;}
+  if(q>.66){baseballBall.visible=true;baseballBallShadow.visible=true;baseballNewAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE!';}
   if(q>0){const start=baseballPitchReleasePoint||new THREE.Vector3(.2,1.5,-14.7);const target=new THREE.Vector3(-.15,1.52,-.75);const eased=q*q*(3-2*q);baseballBall.position.copy(start).lerp(target,eased);baseballBall.scale.setScalar(.65+q*.7);baseballBallShadow.position.set(baseballBall.position.x,.035,baseballBall.position.z);baseballBallShadow.scale.setScalar(.7+q*.5);}
   if(baseballSwingRequested&&baseballBatPivot){
    const swingT=Math.max(0,Math.min(1,(elapsed-baseballSwingStartTime)/.48));const smooth=swingT*swingT*(3-2*swingT);
@@ -1073,11 +1073,11 @@ function baseballUpdate(now){
   if(q>=.96){if(baseballSwingRequested&&baseballSwingStartTime>0)baseballHit();else baseballMiss();}
  }else if(baseballPhase==='miss'){
   const m=Math.min(1,(now-baseballFlightStart)/850);baseballBall.visible=true;baseballBall.position.set(-.1,1.5+Math.sin(m*Math.PI)*.2, -.75+5*m);baseballBall.scale.setScalar(1.1-.3*m);
-  if(m>=1){baseballPhase='done';baseballBall.visible=false;baseballBallShadow.visible=false;baseballAction.textContent='OTRA PELOTA';baseballBatPivot.rotation.set(.15,0,-.68);baseballPlayer.rotation.y=.05;}
+  if(m>=1){baseballPhase='done';baseballBall.visible=false;baseballBallShadow.visible=false;baseballNewAction.textContent='OTRA PELOTA';baseballBatPivot.rotation.set(.15,0,-.68);baseballPlayer.rotation.y=.05;}
  }else if(baseballPhase==='flight'){
   const f=Math.min(1,(now-baseballFlightStart)/2100),endX=baseballOutcome==='HOME RUN'?5:baseballOutcome==='TRIPLE'?3.5:baseballOutcome==='DOBLE'?2.2:.9;
   baseballBall.position.set(-.1+endX*f,1.5+Math.sin(f*Math.PI)*9*f,-.9-36*f);baseballBall.scale.setScalar(1.25-.4*f);
-  if(f>=1){baseballPhase='done';baseballAction.textContent='OTRA JUGADA';baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡LA SACÓ DEL ESTADIO!':'¡GRAN CONEXIÓN!';baseballBall.visible=false;baseballBallShadow.visible=false;baseballBatPivot.rotation.set(.15,0,-.68);baseballPlayer.rotation.y=.05;}
+  if(f>=1){baseballPhase='done';baseballNewAction.textContent='OTRA JUGADA';baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡LA SACÓ DEL ESTADIO!':'¡GRAN CONEXIÓN!';baseballBall.visible=false;baseballBallShadow.visible=false;baseballBatPivot.rotation.set(.15,0,-.68);baseballPlayer.rotation.y=.05;}
  }
 }
 let baseballSwingStartTime=0;
@@ -1101,8 +1101,8 @@ baseballNewAction.addEventListener('click',()=>{
  if(baseballPhase==='ready'||baseballPhase==='done'){baseballSwingStartTime=0;baseballStartPitch();return;}
  if(baseballPhase==='pitch'){
   const elapsed=(performance.now()-baseballPitchStart)/1000;
-  if(elapsed<.82){baseballHint.textContent='Esperá un instante: el pitcher todavía está lanzando.';return;}
-  if(elapsed>2.02){baseballHint.textContent='¡Llegó tarde! La pelota ya pasó.';return;}
+  if(elapsed<1.5){baseballHint.textContent='Esperá a que la pelota aparezca cerca tuyo.';return;}
+  if(elapsed>1.99){baseballHint.textContent='¡Llegó tarde! La pelota ya pasó.';return;}
   baseballSwingRequested=true;baseballSwingStarted=true;baseballSwingStartTime=performance.now();baseballPlaySound('tap');
   baseballHint.textContent='¡SWING!';baseballMessage.textContent='¡A BATEAR!';
  }
