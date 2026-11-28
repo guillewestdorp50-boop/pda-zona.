@@ -105,38 +105,9 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 #habla #repeatPraise{text-align:center;margin:7px 0 0}
 /* Evita el menú de selección/copiar al mantener pulsadas las palancas del Flipper. */
 .flipper-wrap,.flipper-wrap button,.flipper-wrap canvas,.game-panel,.game-panel button,.game-panel canvas{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent }
-.flipper-key,.launch-key,#baseballAction{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none }
+.flipper-key,.launch-key{ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none }
 @media(orientation:portrait){#habla .talk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#habla .talk-grid .tile{min-height:82px}}
 
-/* BÉISBOL — reconstrucción integral: estadio, jugadores articulados y controles */
-#baseball{gap:8px;overflow:hidden;padding:clamp(7px,1.5vw,13px);background:linear-gradient(160deg,#d9eef7,#a9d3e2)}
-.baseball-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:0 0 auto}
-.baseball-heading h1{font-size:clamp(20px,3vw,28px);color:#133552}
-.baseball-heading .hint{font-size:11px;color:#41637a}
-.baseball-counts{display:flex;gap:6px;font-size:11px;font-weight:1000;color:#173b62}
-.baseball-counts span{background:#fff;padding:7px 9px;border-radius:10px;box-shadow:0 2px 7px #15344b18}
-.baseball-stage{position:relative;flex:1;min-height:270px;overflow:hidden;border-radius:18px;background:linear-gradient(#82c2e7,#d6edf5 43%,#347440 44%,#173322);box-shadow:inset 0 0 0 2px #ffffffa8,0 9px 22px #15354b38;isolation:isolate}
-#baseball3d{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
-.baseball-player-strip{position:absolute;z-index:7;top:9px;left:9px;display:flex;align-items:center;gap:5px;max-width:calc(100% - 125px);padding:6px 8px;border:1px solid #a9d9e7;border-radius:12px;background:#102d45eF;color:#fff;box-shadow:0 3px 10px #001a2d55}
-.baseball-name-wrap{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:1000;color:#fff;white-space:nowrap}
-.baseball-name-wrap input{width:clamp(82px,22vw,145px);min-width:0;border:2px solid #8fc8dc;border-radius:8px;padding:6px 7px;font:800 12px system-ui;color:#17304a;background:#fff}
-.baseball-name-wrap button{border:0;border-radius:8px;padding:7px 8px;background:#e8bf55;color:#263a4a;font-size:10px;font-weight:1000}
-#baseballNameStatus{font-size:9px;font-weight:850;color:#c6f4d4;white-space:nowrap}
-.baseball-scoreboard{position:absolute;z-index:5;top:55px;right:9px;display:flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid #d5b56c;border-radius:9px;background:#0d2237ed;color:#fff;font-size:9px;font-weight:950;white-space:nowrap;box-shadow:0 3px 9px #0006;pointer-events:none}
-.baseball-scoreboard strong{font-size:15px;color:#ffe17a}
-.baseball-message{position:absolute;z-index:5;top:54px;left:50%;transform:translateX(-50%);max-width:70%;padding:7px 13px;border:1px solid #ffffff66;border-radius:99px;background:#071b2cda;color:#fff;font-size:clamp(12px,2vw,17px);font-weight:1000;letter-spacing:.5px;text-align:center;text-shadow:0 2px 3px #000;pointer-events:none;white-space:nowrap}
-.baseball-controls{position:absolute;z-index:6;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:12px;padding:18px 12px max(12px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#081b28ef 34%)}
-#baseballAction{min-width:155px;min-height:56px;padding:11px 20px;border:2px solid #fff4c8;border-radius:17px;background:linear-gradient(160deg,#fff08a,#e9ac32 65%,#9b5d1d);box-shadow:0 5px 0 #744315,0 8px 18px #0007;color:#38230a;font-size:clamp(16px,2.2vw,20px);font-weight:1000;touch-action:manipulation}
-#baseballAction:active{transform:translateY(3px);box-shadow:0 2px 0 #744315}
-#baseballHint{max-width:48%;color:#fff;font-size:11px;font-weight:850;text-shadow:0 1px 3px #000}
-.baseball-loading,.baseball-fallback{position:absolute;z-index:9;inset:0;display:grid;place-items:center;padding:20px;background:#0c1b29ef;color:#fff;text-align:center;font-weight:900}
-.baseball-loading[hidden],.baseball-fallback[hidden]{display:none}
-@media(orientation:portrait){#baseball{padding:6px}.baseball-heading{gap:5px}.baseball-heading h1{font-size:19px}.baseball-stage{min-height:260px}.baseball-player-strip{top:7px;left:7px;max-width:calc(100% - 105px);padding:5px}.baseball-name-wrap{gap:3px;font-size:9px}.baseball-name-wrap input{width:clamp(72px,21vw,112px);font-size:11px;padding:5px}.baseball-name-wrap button{padding:6px;font-size:9px}#baseballNameStatus{display:none}.baseball-scoreboard{top:52px;right:7px;gap:5px;padding:5px 7px;font-size:8px}.baseball-scoreboard strong{font-size:13px}.baseball-message{top:54px;max-width:82%;font-size:11px}.baseball-controls{gap:8px;padding:12px 8px max(10px,env(safe-area-inset-bottom))}#baseballAction{min-width:126px;min-height:50px;font-size:15px}#baseballHint{font-size:10px;max-width:43%}}
-@media(orientation:landscape){.baseball-stage{min-height:220px}.baseball-message{top:56px}}
-body.game-fullscreen #baseball{gap:0;padding:0}
-body.game-fullscreen #baseball .baseball-heading{display:none}
-body.game-fullscreen #baseball .baseball-stage{position:absolute;inset:0;width:100%;height:100%;min-height:0;border-radius:0}
-body.game-fullscreen #baseball .baseball-controls{padding-bottom:max(14px,env(safe-area-inset-bottom))}
 /* Cuaderno de dibujo: hoja táctil, páginas prediseñadas y hoja libre. */
 #draw{gap:8px;overflow:auto}
 .draw-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -193,11 +164,11 @@ body.game-fullscreen #baseball .baseball-controls{padding-bottom:max(14px,env(sa
 @media(max-width:390px){.guille-top{gap:7px;min-height:130px}.guille-robot{flex-basis:112px;transform:scale(.86);transform-origin:center}.guille-card{padding:10px;gap:9px}.guille-key{min-height:38px}.guille-keyboard{gap:5px}}
 @media(orientation:landscape){.guille-card{max-width:760px}.guille-top{min-height:112px}.guille-robot{height:118px;transform:scale(.78);transform-origin:center}.guille-key{min-height:34px}.guille-card{gap:7px}}
 /* 1.0.31: juegos a pantalla completa y pinceles ajustables */
-body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;margin:0;padding:0;gap:0}body.game-fullscreen header,body.game-fullscreen nav,body.game-fullscreen footer{display:none!important}body.game-fullscreen main{position:fixed;inset:0;width:100vw;height:100dvh;margin:0;padding:0}body.game-fullscreen .panel.game-panel,body.game-fullscreen #memory{position:absolute;inset:0;width:100%;height:100%;min-height:0;max-height:none;border:0;border-radius:0;padding:8px;overflow:hidden}body.game-fullscreen #flipper .flipper-caption{display:none}body.game-fullscreen #flipper .flipper-wrap{height:100%;width:100%;border-radius:0}body.game-fullscreen #flipper #table{inset:0;width:100%;height:100%;border-radius:0}body.game-fullscreen #baseball{gap:0;padding:0}body.game-fullscreen #baseball .baseball-heading{display:none}body.game-fullscreen #baseball .baseball-stage{position:absolute;inset:0;width:100%;height:100%;min-height:0;border-radius:0}body.game-fullscreen #memory{display:flex;flex-direction:column;gap:10px}
-.game-exit{position:absolute;z-index:20;top:max(7px,env(safe-area-inset-top));right:8px;border:1px solid #ffffffaa;border-radius:999px;padding:3px 8px;background:#11283bdc;color:#fff;font-size:10px;line-height:1.2;font-weight:800;box-shadow:0 2px 7px #0004;min-height:0}body.game-fullscreen #baseball .baseball-controls{padding-bottom:max(14px,env(safe-area-inset-bottom))}
+body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixed;inset:0;width:100vw;height:100dvh;max-width:none;margin:0;padding:0;gap:0}body.game-fullscreen header,body.game-fullscreen nav,body.game-fullscreen footer{display:none!important}body.game-fullscreen main{position:fixed;inset:0;width:100vw;height:100dvh;margin:0;padding:0}body.game-fullscreen .panel.game-panel,body.game-fullscreen #memory{position:absolute;inset:0;width:100%;height:100%;min-height:0;max-height:none;border:0;border-radius:0;padding:8px;overflow:hidden}body.game-fullscreen #flipper .flipper-caption{display:none}body.game-fullscreen #flipper .flipper-wrap{height:100%;width:100%;border-radius:0}body.game-fullscreen #flipper #table{inset:0;width:100%;height:100%;border-radius:0}body.game-fullscreen #memory{display:flex;flex-direction:column;gap:10px}
+.game-exit{position:absolute;z-index:20;top:max(7px,env(safe-area-inset-top));right:8px;border:1px solid #ffffffaa;border-radius:999px;padding:3px 8px;background:#11283bdc;color:#fff;font-size:10px;line-height:1.2;font-weight:800;box-shadow:0 2px 7px #0004;min-height:0}
 .brush-size{display:flex;align-items:center;justify-content:center;gap:10px;padding:5px 10px;background:#ffffffc9;border-radius:12px;font-size:13px;font-weight:900;color:#173b62}.brush-size input{width:min(48vw,240px);accent-color:#176b9b}.brush-size strong{min-width:48px;text-align:right}
 .memory-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-right:104px}.memory-heading h1{font-size:clamp(19px,3vw,27px)}.memory-heading button{border:0;border-radius:12px;padding:9px 12px;background:#173b62;color:white;font-weight:900}.memory-stats{display:flex;justify-content:space-around;gap:8px;font-weight:950;color:#173b62}.memory-stats span{background:#fff;padding:7px 12px;border-radius:12px}
-.memory-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:8px}.memory-card{position:relative;min-width:0;min-height:0;border:3px solid #fff;border-radius:16px;background:linear-gradient(145deg,#2c78a7,#173b62);box-shadow:0 5px 0 #0e2944;color:#fff;font-weight:950;display:grid;place-items:center;overflow:hidden}.memory-card .memory-back{font-size:clamp(30px,9vw,58px);text-shadow:0 3px 5px #001a}.memory-card .memory-front{display:none;flex-direction:column;align-items:center;gap:3px;color:#18344e}.memory-card .memory-front strong{font-size:clamp(32px,9vw,60px)}.memory-card .memory-front small{font-size:clamp(9px,2.6vw,13px);text-align:center}.memory-card.revealed,.memory-card.matched{background:linear-gradient(145deg,#fff,#dff5ff);box-shadow:0 4px 0 #a6cbdc}.memory-card.revealed .memory-back,.memory-card.matched .memory-back{display:none}.memory-card.revealed .memory-front,.memory-card.matched .memory-front{display:flex}.memory-card.matched{border-color:#68d79d;opacity:.85}#memoryMessage{text-align:center;background:#ffffffc9;border-radius:12px;padding:7px}@media(orientation:landscape){.memory-grid{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}}@media(max-height:520px){body.game-fullscreen #flipper .flipper-controls{bottom:4px}body.game-fullscreen #flipper .flipper-key{min-height:42px}body.game-fullscreen #baseballAction{min-height:42px}}
+.memory-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:8px}.memory-card{position:relative;min-width:0;min-height:0;border:3px solid #fff;border-radius:16px;background:linear-gradient(145deg,#2c78a7,#173b62);box-shadow:0 5px 0 #0e2944;color:#fff;font-weight:950;display:grid;place-items:center;overflow:hidden}.memory-card .memory-back{font-size:clamp(30px,9vw,58px);text-shadow:0 3px 5px #001a}.memory-card .memory-front{display:none;flex-direction:column;align-items:center;gap:3px;color:#18344e}.memory-card .memory-front strong{font-size:clamp(32px,9vw,60px)}.memory-card .memory-front small{font-size:clamp(9px,2.6vw,13px);text-align:center}.memory-card.revealed,.memory-card.matched{background:linear-gradient(145deg,#fff,#dff5ff);box-shadow:0 4px 0 #a6cbdc}.memory-card.revealed .memory-back,.memory-card.matched .memory-back{display:none}.memory-card.revealed .memory-front,.memory-card.matched .memory-front{display:flex}.memory-card.matched{border-color:#68d79d;opacity:.85}#memoryMessage{text-align:center;background:#ffffffc9;border-radius:12px;padding:7px}@media(orientation:landscape){.memory-grid{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}}@media(max-height:520px){body.game-fullscreen #flipper .flipper-controls{bottom:4px}body.game-fullscreen #flipper .flipper-key{min-height:42px}}
 /* Abecedario interactivo */
 #alphabet{gap:8px}
 .alphabet-feature{display:flex;align-items:center;gap:14px;min-height:116px;padding:12px;border-radius:18px;background:linear-gradient(135deg,#fff3b5,#dff5ff);box-shadow:0 4px 0 #b7d5df}
@@ -224,7 +195,6 @@ body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixe
 <button data-panel="alphabet" aria-selected="false">🔤 Abecedario</button>
 <button data-panel="habla" aria-selected="false">🗣️ Hablemos</button>
 <button data-panel="flipper" aria-selected="false">🎱 Flipper</button>
-<button data-panel="baseball" aria-selected="false">⚾ Béisbol</button>
 <button data-panel="draw" aria-selected="false">🎨 Dibujar</button><button data-panel="memory" aria-selected="false">🧠 Memoria</button>
 </nav>
 <main>
@@ -303,18 +273,6 @@ body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixe
 <button class="launch-key" id="launchKey" aria-label="Botón rojo debajo del carril para lanzar la pelota">● LANZAR</button>
 <div class="pin-score" id="pinScore">000000</div>
 </div>
-</section>
-<section class="panel game-panel" id="baseball">
- <button class="game-exit" type="button" onclick="openExplorerPanel('dinos')">✕ Salir</button>
- <div class="baseball-heading"><div><h1>⚾ Béisbol · Estadio Chazón</h1><p class="hint">Observá el lanzamiento y bateá en el momento justo.</p></div><div class="baseball-counts"><span id="baseballHits">HITS 0</span><span id="baseballRuns">CARRERAS 0</span></div></div>
- <div class="baseball-stage" id="baseballStage">
-  <div class="baseball-player-strip"><label class="baseball-name-wrap">JUGADOR <input id="baseballPlayerName" maxlength="18" autocomplete="given-name" placeholder="Tu nombre"><button id="baseballNameConfirm" type="button">OK</button></label><span id="baseballNameStatus">Confirmá tu nombre</span></div>
-  <div class="baseball-scoreboard"><span>CHAZÓN</span><strong id="baseballScore">0 — 0</strong><span id="baseballInning">1ª ENTRADA</span></div>
-  <div id="baseballMessage" class="baseball-message">¡PREPARADO PARA BATEAR!</div>
-  <div id="baseballFallback" class="baseball-fallback" hidden>Este teléfono no pudo iniciar los gráficos 3D. Probá cerrar otras aplicaciones y volver a entrar.</div>
-  <div id="baseballLoading" class="baseball-loading">Construyendo el estadio…</div>
-  <div class="baseball-controls"><button id="baseballAction" type="button">⚾ LANZAR</button><span id="baseballHint">El pitcher se prepara. Tocá LANZAR para comenzar.</span></div>
- </div>
 </section>
 <section class="panel game-panel" id="memory"><div class="memory-heading"><div><h1>🧠 Memoria de dinosaurios</h1><p class="hint">Encontrá las seis parejas. ¡Acordate dónde está cada dinosaurio!</p></div><button id="memoryRestart" type="button">↻ Reiniciar</button></div><div class="memory-stats"><span id="memoryMoves">Movimientos: 0</span><span id="memoryPairs">Parejas: 0 / 6</span></div><div class="memory-grid" id="memoryGrid" aria-label="Cartas de memoria"></div><p class="hint" id="memoryMessage">Tocá dos cartas para encontrar una pareja.</p><button class="game-exit" type="button" onclick="openExplorerPanel('dinos')">✕ Salir del juego</button></section><section class="panel" id="draw">
  <div class="draw-heading"><div><h1>🎨 Dibujar y pintar</h1><p class="hint">Pasá el dedo por las líneas o creá tu propio dibujo.</p></div><div class="draw-page-count" id="drawPageCount">Libro · 1 / 4</div></div>
@@ -422,10 +380,10 @@ function showAlphabetItem(index,announce=true){
 function openExplorerPanel(id){
  document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.panel===id)));
  const panels=[...document.querySelectorAll('main > .panel')];if(!panels.some(x=>x.id===id))return;panels.forEach(panel=>{const selected=panel.id===id;panel.hidden=!selected;panel.classList.toggle('active',selected);});
- const game=['flipper','baseball','memory'].includes(id);document.body.classList.toggle('game-fullscreen',game);
- if(id==='flipper')startFlipper();else stopFlipper();if(id==='baseball')startBaseball();else stopBaseball();
+ const game=['flipper','memory'].includes(id);document.body.classList.toggle('game-fullscreen',game);
+ if(id==='flipper')startFlipper();else stopFlipper();
  if(id==='draw')drawRenderPage();if(id==='memory')memoryStart();
- if(game)setTimeout(()=>{window.dispatchEvent(new Event('resize'));if(id==='flipper')resizeTable();if(id==='baseball')baseballResize()},80);
+ if(game)setTimeout(()=>{window.dispatchEvent(new Event('resize'));if(id==='flipper')resizeTable()},80);
 }
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>openExplorerPanel(b.dataset.panel)));
 document.querySelectorAll('[data-say]').forEach(b=>b.addEventListener('click',()=>speak(b.dataset.say)));
@@ -685,315 +643,6 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)stopFlipper
 window.addEventListener('pagehide',stopFlipper);
 
 
-/* BÉISBOL 3D — escena procedural sin descargas externas. */
-/* MOTOR NUEVO DE BÉISBOL — escena y animaciones independientes */
-let baseballRenderer=null,baseballScene=null,baseballCamera=null,baseballRAF=0,baseballActive=false,baseballLastRender=0;
-let baseballPitcher=null,baseballBatter=null,baseballBall=null,baseballBallShadow=null,baseballBat=null,baseballBatPivot=null;
-let baseballPitchUpper=null,baseballPitchLower=null,baseballPitchElbow=null,baseballPitchHand=null;
-let baseballBatterArms=[],baseballBatterHands=[],baseballBatterTorso=null,baseballBatterRoot=null;
-let baseballPhase='ready',baseballPitchStart=0,baseballFlightStart=0,baseballSwingRequested=false,baseballSwingStart=0,baseballHits=0,baseballRuns=0,baseballScore=0,baseballMisses=0,baseballOutcome='HOME RUN';
-let baseballReleasePoint=null,baseballContactPoint=null,baseballBallStart=null,baseballHomePlate=null,baseballImpactRing=null;
-const baseballStage=document.getElementById('baseballStage');
-const baseballAction=document.getElementById('baseballAction');
-const baseballMessage=document.getElementById('baseballMessage');
-const baseballLoading=document.getElementById('baseballLoading');
-const baseballFallback=document.getElementById('baseballFallback');
-const baseballHint=document.getElementById('baseballHint');
-const baseballNameInput=document.getElementById('baseballPlayerName');
-const baseballNameConfirm=document.getElementById('baseballNameConfirm');
-const baseballNameStatus=document.getElementById('baseballNameStatus');
-let baseballAudioContext=null;
-function baseballSound(kind){
- const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
- if(!baseballAudioContext)baseballAudioContext=new AC();
- const c=baseballAudioContext;if(c.state==='suspended')c.resume().catch(()=>{});
- const now=c.currentTime;
- const tone=(freq,end,duration,volume,type='triangle')=>{const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,now);o.frequency.exponentialRampToValueAtTime(end,now+duration);g.gain.setValueAtTime(volume,now);g.gain.exponentialRampToValueAtTime(.001,now+duration);o.connect(g);g.connect(c.destination);o.start(now);o.stop(now+duration+.01)};
- if(kind==='pitch'){tone(260,105,.18,.14,'sine');tone(145,75,.32,.09,'triangle');}
- if(kind==='miss')tone(290,105,.32,.12);
- if(kind==='hit'){tone(165,55,.12,.22,'triangle');tone(720,210,.42,.12,'sine');tone(980,420,.24,.045,'triangle');}
- if(kind==='crowd'){tone(390,650,.55,.08,'sawtooth');tone(520,820,.48,.045,'sine');}
-}
-const baseballMat=(color,roughness=.8,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness});
-function baseballBox(parent,w,h,d,mat,x,y,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);parent.add(m);return m}
-function baseballBallMesh(parent,r,mat,x,y,z,sx=1,sy=1,sz=1){const m=new THREE.Mesh(new THREE.SphereGeometry(r,20,16),mat);m.position.set(x,y,z);m.scale.set(sx,sy,sz);parent.add(m);return m}
-function baseballLimb(parent,a,b,rA,rB,mat){
- const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),len=A.distanceTo(B);
- const mesh=new THREE.Mesh(new THREE.CylinderGeometry(rB,rA,1,16,1,false),mat);
- mesh.position.copy(A.clone().add(B).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),B.clone().sub(A).normalize());mesh.scale.y=len;mesh.userData.baseLength=len;parent.add(mesh);return mesh;
-}
-function baseballMoveLimb(mesh,a,b){
- const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),d=B.clone().sub(A),len=d.length();
- mesh.position.copy(A.add(B).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());mesh.scale.y=len/(mesh.userData.baseLength||len);
-}
-function baseballJoint(parent,p,r,mat){const m=new THREE.Mesh(new THREE.SphereGeometry(r,18,14),mat);m.position.set(...p);parent.add(m);return m}
-function baseballMakeOrganicLimb(parent,a,b,r,mat){
- const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b),len=A.distanceTo(B);
- const geo=new THREE.CapsuleGeometry(r,Math.max(.02,len-r*2),5,12);
- const mesh=new THREE.Mesh(geo,mat);mesh.position.copy(A.clone().add(B).multiplyScalar(.5));mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),B.clone().sub(A).normalize());mesh.userData.baseLength=len;parent.add(mesh);return mesh;
-}
-function baseballCreatePerson(x,z,uniform,capColor,rotation,role){
- const root=new THREE.Group();root.position.set(x,0,z);root.rotation.y=rotation;baseballScene.add(root);
- const skin=baseballMat(0xb87958),skinLight=baseballMat(0xc98d69),shirt=baseballMat(uniform),shirtDark=baseballMat(0x142b43),pants=baseballMat(0x25384a),pantsLight=baseballMat(0x405365),shoes=baseballMat(0x151b23),cap=baseballMat(capColor),white=baseballMat(0xf4f0e7),glove=baseballMat(0x704027),belt=baseballMat(0x17212a);
- const torso=new THREE.Group();torso.position.set(0,1.08,0);root.add(torso);
- const profile=[new THREE.Vector2(.25,0),new THREE.Vector2(.31,.08),new THREE.Vector2(.29,.25),new THREE.Vector2(.35,.52),new THREE.Vector2(.39,.77),new THREE.Vector2(.34,.94),new THREE.Vector2(.24,1.02),new THREE.Vector2(.18,1.06)];
- const chest=new THREE.Mesh(new THREE.LatheGeometry(profile,28),shirt);torso.add(chest);
- baseballBox(torso,.61,.09,.34,belt,0,.04,0);
- const collar=new THREE.Mesh(new THREE.TorusGeometry(.19,.032,8,24),shirtDark);collar.rotation.x=Math.PI/2;collar.position.set(0,1.01,0);torso.add(collar);
- for(let i=0;i<5;i++)baseballJoint(torso,[0,.9-i*.16,.292],.019,white);
- baseballJoint(root,[0,2.28,0],.26,skin);
- baseballJoint(root,[0,2.20,.055],.19,skinLight);
- for(const side of [-1,1]){
-  baseballJoint(root,[side*.25,2.29,0],.07,skin);
-  baseballBallMesh(root,.038,white,side*.105,2.34,.224);
-  baseballBallMesh(root,.018,shirtDark,side*.105,2.34,.257);
-  baseballMakeOrganicLimb(root,[side*.07,2.40,.24],[side*.14,2.41,.23],.018,shirtDark);
- }
- baseballJoint(root,[0,2.25,.27],.045,skin);
- const mouth=new THREE.Mesh(new THREE.TorusGeometry(.052,.008,5,14),shirtDark);mouth.position.set(0,2.17,.246);root.add(mouth);
- const capCrown=new THREE.Mesh(new THREE.SphereGeometry(.275,22,14,0,Math.PI*2,0,Math.PI*.55),cap);capCrown.position.set(0,2.47,0);root.add(capCrown);
- const brim=new THREE.Mesh(new THREE.SphereGeometry(.22,18,10),cap);brim.scale.set(1,.075,.7);brim.position.set(0,2.44,.18);root.add(brim);
- baseballMakeOrganicLimb(root,[0,2.00,0],[0,2.18,0],.105,skin);
- // Legs are shaped upper/lower segments with connected knees and cleats.
- for(const side of [-1,1]){
-  const hip=[side*.19,1.12,0],knee=[side*.24,.64,.025],ankle=[side*.30,.16,.09];
-  baseballMakeOrganicLimb(root,hip,knee,.15,pants);baseballJoint(root,knee,.135,pantsLight);
-  baseballMakeOrganicLimb(root,knee,ankle,.105,pants);
-  baseballBox(root,.29,.14,.48,shoes,ankle[0],.09,.14);
-  for(let n=0;n<3;n++)baseballBox(root,.025,.025,.12,shirtDark,ankle[0]-.09+n*.09,.03,.35);
- }
- const shoulderL=[-.37,1.84,0],shoulderR=[.37,1.84,0];
- if(role==='pitcher'){
-  baseballMakeOrganicLimb(root,shoulderL,[-.57,1.49,.02],.125,shirt);baseballJoint(root,[-.57,1.49,.02],.11,skin);
-  baseballMakeOrganicLimb(root,[-.57,1.49,.02],[-.45,1.17,.16],.085,skin);baseballJoint(root,[-.45,1.17,.16],.09,skin);
-  const mitt=baseballBallMesh(root,.16,glove,-.42,1.08,.22,1.2,.8,.7);
-  baseballBox(root,.06,.18,.08,glove,-.34,1.08,.3);
-  baseballPitchUpper=baseballMakeOrganicLimb(root,shoulderR,[.55,1.67,.02],.13,shirt);
-  baseballPitchElbow=baseballJoint(root,[.55,1.67,.02],.105,skin);
-  baseballPitchLower=baseballMakeOrganicLimb(root,[.55,1.67,.02],[.69,2.02,.17],.09,skin);
-  baseballPitchHand=baseballJoint(root,[.69,2.02,.17],.09,skinLight);
- }else{
-  baseballBatterRoot=root;baseballBatterTorso=torso;
-  const lEl=[-.22,1.55,.18],lHand=[.31,1.59,.47],rEl=[.51,1.61,.16],rHand=[.31,1.73,.47];
-  baseballBatterArms=[
-   {upper:baseballMakeOrganicLimb(root,shoulderL,lEl,.125,shirt),elbow:baseballJoint(root,lEl,.105,skin),lower:baseballMakeOrganicLimb(root,lEl,lHand,.085,skin),hand:baseballJoint(root,lHand,.095,skinLight),shoulder:shoulderL,side:'left'},
-   {upper:baseballMakeOrganicLimb(root,shoulderR,rEl,.125,shirt),elbow:baseballJoint(root,rEl,.105,skin),lower:baseballMakeOrganicLimb(root,rEl,rHand,.085,skin),hand:baseballJoint(root,rHand,.095,skinLight),shoulder:shoulderR,side:'right'}
-  ];
-  baseballBatterHands=baseballBatterArms.map(a=>a.hand);
-  baseballBatPivot=new THREE.Group();baseballBatPivot.position.set(.31,1.42,.40);root.add(baseballBatPivot);
-  const wood=baseballMat(0x98602f,.52),tape=baseballMat(0x292e33,.7),woodLight=baseballMat(0xd2a56a,.58);
-  baseballBat=new THREE.Mesh(new THREE.CylinderGeometry(.045,.075,1.28,18),wood);baseballBat.position.set(0,.68,0);baseballBatPivot.add(baseballBat);
-  const knob=new THREE.Mesh(new THREE.SphereGeometry(.075,14,10),woodLight);knob.position.set(0,.055,0);baseballBatPivot.add(knob);
-  const grip=new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,.25,14),tape);grip.position.set(0,.22,0);baseballBatPivot.add(grip);
-  // Hands overlap the bat handle, visibly gripping it with both palms.
-  baseballJoint(baseballBatPivot,[0,.17,.07],.095,skinLight);
-  baseballJoint(baseballBatPivot,[0,.31,.07],.095,skinLight);
-  baseballBox(root,.12,.06,.16,shirtDark,.31,1.43,.39);
- }
- return root;
-}
-function baseballPitchPose(p){
- const poses=[
-  {p:0,e:[.55,1.72,.02],w:[.72,2.18,.17]},
-  {p:.22,e:[.70,1.94,-.08],w:[.62,2.68,-.18]},
-  {p:.46,e:[.72,1.82,.16],w:[.22,2.38,.38]},
-  {p:.62,e:[.60,1.66,.30],w:[.08,1.98,.70]},
-  {p:.80,e:[.48,1.38,.36],w:[-.02,1.48,.82]},
-  {p:1,e:[.38,1.22,.38],w:[-.10,1.12,.76]}
- ];
- let a=poses[0],b=poses[1];for(let i=1;i<poses.length;i++){if(p<=poses[i].p){a=poses[i-1];b=poses[i];break}a=poses[i-1];b=poses[i]}
- const t=Math.max(0,Math.min(1,(p-a.p)/(b.p-a.p))),s=t*t*(3-2*t),mix=(x,y)=>x+(y-x)*s;
- return {elbow:a.e.map((v,i)=>mix(v,b.e[i])),wrist:a.w.map((v,i)=>mix(v,b.w[i]))};
-}
-function baseballSetPitcher(p){
- const pose=baseballPitchPose(p),shoulder=[.37,1.84,0];
- baseballMoveLimb(baseballPitchUpper,shoulder,pose.elbow);baseballPitchElbow.position.set(...pose.elbow);
- baseballMoveLimb(baseballPitchLower,pose.elbow,pose.wrist);baseballPitchHand.position.set(...pose.wrist);
- baseballPitcher.rotation.z=.05*Math.sin(p*Math.PI*2);
- baseballPitcher.rotation.y=.06*Math.sin(p*Math.PI);
-}
-function baseballWorldPitchHand(p){
- baseballSetPitcher(p);baseballPitcher.updateMatrixWorld(true);
- const pose=baseballPitchPose(p);return baseballPitcher.localToWorld(new THREE.Vector3(...pose.wrist));
-}
-function baseballSetBatterPose(swing){
- const s=Math.max(0,Math.min(1,swing)),ease=s*s*(3-2*s);
- const start=[[-.22,1.55,.18],[.31,1.59,.47],[.51,1.61,.16],[.31,1.73,.47]];
- const finish=[[-.08,1.48,.12],[.42,1.55,.40],[.32,1.53,.12],[.48,1.66,.38]];
- baseballBatterArms.forEach((arm,i)=>{
-  const e=start[i*2],h=start[i*2+1],E=finish[i*2],H=finish[i*2+1];
-  const el=e.map((v,k)=>v+(E[k]-v)*ease),hand=h.map((v,k)=>v+(H[k]-v)*ease);
-  baseballMoveLimb(arm.upper,arm.shoulder,el);arm.elbow.position.set(...el);
-  baseballMoveLimb(arm.lower,el,hand);arm.hand.position.set(...hand);
- });
- baseballBatterRoot.rotation.y=Math.PI+.62*ease;
- baseballBatterTorso.rotation.z=-.10*Math.sin(s*Math.PI);
- baseballBatPivot.rotation.set(.08*ease,0,-.62+1.30*ease);
-}
-function baseballCreateStadium(){
- baseballScene=new THREE.Scene();baseballScene.background=new THREE.Color(0x8bc9e9);baseballScene.fog=new THREE.Fog(0x8bc9e9,45,100);
- baseballCamera=new THREE.PerspectiveCamera(47,1,.1,125);baseballCamera.position.set(-4.5,6.5,19);baseballCamera.lookAt(-.1,1.75,-7.5);
- baseballScene.add(new THREE.HemisphereLight(0xeaf7ff,0x344a32,1.7));
- const sun=new THREE.DirectionalLight(0xffedcf,2.1);sun.position.set(-8,18,10);baseballScene.add(sun);
- const fill=new THREE.DirectionalLight(0xb7ddff,.75);fill.position.set(10,9,-18);baseballScene.add(fill);
- const grass=baseballMat(0x347b3b),stripe=baseballMat(0x438d45),dirt=baseballMat(0xb77b4b),white=baseballMat(0xf5f0df),fence=baseballMat(0x183c37),stand=baseballMat(0x34495a),seat=baseballMat(0x6c7d87),rail=baseballMat(0xb9c7ce,.5,.3);
- const field=new THREE.Mesh(new THREE.PlaneGeometry(100,100),grass);field.rotation.x=-Math.PI/2;field.position.set(0,-.05,-16);baseballScene.add(field);
- for(let i=0;i<11;i++){const m=new THREE.Mesh(new THREE.PlaneGeometry(90,2.1),stripe);m.rotation.x=-Math.PI/2;m.position.set(0,.002,-5-i*4.6);baseballScene.add(m)}
- const infield=new THREE.Mesh(new THREE.CircleGeometry(8.6,4),dirt);infield.rotation.x=-Math.PI/2;infield.rotation.z=Math.PI/4;infield.position.set(0,.02,-2.7);baseballScene.add(infield);
- const mound=new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.8,.24,36),dirt);mound.position.set(0,.12,-14.3);baseballScene.add(mound);
- const basePositions=[[-5,.07,-2.7],[0,.07,-7.7],[5,.07,-2.7]];
- basePositions.forEach(p=>{const b=baseballBox(baseballScene,.43,.11,.43,white,p[0],p[1],p[2]);b.rotation.y=Math.PI/4});
- baseballHomePlate=baseballBox(baseballScene,.62,.09,.55,white,0,.08,2.1);baseballHomePlate.rotation.y=Math.PI/4;
- baseballBox(baseballScene,58,3,.5,fence,0,1.5,-35);
- for(const side of [-1,1]){
-  const bleacher=baseballBox(baseballScene,14,4.8,2.5,stand,side*19,2.9,-25);bleacher.rotation.z=side*.04;
-  for(let row=0;row<5;row++)baseballBox(baseballScene,14,.11,.32,seat,side*19,1.0+row*.76,-23.6-row*.16);
-  baseballBox(baseballScene,14,.14,.18,rail,side*19,5.5,-23);
- }
- const crowd=[0xd94c43,0xe5d6b2,0x2d75a6,0xe2b33c,0x263b50];
- for(let c=0;c<crowd.length;c++){
-  const inst=new THREE.InstancedMesh(new THREE.SphereGeometry(.085,8,6),baseballMat(crowd[c]),100),d=new THREE.Object3D();
-  for(let i=0;i<100;i++){const row=Math.floor(i/20),col=i%20;d.position.set(-27+col*2.85,1.2+row*.7,-30-row*.18);d.scale.set(.8,1.4,.8);d.updateMatrix();inst.setMatrixAt(i,d.matrix)}
-  baseballScene.add(inst);
- }
- for(const side of [-1,1]){
-  baseballLimb(baseballScene,[side*25,0,-16],[side*25,18,-16],.16,.12,rail);
-  baseballBox(baseballScene,3,.22,.4,rail,side*25,18,-16);
-  for(let j=0;j<5;j++){const lamp=new THREE.Mesh(new THREE.SphereGeometry(.16,10,8),baseballMat(0xfff2c7,.25));lamp.position.set(side*25-1.2+j*.6,17.9,-15.7);baseballScene.add(lamp)}
- }
- // Batter foreground and pitcher on the mound, both built as articulated human models.
- baseballBatter=baseballCreatePerson(-1.05,1.25,0x1d4e80,0x122e53,Math.PI,'batter');
- baseballPitcher=baseballCreatePerson(.15,-14.6,0xe7e9eb,0x1d2935,0,'pitcher');
- baseballBall=new THREE.Group();baseballBallMesh(baseballBall,.105,baseballMat(0xfffdf4,.32),0,0,0);baseballBall.visible=false;
- const seamMat=new THREE.MeshBasicMaterial({color:0xb92728});
- for(let side of [-1,1]){
-  const pts=[];for(let i=0;i<=28;i++){const t=i/28*Math.PI*2;pts.push(new THREE.Vector3(.102*Math.cos(t),.072*Math.sin(t),side*.035*Math.sin(t*.5)))}
-  const curve=new THREE.CatmullRomCurve3(pts);baseballBall.add(new THREE.Mesh(new THREE.TubeGeometry(curve,32,.004,5,false),seamMat));
- }
- baseballScene.add(baseballBall);
- const shadowMat=new THREE.MeshBasicMaterial({color:0x101d16,transparent:true,opacity:.28});
- baseballBallShadow=new THREE.Mesh(new THREE.CircleGeometry(.22,20),shadowMat);baseballBallShadow.rotation.x=-Math.PI/2;baseballScene.add(baseballBallShadow);baseballBallShadow.visible=false;
- baseballImpactRing=new THREE.Mesh(new THREE.TorusGeometry(.36,.035,8,36),new THREE.MeshBasicMaterial({color:0xffe17a,transparent:true,opacity:.95}));baseballImpactRing.rotation.x=Math.PI/2;baseballScene.add(baseballImpactRing);baseballImpactRing.visible=false;
-}
-function baseballResize(){
- if(!baseballRenderer||!baseballStage.clientWidth||!baseballStage.clientHeight)return;
- const w=baseballStage.clientWidth,h=baseballStage.clientHeight;baseballCamera.aspect=w/h;baseballCamera.updateProjectionMatrix();
- baseballRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.25));baseballRenderer.setSize(w,h,false);
-}
-function baseballBuildScene(){
- if(baseballRenderer)return true;
- if(!window.THREE||!THREE.WebGLRenderer)throw new Error('WebGL no está disponible');
- baseballCreateStadium();
- baseballRenderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power',stencil:false,depth:true});
- baseballRenderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.25));baseballRenderer.setSize(baseballStage.clientWidth,baseballStage.clientHeight,false);
- if('outputColorSpace'in baseballRenderer&&THREE.SRGBColorSpace)baseballRenderer.outputColorSpace=THREE.SRGBColorSpace;
- baseballRenderer.domElement.id='baseball3d';baseballRenderer.domElement.setAttribute('aria-label','Partido de béisbol 3D con pitcher y bateador humanos');
- baseballStage.insertBefore(baseballRenderer.domElement,baseballStage.firstChild);
- baseballRenderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();stopBaseball();baseballFallback.hidden=false;baseballFallback.textContent='Se interrumpieron los gráficos 3D. Volvé a entrar a Béisbol para intentar de nuevo.'});
- baseballResize();baseballRenderer.render(baseballScene,baseballCamera);baseballLoading.hidden=true;return true;
-}
-function baseballStartPitch(){
- baseballPhase='pitch';baseballPitchStart=performance.now();baseballSwingRequested=false;baseballSwingStart=0;
- baseballSetBatterPose(0);baseballSetPitcher(0);
- baseballBallStart=baseballWorldPitchHand(0);baseballReleasePoint=baseballWorldPitchHand(.62);
- baseballContactPoint=new THREE.Vector3(-.72,1.55,.35);
- baseballBall.position.copy(baseballBallStart);baseballBall.visible=true;baseballBall.scale.setScalar(.78);
- baseballBallShadow.visible=true;baseballBallShadow.position.set(baseballBall.position.x,.035,baseballBall.position.z);
- baseballImpactRing.visible=false;
- baseballAction.textContent='¡ESPERÁ!';baseballMessage.textContent='EL PITCHER SE PREPARA';baseballHint.textContent='Mirá cómo carga el brazo. La pelota va a salir de su mano.';
- baseballSound('pitch');
-}
-function baseballMiss(){
- baseballPhase='miss';baseballFlightStart=performance.now();baseballMisses++;baseballSound('miss');
- baseballMessage.textContent='¡FALLASTE!';baseballHint.textContent='La pelota pasó el bate. ¡Probá con el próximo lanzamiento!';
- baseballAction.textContent='OTRA PELOTA';
-}
-function baseballHit(){
- if(baseballPhase!=='pitch')return;
- baseballPhase='hitFlight';baseballFlightStart=performance.now();baseballHits++;
- const results=['SENCILLO','DOBLE','TRIPLE','HOME RUN','HOME RUN','DOBLE'];baseballOutcome=results[(baseballHits-1)%results.length];
- if(baseballOutcome==='HOME RUN')baseballRuns++;
- baseballScore=baseballRuns;
- document.getElementById('baseballHits').textContent='HITS '+baseballHits;
- document.getElementById('baseballRuns').textContent='CARRERAS '+baseballRuns;
- document.getElementById('baseballScore').textContent=baseballRuns+' — 0';
- baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡¡¡HOME RUN!!!':'¡¡¡BATAZO '+baseballOutcome+'!!!';
- baseballHint.textContent='¡La pelota salió disparada hacia el jardín!';
- baseballSound('hit');baseballImpactRing.visible=true;baseballImpactRing.position.copy(baseballContactPoint);baseballImpactRing.position.y+=.04;
-}
-function baseballUpdate(now){
- const elapsed=(now-baseballPitchStart)/1000;
- if(baseballPhase==='pitch'){
-  const p=Math.min(1,elapsed/1.72);
-  const wind=Math.min(1,p);baseballSetPitcher(wind);
-  if(p<.62){baseballBall.position.copy(baseballWorldPitchHand(wind));}
-  else{
-   const q=Math.min(1,(p-.62)/.38),e=q*q*(3-2*q);
-   baseballBall.position.copy(baseballReleasePoint).lerp(baseballContactPoint,e);
-   baseballBall.position.y+=Math.sin(q*Math.PI)*.18;
-   baseballBall.scale.setScalar(.78+.55*q);
-   baseballAction.textContent='⚾ BATEAR';
-   baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';
-   baseballHint.textContent='Tocá BATEAR justo cuando la pelota llegue a la zona.';
-  }
-  baseballBallShadow.position.set(baseballBall.position.x,.035,baseballBall.position.z);
-  baseballBallShadow.scale.setScalar(.8+p*.5);
-  if(baseballSwingRequested){
-   const swing=Math.max(0,Math.min(1,(now-baseballSwingStart)/420));baseballSetBatterPose(swing);
-  }
-  if(p>=1){
-   const swingProgress=baseballSwingRequested?(now-baseballSwingStart)/420:0;
-   if(baseballSwingRequested&&swingProgress>=.30&&swingProgress<=1.12)baseballHit();else baseballMiss();
-  }
- }else if(baseballPhase==='miss'){
-  const p=Math.min(1,(now-baseballFlightStart)/850);
-  baseballBall.position.set(baseballContactPoint.x,1.5+Math.sin(p*Math.PI)*.25,baseballContactPoint.z+3.8*p);
-  baseballBall.scale.setScalar(1.3-.3*p);
-  if(p>=1){baseballPhase='done';baseballBall.visible=false;baseballBallShadow.visible=false;baseballAction.textContent='OTRA PELOTA';baseballSetBatterPose(0);}
- }else if(baseballPhase==='hitFlight'){
-  const p=Math.min(1,(now-baseballFlightStart)/2600),endX=baseballOutcome==='HOME RUN'?4.8:baseballOutcome==='TRIPLE'?3.3:baseballOutcome==='DOBLE'?2.1:.8;
-  baseballBall.position.set(baseballContactPoint.x+endX*p,1.6+Math.sin(p*Math.PI)*10*p,baseballContactPoint.z-39*p);
-  baseballBall.scale.setScalar(1.25-.48*p);baseballBallShadow.position.set(baseballBall.position.x,.035,baseballBall.position.z);
-  if(p>=1){baseballPhase='done';baseballBall.visible=false;baseballBallShadow.visible=false;baseballImpactRing.visible=false;baseballAction.textContent='OTRA JUGADA';baseballMessage.textContent=baseballOutcome==='HOME RUN'?'¡LA SACÓ DEL ESTADIO!':'¡GRAN BATAZO!';baseballSetBatterPose(0);}
- }
-}
-function baseballLoop(now){
- baseballRAF=0;if(!baseballActive||document.hidden)return;
- if(baseballPhase==='pitch'||baseballPhase==='miss'||baseballPhase==='hitFlight')baseballUpdate(now);
- const interval=(baseballPhase==='pitch'||baseballPhase==='miss'||baseballPhase==='hitFlight')?0:33;
- if(now-baseballLastRender>=interval){baseballRenderer.render(baseballScene,baseballCamera);baseballLastRender=now}
- baseballRAF=requestAnimationFrame(baseballLoop);
-}
-function startBaseball(){
- baseballActive=true;baseballFallback.hidden=true;
- if(!baseballRenderer){baseballLoading.hidden=false;try{baseballBuildScene()}catch(e){baseballLoading.hidden=true;baseballFallback.hidden=false;baseballFallback.textContent='No se pudo iniciar el estadio 3D: '+(e&&e.message?e.message:'error gráfico')+'. El resto de Exploradores sigue funcionando.';baseballActive=false;return}}
- baseballResize();if(baseballRAF)cancelAnimationFrame(baseballRAF);baseballLastRender=0;
- if(baseballPhase==='ready'){baseballSetBatterPose(0);baseballMessage.textContent='¡PREPARADO PARA BATEAR!';}
- baseballRAF=requestAnimationFrame(baseballLoop);
-}
-function stopBaseball(){baseballActive=false;if(baseballRAF)cancelAnimationFrame(baseballRAF);baseballRAF=0}
-baseballAction.addEventListener('click',()=>{
- if(!baseballActive)return;
- if(baseballPhase==='ready'||baseballPhase==='done'){baseballStartPitch();return}
- if(baseballPhase==='pitch'){
-  const elapsed=(performance.now()-baseballPitchStart)/1000;
-  if(elapsed<1.22){baseballHint.textContent='¡Esperá a que la pelota se acerque a la zona de bateo!';return}
-  if(elapsed>1.60){baseballHint.textContent='¡Un poquito tarde!';return}
-  if(!baseballSwingRequested){baseballSwingRequested=true;baseballSwingStart=performance.now();baseballSound('hit');baseballSound('crowd');baseballMessage.textContent='¡SWING!';baseballHint.textContent='¡Dale con todo!';}
- }
-});
-baseballNameConfirm.addEventListener('click',()=>{
- const name=(baseballNameInput.value||'').trim().replace(/\s+/g,' ').slice(0,18);
- if(!name){baseballNameStatus.textContent='Escribí tu nombre';baseballNameInput.focus();return}
- localStorage.setItem('explorer-player-name',name);if(playerInput)playerInput.value=name;
- baseballNameInput.value=name;baseballNameStatus.textContent='✓ '+name;
- baseballHint.textContent='¡Bienvenido, '+name+'! Preparáte para batear.';
- if(greetedPlayerNameThisSession!==name){greetedPlayerNameThisSession=name;sayPlayer('¡Hola, '+name+'! ¡Vamos a jugar al béisbol!');}
-});
-baseballNameInput.value=localStorage.getItem('explorer-player-name')||'';
-baseballNameStatus.textContent=baseballNameInput.value?'✓ '+baseballNameInput.value:'Confirmá tu nombre';
-baseballNameInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();baseballNameConfirm.click();}});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBaseball();else if(document.getElementById('baseball').classList.contains('active'))startBaseball()});
 /* LIBRO PARA DIBUJAR Y PINTAR */
 (function initDrawingBook(){
  const canvas=document.getElementById('drawCanvas');if(!canvas)return;
