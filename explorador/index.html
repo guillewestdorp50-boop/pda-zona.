@@ -112,6 +112,7 @@ footer{text-align:center;font-size:11px;font-weight:800;color:#38566b}
 #baseball{overflow:hidden;gap:7px}
 .baseball-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:0 0 auto}
 .baseball-heading h1{font-size:clamp(18px,2.3vw,25px)}
+.baseball-name-wrap{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:11px;font-weight:900;color:#173b62}.baseball-name-wrap input{width:118px;min-width:0;border:2px solid #8fc8dc;border-radius:9px;padding:6px 8px;font:800 12px system-ui;color:#17304a;background:#fff}.baseball-name-wrap button{border:0;border-radius:9px;padding:7px 9px;background:#176b45;color:#fff;font-size:11px;font-weight:950}
 .baseball-counts{display:flex;flex-direction:column;gap:4px;text-align:right;font-size:11px;font-weight:1000;color:#173b62}
 .baseball-counts span{background:#fff;padding:4px 7px;border-radius:8px}
 .baseball-stage{position:relative;flex:1;min-height:250px;overflow:hidden;border-radius:17px;background:linear-gradient(#7ec8ed 0%,#b8e5f5 46%,#234d2b 47%,#10281b 100%);box-shadow:inset 0 0 0 2px #fff,0 7px 18px #18304733;isolation:isolate}
@@ -297,7 +298,7 @@ body.game-fullscreen{padding:0!important}body.game-fullscreen #app{position:fixe
 </div>
 </section>
 <section class="panel game-panel" id="baseball"><button class="game-exit" type="button" onclick="openExplorerPanel('dinos')">✕ Salir del juego</button>
- <div class="baseball-heading"><div><h1>⚾ ¡A batear!</h1><p class="hint">El pitcher lanza. ¡Vos conectás! Siempre hay otra oportunidad.</p></div><div class="baseball-counts"><span id="baseballHits">HITS 0</span><span id="baseballRuns">CARRERAS 0</span></div></div>
+ <div class="baseball-heading"><div><h1>⚾ ¡A batear!</h1><p class="hint">El pitcher lanza. ¡Vos conectás! Siempre hay otra oportunidad.</p><label class="baseball-name-wrap">Tu nombre <input id="baseballPlayerName" maxlength="18" autocomplete="given-name" placeholder="Escribí tu nombre"><button id="baseballNameConfirm" type="button">Confirmar</button></label></div><div class="baseball-counts"><span id="baseballHits">HITS 0</span><span id="baseballRuns">CARRERAS 0</span></div></div>
  <div class="baseball-stage" id="baseballStage">
   <div class="baseball-scoreboard"><span>CHAZÓN</span><strong id="baseballScore">0 — 0</strong><span id="baseballInning">1ª ENTRADA</span></div>
   <div id="baseballMessage" class="baseball-message">¡PREPARADO PARA BATEAR!</div>
@@ -687,6 +688,8 @@ const baseballMessage=document.getElementById('baseballMessage');
 const baseballLoading=document.getElementById('baseballLoading');
 const baseballFallback=document.getElementById('baseballFallback');
 const baseballHint=document.getElementById('baseballHint');
+const baseballNameInput=document.getElementById('baseballPlayerName');
+const baseballNameConfirm=document.getElementById('baseballNameConfirm');
 let baseballAudioContext=null;
 function baseballGetAudio(){
  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
@@ -740,11 +743,14 @@ function baseballCreateHuman(x,z,uniform,capColor,rotation=0,isPitcher=false){
   baseballPitchForearm=baseballLimb(root,[.55,1.68,-.02],[.67,2.05,-.05],.09,.075,skin);
   baseballPitchHand=baseballSphere(root,.09,skin,.67,2.05,-.05,1.05,.9,.9);
  }else{
-  // Los dos brazos se flexionan hacia el mismo agarre: el bate queda entre las manos.
-  baseballLimb(root,[-.36,1.83,0],[-.18,1.58,.12],.115,.09,shirt);
-  baseballLimb(root,[-.18,1.58,.12],[.30,1.48,.27],.09,.075,skin);
-  baseballLimb(root,[.36,1.83,0],[.52,1.63,.10],.115,.09,shirt);
-  baseballLimb(root,[.52,1.63,.10],[.40,1.49,.27],.09,.075,skin);
+  // Brazos con uniones redondeadas y superpuestas para que se lean como extremidades continuas.
+  baseballLimb(root,[-.36,1.83,0],[-.18,1.58,.12],.14,.12,shirt);
+  baseballLimb(root,[-.18,1.58,.12],[.30,1.48,.27],.12,.105,skin);
+  baseballLimb(root,[.36,1.83,0],[.52,1.63,.10],.14,.12,shirt);
+  baseballLimb(root,[.52,1.63,.10],[.40,1.49,.27],.12,.105,skin);
+  baseballSphere(root,.145,shirt,-.36,1.83,0,1,1,1);baseballSphere(root,.145,shirt,.36,1.83,0,1,1,1);
+  baseballSphere(root,.13,skin,-.18,1.58,.12,1,1,1);baseballSphere(root,.13,skin,.52,1.63,.10,1,1,1);
+  baseballSphere(root,.115,skin,.30,1.48,.27,1,1,1);baseballSphere(root,.115,skin,.40,1.49,.27,1,1,1);
   const pivot=new THREE.Group();pivot.position.set(.39,1.45,.29);pivot.rotation.z=-.45;root.add(pivot);
   const batWood=baseballMat(0xb87935,.55),batTip=baseballMat(0xe3bd7c,.48);
   const bat=new THREE.Mesh(new THREE.CylinderGeometry(.035,.073,1.2,12),batWood);bat.position.set(0,.63,0);pivot.add(bat);
@@ -825,7 +831,8 @@ function baseballSetPitchArm(p){
 }
 function baseballWorldHand(p){const pose=baseballPitchWrist(p);baseballPitcher.updateMatrixWorld(true);return baseballPitcher.localToWorld(new THREE.Vector3(...pose.wrist));}
 function baseballStartPitch(){
- baseballPhase='pitch';baseballPlaySound('pitch');baseballPitchStart=performance.now();baseballSwingStarted=false;baseballSwingRequested=false;
+ baseballPhase='pitch';
+ if(baseballBatPivot)baseballBatPivot.rotation.z=-.45;baseballPlaySound('pitch');baseballPitchStart=performance.now();baseballSwingStarted=false;baseballSwingRequested=false;
  baseballSetPitchArm(0);const hand=baseballWorldHand(0);baseballPitchReleasePoint=baseballWorldHand(.58);
  baseballBall.position.copy(hand);baseballBall.scale.setScalar(.72);baseballBall.visible=true;
  baseballBallShadow.position.set(hand.x,.03,hand.z);baseballAction.textContent='¡BATEAR!';baseballMessage.textContent='¡AHÍ VIENE LA PELOTA!';baseballHint.textContent='Tocá ¡BATEAR! mientras la pelota viene. Si no lo tocás, es fallo.';
@@ -847,13 +854,13 @@ function baseballHit(){
 function baseballUpdate(now){
  const t=(now-baseballPitchStart)/1000;
  if(baseballPhase==='pitch'){
-  const p=Math.min(1,t/1.25);baseballSetPitchArm(p);
+  const p=Math.min(1,t/1.55);baseballSetPitchArm(p);
   if(p<.58){const hand=baseballWorldHand(p);baseballBall.position.copy(hand);baseballBall.scale.setScalar(.72);}
-  else{const q=Math.min(1,(p-.58)/.42);baseballBall.position.set(baseballPitchReleasePoint.x+(-.07-baseballPitchReleasePoint.x)*q,baseballPitchReleasePoint.y+(2.35-baseballPitchReleasePoint.y)*q+Math.sin(q*Math.PI)*.22,baseballPitchReleasePoint.z+17*q);baseballBall.scale.setScalar(.72+.5*q);}
+  else{const q=Math.min(1,(p-.58)/.42);baseballBall.position.set(baseballPitchReleasePoint.x+(-.07-baseballPitchReleasePoint.x)*q,baseballPitchReleasePoint.y+(2.35-baseballPitchReleasePoint.y)*q+Math.sin(q*Math.PI)*.22,baseballPitchReleasePoint.z+16*q);baseballBall.scale.setScalar(.72+.5*q);}
   baseballBallShadow.position.x=baseballBall.position.x;baseballBallShadow.position.z=baseballBall.position.z;baseballBallShadow.scale.setScalar(.8+Math.min(1,p)*.7);
-  if(baseballSwingRequested&&!baseballSwingStarted)baseballSwingStarted=true;
-  if(baseballSwingStarted&&baseballBatPivot){const swing=Math.max(0,Math.min(1,(p-.30)/.48));baseballBatPivot.rotation.z=-.45+1.65*swing;}
-  if(p>.88){if(baseballSwingRequested)baseballHit();else baseballMiss();}
+  if(baseballSwingRequested&&baseballBatPivot){baseballSwingStarted=true;const swing=Math.max(0,Math.min(1,(p-.68)/.29));const eased=swing*swing*(3-2*swing);baseballBatPivot.rotation.z=-.45+1.65*eased;}
+  // El impacto se decide cuando la pelota llega a la zona del bate, no al terminar el gesto.
+  if(p>.975){if(baseballSwingRequested&&baseballSwingStarted)baseballHit();else baseballMiss();}
  }else if(baseballPhase==='miss'){
   const p=Math.min(1,(now-baseballFlightStart)/850);baseballBall.position.set(.08,2.35+Math.sin(p*Math.PI)*.35,2+7*p);baseballBall.scale.setScalar(1.22-.25*p);
   if(p>=1){baseballPhase='done';baseballBall.visible=false;baseballAction.textContent='OTRA PELOTA';if(baseballBatPivot)baseballBatPivot.rotation.z=-.45;}
@@ -882,8 +889,11 @@ function stopBaseball(){baseballActive=false;if(baseballRAF)cancelAnimationFrame
 baseballAction.addEventListener('click',()=>{
  if(!baseballActive)return;
  if(baseballPhase==='ready'||baseballPhase==='done'){baseballStartPitch();return}
- if(baseballPhase==='pitch'){const p=(performance.now()-baseballPitchStart)/1050;if(p<.12){baseballHint.textContent='¡Esperá que el pitcher lance la pelota!';return}if(p>.88){baseballHint.textContent='¡Llegó tarde! Esta pelota ya pasó.';return}baseballSwingRequested=true;baseballHint.textContent='¡BATEÓ! ¡Buen reflejo!';baseballMessage.textContent='¡CONTACTO!';}
+ if(baseballPhase==='pitch'){const p=(performance.now()-baseballPitchStart)/1550;if(p<.12){baseballHint.textContent='¡Esperá que el pitcher lance la pelota!';return}if(p>.95){baseballHint.textContent='¡Llegó tarde! Esta pelota ya pasó.';return}baseballSwingRequested=true;baseballHint.textContent='¡BATEÓ! ¡Buen reflejo!';baseballMessage.textContent='¡CONTACTO!';}
 });
+baseballNameConfirm.addEventListener('click',()=>{const name=(baseballNameInput.value||'').trim().slice(0,18);if(!name){baseballHint.textContent='Escribí tu nombre antes de confirmar.';baseballNameInput.focus();return;}localStorage.setItem('explorer-player-name',name);if(playerInput)playerInput.value=name;baseballNameInput.value=name;greetPlayerName();});
+baseballNameInput.value=localStorage.getItem('explorer-player-name')||'';
+baseballNameInput.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();baseballNameConfirm.click();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopBaseball();else if(document.getElementById('baseball').classList.contains('active'))startBaseball()});
 
 // Evitar menús nativos de selección/copiar/pegar durante las partidas, sin bloquear inputs editables.
